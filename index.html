@@ -64,18 +64,18 @@ img{max-width:100%;display:block}
 .topbar .sep{color:var(--blush);margin:0 6px}
 nav{background:rgba(255,255,255,.86);backdrop-filter:blur(14px) saturate(1.5);-webkit-backdrop-filter:blur(14px) saturate(1.5);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;transition:box-shadow .3s var(--ease)}
 nav.scrolled{box-shadow:0 10px 30px rgba(69,50,48,.09)}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1280px;margin:0 auto}
-.brand{font-family:'Fraunces',serif;font-size:22px;color:var(--ink);cursor:pointer}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:32px;padding:16px 24px;max-width:1320px;margin:0 auto}
+.brand{font-family:'Fraunces',serif;font-size:22px;color:var(--ink);cursor:pointer;flex:none;white-space:nowrap}
 .brand span{color:var(--merlot-deep)}
-.nav-links{display:flex;gap:22px;list-style:none;align-items:center}
+.nav-links{display:flex;gap:18px;list-style:none;align-items:center}
 .nav-links>li{position:relative}
-.nav-links a{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--ink);padding:6px 0;border-bottom:2px solid transparent;cursor:pointer;display:inline-block;transition:color .2s,border-color .2s}
+.nav-links a{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink);padding:6px 0;border-bottom:2px solid transparent;cursor:pointer;display:inline-block;white-space:nowrap;transition:color .2s,border-color .2s}
 .nav-links a:hover,.nav-links a.active{border-color:var(--gold);color:var(--merlot-ink)}
 .drop{display:block;visibility:hidden;opacity:0;transform:translateY(6px);position:absolute;top:100%;left:-14px;background:#fff;border:1px solid var(--line);min-width:220px;padding:10px 0;box-shadow:var(--shadow-m);z-index:60;transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s}
 .has-drop:hover .drop,.has-drop:focus-within .drop{visibility:visible;opacity:1;transform:none}
 .drop a{display:block;padding:9px 18px;border-bottom:none!important;font-size:11.5px}
 .drop a:hover,.drop a:focus-visible{background:var(--cream-2);color:var(--merlot-ink)}
-.nav-cta{background:var(--merlot-deep);color:var(--cream)!important;padding:11px 18px!important;border-bottom:none!important;transition:background .25s,box-shadow .25s!important}
+.nav-cta{background:var(--merlot-deep);color:var(--cream)!important;padding:10px 16px!important;border-bottom:none!important;transition:background .25s,box-shadow .25s!important}
 .nav-cta:hover{background:var(--merlot-ink);box-shadow:var(--shadow-s)}
 .burger{display:none;background:none;border:none;color:var(--ink);cursor:pointer;padding:8px;line-height:0}
 .burger svg{width:24px;height:24px}
@@ -295,6 +295,13 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 .thumb-strip .cap{padding:26px 12px 10px;font-size:9px}
 .gal .g:hover .cap,.gal .g:focus-visible .cap,.thumb-strip .g:hover .cap,.thumb-strip .g:focus-visible .cap{opacity:1}
 
+@media(max-width:1279px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--cream);flex-direction:column;padding:20px 24px;border-bottom:1px solid var(--line);gap:14px;align-items:flex-start;max-height:70vh;overflow:auto;box-shadow:var(--shadow-m)}
+  .nav-links.open{display:flex}
+  .nav-links a{font-size:12px;letter-spacing:.12em}
+  .drop{visibility:visible;opacity:1;transform:none;position:static;box-shadow:none;border:none;background:transparent;padding:4px 0 0 14px;min-width:0;transition:none}
+  .burger{display:block}
+}
 @media(max-width:920px){
   .hero-grid,.split,.foot-grid,.two-col,.lead-mag{grid-template-columns:1fr}
   .hero-grid{padding:56px 0 48px;gap:36px}
@@ -306,10 +313,6 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
   .proof-grid{grid-template-columns:1fr}
   .proof-item{border-left:none;border-top:1px solid rgba(251,247,243,.12)}
   .proof-item:first-child{border-top:none}
-  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--cream);flex-direction:column;padding:20px 24px;border-bottom:1px solid var(--line);gap:14px;align-items:flex-start;max-height:70vh;overflow:auto;box-shadow:var(--shadow-m)}
-  .nav-links.open{display:flex}
-  .drop{visibility:visible;opacity:1;transform:none;position:static;box-shadow:none;border:none;background:transparent;padding:4px 0 0 14px;min-width:0;transition:none}
-  .burger{display:block}
   section{padding:54px 0}
   .form-card{padding:32px 24px}
 }
