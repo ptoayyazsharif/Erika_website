@@ -10,6 +10,12 @@ Design mockup for Erika Page, Atlanta Metro Real Estate Expert, Speaker & Mentor
 
 Open `index.html` in any browser — no build step or server required.
 
+## v5.1 — Ecosystem expansion
+
+- Refreshed ecosystem card copy for Speaking, Mentorship, Investing, and Brands & Partners
+- Two new ecosystem lanes with full pages: **Escaluxe Transportation & Logistics** (services grid, standards checklist, inquiry form, FAQ) and **Escaluxe Living** (collection grid, brand story, gifting CTA)
+- Both pages wired into the Resources dropdown, footer Ecosystem column, router (`#/transportation`, `#/living`), plus About-page and homepage-FAQ ecosystem mentions
+
 ## v5 — July 7 meeting revisions
 
 - Homepage reordered: intro → moving ticker tape (with extra factoids) → selling → booking Erika → personal welcome video → ecosystem → insights → thumbnail gallery → testimonials → FAQ → final sell CTA
