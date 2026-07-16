@@ -76,7 +76,7 @@ button:hover{background:#9C4A3E}
 $pages = manifest();
 $pageIds = array_keys($pages);
 $cur = $_GET['page'] ?? 'home';
-if (!isset($pages[$cur]) && $cur !== 'settings') $cur = 'home';
+if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email'], true)) $cur = 'home';
 
 /* ---------- change password ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_password'])) {
@@ -92,6 +92,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_password'])) {
             ->execute([password_hash($_POST['new'], PASSWORD_DEFAULT), $u['id']]);
         $flash = 'Password changed.';
     }
+}
+
+/* ---------- save SMTP / email settings ---------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_smtp'])) {
+    csrf_check();
+    $keys = ['smtp.host', 'smtp.port', 'smtp.secure', 'smtp.user', 'smtp.from', 'smtp.from_name', 'smtp.to'];
+    foreach ($keys as $sk) set_setting($sk, trim((string) ($_POST[str_replace('smtp.', 's_', $sk)] ?? '')));
+    // only overwrite the password when a new one is typed (blank leaves the stored one)
+    if (($_POST['s_pass'] ?? '') !== '') set_setting('smtp.pass', (string) $_POST['s_pass']);
+    $flash = 'Email settings saved.';
+    if (($_POST['do_smtp'] ?? '') === 'test') {
+        $rcpt = setting('smtp.to');
+        [$ok, $mErr] = send_mail(
+            'Test email — ErikaKPage CMS',
+            '<p>This is a test email from your ErikaKPage website admin. If you can read this, form submissions will be delivered here.</p>',
+            'This is a test email from your ErikaKPage website admin. If you can read this, form submissions will be delivered here.'
+        );
+        if ($ok) $flash = 'Settings saved and a test email was sent to ' . $rcpt . '.';
+        else { $err = 'Settings saved, but the test email failed: ' . $mErr; $flash = ''; }
+    }
+    $cur = 'email';
 }
 
 /* ---------- save content ---------- */
@@ -117,7 +138,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
                         elseif ($path) { content_set($k, $path); $saved++; }
                     } elseif (!empty($_POST['clear'][$k])) {
                         content_set($k, ''); // back to placeholder
+                        content_set($k . '__adj', '');
                         $saved++;
+                    }
+                    // reposition / zoom adjustment (posX posY zoom)
+                    if (isset($_POST['adj'][$k])) {
+                        $adj = trim((string) $_POST['adj'][$k]);
+                        $currentAdj = setting($k . '__adj', '');
+                        if (preg_match('/^\d{1,3}(\.\d+)?\s+\d{1,3}(\.\d+)?\s+\d{1,3}(\.\d+)?$/', $adj)) {
+                            $normalized = ($adj === '50 50 100') ? '' : $adj;
+                            if ($normalized !== $currentAdj) {
+                                content_set($k . '__adj', $normalized);
+                                $saved++;
+                            }
+                        }
                     }
                     continue;
                 }
@@ -132,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     }
 }
 
-$curTitle = $cur === 'settings' ? 'Settings' : $pages[$cur]['title'];
+$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : $pages[$cur]['title']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -178,6 +212,15 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
 .imgrow .thumb{width:84px;height:64px;object-fit:cover;border:1px solid rgba(69,50,48,.2);background:linear-gradient(145deg,#EBD2CA,#D49388);display:flex;align-items:center;justify-content:center;font-size:9px;color:#7a5c55;text-align:center}
 .imgrow input[type=file]{font-size:13px}
 .imgrow .rm{font-size:12.5px;display:flex;gap:6px;align-items:center;color:#8C3B32}
+.adjust{margin-top:12px;max-width:340px}
+.adjust-head{font-size:11.5px;color:#8a746f;margin-bottom:8px}
+.adjust-stage{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;border:1px solid rgba(69,50,48,.2);background:#EBD2CA;cursor:grab;touch-action:none}
+.adjust-stage.grabbing{cursor:grabbing}
+.adjust-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.adjust-ctrls{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:12px;color:#6b5550}
+.adjust-ctrls .zoom{flex:1;accent-color:#B05E51}
+.adjust-ctrls .reset{background:none;border:1px solid rgba(69,50,48,.25);color:#6b5550;font-size:11px;padding:5px 10px;cursor:pointer;text-transform:none;letter-spacing:0}
+.adjust-ctrls .reset:hover{border-color:#B05E51;color:#9C4A3E}
 .savebar{position:sticky;bottom:0;background:#fff;border:1px solid rgba(69,50,48,.12);padding:12px 18px;display:flex;gap:12px;align-items:center;box-shadow:0 -8px 24px rgba(69,50,48,.07)}
 .savebar button{background:#B05E51;color:#fff;border:none;padding:13px 30px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer}
 .savebar button:hover{background:#9C4A3E}
@@ -201,6 +244,7 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
       <a href="admin.php?page=<?= esc($pid) ?>" class="<?= $pid === $cur ? 'on' : '' ?>"><?= esc($p['title']) ?></a>
     <?php endforeach; ?>
     <div class="grp">Account</div>
+    <a href="admin.php?page=email" class="<?= $cur === 'email' ? 'on' : '' ?>">Email / Forms</a>
     <a href="admin.php?page=settings" class="<?= $cur === 'settings' ? 'on' : '' ?>">Settings</a>
   </nav>
 
@@ -221,6 +265,36 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
         </form>
       </div>
 
+    <?php elseif ($cur === 'email'): ?>
+      <h1>Email / Forms</h1>
+      <p class="hint">All website forms (seller, home value, speaking, mentorship, contact, and the rest) are emailed to the recipient below using these SMTP settings. Ask your email/host provider for the SMTP details.</p>
+      <div class="setcard" style="max-width:560px">
+        <form method="post">
+          <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+          <div class="fld"><label>Send all form submissions to</label><input type="text" name="s_to" value="<?= esc(setting('smtp.to')) ?>" placeholder="you@yourdomain.com" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div style="height:1px;background:rgba(69,50,48,.1);margin:20px 0"></div>
+          <div class="fld"><label>SMTP host</label><input type="text" name="s_host" value="<?= esc(setting('smtp.host')) ?>" placeholder="smtp.yourhost.com" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="fld"><label>Port</label><input type="text" name="s_port" value="<?= esc(setting('smtp.port', '587')) ?>" placeholder="587" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+            <div class="fld"><label>Security</label>
+              <select name="s_secure" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3">
+                <?php $sec = setting('smtp.secure', 'tls'); foreach (['tls' => 'TLS (587)', 'ssl' => 'SSL (465)', 'none' => 'None'] as $val => $lbl): ?>
+                  <option value="<?= $val ?>" <?= $sec === $val ? 'selected' : '' ?>><?= $lbl ?></option>
+                <?php endforeach; ?>
+              </select></div>
+          </div>
+          <div class="fld"><label>SMTP username</label><input type="text" name="s_user" value="<?= esc(setting('smtp.user')) ?>" placeholder="usually your email address" autocomplete="off" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div class="fld"><label>SMTP password <?= setting('smtp.pass') !== '' ? '<span style="color:#3E6B36;font-weight:400;text-transform:none;letter-spacing:0">(saved — leave blank to keep)</span>' : '' ?></label><input type="password" name="s_pass" value="" placeholder="<?= setting('smtp.pass') !== '' ? '••••••••' : '' ?>" autocomplete="new-password" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div style="height:1px;background:rgba(69,50,48,.1);margin:20px 0"></div>
+          <div class="fld"><label>From email (shown as sender)</label><input type="text" name="s_from" value="<?= esc(setting('smtp.from')) ?>" placeholder="noreply@yourdomain.com" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div class="fld"><label>From name</label><input type="text" name="s_from_name" value="<?= esc(setting('smtp.from_name', 'ErikaKPage Website')) ?>" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div class="savebar" style="position:static;box-shadow:none;border:none;padding:0;gap:10px">
+            <button name="do_smtp" value="save">Save settings</button>
+            <button name="do_smtp" value="test" style="background:#8F6B2E">Save &amp; send test</button>
+          </div>
+        </form>
+      </div>
+
     <?php else: ?>
       <h1><?= esc($pages[$cur]['title']) ?></h1>
       <p class="hint">Open a section, edit the text or replace pictures, then hit <b>Save</b>. Leaving a picture empty shows the designed placeholder.</p>
@@ -234,7 +308,7 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
             <?php foreach ($sec['fields'] as $f): $k = $f['k']; $v = cms($k); $id = 'x' . substr(md5($k), 0, 10); ?>
               <div class="fld">
                 <label><?= esc($f['label']) ?></label>
-                <?php if ($f['t'] === 'image'): ?>
+                <?php if ($f['t'] === 'image'): $adj = setting($k . '__adj', '50 50 100'); $ap = preg_split('/\s+/', $adj); ?>
                   <div class="imgrow">
                     <?php if ($v !== ''): $ext = strtolower(pathinfo($v, PATHINFO_EXTENSION)); ?>
                       <?php if (in_array($ext, ['mp4','webm'])): ?><video class="thumb" src="<?= esc($v) ?>" muted></video>
@@ -243,6 +317,24 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
                     <input type="file" name="up[<?= esc($k) ?>]" accept=".jpg,.jpeg,.png,.webp,.gif,.mp4,.webm">
                     <?php if ($v !== ''): ?><label class="rm"><input type="checkbox" name="clear[<?= esc($k) ?>]" value="1"> remove (back to placeholder)</label><?php endif; ?>
                   </div>
+                  <?php if ($v !== ''): $ext = strtolower(pathinfo($v, PATHINFO_EXTENSION)); ?>
+                  <div class="adjust" data-key="<?= esc($k) ?>">
+                    <div class="adjust-head">Adjust — drag the picture to choose what shows, then zoom.</div>
+                    <div class="adjust-stage">
+                      <?php if (in_array($ext, ['mp4','webm'])): ?>
+                        <video class="adjust-media" src="<?= esc($v) ?>" muted autoplay loop playsinline></video>
+                      <?php else: ?>
+                        <img class="adjust-media" src="<?= esc($v) ?>" alt="">
+                      <?php endif; ?>
+                    </div>
+                    <div class="adjust-ctrls">
+                      <span>Zoom</span>
+                      <input type="range" class="zoom" min="100" max="300" step="1" value="<?= esc($ap[2] ?? '100') ?>">
+                      <button type="button" class="reset">Reset</button>
+                    </div>
+                    <input type="hidden" name="adj[<?= esc($k) ?>]" class="adjval" value="<?= esc($adj) ?>">
+                  </div>
+                  <?php endif; ?>
                 <?php elseif ($f['t'] === 'rich'): ?>
                   <div class="rte-box"><div class="rte" id="<?= $id ?>"><?= strip_bad($v) ?></div></div>
                   <input type="hidden" name="f[<?= esc($k) ?>]" id="in_<?= $id ?>">
@@ -286,6 +378,40 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
       if(editors[el.id])input.value=editors[el.id].root.innerHTML;
       else input.value=el.innerHTML; // untouched section — submit original content unchanged
     });
+  });
+
+  /* ---------- image reposition + zoom ---------- */
+  document.querySelectorAll('.adjust').forEach(function(box){
+    var media=box.querySelector('.adjust-media'),
+        stage=box.querySelector('.adjust-stage'),
+        zoom=box.querySelector('.zoom'),
+        reset=box.querySelector('.reset'),
+        hidden=box.querySelector('.adjval');
+    var parts=(hidden.value||'50 50 100').split(/\s+/);
+    var posX=clamp(parseFloat(parts[0]),0,100), posY=clamp(parseFloat(parts[1]),0,100), z=clamp(parseFloat(parts[2]),100,300);
+    function clamp(n,a,b){n=isNaN(n)?a:n;return Math.max(a,Math.min(b,n));}
+    function apply(){
+      media.style.objectPosition=posX+'% '+posY+'%';
+      media.style.transform='scale('+(z/100)+')';
+      media.style.transformOrigin=posX+'% '+posY+'%';
+      hidden.value=Math.round(posX)+' '+Math.round(posY)+' '+Math.round(z);
+    }
+    apply();
+    zoom.addEventListener('input',function(){z=parseFloat(zoom.value);apply();});
+    reset.addEventListener('click',function(){posX=50;posY=50;z=100;zoom.value=100;apply();});
+    var dragging=false,lastX,lastY;
+    stage.addEventListener('pointerdown',function(e){dragging=true;lastX=e.clientX;lastY=e.clientY;stage.classList.add('grabbing');stage.setPointerCapture(e.pointerId);});
+    stage.addEventListener('pointermove',function(e){
+      if(!dragging)return;
+      var r=stage.getBoundingClientRect();
+      // dragging right should reveal the left of the image -> position decreases
+      posX=clamp(posX-(e.clientX-lastX)/r.width*100,0,100);
+      posY=clamp(posY-(e.clientY-lastY)/r.height*100,0,100);
+      lastX=e.clientX;lastY=e.clientY;apply();
+    });
+    function end(){dragging=false;stage.classList.remove('grabbing');}
+    stage.addEventListener('pointerup',end);
+    stage.addEventListener('pointercancel',end);
   });
 })();
 </script>

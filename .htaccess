@@ -1,0 +1,27 @@
+# ErikaKPage — clean URLs + upload limits (Apache / cPanel)
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Serve real files and directories directly (uploads, assets, admin.php, submit.php, setup.php, etc.)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Everything else -> front controller (index.php reads the path via routes.php)
+  RewriteRule ^ index.php [L]
+</IfModule>
+
+# Upload-size fallback if .user.ini isn't picked up (works under mod_php).
+<IfModule mod_php.c>
+  php_value upload_max_filesize 300M
+  php_value post_max_size 320M
+  php_value memory_limit 512M
+  php_value max_execution_time 600
+  php_value max_input_time 600
+</IfModule>
+
+# Never expose config or the SQLite fallback file.
+<FilesMatch "^(config\.php|config\.local\.php|cms\.sqlite)$">
+  Require all denied
+</FilesMatch>

@@ -122,15 +122,88 @@ function strip_bad(string $html): string {
     return $html;
 }
 
+/** Parse a stored "posX posY zoom" adjustment into an inline style, or '' for defaults. */
+function adjust_style(string $k): string {
+    $raw = content_all()[$k . '__adj'] ?? '';
+    if ($raw === '') return '';
+    $p = preg_split('/\s+/', trim($raw));
+    $x = isset($p[0]) ? (float) $p[0] : 50;
+    $y = isset($p[1]) ? (float) $p[1] : 50;
+    $z = isset($p[2]) ? (float) $p[2] : 100;
+    $x = max(0, min(100, $x));
+    $y = max(0, min(100, $y));
+    $z = max(100, min(400, $z));
+    if ($x == 50 && $y == 50 && $z == 100) return '';
+    $scale = number_format($z / 100, 3);
+    return sprintf('object-position:%s%% %s%%;transform:scale(%s);transform-origin:%s%% %s%%;', $x, $y, $scale, $x, $y);
+}
+
 /** Image/video slot: outputs media tag when an upload exists, empty string otherwise. */
 function cms_img(string $k): string {
     $v = cms($k);
     if ($v === '') return '';
+    $style = adjust_style($k);
+    $styleAttr = $style !== '' ? ' style="' . esc($style) . '"' : '';
     $ext = strtolower(pathinfo($v, PATHINFO_EXTENSION));
     if (in_array($ext, ['mp4', 'webm'], true)) {
-        return '<video src="' . esc($v) . '" autoplay muted loop playsinline></video>';
+        return '<video src="' . esc($v) . '" autoplay muted loop playsinline' . $styleAttr . '></video>';
     }
-    return '<img src="' . esc($v) . '" alt="' . esc(fields_flat()[$k]['label'] ?? '') . '">';
+    return '<img src="' . esc($v) . '" alt="' . esc(fields_flat()[$k]['label'] ?? '') . '"' . $styleAttr . '>';
+}
+
+/* ---------- app settings (SMTP etc.) — stored in the content table ---------- */
+
+function setting(string $k, string $default = ''): string {
+    $all = content_all();
+    return array_key_exists($k, $all) ? $all[$k] : $default;
+}
+
+function set_setting(string $k, string $v): void {
+    content_set($k, $v);
+}
+
+/* ---------- email via SMTP (PHPMailer, self-hosted) ---------- */
+
+/** Send an email using the admin-configured SMTP settings. Returns [ok, error]. */
+function send_mail(string $subject, string $htmlBody, string $textBody, string $replyTo = '', string $replyName = ''): array {
+    $host = setting('smtp.host');
+    $to   = setting('smtp.to');
+    if ($host === '' || $to === '') {
+        return [false, 'Email is not configured yet. Set it up under Email / Forms in the admin.'];
+    }
+    require_once __DIR__ . '/lib/phpmailer/Exception.php';
+    require_once __DIR__ . '/lib/phpmailer/PHPMailer.php';
+    require_once __DIR__ . '/lib/phpmailer/SMTP.php';
+
+    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = $host;
+        $mail->Port = (int) (setting('smtp.port', '587') ?: 587);
+        $secure = setting('smtp.secure', 'tls');
+        if ($secure === 'ssl')      $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+        elseif ($secure === 'tls')  $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        else                        { $mail->SMTPSecure = false; $mail->SMTPAutoTLS = false; }
+        $user = setting('smtp.user');
+        if ($user !== '') {
+            $mail->SMTPAuth = true;
+            $mail->Username = $user;
+            $mail->Password = setting('smtp.pass');
+        }
+        $fromEmail = setting('smtp.from', $user ?: $to);
+        $mail->setFrom($fromEmail, setting('smtp.from_name', 'ErikaKPage Website'));
+        foreach (array_filter(array_map('trim', explode(',', $to))) as $rcpt) $mail->addAddress($rcpt);
+        if ($replyTo !== '' && filter_var($replyTo, FILTER_VALIDATE_EMAIL)) $mail->addReplyTo($replyTo, $replyName);
+        $mail->CharSet = 'UTF-8';
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $htmlBody;
+        $mail->AltBody = $textBody;
+        $mail->send();
+        return [true, ''];
+    } catch (\Throwable $e) {
+        return [false, $mail->ErrorInfo ?: $e->getMessage()];
+    }
 }
 
 /* ---------- auth & CSRF ---------- */
@@ -160,11 +233,16 @@ function csrf_check(): void {
 
 /* ---------- uploads ---------- */
 
+const MAX_UPLOAD_BYTES = 300 * 1024 * 1024; // 300 MB
+
 function handle_upload(array $file): array {
     // returns [path, error]
     if ($file['error'] === UPLOAD_ERR_NO_FILE) return ['', ''];
+    if ($file['error'] === UPLOAD_ERR_INI_SIZE || $file['error'] === UPLOAD_ERR_FORM_SIZE) {
+        return ['', 'File is too large for the server limit. Ask the host to raise upload_max_filesize / post_max_size.'];
+    }
     if ($file['error'] !== UPLOAD_ERR_OK) return ['', 'Upload failed (code ' . $file['error'] . ').'];
-    if ($file['size'] > 8 * 1024 * 1024) return ['', 'File is larger than 8 MB.'];
+    if ($file['size'] > MAX_UPLOAD_BYTES) return ['', 'File is larger than 300 MB.'];
 
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $allowed = [

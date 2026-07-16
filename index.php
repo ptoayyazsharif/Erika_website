@@ -1,11 +1,39 @@
-<?php require __DIR__ . '/cms.php'; ?>
+<?php
+require __DIR__ . '/cms.php';
+require __DIR__ . '/routes.php';
+
+// Which page does this URL ask for? (clean slug -> internal id)
+$current = id_for_path($_SERVER['REQUEST_URI'] ?? '/');
+if ($current === '') $current = 'home';
+
+// id -> path map for the client router, and the reverse for popstate
+$PATHS = [];
+foreach (ROUTES as $path => $id) $PATHS[$id] = '/' . $path;
+
+// per-page browser title
+$siteTitle = cms('global.meta-title');
+$pageNames = [
+  'home' => '', 'about' => 'About', 'sell' => 'Sell', 'homevalue' => 'Home Value Strategy',
+  'buy' => 'Buy', 'speaking' => 'Speaking', 'collaborations' => 'Collaborations',
+  'lifestyle' => 'Lifestyle & Magazine', 'media' => 'Media & Press', 'testimonials' => 'Testimonials',
+  'resources' => 'Resources', 'products' => 'Digital Products', 'explains' => 'Erika Explains',
+  'mentorship' => 'Mentorship', 'investing' => 'Investing', 'pm' => 'Property Management',
+  'transportation' => 'Transportation & Logistics', 'living' => 'Escaluxe Living',
+  'loc-atlanta' => 'Atlanta Metro', 'loc-gwinnett' => 'Gwinnett / Lawrenceville',
+  'loc-fayette' => 'Fayette / Peachtree City', 'gallery' => 'Gallery', 'contact' => 'Contact',
+];
+$pt = $pageNames[$current] ?? '';
+$docTitle = ($pt && $current !== 'home') ? ($pt . ' · Erika Page') : $siteTitle;
+
+ob_start();
+?>
 <!DOCTYPE html>
 
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title><?= cms_e('global.meta-title') ?></title>
+<title><?= esc($docTitle) ?></title>
 <meta content="<?= cms_e('global.meta-desc') ?>" name="description"/>
 <meta content="#453230" name="theme-color"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -326,6 +354,10 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .reveal{opacity:1;transform:none}
 }
+.formflash{max-width:1160px;margin:18px auto 0;padding:14px 22px;font-size:14.5px;letter-spacing:.01em;border-radius:2px}
+.formflash.ok{background:#EEF6EC;border:1px solid #9CC493;color:#3E6B36}
+.formflash.err{background:#FBEAEA;border:1px solid #D9908B;color:#8C3B32}
+@media(max-width:1180px){.formflash{margin:18px 24px 0}}
 </style>
 </head>
 <body>
@@ -333,22 +365,22 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="topbar"><span class="mkt" onclick="go('loc-atlanta')">Atlanta Metro</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-gwinnett')">Gwinnett County</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-gwinnett')">Lawrenceville</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-fayette')">Peachtree City / Fayette</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('Sandy Springs / Roswell / Alpharetta local page — coming soon (mockup)')">Sandy Springs / Roswell / Alpharetta</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('East Cobb / Marietta local page — coming soon (mockup)')">East Cobb / Marietta</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('Brookhaven / Decatur / Tucker local page — coming soon (mockup)')">Brookhaven / Decatur / Tucker</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('McDonough / Henry local page — coming soon (mockup)')">McDonough / Henry</span>  ·  <b><?= cms_e('global.phone') ?></b></div>
 <nav>
 <div class="nav-inner">
-<a class="brand" onclick="go('home')">Erika<span>K</span>Page</a>
+<a class="brand" href="/" data-nav="home" onclick="return _nav(event,'home')">Erika<span>K</span>Page</a>
 <button aria-controls="nl" aria-expanded="false" aria-label="Toggle navigation menu" class="burger"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewbox="0 0 24 24"><line x1="3" x2="21" y1="6" y2="6"></line><line x1="3" x2="21" y1="12" y2="12"></line><line x1="3" x2="21" y1="18" y2="18"></line></svg></button>
 <ul class="nav-links" id="nl">
-<li><a class="active" data-p="home" onclick="go('home')">Home</a></li>
-<li class="has-drop"><a data-p="sell" onclick="go('sell')">Sell ▾</a>
-<div class="drop"><a onclick="go('sell')">Sell Your Home</a><a onclick="go('homevalue')">Home Value Strategy</a></div></li>
-<li><a data-p="buy" onclick="go('buy')">Buy</a></li>
-<li><a data-p="speaking" onclick="go('speaking')">Speaking</a></li>
-<li class="has-drop"><a data-p="lifestyle" onclick="go('lifestyle')">Lifestyle &amp; Media ▾</a>
-<div class="drop"><a onclick="go('lifestyle')">Lifestyle Magazine</a><a onclick="go('media')">Media &amp; Press</a><a onclick="go('collaborations')">Collaborations</a></div></li>
-<li class="has-drop"><a data-p="resources" onclick="go('resources')">Resources ▾</a>
-<div class="drop"><a onclick="go('resources')">All Resources</a><a onclick="go('products')">Digital Products</a><a onclick="go('explains')">Erika Explains</a><a onclick="go('mentorship')">Mentorship</a><a onclick="go('investing')">Investing / C&amp;A</a><a onclick="go('pm')">Property Management</a><a onclick="go('transportation')">Transportation &amp; Logistics</a><a onclick="go('living')">Escaluxe Living</a></div></li>
-<li><a data-p="gallery" onclick="go('gallery')">Gallery</a></li>
-<li><a data-p="testimonials" onclick="go('testimonials')">Testimonials</a></li>
-<li><a data-p="contact" onclick="go('contact')">Contact</a></li>
-<li><a class="nav-cta" onclick="go('homevalue')">Home Value Strategy</a></li>
+<li><a class="active" data-p="home" href="/" data-nav="home" onclick="return _nav(event,'home')">Home</a></li>
+<li class="has-drop"><a data-p="sell" href="/sell" data-nav="sell" onclick="return _nav(event,'sell')">Sell ▾</a>
+<div class="drop"><a href="/sell" data-nav="sell" onclick="return _nav(event,'sell')">Sell Your Home</a><a href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')">Home Value Strategy</a></div></li>
+<li><a data-p="buy" href="/buy" data-nav="buy" onclick="return _nav(event,'buy')">Buy</a></li>
+<li><a data-p="speaking" href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')">Speaking</a></li>
+<li class="has-drop"><a data-p="lifestyle" href="/lifestyle" data-nav="lifestyle" onclick="return _nav(event,'lifestyle')">Lifestyle &amp; Media ▾</a>
+<div class="drop"><a href="/lifestyle" data-nav="lifestyle" onclick="return _nav(event,'lifestyle')">Lifestyle Magazine</a><a href="/media" data-nav="media" onclick="return _nav(event,'media')">Media &amp; Press</a><a href="/collaborations" data-nav="collaborations" onclick="return _nav(event,'collaborations')">Collaborations</a></div></li>
+<li class="has-drop"><a data-p="resources" href="/resources" data-nav="resources" onclick="return _nav(event,'resources')">Resources ▾</a>
+<div class="drop"><a href="/resources" data-nav="resources" onclick="return _nav(event,'resources')">All Resources</a><a href="/digital-products" data-nav="products" onclick="return _nav(event,'products')">Digital Products</a><a href="/erika-explains" data-nav="explains" onclick="return _nav(event,'explains')">Erika Explains</a><a href="/mentorship" data-nav="mentorship" onclick="return _nav(event,'mentorship')">Mentorship</a><a href="/investing" data-nav="investing" onclick="return _nav(event,'investing')">Investing / C&amp;A</a><a href="/property-management" data-nav="pm" onclick="return _nav(event,'pm')">Property Management</a><a href="/transportation-logistics" data-nav="transportation" onclick="return _nav(event,'transportation')">Transportation &amp; Logistics</a><a href="/escaluxe-living" data-nav="living" onclick="return _nav(event,'living')">Escaluxe Living</a></div></li>
+<li><a data-p="gallery" href="/gallery" data-nav="gallery" onclick="return _nav(event,'gallery')">Gallery</a></li>
+<li><a data-p="testimonials" href="/testimonials" data-nav="testimonials" onclick="return _nav(event,'testimonials')">Testimonials</a></li>
+<li><a data-p="contact" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')">Contact</a></li>
+<li><a class="nav-cta" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')">Home Value Strategy</a></li>
 </ul>
 </div>
 </nav>
@@ -363,8 +395,8 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="pos"><?= cms_e('home.atlanta-metro-established-au.eyebrow2') ?></p>
 <p class="lede"><?= cms_rich('home.atlanta-metro-established-au.p1') ?></p>
 <div class="hero-ctas">
-<a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('home.atlanta-metro-established-au.btn1') ?></a>
-<a class="btn btn-outline" onclick="go('speaking')"><?= cms_e('home.atlanta-metro-established-au.btn2') ?></a>
+<a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('home.atlanta-metro-established-au.btn1') ?></a>
+<a class="btn btn-outline" href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')"><?= cms_e('home.atlanta-metro-established-au.btn2') ?></a>
 <a class="btn btn-outline" onclick="document.getElementById('ecosystem').scrollIntoView({behavior:'smooth'})"><?= cms_e('home.atlanta-metro-established-au.btn3') ?></a>
 </div>
 <div class="hero-badges">
@@ -390,15 +422,15 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow"><?= cms_e('home.one-name-every-lane.eyebrow1') ?></p>
 <h2 style="font-size:clamp(28px,3.4vw,40px);margin-top:10px"><?= cms_e('home.one-name-every-lane.heading1') ?></h2>
 <div class="eco-grid">
-<div class="eco"><div class="tag">Priority</div><h3><?= cms_e('home.one-name-every-lane.eco1-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco1-text') ?></p><a onclick="go('sell')"><?= cms_e('home.one-name-every-lane.eco1-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco2-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco2-text') ?></p><a onclick="go('speaking')"><?= cms_e('home.one-name-every-lane.eco2-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco3-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco3-text') ?></p><a onclick="go('mentorship')"><?= cms_e('home.one-name-every-lane.eco3-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco4-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco4-text') ?></p><a onclick="go('investing')"><?= cms_e('home.one-name-every-lane.eco4-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco5-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco5-text') ?></p><a onclick="go('pm')"><?= cms_e('home.one-name-every-lane.eco5-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco6-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco6-text') ?></p><a onclick="go('products')"><?= cms_e('home.one-name-every-lane.eco6-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco7-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco7-text') ?></p><a onclick="go('collaborations')"><?= cms_e('home.one-name-every-lane.eco7-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco8-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco8-text') ?></p><a onclick="go('transportation')"><?= cms_e('home.one-name-every-lane.eco8-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco9-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco9-text') ?></p><a onclick="go('living')"><?= cms_e('home.one-name-every-lane.eco9-btn') ?></a></div>
+<div class="eco"><div class="tag">Priority</div><h3><?= cms_e('home.one-name-every-lane.eco1-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco1-text') ?></p><a href="/sell" data-nav="sell" onclick="return _nav(event,'sell')"><?= cms_e('home.one-name-every-lane.eco1-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco2-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco2-text') ?></p><a href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')"><?= cms_e('home.one-name-every-lane.eco2-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco3-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco3-text') ?></p><a href="/mentorship" data-nav="mentorship" onclick="return _nav(event,'mentorship')"><?= cms_e('home.one-name-every-lane.eco3-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco4-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco4-text') ?></p><a href="/investing" data-nav="investing" onclick="return _nav(event,'investing')"><?= cms_e('home.one-name-every-lane.eco4-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco5-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco5-text') ?></p><a href="/property-management" data-nav="pm" onclick="return _nav(event,'pm')"><?= cms_e('home.one-name-every-lane.eco5-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco6-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco6-text') ?></p><a href="/digital-products" data-nav="products" onclick="return _nav(event,'products')"><?= cms_e('home.one-name-every-lane.eco6-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco7-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco7-text') ?></p><a href="/collaborations" data-nav="collaborations" onclick="return _nav(event,'collaborations')"><?= cms_e('home.one-name-every-lane.eco7-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco8-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco8-text') ?></p><a href="/transportation-logistics" data-nav="transportation" onclick="return _nav(event,'transportation')"><?= cms_e('home.one-name-every-lane.eco8-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco9-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco9-text') ?></p><a href="/escaluxe-living" data-nav="living" onclick="return _nav(event,'living')"><?= cms_e('home.one-name-every-lane.eco9-btn') ?></a></div>
 </div>
 </div>
 </section>
@@ -411,7 +443,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h2><?= cms_e('home.sellers-first.heading1') ?></h2>
 <div class="rule"></div>
 <p><?= cms_rich('home.sellers-first.p1') ?></p>
-<a class="btn btn-primary" onclick="go('homevalue')"><?= cms_e('home.sellers-first.btn1') ?></a>
+<a class="btn btn-primary" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('home.sellers-first.btn1') ?></a>
 </div>
 </div>
 </section>
@@ -422,7 +454,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h2><?= cms_e('home.speaking-influence.heading1') ?></h2>
 <div class="rule"></div>
 <p><?= cms_rich('home.speaking-influence.p1') ?></p>
-<a class="btn btn-outline-dark" onclick="go('speaking')"><?= cms_e('home.speaking-influence.btn1') ?></a>
+<a class="btn btn-outline-dark" href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')"><?= cms_e('home.speaking-influence.btn1') ?></a>
 </div>
 <div class="cutout" data-label="Erika — Full-Body Photo · No Background"><?= cms_img('home.speaking-influence.img-erika-full-body-photo') ?>
 <svg aria-hidden="true" viewbox="0 0 200 320"><ellipse cx="100" cy="306" fill="rgba(69,50,48,.14)" rx="66" ry="10"></ellipse><circle cx="100" cy="40" fill="#C98D80" r="23"></circle><path d="M100 66c-27 0-39 19-41 45l-6 72c-1 10 4 16 12 16h9l7 108h38l7-108h9c8 0 13-6 12-16l-6-72c-2-26-14-45-41-45z" fill="#C98D80"></path></svg>
@@ -458,7 +490,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="g" onclick="go('gallery')"><div class="ph" data-label="Agent Mastermind"><?= cms_img('home.moments-stages.img-agent-mastermind') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap5') ?></div></div>
 <div class="g" onclick="go('gallery')"><div class="ph" data-label="Community Event"><?= cms_img('home.moments-stages.img-community-event') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap6') ?></div></div>
 </div>
-<div style="text-align:center;margin-top:36px"><a class="btn btn-outline-dark" onclick="go('gallery')"><?= cms_e('home.moments-stages.btn1') ?></a></div>
+<div style="text-align:center;margin-top:36px"><a class="btn btn-outline-dark" href="/gallery" data-nav="gallery" onclick="return _nav(event,'gallery')"><?= cms_e('home.moments-stages.btn1') ?></a></div>
 </div>
 </section>
 <section class="dark">
@@ -469,7 +501,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('home.client-stories.tst2-quote') ?></blockquote><div class="who"><?= cms_e('home.client-stories.tst2-who') ?></div></div>
 <div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('home.client-stories.tst3-quote') ?></blockquote><div class="who"><?= cms_e('home.client-stories.tst3-who') ?></div></div>
 </div>
-<div style="text-align:center;margin-top:40px"><a class="btn btn-outline" onclick="go('testimonials')"><?= cms_e('home.client-stories.btn1') ?></a></div>
+<div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/testimonials" data-nav="testimonials" onclick="return _nav(event,'testimonials')"><?= cms_e('home.client-stories.btn1') ?></a></div>
 </div>
 </section>
 <section>
@@ -487,7 +519,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="wrap">
 <h2><?= cms_e('home.thinking-about-selling-your.heading1') ?></h2>
 <p><?= cms_rich('home.thinking-about-selling-your.p1') ?></p>
-<a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('home.thinking-about-selling-your.btn1') ?></a>
+<a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('home.thinking-about-selling-your.btn1') ?></a>
 </div>
 </section>
 </div>
@@ -509,7 +541,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="rule"></div>
 <p><?= cms_rich('about.professional-bio.p1') ?></p>
 <p><?= cms_rich('about.professional-bio.p2') ?></p>
-<a class="btn btn-primary" onclick="go('contact')"><?= cms_e('about.professional-bio.btn1') ?></a>
+<a class="btn btn-primary" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('about.professional-bio.btn1') ?></a>
 </div>
 </div>
 </section>
@@ -544,7 +576,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h2><?= cms_e('about.speaking-media-authority.heading1') ?></h2>
 <div class="rule"></div>
 <p><?= cms_rich('about.speaking-media-authority.p1') ?></p>
-<a class="btn btn-outline" onclick="go('speaking')"><?= cms_e('about.speaking-media-authority.btn1') ?></a>
+<a class="btn btn-outline" href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')"><?= cms_e('about.speaking-media-authority.btn1') ?></a>
 </div>
 </div>
 </section>
@@ -578,7 +610,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="wrap">
 <h2><?= cms_e('about.ready-to-work-with-erika.heading1') ?></h2>
 <p><?= cms_rich('about.ready-to-work-with-erika.p1') ?></p>
-<a class="btn btn-gold" onclick="go('contact')"><?= cms_e('about.ready-to-work-with-erika.btn1') ?></a>  <a class="btn btn-outline" onclick="go('speaking')"><?= cms_e('about.ready-to-work-with-erika.btn2') ?></a>
+<a class="btn btn-gold" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('about.ready-to-work-with-erika.btn1') ?></a>  <a class="btn btn-outline" href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')"><?= cms_e('about.ready-to-work-with-erika.btn2') ?></a>
 </div>
 </section>
 </div>
@@ -589,24 +621,24 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow on-dark"><?= cms_e('sell.sell-with-erika.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('sell.sell-with-erika.heading1') ?></h1>
 <p><?= cms_rich('sell.sell-with-erika.p1') ?></p>
-<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('sell.sell-with-erika.btn1') ?></a></div>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('sell.sell-with-erika.btn1') ?></a></div>
 </div>
-<div class="form-card">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Book a Seller Strategy Call"><input type="hidden" name="_page" value="sell"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card">
 <h3><?= cms_e('sell.sell-with-erika.heading2') ?></h3>
 <p class="sub"><?= cms_rich('sell.sell-with-erika.p2') ?></p>
 <div class="fld-row">
-<div class="fld"><label>First name</label><input placeholder="First name"/></div>
-<div class="fld"><label>Last name</label><input placeholder="Last name"/></div>
+<div class="fld"><label>First name</label><input name="f_first_name" placeholder="First name"/></div>
+<div class="fld"><label>Last name</label><input name="f_last_name" placeholder="Last name"/></div>
 </div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
-<div class="fld"><label>Phone</label><input placeholder="(___) ___-____"/></div>
-<div class="fld"><label>Property address</label><input placeholder="Street, City, GA"/></div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+<div class="fld"><label>Phone</label><input type="tel" name="f_phone" placeholder="(___) ___-____"/></div>
+<div class="fld"><label>Property address</label><input name="f_property_address" placeholder="Street, City, GA"/></div>
 <div class="fld"><label>Ideal selling timeline</label>
-<select><option>Now</option><option>30–60 days</option><option>3–6 months</option><option>6+ months</option><option>Not sure yet</option></select></div>
-<label class="consent"><input type="checkbox"/> I agree to be contacted by Erika Page about selling my home. Your information stays private.</label>
-<a class="btn btn-primary" onclick="alert('Submits to CRM · fires seller form event (mockup)')" style="width:100%;text-align:center"><?= cms_e('sell.sell-with-erika.btn2') ?></a>
+<select name="f_ideal_selling_timeline"><option>Now</option><option>30–60 days</option><option>3–6 months</option><option>6+ months</option><option>Not sure yet</option></select></div>
+<label class="consent"><input name="f_consent" value="Yes, I agree" type="checkbox"/> I agree to be contacted by Erika Page about selling my home. Your information stays private.</label>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('sell.sell-with-erika.btn2') ?></button>
 <p style="font-size:12px;margin-top:14px;text-align:center"><?= cms_rich('sell.sell-with-erika.p3') ?></p>
-</div></div>
+</div></form></div>
 </header>
 <section>
 <div class="wrap">
@@ -683,24 +715,24 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 </div>
 </div>
 <div>
-<div class="form-card">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Request My Atlanta Home Value Strategy"><input type="hidden" name="_page" value="homevalue"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card">
 <h3><?= cms_e('homevalue.why-online-estimates-are-not.heading2') ?></h3>
 <p class="sub"><?= cms_rich('homevalue.why-online-estimates-are-not.p2') ?></p>
 <div class="fld-row">
-<div class="fld"><label>First name *</label><input placeholder="First name"/></div>
-<div class="fld"><label>Last name *</label><input placeholder="Last name"/></div>
+<div class="fld"><label>First name *</label><input name="f_first_name" placeholder="First name"/></div>
+<div class="fld"><label>Last name *</label><input name="f_last_name" placeholder="Last name"/></div>
 </div>
-<div class="fld"><label>Email *</label><input placeholder="you@email.com"/></div>
-<div class="fld"><label>Phone *</label><input placeholder="(___) ___-____"/></div>
-<div class="fld"><label>Property address *</label><input placeholder="Street, City, GA"/></div>
+<div class="fld"><label>Email *</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+<div class="fld"><label>Phone *</label><input type="tel" name="f_phone" placeholder="(___) ___-____"/></div>
+<div class="fld"><label>Property address *</label><input name="f_property_address" placeholder="Street, City, GA"/></div>
 <div class="fld"><label>Ideal selling timeline *</label>
-<select><option>Now</option><option>30–60 days</option><option>3–6 months</option><option>6+ months</option><option>Not sure yet</option></select></div>
-<div class="fld"><label>Estimated home value (optional)</label><input placeholder="$"/></div>
+<select name="f_ideal_selling_timeline"><option>Now</option><option>30–60 days</option><option>3–6 months</option><option>6+ months</option><option>Not sure yet</option></select></div>
+<div class="fld"><label>Estimated home value (optional)</label><input name="f_estimated_home_value_optional" placeholder="$"/></div>
 <div class="fld"><label>What matters most? (optional)</label>
-<select><option>Price</option><option>Timing</option><option>Privacy</option><option>Repairs</option><option>Relocation</option><option>Divorce / probate</option><option>Investment</option><option>Other</option></select></div>
-<label class="consent"><input type="checkbox"/> I consent to be contacted by Erika Page by phone, text, or email about my home value strategy. *</label>
-<a class="btn btn-primary" onclick="alert('Fires home_value_form_submit → CRM (mockup)')" style="width:100%;text-align:center"><?= cms_e('homevalue.why-online-estimates-are-not.btn1') ?></a>
-</div>
+<select name="f_what_matters_most_optional"><option>Price</option><option>Timing</option><option>Privacy</option><option>Repairs</option><option>Relocation</option><option>Divorce / probate</option><option>Investment</option><option>Other</option></select></div>
+<label class="consent"><input name="f_consent" value="Yes, I agree" type="checkbox"/> I consent to be contacted by Erika Page by phone, text, or email about my home value strategy. *</label>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('homevalue.why-online-estimates-are-not.btn1') ?></button>
+</div></form>
 <div class="info-card" style="margin-top:20px;text-align:center">
 <h3><?= cms_e('homevalue.why-online-estimates-are-not.info2-title') ?></h3>
 <p><?= cms_rich('homevalue.why-online-estimates-are-not.info2-text') ?></p>
@@ -732,7 +764,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow on-dark"><?= cms_e('buy.buy-with-erika.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('buy.buy-with-erika.heading1') ?></h1>
 <p><?= cms_rich('buy.buy-with-erika.p1') ?></p>
-<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('contact')"><?= cms_e('buy.buy-with-erika.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Links to Axen Realty / Lofty IDX home search (mockup)')"><?= cms_e('buy.buy-with-erika.btn2') ?></a></div>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('buy.buy-with-erika.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Links to Axen Realty / Lofty IDX home search (mockup)')"><?= cms_e('buy.buy-with-erika.btn2') ?></a></div>
 </div><div class="ph hero-media" data-label="Buyers Touring an Atlanta Home"><?= cms_img('buy.buy-with-erika.img-buyers-touring-an-atla') ?></div></div>
 </header>
 <section>
@@ -755,8 +787,8 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="wrap">
 <div class="center-h"><p class="eyebrow"><?= cms_e('buy.every-kind-of-buyer.eyebrow1') ?></p><h2><?= cms_e('buy.every-kind-of-buyer.heading1') ?></h2></div>
 <div class="eco-grid">
-<div class="eco"><h3><?= cms_e('buy.every-kind-of-buyer.eco1-title') ?></h3><p><?= cms_e('buy.every-kind-of-buyer.eco1-text') ?></p><a onclick="go('contact')"><?= cms_e('buy.every-kind-of-buyer.eco1-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('buy.every-kind-of-buyer.eco2-title') ?></h3><p><?= cms_e('buy.every-kind-of-buyer.eco2-text') ?></p><a onclick="go('contact')"><?= cms_e('buy.every-kind-of-buyer.eco2-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('buy.every-kind-of-buyer.eco1-title') ?></h3><p><?= cms_e('buy.every-kind-of-buyer.eco1-text') ?></p><a href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('buy.every-kind-of-buyer.eco1-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('buy.every-kind-of-buyer.eco2-title') ?></h3><p><?= cms_e('buy.every-kind-of-buyer.eco2-text') ?></p><a href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('buy.every-kind-of-buyer.eco2-btn') ?></a></div>
 <div class="eco"><h3><?= cms_e('buy.every-kind-of-buyer.eco3-title') ?></h3><p><?= cms_e('buy.every-kind-of-buyer.eco3-text') ?></p><a onclick="alert('Opens Axen / Lofty IDX (mockup)')"><?= cms_e('buy.every-kind-of-buyer.eco3-btn') ?></a></div>
 </div>
 </div>
@@ -779,7 +811,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <details><summary><?= cms_e('buy.buyer-questions.faq2-q') ?></summary><p><?= cms_rich('buy.buyer-questions.faq2-a') ?></p></details>
 <details><summary><?= cms_e('buy.buyer-questions.faq3-q') ?></summary><p><?= cms_rich('buy.buyer-questions.faq3-a') ?></p></details>
 </div>
-<div style="text-align:center;margin-top:44px"><a class="btn btn-primary" onclick="go('contact')"><?= cms_e('buy.buyer-questions.btn1') ?></a></div>
+<div style="text-align:center;margin-top:44px"><a class="btn btn-primary" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('buy.buyer-questions.btn1') ?></a></div>
 </div>
 </section>
 </div>
@@ -858,18 +890,18 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <details><summary><?= cms_e('speaking.speaking-questions.faq4-q') ?></summary><p><?= cms_rich('speaking.speaking-questions.faq4-a') ?></p></details>
 </div>
 </div>
-<div class="form-card">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Speaking Inquiry"><input type="hidden" name="_page" value="speaking"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card">
 <h3><?= cms_e('speaking.speaking-questions.heading2') ?></h3>
 <p class="sub"><?= cms_rich('speaking.speaking-questions.p1') ?></p>
 <div class="fld-row">
-<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
-<div class="fld"><label>Organization</label><input placeholder="Company / event"/></div>
+<div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
+<div class="fld"><label>Organization</label><input name="f_organization" placeholder="Company / event"/></div>
 </div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
-<div class="fld"><label>Event date &amp; location</label><input placeholder="Date · City"/></div>
-<div class="fld"><label>Audience &amp; format</label><textarea placeholder="Who's in the room? Keynote, panel, or workshop?" rows="3"></textarea></div>
-<a class="btn btn-primary" onclick="alert('Fires speaking_inquiry_submit → routed to Erika (mockup)')" style="width:100%;text-align:center"><?= cms_e('speaking.speaking-questions.btn1') ?></a>
-</div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+<div class="fld"><label>Event date &amp; location</label><input name="f_event_date_amp_location" placeholder="Date · City"/></div>
+<div class="fld"><label>Audience &amp; format</label><textarea name="f_audience_amp_format" placeholder="Who's in the room? Keynote, panel, or workshop?" rows="3"></textarea></div>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('speaking.speaking-questions.btn1') ?></button>
+</div></form>
 </div>
 </section>
 </div>
@@ -888,8 +920,8 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="center-h"><p class="eyebrow"><?= cms_e('collaborations.collaboration-lanes.eyebrow1') ?></p><h2><?= cms_e('collaborations.collaboration-lanes.heading1') ?></h2></div>
 <div class="eco-grid">
 <div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco1-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco1-text') ?></p><a onclick="document.getElementById('collab-form').scrollIntoView()"><?= cms_e('collaborations.collaboration-lanes.eco1-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco2-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco2-text') ?></p><a onclick="go('media')"><?= cms_e('collaborations.collaboration-lanes.eco2-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco3-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco3-text') ?></p><a onclick="go('speaking')"><?= cms_e('collaborations.collaboration-lanes.eco3-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco2-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco2-text') ?></p><a href="/media" data-nav="media" onclick="return _nav(event,'media')"><?= cms_e('collaborations.collaboration-lanes.eco2-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco3-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco3-text') ?></p><a href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')"><?= cms_e('collaborations.collaboration-lanes.eco3-btn') ?></a></div>
 <div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco4-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco4-text') ?></p><a onclick="document.getElementById('collab-form').scrollIntoView()"><?= cms_e('collaborations.collaboration-lanes.eco4-btn') ?></a></div>
 <div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco5-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco5-text') ?></p><a onclick="document.getElementById('collab-form').scrollIntoView()"><?= cms_e('collaborations.collaboration-lanes.eco5-btn') ?></a></div>
 <div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco6-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco6-text') ?></p><a onclick="document.getElementById('collab-form').scrollIntoView()"><?= cms_e('collaborations.collaboration-lanes.eco6-btn') ?></a></div>
@@ -908,19 +940,19 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p><?= cms_rich('collaborations.brand-safe-positioning.info1-text') ?></p>
 </div>
 </div>
-<div class="form-card" id="collab-form">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Collaboration Inquiry"><input type="hidden" name="_page" value="collaborations"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card" id="collab-form">
 <h3><?= cms_e('collaborations.brand-safe-positioning.heading2') ?></h3>
 <p class="sub"><?= cms_rich('collaborations.brand-safe-positioning.p2') ?></p>
 <div class="fld-row">
-<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
-<div class="fld"><label>Brand / company</label><input placeholder="Brand name"/></div>
+<div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
+<div class="fld"><label>Brand / company</label><input name="f_brand_company" placeholder="Brand name"/></div>
 </div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
 <div class="fld"><label>Collaboration type</label>
-<select><option>Brand partnership</option><option>Media / interview</option><option>Panel / event</option><option>Content collaboration</option><option>Luxury / local Atlanta</option><option>Other</option></select></div>
-<div class="fld"><label>Tell us about the idea</label><textarea placeholder="Goals, timing, audience..." rows="3"></textarea></div>
-<a class="btn btn-primary" onclick="alert('Fires collaboration_inquiry_submit (mockup)')" style="width:100%;text-align:center"><?= cms_e('collaborations.brand-safe-positioning.btn1') ?></a>
-</div>
+<select name="f_collaboration_type"><option>Brand partnership</option><option>Media / interview</option><option>Panel / event</option><option>Content collaboration</option><option>Luxury / local Atlanta</option><option>Other</option></select></div>
+<div class="fld"><label>Tell us about the idea</label><textarea name="f_tell_us_about_the_idea" placeholder="Goals, timing, audience..." rows="3"></textarea></div>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('collaborations.brand-safe-positioning.btn1') ?></button>
+</div></form>
 </div>
 </section>
 </div>
@@ -953,7 +985,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="wrap">
 <h2><?= cms_e('lifestyle.create-something-with-erika.heading1') ?></h2>
 <p><?= cms_rich('lifestyle.create-something-with-erika.p1') ?></p>
-<a class="btn btn-gold" onclick="go('collaborations')"><?= cms_e('lifestyle.create-something-with-erika.btn1') ?></a>  <a class="btn btn-outline" onclick="go('explains')"><?= cms_e('lifestyle.create-something-with-erika.btn2') ?></a>
+<a class="btn btn-gold" href="/collaborations" data-nav="collaborations" onclick="return _nav(event,'collaborations')"><?= cms_e('lifestyle.create-something-with-erika.btn1') ?></a>  <a class="btn btn-outline" href="/erika-explains" data-nav="explains" onclick="return _nav(event,'explains')"><?= cms_e('lifestyle.create-something-with-erika.btn2') ?></a>
 </div>
 </section>
 </div>
@@ -964,7 +996,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow on-dark"><?= cms_e('media.media-press.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('media.media-press.heading1') ?></h1>
 <p><?= cms_rich('media.media-press.p1') ?></p>
-<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('speaking')"><?= cms_e('media.media-press.btn1') ?></a>  <a class="btn btn-outline" onclick="go('contact')"><?= cms_e('media.media-press.btn2') ?></a></div>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')"><?= cms_e('media.media-press.btn1') ?></a>  <a class="btn btn-outline" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('media.media-press.btn2') ?></a></div>
 </div><div class="ph hero-media" data-label="ADTV Feature Clip"><?= cms_img('media.media-press.img-adtv-feature-clip') ?><div class="play"></div></div></div>
 </header>
 <section>
@@ -998,17 +1030,17 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 </section>
 <section class="alt">
 <div class="wrap" style="max-width:680px">
-<div class="form-card">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Media & Interview Requests"><input type="hidden" name="_page" value="media"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card">
 <h3><?= cms_e('media.section-4.heading1') ?></h3>
 <p class="sub"><?= cms_rich('media.section-4.p1') ?></p>
 <div class="fld-row">
-<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
-<div class="fld"><label>Outlet / show</label><input placeholder="Publication or podcast"/></div>
+<div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
+<div class="fld"><label>Outlet / show</label><input name="f_outlet_show" placeholder="Publication or podcast"/></div>
 </div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
-<div class="fld"><label>Topic &amp; deadline</label><textarea placeholder="What's the story? When do you need Erika?" rows="3"></textarea></div>
-<a class="btn btn-primary" onclick="alert('Routes to media inbox (mockup)')" style="width:100%;text-align:center"><?= cms_e('media.section-4.btn1') ?></a>
-</div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+<div class="fld"><label>Topic &amp; deadline</label><textarea name="f_topic_amp_deadline" placeholder="What's the story? When do you need Erika?" rows="3"></textarea></div>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('media.section-4.btn1') ?></button>
+</div></form>
 </div>
 </section>
 </div>
@@ -1056,7 +1088,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <details><summary><?= cms_e('testimonials.testimonial-questions.faq2-q') ?></summary><p><?= cms_rich('testimonials.testimonial-questions.faq2-a') ?></p></details>
 <details><summary><?= cms_e('testimonials.testimonial-questions.faq3-q') ?></summary><p><?= cms_rich('testimonials.testimonial-questions.faq3-a') ?></p></details>
 </div>
-<div style="text-align:center;margin-top:44px"><a class="btn btn-primary" onclick="go('homevalue')"><?= cms_e('testimonials.testimonial-questions.btn1') ?></a></div>
+<div style="text-align:center;margin-top:44px"><a class="btn btn-primary" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('testimonials.testimonial-questions.btn1') ?></a></div>
 </div>
 </section>
 </div>
@@ -1095,21 +1127,21 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow"><?= cms_e('resources.digital-products.eyebrow1') ?></p>
 <h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('resources.digital-products.heading1') ?></h2>
 <p style="margin-top:14px;max-width:460px"><?= cms_rich('resources.digital-products.p1') ?></p>
-<a class="btn btn-primary" onclick="go('products')" style="margin-top:10px"><?= cms_e('resources.digital-products.btn1') ?></a>
+<a class="btn btn-primary" href="/digital-products" data-nav="products" onclick="return _nav(event,'products')" style="margin-top:10px"><?= cms_e('resources.digital-products.btn1') ?></a>
 </div>
 <div class="ph wide" data-label="Digital Products Preview"><?= cms_img('resources.digital-products.img-digital-products-previ') ?></div>
 </div>
-<div class="lead-mag">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Get the Atlanta Seller's Pricing Checklist"><input type="hidden" name="_page" value="resources"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="lead-mag">
 <div>
 <p class="eyebrow" style="color:#fff"><?= cms_e('resources.digital-products.eyebrow2') ?></p>
 <h3><?= cms_e('resources.digital-products.heading2') ?></h3>
 <p><?= cms_rich('resources.digital-products.p2') ?></p>
 </div>
 <div>
-<div class="fld"><input placeholder="Your email address"/></div>
-<a class="btn btn-gold" onclick="alert('Adds to email list + sends checklist (mockup)')" style="width:100%;text-align:center"><?= cms_e('resources.digital-products.btn2') ?></a>
+<div class="fld"><input type="email" name="f_your_email_address" placeholder="Your email address"/></div>
+<button type="submit" class="btn btn-gold" style="width:100%;text-align:center"><?= cms_e('resources.digital-products.btn2') ?></button>
 </div>
-</div>
+</div></form>
 </div>
 </section>
 <section>
@@ -1156,7 +1188,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <details><summary><?= cms_e('products.product-questions.faq2-q') ?></summary><p><?= cms_rich('products.product-questions.faq2-a') ?></p></details>
 <details><summary><?= cms_e('products.product-questions.faq3-q') ?></summary><p><?= cms_rich('products.product-questions.faq3-a') ?></p></details>
 </div>
-<div style="text-align:center;margin-top:40px"><p class="eyebrow"><?= cms_e('products.product-questions.eyebrow2') ?></p><div style="margin-top:16px"><a class="btn btn-outline-dark" onclick="go('resources')"><?= cms_e('products.product-questions.btn1') ?></a>  <a class="btn btn-outline-dark" onclick="go('explains')"><?= cms_e('products.product-questions.btn2') ?></a></div></div>
+<div style="text-align:center;margin-top:40px"><p class="eyebrow"><?= cms_e('products.product-questions.eyebrow2') ?></p><div style="margin-top:16px"><a class="btn btn-outline-dark" href="/resources" data-nav="resources" onclick="return _nav(event,'resources')"><?= cms_e('products.product-questions.btn1') ?></a>  <a class="btn btn-outline-dark" href="/erika-explains" data-nav="explains" onclick="return _nav(event,'explains')"><?= cms_e('products.product-questions.btn2') ?></a></div></div>
 </div>
 </section>
 </div>
@@ -1191,7 +1223,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="wrap">
 <h2><?= cms_e('explains.have-a-question-erika-should.heading1') ?></h2>
 <p><?= cms_rich('explains.have-a-question-erika-should.p1') ?></p>
-<a class="btn btn-gold" onclick="go('contact')"><?= cms_e('explains.have-a-question-erika-should.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Links to YouTube channel (mockup)')"><?= cms_e('explains.have-a-question-erika-should.btn2') ?></a>
+<a class="btn btn-gold" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('explains.have-a-question-erika-should.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Links to YouTube channel (mockup)')"><?= cms_e('explains.have-a-question-erika-should.btn2') ?></a>
 </div>
 </section>
 </div>
@@ -1250,20 +1282,20 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow"><?= cms_e('mentorship.related-resources.eyebrow1') ?></p>
 <h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('mentorship.related-resources.heading1') ?></h2>
 <p style="margin-top:14px;max-width:440px"><?= cms_rich('mentorship.related-resources.p1') ?></p>
-<div style="margin-top:20px"><a class="btn btn-outline-dark" onclick="go('products')"><?= cms_e('mentorship.related-resources.btn1') ?></a>  <a class="btn btn-outline-dark" onclick="go('explains')"><?= cms_e('mentorship.related-resources.btn2') ?></a></div>
+<div style="margin-top:20px"><a class="btn btn-outline-dark" href="/digital-products" data-nav="products" onclick="return _nav(event,'products')"><?= cms_e('mentorship.related-resources.btn1') ?></a>  <a class="btn btn-outline-dark" href="/erika-explains" data-nav="explains" onclick="return _nav(event,'explains')"><?= cms_e('mentorship.related-resources.btn2') ?></a></div>
 </div>
-<div class="form-card">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Mentorship Inquiry"><input type="hidden" name="_page" value="mentorship"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card">
 <h3><?= cms_e('mentorship.related-resources.heading2') ?></h3>
 <p class="sub"><?= cms_rich('mentorship.related-resources.p2') ?></p>
 <div class="fld-row">
-<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
-<div class="fld"><label>Brokerage</label><input placeholder="Brokerage / team"/></div>
+<div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
+<div class="fld"><label>Brokerage</label><input name="f_brokerage" placeholder="Brokerage / team"/></div>
 </div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
-<div class="fld"><label>Years in real estate</label><select><option>New / pre-license</option><option>0–2 years</option><option>3–7 years</option><option>8+ years</option></select></div>
-<div class="fld"><label>Biggest challenge right now</label><textarea placeholder="Listings, leads, systems, brand..." rows="3"></textarea></div>
-<a class="btn btn-primary" onclick="alert('Routes mentorship inquiry (mockup)')" style="width:100%;text-align:center"><?= cms_e('mentorship.related-resources.btn3') ?></a>
-</div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+<div class="fld"><label>Years in real estate</label><select name="f_years_in_real_estate"><option>New / pre-license</option><option>0–2 years</option><option>3–7 years</option><option>8+ years</option></select></div>
+<div class="fld"><label>Biggest challenge right now</label><textarea name="f_biggest_challenge_right_now" placeholder="Listings, leads, systems, brand..." rows="3"></textarea></div>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('mentorship.related-resources.btn3') ?></button>
+</div></form>
 </div>
 </section>
 </div>
@@ -1303,18 +1335,18 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 </section>
 <section class="alt" id="inv-form">
 <div class="wrap" style="max-width:680px">
-<div class="form-card">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Investment & Acquisition Inquiry"><input type="hidden" name="_page" value="investing"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card">
 <h3><?= cms_e('investing.section-3.heading1') ?></h3>
 <p class="sub"><?= cms_rich('investing.section-3.p1') ?></p>
 <div class="fld-row">
-<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
-<div class="fld"><label>Phone</label><input placeholder="(___) ___-____"/></div>
+<div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
+<div class="fld"><label>Phone</label><input type="tel" name="f_phone" placeholder="(___) ___-____"/></div>
 </div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
-<div class="fld"><label>I am a...</label><select><option>Investor seeking opportunities</option><option>Owner selling investment property</option><option>Homeowner exploring off-market sale</option><option>Potential partner</option></select></div>
-<div class="fld"><label>Details</label><textarea placeholder="Property, capital, or opportunity details..." rows="3"></textarea></div>
-<a class="btn btn-primary" onclick="alert('Routes to Escaluxe C&amp;A inbox (mockup)')" style="width:100%;text-align:center"><?= cms_e('investing.section-3.btn1') ?></a>
-</div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+<div class="fld"><label>I am a...</label><select name="f_i_am_a"><option>Investor seeking opportunities</option><option>Owner selling investment property</option><option>Homeowner exploring off-market sale</option><option>Potential partner</option></select></div>
+<div class="fld"><label>Details</label><textarea name="f_details" placeholder="Property, capital, or opportunity details..." rows="3"></textarea></div>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('investing.section-3.btn1') ?></button>
+</div></form>
 </div>
 </section>
 </div>
@@ -1355,18 +1387,18 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 </section>
 <section class="alt">
 <div class="wrap" style="max-width:680px">
-<div class="form-card">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Property Management Inquiry"><input type="hidden" name="_page" value="pm"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card">
 <h3><?= cms_e('pm.section-3.heading1') ?></h3>
 <p class="sub"><?= cms_rich('pm.section-3.p1') ?></p>
 <div class="fld-row">
-<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
-<div class="fld"><label>Phone</label><input placeholder="(___) ___-____"/></div>
+<div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
+<div class="fld"><label>Phone</label><input type="tel" name="f_phone" placeholder="(___) ___-____"/></div>
 </div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
-<div class="fld"><label>Property address</label><input placeholder="Street, City, GA"/></div>
-<div class="fld"><label>Current status</label><select><option>Vacant</option><option>Tenant in place</option><option>Owner-occupied (moving soon)</option><option>Multiple properties</option></select></div>
-<a class="btn btn-primary" onclick="alert('Routes PM referral (mockup)')" style="width:100%;text-align:center"><?= cms_e('pm.section-3.btn1') ?></a>
-</div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+<div class="fld"><label>Property address</label><input name="f_property_address" placeholder="Street, City, GA"/></div>
+<div class="fld"><label>Current status</label><select name="f_current_status"><option>Vacant</option><option>Tenant in place</option><option>Owner-occupied (moving soon)</option><option>Multiple properties</option></select></div>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('pm.section-3.btn1') ?></button>
+</div></form>
 </div>
 </section>
 </div>
@@ -1410,20 +1442,20 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p><?= cms_rich('transportation.the-escaluxe-standard.info1-text') ?></p>
 </div>
 </div>
-<div class="form-card" id="tl-form">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Transportation & Logistics Inquiry"><input type="hidden" name="_page" value="transportation"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card" id="tl-form">
 <h3><?= cms_e('transportation.the-escaluxe-standard.heading2') ?></h3>
 <p class="sub"><?= cms_rich('transportation.the-escaluxe-standard.p1') ?></p>
 <div class="fld-row">
-<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
-<div class="fld"><label>Phone</label><input placeholder="(___) ___-____"/></div>
+<div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
+<div class="fld"><label>Phone</label><input type="tel" name="f_phone" placeholder="(___) ___-____"/></div>
 </div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
 <div class="fld"><label>Service needed</label>
-<select><option>Executive transportation</option><option>Airport transfer</option><option>Moving services</option><option>Courier &amp; delivery</option><option>Specialty logistics</option><option>Event transportation</option><option>Not sure yet</option></select></div>
-<div class="fld"><label>Date needed</label><input placeholder="Date &amp; time"/></div>
-<div class="fld"><label>Details</label><textarea placeholder="Pickup, drop-off, passengers or items..." rows="3"></textarea></div>
-<a class="btn btn-primary" onclick="alert('Routes to Escaluxe Transportation &amp; Logistics dispatch (mockup)')" style="width:100%;text-align:center"><?= cms_e('transportation.the-escaluxe-standard.btn1') ?></a>
-</div>
+<select name="f_service_needed"><option>Executive transportation</option><option>Airport transfer</option><option>Moving services</option><option>Courier &amp; delivery</option><option>Specialty logistics</option><option>Event transportation</option><option>Not sure yet</option></select></div>
+<div class="fld"><label>Date needed</label><input name="f_date_needed" placeholder="Date &amp; time"/></div>
+<div class="fld"><label>Details</label><textarea name="f_details" placeholder="Pickup, drop-off, passengers or items..." rows="3"></textarea></div>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('transportation.the-escaluxe-standard.btn1') ?></button>
+</div></form>
 </div>
 </section>
 <section>
@@ -1474,7 +1506,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="wrap">
 <h2><?= cms_e('living.give-the-gift-of-escaluxe.heading1') ?></h2>
 <p><?= cms_rich('living.give-the-gift-of-escaluxe.p1') ?></p>
-<a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.give-the-gift-of-escaluxe.btn1') ?></a>  <a class="btn btn-outline" onclick="go('contact')"><?= cms_e('living.give-the-gift-of-escaluxe.btn2') ?></a>
+<a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.give-the-gift-of-escaluxe.btn1') ?></a>  <a class="btn btn-outline" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('living.give-the-gift-of-escaluxe.btn2') ?></a>
 </div>
 </section>
 </div>
@@ -1485,7 +1517,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow on-dark"><?= cms_e('loc-atlanta.locations-atlanta-metro.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('loc-atlanta.locations-atlanta-metro.heading1') ?></h1>
 <p><?= cms_rich('loc-atlanta.locations-atlanta-metro.p1') ?></p>
-<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('loc-atlanta.locations-atlanta-metro.btn1') ?></a></div>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-atlanta.locations-atlanta-metro.btn1') ?></a></div>
 </div><div class="ph hero-media" data-label="Atlanta Skyline — Photo"><?= cms_img('loc-atlanta.locations-atlanta-metro.img-atlanta-skyline-photo') ?></div></div>
 </header>
 <section>
@@ -1497,7 +1529,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p style="max-width:480px"><?= cms_rich('loc-atlanta.selling-in-atlanta-metro.p1') ?></p>
 <p class="eyebrow" style="margin-top:30px"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.eyebrow2') ?></p>
 <p style="max-width:480px;margin-top:10px"><?= cms_rich('loc-atlanta.selling-in-atlanta-metro.p2') ?></p>
-<div style="margin-top:24px"><a class="btn btn-outline-dark" onclick="go('loc-gwinnett')"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.btn1') ?></a>  <a class="btn btn-outline-dark" onclick="go('loc-fayette')"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.btn2') ?></a></div>
+<div style="margin-top:24px"><a class="btn btn-outline-dark" href="/gwinnett-lawrenceville" data-nav="loc-gwinnett" onclick="return _nav(event,'loc-gwinnett')"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.btn1') ?></a>  <a class="btn btn-outline-dark" href="/fayette-peachtree-city" data-nav="loc-fayette" onclick="return _nav(event,'loc-fayette')"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.btn2') ?></a></div>
 </div>
 <div>
 <div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('loc-atlanta.selling-in-atlanta-metro.tst1-quote') ?></blockquote><div class="who"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.tst1-who') ?></div></div>
@@ -1517,7 +1549,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow on-dark"><?= cms_e('loc-gwinnett.locations-lawrenceville-gwin.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('loc-gwinnett.locations-lawrenceville-gwin.heading1') ?></h1>
 <p><?= cms_rich('loc-gwinnett.locations-lawrenceville-gwin.p1') ?></p>
-<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('loc-gwinnett.locations-lawrenceville-gwin.btn1') ?></a></div>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-gwinnett.locations-lawrenceville-gwin.btn1') ?></a></div>
 </div><div class="ph hero-media" data-label="Downtown Lawrenceville Square"><?= cms_img('loc-gwinnett.locations-lawrenceville-gwin.img-downtown-lawrenceville') ?></div></div>
 </header>
 <section>
@@ -1548,7 +1580,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow on-dark"><?= cms_e('loc-fayette.locations-fayette-county-pea.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('loc-fayette.locations-fayette-county-pea.heading1') ?></h1>
 <p><?= cms_rich('loc-fayette.locations-fayette-county-pea.p1') ?></p>
-<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('loc-fayette.locations-fayette-county-pea.btn1') ?></a></div>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-fayette.locations-fayette-county-pea.btn1') ?></a></div>
 </div><div class="ph hero-media" data-label="Peachtree City — Golf Cart Path"><?= cms_img('loc-fayette.locations-fayette-county-pea.img-peachtree-city-golf-ca') ?></div></div>
 </header>
 <section>
@@ -1591,24 +1623,24 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="fld"><label>Name</label><input placeholder="Full name"/></div>
 <div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
 <div class="fld"><label>Property address</label><input placeholder="Street, City, GA"/></div>
-<a class="btn btn-primary" onclick="go('homevalue')" style="width:100%;text-align:center"><?= cms_e('contact.section-2.btn1') ?></a>
+<a class="btn btn-primary" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')" style="width:100%;text-align:center"><?= cms_e('contact.section-2.btn1') ?></a>
 </div>
-<div class="form-card">
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Speaking Inquiry"><input type="hidden" name="_page" value="contact"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card">
 <h3><?= cms_e('contact.section-2.heading2') ?></h3>
 <p class="sub"><?= cms_rich('contact.section-2.p2') ?></p>
-<div class="fld"><label>Name</label><input placeholder="Full name"/></div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
-<div class="fld"><label>Event &amp; date</label><input placeholder="Event · Date"/></div>
-<a class="btn btn-primary" onclick="alert('Fires speaking_inquiry_submit (mockup)')" style="width:100%;text-align:center"><?= cms_e('contact.section-2.btn2') ?></a>
-</div>
-<div class="form-card">
+<div class="fld"><label>Name</label><input name="f_name" placeholder="Full name"/></div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+<div class="fld"><label>Event &amp; date</label><input name="f_event_amp_date" placeholder="Event · Date"/></div>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('contact.section-2.btn2') ?></button>
+</div></form>
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Collaboration Inquiry"><input type="hidden" name="_page" value="contact"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="form-card">
 <h3><?= cms_e('contact.section-2.heading3') ?></h3>
 <p class="sub"><?= cms_rich('contact.section-2.p3') ?></p>
-<div class="fld"><label>Name</label><input placeholder="Full name"/></div>
-<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
-<div class="fld"><label>Brand / idea</label><input placeholder="Tell us briefly"/></div>
-<a class="btn btn-primary" onclick="alert('Fires collaboration_inquiry_submit (mockup)')" style="width:100%;text-align:center"><?= cms_e('contact.section-2.btn3') ?></a>
-</div>
+<div class="fld"><label>Name</label><input name="f_name" placeholder="Full name"/></div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+<div class="fld"><label>Brand / idea</label><input name="f_brand_idea" placeholder="Tell us briefly"/></div>
+<button type="submit" class="btn btn-primary" style="width:100%;text-align:center"><?= cms_e('contact.section-2.btn3') ?></button>
+</div></form>
 </div>
 <div class="two-col" style="margin-top:56px">
 <div class="info-card">
@@ -1655,7 +1687,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="g"><div class="ph" data-label="Sold — Gwinnett Colonial" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-sold-gwinnett-colonial') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap15') ?></div></div>
 </div>
 <p style="text-align:center;margin-top:36px;font-size:14px"><?= cms_rich('gallery.section-2.p1') ?></p>
-<div style="text-align:center;margin-top:24px"><a class="btn btn-primary" onclick="go('homevalue')"><?= cms_e('gallery.section-2.btn1') ?></a></div>
+<div style="text-align:center;margin-top:24px"><a class="btn btn-primary" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('gallery.section-2.btn1') ?></a></div>
 </div>
 </section>
 </div>
@@ -1671,15 +1703,15 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 </div>
 <div>
 <h4>Quick Links</h4>
-<ul><li><a onclick="go('about')">About</a></li><li><a onclick="go('sell')">Sell</a></li><li><a onclick="go('homevalue')">Home Value</a></li><li><a onclick="go('speaking')">Speaking</a></li><li><a onclick="go('testimonials')">Testimonials</a></li><li><a onclick="go('gallery')">Gallery</a></li><li><a onclick="go('resources')">Resources</a></li><li><a onclick="go('contact')">Contact</a></li></ul>
+<ul><li><a href="/about" data-nav="about" onclick="return _nav(event,'about')">About</a></li><li><a href="/sell" data-nav="sell" onclick="return _nav(event,'sell')">Sell</a></li><li><a href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')">Home Value</a></li><li><a href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')">Speaking</a></li><li><a href="/testimonials" data-nav="testimonials" onclick="return _nav(event,'testimonials')">Testimonials</a></li><li><a href="/gallery" data-nav="gallery" onclick="return _nav(event,'gallery')">Gallery</a></li><li><a href="/resources" data-nav="resources" onclick="return _nav(event,'resources')">Resources</a></li><li><a href="/contact" data-nav="contact" onclick="return _nav(event,'contact')">Contact</a></li></ul>
 </div>
 <div>
 <h4>Ecosystem</h4>
-<ul><li><a onclick="go('pm')">Property Management</a></li><li><a onclick="go('investing')">Capital &amp; Acquisitions</a></li><li><a onclick="go('transportation')">Transportation &amp; Logistics</a></li><li><a onclick="go('living')">Escaluxe Living</a></li><li><a onclick="alert('Axen Realty / Lofty (mockup)')">Axen Realty / Lofty</a></li><li><a onclick="alert('stan.store/erikakpage (mockup)')">Stan Store</a></li><li><a onclick="go('explains')">Erika Explains</a></li><li><a onclick="go('mentorship')">Mentorship</a></li></ul>
+<ul><li><a href="/property-management" data-nav="pm" onclick="return _nav(event,'pm')">Property Management</a></li><li><a href="/investing" data-nav="investing" onclick="return _nav(event,'investing')">Capital &amp; Acquisitions</a></li><li><a href="/transportation-logistics" data-nav="transportation" onclick="return _nav(event,'transportation')">Transportation &amp; Logistics</a></li><li><a href="/escaluxe-living" data-nav="living" onclick="return _nav(event,'living')">Escaluxe Living</a></li><li><a onclick="alert('Axen Realty / Lofty (mockup)')">Axen Realty / Lofty</a></li><li><a onclick="alert('stan.store/erikakpage (mockup)')">Stan Store</a></li><li><a href="/erika-explains" data-nav="explains" onclick="return _nav(event,'explains')">Erika Explains</a></li><li><a href="/mentorship" data-nav="mentorship" onclick="return _nav(event,'mentorship')">Mentorship</a></li></ul>
 </div>
 <div>
 <h4>Local Expertise</h4>
-<ul><li><a onclick="go('loc-atlanta')">Atlanta Metro</a></li><li><a onclick="go('loc-gwinnett')">Gwinnett County / Lawrenceville</a></li><li><a onclick="go('loc-fayette')">Peachtree City / Fayette</a></li><li><a onclick="alert('Local page coming soon (mockup)')">Sandy Springs / Roswell / Alpharetta</a></li><li><a onclick="alert('Local page coming soon (mockup)')">East Cobb / Marietta</a></li><li><a onclick="alert('Local page coming soon (mockup)')">Brookhaven / Decatur / Tucker</a></li><li><a onclick="alert('Local page coming soon (mockup)')">McDonough / Henry</a></li><li><a onclick="go('lifestyle')">Lifestyle &amp; Magazine</a></li><li><a onclick="go('media')">Media &amp; Press</a></li><li><a onclick="go('collaborations')">Collaborations</a></li></ul>
+<ul><li><a href="/atlanta-metro" data-nav="loc-atlanta" onclick="return _nav(event,'loc-atlanta')">Atlanta Metro</a></li><li><a href="/gwinnett-lawrenceville" data-nav="loc-gwinnett" onclick="return _nav(event,'loc-gwinnett')">Gwinnett County / Lawrenceville</a></li><li><a href="/fayette-peachtree-city" data-nav="loc-fayette" onclick="return _nav(event,'loc-fayette')">Peachtree City / Fayette</a></li><li><a onclick="alert('Local page coming soon (mockup)')">Sandy Springs / Roswell / Alpharetta</a></li><li><a onclick="alert('Local page coming soon (mockup)')">East Cobb / Marietta</a></li><li><a onclick="alert('Local page coming soon (mockup)')">Brookhaven / Decatur / Tucker</a></li><li><a onclick="alert('Local page coming soon (mockup)')">McDonough / Henry</a></li><li><a href="/lifestyle" data-nav="lifestyle" onclick="return _nav(event,'lifestyle')">Lifestyle &amp; Magazine</a></li><li><a href="/media" data-nav="media" onclick="return _nav(event,'media')">Media &amp; Press</a></li><li><a href="/collaborations" data-nav="collaborations" onclick="return _nav(event,'collaborations')">Collaborations</a></li></ul>
 </div>
 <div>
 <h4>Follow</h4>
@@ -1700,23 +1732,56 @@ var nl=document.getElementById('nl');
 var burger=document.querySelector('.burger');
 var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ---------- page routing (with hash deep-links) ---------- */
+/* ---------- page routing (real per-page URLs + working history) ---------- */
+var PATHS=window.__paths||{};                 // id -> "/clean-path"
+var PATH2ID={};for(var k in PATHS){PATH2ID[PATHS[k]]=k;}
 function closeNav(){nl.classList.remove('open');burger.setAttribute('aria-expanded','false');}
-window.go=function(p){
-  var t=document.getElementById('page-'+p);
-  if(!t)return;
-  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active')});
-  t.classList.add('active');
+function setNavActive(p){
   var map={homevalue:'sell',media:'lifestyle',collaborations:'lifestyle',products:'resources',explains:'resources',mentorship:'resources',investing:'resources',pm:'resources',transportation:'resources',living:'resources','loc-atlanta':'home','loc-gwinnett':'home','loc-fayette':'home',about:'home'};
   var key=map[p]||p;
   document.querySelectorAll('.nav-links a[data-p]').forEach(function(a){a.classList.toggle('active',a.dataset.p===key)});
+}
+/* render a page without touching history (used on load + back/forward) */
+function render(p){
+  var t=document.getElementById('page-'+p);
+  if(!t)return false;
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active')});
+  t.classList.add('active');
+  setNavActive(p);
   closeNav();
-  if(history.replaceState)history.replaceState(null,'','#/'+p);
+  return true;
+}
+/* navigate: change page, push a real URL so Back/Forward work */
+window.go=function(p){
+  if(!render(p))return;
+  var path=PATHS[p]||'/';
+  if(location.pathname!==path && history.pushState) history.pushState({p:p},'',path);
   window.scrollTo({top:0,behavior:'instant'});
 };
-function fromHash(){var m=location.hash.match(/^#\/(.+)$/);if(m&&document.getElementById('page-'+m[1]))go(m[1]);}
-window.addEventListener('hashchange',fromHash);
-fromHash();
+/* click handler for real links: SPA-navigate on plain left-click, else let the browser do its thing */
+window._nav=function(e,p){
+  if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button)return true;
+  e.preventDefault();go(p);return false;
+};
+/* Back / Forward buttons */
+window.addEventListener('popstate',function(e){
+  var p=(e.state&&e.state.p)||PATH2ID[location.pathname]||'home';
+  render(p);
+  window.scrollTo({top:0,behavior:'instant'});
+});
+/* Initial load: server already marked the right page active; sync nav + seed history state.
+   Also upgrade any legacy #/page hash link to the real URL. */
+(function(){
+  var start=window.__page||'home';
+  var legacy=location.hash.match(/^#\/(.+)$/);
+  if(legacy&&document.getElementById('page-'+legacy[1])){
+    start=legacy[1];
+    if(history.replaceState)history.replaceState({p:start},'',PATHS[start]||'/');
+  } else if(history.replaceState){
+    history.replaceState({p:start},'',location.pathname);
+  }
+  render(start);
+})();
 
 /* ---------- mobile nav ---------- */
 burger.addEventListener('click',function(){
@@ -1803,3 +1868,32 @@ backtop.addEventListener('click',function(){
 </script>
 </body>
 </html>
+<?php
+$html = ob_get_clean();
+
+// Server-side active page: clear the hard-coded home default, then activate the requested page.
+$html = str_replace('<div class="page active" id="page-home">', '<div class="page" id="page-home">', $html);
+$html = str_replace('<div class="page" id="page-' . $current . '">',
+                    '<div class="page active" id="page-' . $current . '">', $html);
+
+// Success / error banner after a form submission (submit.php redirects here with ?sent / ?senterr).
+$banner = '';
+if (isset($_GET['sent'])) {
+    $banner = '<div class="formflash ok" role="status">Thank you — your message has been sent. Erika&rsquo;s team will be in touch shortly.</div>';
+} elseif (isset($_GET['senterr'])) {
+    $msg = $_GET['senterr'] === 'config'
+        ? 'Sorry — the site&rsquo;s email isn&rsquo;t set up yet, so this form could not be sent. Please call 678-404-1562.'
+        : 'Sorry — something went wrong sending your message. Please try again or call 678-404-1562.';
+    $banner = '<div class="formflash err" role="alert">' . $msg . '</div>';
+}
+if ($banner !== '') {
+    $html = preg_replace('/(<main id="main">)/', '$1' . $banner, $html, 1);
+}
+
+// Router data for the client (real URLs + history) — must load before the router script.
+$inject = '<script>window.__page=' . json_encode($current)
+        . ';window.__paths=' . json_encode($PATHS) . ';</script>';
+$html = str_replace('</head>', $inject . '</head>', $html);
+
+echo $html;
+

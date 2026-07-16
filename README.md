@@ -15,7 +15,39 @@ or video, save. Plain PHP + MySQL — no framework, no plugins, no build step.
 | `fields.php` | The widget manifest: every editable field with its original content as default |
 | `config.php` | MySQL credentials (edit on your host) |
 | `assets/quill/` | Self-hosted WYSIWYG editor (no CDN, no external calls) |
+| `lib/phpmailer/` | Self-hosted PHPMailer (SMTP sending for forms) |
+| `routes.php` | Clean-URL ↔ page map (real per-page URLs) |
+| `submit.php` | Public form handler (emails submissions to admin) |
+| `.htaccess` / `.user.ini` | Clean-URL rewriting + raised upload limits |
 | `uploads/` | Uploaded images/videos (PHP execution blocked via .htaccess) |
+
+## Real page URLs & navigation
+
+Every page has its own shareable URL (`/`, `/sell`, `/home-value`, `/property-management`,
+`/escaluxe-living`, …) served by the `.htaccess` front controller, and the browser
+back/forward buttons work correctly. Home is always the root `/`. The `.htaccess`
+rewrite is required — on a host without mod_rewrite, ask support to enable it.
+
+## Pictures: replace, reposition & zoom (photo or video)
+
+Each image slot in the admin has an **Adjust** panel: after uploading, drag the picture
+to choose which part shows and use the zoom slider — a non-destructive focal-point crop
+that also works for videos (MP4/WEBM). "Reset" recenters. Uploads accept files up to
+**300 MB** (JPG/PNG/WEBP/GIF/MP4/WEBM). If large uploads are rejected, raise
+`upload_max_filesize`/`post_max_size` in cPanel → MultiPHP INI Editor (the included
+`.user.ini` sets these, but some hosts require the panel). Very large uploads can still
+time out depending on the host.
+
+## Forms → email (SMTP)
+
+All website forms (seller, home value, speaking, mentorship, contact, transportation,
+etc.) email their submissions to one inbox. Set it up under **Email / Forms** in the
+admin: the recipient address plus your SMTP host/port/security/username/password and a
+"from" address. Use **Save & send test** to confirm delivery. Each email's subject and
+body identify which form and page it came from, and Reply-To is set to the submitter so
+Erika can reply directly. Spam is filtered with a hidden honeypot field and a timing
+check. The SMTP password is stored in the database (required to authenticate); keep the
+admin account secure.
 
 **907 editable fields** across 24 page groups — headlines, paragraphs, testimonials,
 FAQs, cards, buttons, badges, ticker items, captions, SEO title/description, and all
