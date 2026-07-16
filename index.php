@@ -385,6 +385,24 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div aria-hidden="true" class="ticker-group"><span><?= cms_rich('home.ticker.item1') ?></span><span><?= cms_rich('home.ticker.item2') ?></span><span><?= cms_rich('home.ticker.item3') ?></span><span><?= cms_rich('home.ticker.item4') ?></span><span><?= cms_rich('home.ticker.item5') ?></span><span><?= cms_rich('home.ticker.item6') ?></span><span><?= cms_rich('home.ticker.item7') ?></span><span><?= cms_rich('home.ticker.item8') ?></span></div>
 </div>
 </div>
+<section class="alt" id="ecosystem">
+<div class="wrap">
+<p class="eyebrow"><?= cms_e('home.one-name-every-lane.eyebrow1') ?></p>
+<h2 style="font-size:clamp(28px,3.4vw,40px);margin-top:10px"><?= cms_e('home.one-name-every-lane.heading1') ?></h2>
+<div class="eco-grid">
+<div class="eco"><div class="tag">Priority</div><h3><?= cms_e('home.one-name-every-lane.eco1-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco1-text') ?></p><a onclick="go('sell')"><?= cms_e('home.one-name-every-lane.eco1-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco2-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco2-text') ?></p><a onclick="go('speaking')"><?= cms_e('home.one-name-every-lane.eco2-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco3-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco3-text') ?></p><a onclick="go('mentorship')"><?= cms_e('home.one-name-every-lane.eco3-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco4-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco4-text') ?></p><a onclick="go('investing')"><?= cms_e('home.one-name-every-lane.eco4-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco5-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco5-text') ?></p><a onclick="go('pm')"><?= cms_e('home.one-name-every-lane.eco5-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco6-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco6-text') ?></p><a onclick="go('products')"><?= cms_e('home.one-name-every-lane.eco6-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco7-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco7-text') ?></p><a onclick="go('collaborations')"><?= cms_e('home.one-name-every-lane.eco7-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco8-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco8-text') ?></p><a onclick="go('transportation')"><?= cms_e('home.one-name-every-lane.eco8-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco9-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco9-text') ?></p><a onclick="go('living')"><?= cms_e('home.one-name-every-lane.eco9-btn') ?></a></div>
+</div>
+</div>
+</section>
+
 <section>
 <div class="wrap split">
 <div class="ph tall" data-label="Atlanta Luxury Listing Photo"><?= cms_img('home.sellers-first.img-atlanta-luxury-listing') ?></div>
@@ -418,24 +436,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="ph video-frame" data-label="60–90 second video intro (with on-page transcript for AI search)"><?= cms_img('home.meet-erika.img-60-90-second-video-int') ?><div class="play"></div></div>
 </div>
 </section>
-<section class="alt" id="ecosystem">
-<div class="wrap">
-<p class="eyebrow"><?= cms_e('home.one-name-every-lane.eyebrow1') ?></p>
-<h2 style="font-size:clamp(28px,3.4vw,40px);margin-top:10px"><?= cms_e('home.one-name-every-lane.heading1') ?></h2>
-<div class="eco-grid">
-<div class="eco"><div class="tag">Priority</div><h3><?= cms_e('home.one-name-every-lane.eco1-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco1-text') ?></p><a onclick="go('sell')"><?= cms_e('home.one-name-every-lane.eco1-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco2-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco2-text') ?></p><a onclick="go('speaking')"><?= cms_e('home.one-name-every-lane.eco2-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco3-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco3-text') ?></p><a onclick="go('mentorship')"><?= cms_e('home.one-name-every-lane.eco3-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco4-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco4-text') ?></p><a onclick="go('investing')"><?= cms_e('home.one-name-every-lane.eco4-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco5-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco5-text') ?></p><a onclick="go('pm')"><?= cms_e('home.one-name-every-lane.eco5-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco6-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco6-text') ?></p><a onclick="go('products')"><?= cms_e('home.one-name-every-lane.eco6-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco7-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco7-text') ?></p><a onclick="go('collaborations')"><?= cms_e('home.one-name-every-lane.eco7-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco8-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco8-text') ?></p><a onclick="go('transportation')"><?= cms_e('home.one-name-every-lane.eco8-btn') ?></a></div>
-<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco9-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco9-text') ?></p><a onclick="go('living')"><?= cms_e('home.one-name-every-lane.eco9-btn') ?></a></div>
-</div>
-</div>
-</section>
-<section>
+<section class="alt">
 <div class="wrap">
 <p class="eyebrow"><?= cms_e('home.erika-explains-latest-resour.eyebrow1') ?></p>
 <h2 style="font-size:clamp(28px,3.4vw,40px);margin-top:10px"><?= cms_e('home.erika-explains-latest-resour.heading1') ?></h2>
@@ -446,7 +447,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 </div>
 </div>
 </section>
-<section class="alt">
+<section>
 <div class="wrap">
 <div class="center-h"><p class="eyebrow"><?= cms_e('home.moments-stages.eyebrow1') ?></p><h2><?= cms_e('home.moments-stages.heading1') ?></h2></div>
 <div class="thumb-strip">
