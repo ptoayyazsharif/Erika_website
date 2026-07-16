@@ -1,7 +1,13 @@
 # ErikaKPage — clean URLs + upload limits (Apache / cPanel)
 
+# Make index.php the default document, and stop Apache guessing file names.
+DirectoryIndex index.php
+# If this next line causes a 500 error on your host, delete just this line.
+Options -MultiViews
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  RewriteBase /
 
   # Serve real files and directories directly (uploads, assets, admin.php, submit.php, setup.php, etc.)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
