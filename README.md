@@ -1,42 +1,69 @@
-# ErikaKPage.com — Website Mockup
+# ErikaKPage.com — Lite CMS
 
-Design mockup for Erika Page, Atlanta Metro Real Estate Expert, Speaker & Mentor.
+The full website for Erika Page (Atlanta Metro Real Estate Expert) with a very light,
+WordPress-style admin: log in, edit any text with a WYSIWYG editor, replace any photo
+or video, save. Plain PHP + MySQL — no framework, no plugins, no build step.
 
-## What's here
+## What's in the box
 
-- `index.html` — the complete single-file site mockup (v4 Refined Edition). All pages (Home, About, Sell, Home Value, Buy, Speaking, Collaborations, Lifestyle, Media, Reviews, Resources, Digital Products, Erika Explains, Mentorship, Investing, Property Management, location pages, Gallery, Contact) live in this one file with a lightweight client-side router. Photos and content are placeholders.
+| File | Purpose |
+|---|---|
+| `index.php` | The public website (all 23 pages in one file, same design as the static mockup) |
+| `admin.php` | Admin dashboard: pages → sections → fields, WYSIWYG, image/video upload |
+| `setup.php` | One-time installer (creates tables + the admin account, then locks itself) |
+| `cms.php` | Core helpers (~200 lines: DB, content, auth, CSRF, uploads, sanitizing) |
+| `fields.php` | The widget manifest: every editable field with its original content as default |
+| `config.php` | MySQL credentials (edit on your host) |
+| `assets/quill/` | Self-hosted WYSIWYG editor (no CDN, no external calls) |
+| `uploads/` | Uploaded images/videos (PHP execution blocked via .htaccess) |
 
-## How to preview
+**907 editable fields** across 24 page groups — headlines, paragraphs, testimonials,
+FAQs, cards, buttons, badges, ticker items, captions, SEO title/description, and all
+97 photo/video slots. Content lives in one `content` table; anything never edited
+falls back to the built-in default, so an empty database renders the complete site.
 
-Open `index.html` in any browser — no build step or server required.
+## Install on shared hosting (cPanel)
 
-## v5.1 — Ecosystem expansion
+1. Upload all files to `public_html` (or a subfolder).
+2. cPanel → **MySQL Databases**: create a database and a user, grant the user
+   ALL PRIVILEGES on that database.
+3. Edit `config.php` — fill in the database name, user, and password.
+4. Visit `https://yourdomain.com/setup.php` — create the admin username and password.
+5. Log in at `https://yourdomain.com/admin.php` and start editing.
 
-- Refreshed ecosystem card copy for Speaking, Mentorship, Investing, and Brands & Partners
-- Two new ecosystem lanes with full pages: **Escaluxe Transportation & Logistics** (services grid, standards checklist, inquiry form, FAQ) and **Escaluxe Living** (collection grid, brand story, gifting CTA)
-- Both pages wired into the Resources dropdown, footer Ecosystem column, router (`#/transportation`, `#/living`), plus About-page and homepage-FAQ ecosystem mentions
+That's the whole install. Backups = export the database + copy the `uploads/` folder.
 
-## v5 — July 7 meeting revisions
+## Using the admin
 
-- Homepage reordered: intro → moving ticker tape (with extra factoids) → selling → booking Erika → personal welcome video → ecosystem → insights → thumbnail gallery → testimonials → FAQ → final sell CTA
-- Ticker tape replaces the static stat band (pauses on hover, static under reduced motion)
-- Third hero button "Everything Else" scrolls to the Erika Page Ecosystem section
-- Ecosystem gains a "Brands & Partners" card (links to Collaborations)
-- Full-body no-background photo placeholder in the "Book Erika" section
-- Barbara Corcoran-style thumbnail gallery strip on the homepage, linking to the full Gallery
-- Sell page: "Book a Seller Strategy Call" form moved above the fold into the hero
-- Every `.ph` placeholder box (hero boxes included, on every page) now accepts a real `<img>` or `<video>` drop-in — see the comment next to the homepage headshot box
-- "Reviews" renamed to "Testimonials" site-wide; testimonials page relabeled "Google · Zillow · Video Testimonials"
-- Buy, Speaking, Lifestyle & Media, and Resources pages unchanged per meeting
+- Left sidebar lists every page (plus **Global** for the phone number, footer, and SEO).
+- Each page is split into collapsible **sections** matching the sections on the site.
+- Short texts are plain inputs; paragraphs get a **WYSIWYG editor** (bold, italic,
+  underline, links); every photo slot shows a thumbnail with an **upload** button
+  (JPG/PNG/WEBP/GIF, or MP4/WEBM for video slots, max 8 MB).
+- "Remove" on a picture returns the slot to its designed placeholder.
+- One **Save** button per page saves all its sections at once.
+- **Settings** → change password.
 
-## Design notes (v4 Refined Edition)
+## Security (kept simple, done properly)
 
-Built on the v3 Blush brand (Fraunces + Archivo, cream / blush / merlot / gold) and refined using UI/UX best practices for luxury real estate personal brands:
+Hashed passwords (`password_hash`), session cookies (httponly/samesite), CSRF tokens on
+every form, prepared statements everywhere, upload whitelist by extension **and** MIME,
+random filenames, no PHP execution in `/uploads`, WYSIWYG HTML sanitized on save
+(scripts, event handlers, and `javascript:` URLs stripped), 1-second delay on failed
+logins, installer self-locks after first run.
 
-- Glassmorphism sticky nav with scroll shadow, keyboard-accessible dropdowns
-- Animated stat counters, scroll-reveal sections, hero trust badges
-- SVG icons throughout (stars, burger, checkmarks, back-to-top) — no text glyphs
-- WCAG-minded contrast (darkened gold/merlot tones for small text), visible focus states, skip link, `<main>` landmark, ARIA labels
-- `prefers-reduced-motion` respected for all animation
-- Hash-based deep links (`#/sell`, `#/homevalue`, …) so every page is shareable
-- Responsive: opaque mobile menu, full-width CTAs on small screens
+## Local development
+
+```bash
+# with a local MySQL:
+cp config.php config.local.php   # edit with local credentials (git-ignored)
+php -S localhost:8000
+# then open /setup.php once, and /admin.php to edit
+```
+
+`config.local.php` can also set `'driver' => 'sqlite'` for a zero-setup local run.
+
+## Branches
+
+- `claude/lite-cms` — this CMS version
+- `claude/client-website-ux-ra0p3o` — the original static single-file mockup (`index.html`)

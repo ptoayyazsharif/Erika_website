@@ -1,0 +1,293 @@
+<?php
+/**
+ * Admin dashboard — login, edit content (grouped by page → section), upload images,
+ * change password. One file, no framework.
+ */
+require __DIR__ . '/cms.php';
+
+if (!installed()) { header('Location: setup.php'); exit; }
+
+$flash = '';
+$err = '';
+
+/* ---------- logout ---------- */
+if (isset($_POST['do_logout'])) {
+    csrf_check();
+    session_destroy();
+    header('Location: admin.php');
+    exit;
+}
+
+/* ---------- login ---------- */
+if (!is_admin() && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_login'])) {
+    csrf_check();
+    $row = db()->prepare('SELECT * FROM users WHERE username = ?');
+    $row->execute([trim($_POST['username'] ?? '')]);
+    $u = $row->fetch();
+    if ($u && password_verify($_POST['password'] ?? '', $u['pass_hash'])) {
+        session_regenerate_id(true);
+        $_SESSION['admin_id'] = $u['id'];
+        header('Location: admin.php');
+        exit;
+    }
+    sleep(1); // slow down guessing
+    $err = 'Wrong username or password.';
+}
+
+/* ---------- login screen ---------- */
+if (!is_admin()) { ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in · ErikaKPage CMS</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#FBF7F3;color:#453230;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{background:#fff;border:1px solid rgba(69,50,48,.14);border-top:3px solid #C9A15E;padding:36px;max-width:380px;width:92%;box-shadow:0 14px 30px rgba(69,50,48,.1)}
+h1{font-size:20px;margin:0 0 4px;font-weight:600}h1 span{color:#B05E51}
+p{font-size:13px;color:#5C4B47;margin:0 0 10px}
+label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin:16px 0 6px}
+input{width:100%;padding:12px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3;font-size:15px;box-sizing:border-box}
+button{margin-top:22px;width:100%;padding:14px;background:#B05E51;color:#fff;border:none;font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;cursor:pointer}
+button:hover{background:#9C4A3E}
+.err{background:#FBEAEA;border:1px solid #D9908B;color:#8C3B32;padding:10px 12px;font-size:13px;margin-top:14px}
+.ok{background:#EEF6EC;border:1px solid #9CC493;color:#3E6B36;padding:10px 12px;font-size:13px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Erika<span>K</span>Page · Admin</h1>
+  <p>Log in to edit the website's text and pictures.</p>
+  <?php if (isset($_GET['installed'])): ?><div class="ok">Setup complete — log in with your new account.</div><?php endif; ?>
+  <?php if ($err): ?><div class="err"><?= esc($err) ?></div><?php endif; ?>
+  <form method="post">
+    <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+    <input type="hidden" name="do_login" value="1">
+    <label>Username</label><input name="username" required autocomplete="username" autofocus>
+    <label>Password</label><input name="password" type="password" required autocomplete="current-password">
+    <button>Log in</button>
+  </form>
+</div>
+</body>
+</html>
+<?php exit; }
+
+/* ---------- logged in from here on ---------- */
+$pages = manifest();
+$pageIds = array_keys($pages);
+$cur = $_GET['page'] ?? 'home';
+if (!isset($pages[$cur]) && $cur !== 'settings') $cur = 'home';
+
+/* ---------- change password ---------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_password'])) {
+    csrf_check();
+    $row = db()->prepare('SELECT * FROM users WHERE id = ?');
+    $row->execute([$_SESSION['admin_id']]);
+    $u = $row->fetch();
+    if (!$u || !password_verify($_POST['current'] ?? '', $u['pass_hash'])) $err = 'Current password is wrong.';
+    elseif (strlen($_POST['new'] ?? '') < 8)                                $err = 'New password must be at least 8 characters.';
+    elseif (($_POST['new'] ?? '') !== ($_POST['new2'] ?? ''))               $err = 'New passwords do not match.';
+    else {
+        db()->prepare('UPDATE users SET pass_hash = ? WHERE id = ?')
+            ->execute([password_hash($_POST['new'], PASSWORD_DEFAULT), $u['id']]);
+        $flash = 'Password changed.';
+    }
+}
+
+/* ---------- save content ---------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
+    csrf_check();
+    $page = $_POST['do_save'];
+    if (isset($pages[$page])) {
+        $saved = 0;
+        foreach ($pages[$page]['sections'] as $sec) {
+            foreach ($sec['fields'] as $f) {
+                $k = $f['k'];
+                if ($f['t'] === 'image') {
+                    // uploaded replacement?
+                    if (isset($_FILES['up']['name'][$k]) && $_FILES['up']['error'][$k] !== UPLOAD_ERR_NO_FILE) {
+                        $file = [
+                            'name' => $_FILES['up']['name'][$k],
+                            'tmp_name' => $_FILES['up']['tmp_name'][$k],
+                            'error' => $_FILES['up']['error'][$k],
+                            'size' => $_FILES['up']['size'][$k],
+                        ];
+                        [$path, $uerr] = handle_upload($file);
+                        if ($uerr) { $err = $f['label'] . ': ' . $uerr; }
+                        elseif ($path) { content_set($k, $path); $saved++; }
+                    } elseif (!empty($_POST['clear'][$k])) {
+                        content_set($k, ''); // back to placeholder
+                        $saved++;
+                    }
+                    continue;
+                }
+                if (!isset($_POST['f'][$k])) continue;
+                $v = (string) $_POST['f'][$k];
+                if ($f['t'] === 'rich') $v = unwrap_quill(strip_bad($v));
+                if ($v !== cms($k)) { content_set($k, $v); $saved++; }
+            }
+        }
+        if (!$err) $flash = $saved ? "Saved $saved change" . ($saved > 1 ? 's' : '') . '.' : 'No changes to save.';
+        $cur = $page;
+    }
+}
+
+$curTitle = $cur === 'settings' ? 'Settings' : $pages[$cur]['title'];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?= esc($curTitle) ?> · ErikaKPage CMS</title>
+<link rel="stylesheet" href="assets/quill/quill.snow.css">
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#F5EBE4;color:#453230;margin:0}
+a{color:#B05E51;text-decoration:none}
+.top{background:#3D2B29;color:#FBF7F3;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;position:sticky;top:0;z-index:20}
+.top .brand{font-weight:600}.top .brand span{color:#DCC08C}
+.top form{margin:0}
+.top button,.top a.view{background:none;border:1px solid rgba(251,247,243,.4);color:#FBF7F3;padding:7px 14px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-left:8px}
+.top button:hover,.top a.view:hover{border-color:#DCC08C;color:#DCC08C}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 54px)}
+.side{background:#fff;border-right:1px solid rgba(69,50,48,.12);padding:18px 0}
+.side a{display:block;padding:9px 20px;font-size:13.5px;color:#453230;border-left:3px solid transparent}
+.side a:hover{background:#FBF7F3}
+.side a.on{border-color:#C9A15E;background:#FBF7F3;font-weight:600;color:#9C4A3E}
+.side .grp{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8a746f;padding:16px 20px 6px}
+.main{padding:26px;max-width:900px}
+h1{font-size:22px;margin:0 0 4px;font-weight:600}
+.hint{font-size:13px;color:#5C4B47;margin:0 0 20px}
+.flash{background:#EEF6EC;border:1px solid #9CC493;color:#3E6B36;padding:11px 14px;font-size:14px;margin-bottom:18px}
+.err{background:#FBEAEA;border:1px solid #D9908B;color:#8C3B32;padding:11px 14px;font-size:14px;margin-bottom:18px}
+details.sec{background:#fff;border:1px solid rgba(69,50,48,.12);margin-bottom:14px}
+details.sec>summary{cursor:pointer;list-style:none;padding:15px 18px;font-weight:600;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::after{content:"+";color:#C9A15E;font-size:20px;font-weight:400}
+details.sec[open]>summary::after{content:"–"}
+details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-left:10px}
+.fields{padding:4px 18px 18px;border-top:1px solid rgba(69,50,48,.08)}
+.fld{margin:14px 0}
+.fld label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#6b5550;margin-bottom:6px}
+.fld input[type=text]{width:100%;padding:11px 12px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3;font-size:14.5px}
+.fld input[type=text]:focus{outline:2px solid #C9A15E}
+.rte-box{background:#FBF7F3;border:1px solid rgba(69,50,48,.2)}
+.rte-box .ql-toolbar{border:none;border-bottom:1px solid rgba(69,50,48,.15)}
+.rte-box .ql-container{border:none;font-size:14.5px;font-family:system-ui,sans-serif;min-height:70px}
+.imgrow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.imgrow .thumb{width:84px;height:64px;object-fit:cover;border:1px solid rgba(69,50,48,.2);background:linear-gradient(145deg,#EBD2CA,#D49388);display:flex;align-items:center;justify-content:center;font-size:9px;color:#7a5c55;text-align:center}
+.imgrow input[type=file]{font-size:13px}
+.imgrow .rm{font-size:12.5px;display:flex;gap:6px;align-items:center;color:#8C3B32}
+.savebar{position:sticky;bottom:0;background:#fff;border:1px solid rgba(69,50,48,.12);padding:12px 18px;display:flex;gap:12px;align-items:center;box-shadow:0 -8px 24px rgba(69,50,48,.07)}
+.savebar button{background:#B05E51;color:#fff;border:none;padding:13px 30px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer}
+.savebar button:hover{background:#9C4A3E}
+.savebar span{font-size:12.5px;color:#8a746f}
+.setcard{background:#fff;border:1px solid rgba(69,50,48,.12);padding:22px;max-width:420px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.side{display:flex;overflow-x:auto;padding:0}.side a{white-space:nowrap;border-left:none;border-bottom:3px solid transparent}.side .grp{display:none}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand">Erika<span>K</span>Page · CMS</div>
+  <div style="display:flex;align-items:center">
+    <a class="view" href="index.php" target="_blank">View site</a>
+    <form method="post"><input type="hidden" name="csrf" value="<?= csrf_token() ?>"><button name="do_logout" value="1">Log out</button></form>
+  </div>
+</div>
+<div class="layout">
+  <nav class="side">
+    <div class="grp">Pages</div>
+    <?php foreach ($pages as $pid => $p): ?>
+      <a href="admin.php?page=<?= esc($pid) ?>" class="<?= $pid === $cur ? 'on' : '' ?>"><?= esc($p['title']) ?></a>
+    <?php endforeach; ?>
+    <div class="grp">Account</div>
+    <a href="admin.php?page=settings" class="<?= $cur === 'settings' ? 'on' : '' ?>">Settings</a>
+  </nav>
+
+  <main class="main">
+    <?php if ($flash): ?><div class="flash"><?= esc($flash) ?></div><?php endif; ?>
+    <?php if ($err): ?><div class="err"><?= esc($err) ?></div><?php endif; ?>
+
+    <?php if ($cur === 'settings'): ?>
+      <h1>Settings</h1>
+      <p class="hint">Change your admin password.</p>
+      <div class="setcard">
+        <form method="post">
+          <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+          <div class="fld"><label>Current password</label><input type="text" style="display:none"><input name="current" type="password" autocomplete="current-password" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div class="fld"><label>New password (min 8)</label><input name="new" type="password" autocomplete="new-password" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div class="fld"><label>Repeat new password</label><input name="new2" type="password" autocomplete="new-password" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div class="savebar" style="position:static;box-shadow:none;border:none;padding:0"><button name="do_password" value="1">Change password</button></div>
+        </form>
+      </div>
+
+    <?php else: ?>
+      <h1><?= esc($pages[$cur]['title']) ?></h1>
+      <p class="hint">Open a section, edit the text or replace pictures, then hit <b>Save</b>. Leaving a picture empty shows the designed placeholder.</p>
+
+      <form method="post" enctype="multipart/form-data" id="pageform">
+        <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+        <?php $si = 0; foreach ($pages[$cur]['sections'] as $sec): $si++; ?>
+        <details class="sec" <?= $si === 1 ? 'open' : '' ?>>
+          <summary><?= esc($sec['title']) ?><small><?= count($sec['fields']) ?> field<?= count($sec['fields']) > 1 ? 's' : '' ?></small></summary>
+          <div class="fields">
+            <?php foreach ($sec['fields'] as $f): $k = $f['k']; $v = cms($k); $id = 'x' . substr(md5($k), 0, 10); ?>
+              <div class="fld">
+                <label><?= esc($f['label']) ?></label>
+                <?php if ($f['t'] === 'image'): ?>
+                  <div class="imgrow">
+                    <?php if ($v !== ''): $ext = strtolower(pathinfo($v, PATHINFO_EXTENSION)); ?>
+                      <?php if (in_array($ext, ['mp4','webm'])): ?><video class="thumb" src="<?= esc($v) ?>" muted></video>
+                      <?php else: ?><img class="thumb" src="<?= esc($v) ?>" alt=""><?php endif; ?>
+                    <?php else: ?><div class="thumb">placeholder</div><?php endif; ?>
+                    <input type="file" name="up[<?= esc($k) ?>]" accept=".jpg,.jpeg,.png,.webp,.gif,.mp4,.webm">
+                    <?php if ($v !== ''): ?><label class="rm"><input type="checkbox" name="clear[<?= esc($k) ?>]" value="1"> remove (back to placeholder)</label><?php endif; ?>
+                  </div>
+                <?php elseif ($f['t'] === 'rich'): ?>
+                  <div class="rte-box"><div class="rte" id="<?= $id ?>"><?= strip_bad($v) ?></div></div>
+                  <input type="hidden" name="f[<?= esc($k) ?>]" id="in_<?= $id ?>">
+                <?php else: ?>
+                  <input type="text" name="f[<?= esc($k) ?>]" value="<?= esc($v) ?>">
+                <?php endif; ?>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </details>
+        <?php endforeach; ?>
+        <div class="savebar">
+          <button name="do_save" value="<?= esc($cur) ?>">Save <?= esc($pages[$cur]['title']) ?></button>
+          <span>Saves every section on this page at once.</span>
+        </div>
+      </form>
+    <?php endif; ?>
+  </main>
+</div>
+
+<script src="assets/quill/quill.js"></script>
+<script>
+(function(){
+  var editors={};
+  function initIn(scope){
+    scope.querySelectorAll('.rte').forEach(function(el){
+      if(editors[el.id])return;
+      editors[el.id]=new Quill(el,{theme:'snow',modules:{toolbar:[['bold','italic','underline'],['link'],['clean']]}});
+    });
+  }
+  document.querySelectorAll('details.sec').forEach(function(d){
+    if(d.open)initIn(d);
+    d.addEventListener('toggle',function(){ if(d.open)initIn(d); });
+  });
+  var form=document.getElementById('pageform');
+  if(form)form.addEventListener('submit',function(){
+    // open all sections so hidden inputs of never-opened Quill fields keep their original values
+    document.querySelectorAll('.rte').forEach(function(el){
+      var input=document.getElementById('in_'+el.id);
+      if(!input)return;
+      if(editors[el.id])input.value=editors[el.id].root.innerHTML;
+      else input.value=el.innerHTML; // untouched section — submit original content unchanged
+    });
+  });
+})();
+</script>
+</body>
+</html>

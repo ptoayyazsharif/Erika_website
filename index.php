@@ -1,0 +1,1804 @@
+<?php require __DIR__ . '/cms.php'; ?>
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title><?= cms_e('global.meta-title') ?></title>
+<meta content="<?= cms_e('global.meta-desc') ?>" name="description"/>
+<meta content="#453230" name="theme-color"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&amp;family=Archivo:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#453230; --ink-deep:#332423;
+  --cream:#FBF7F3; --cream-2:#F5EBE4;
+  --gold:#C9A15E; --gold-soft:#DCC08C; --gold-deep:#8F6B2E;
+  --merlot:#C67F72; --merlot-deep:#B05E51; --merlot-ink:#9C4A3E;
+  --blush:#D49388; --blush-soft:#EFD3CC;
+  --body:#5C4B47; --line:rgba(69,50,48,.14);
+  --shadow-s:0 2px 8px rgba(69,50,48,.06),0 1px 2px rgba(69,50,48,.05);
+  --shadow-m:0 14px 30px rgba(69,50,48,.10),0 4px 10px rgba(69,50,48,.05);
+  --shadow-l:0 34px 70px rgba(69,50,48,.18),0 12px 24px rgba(69,50,48,.08);
+  --ease:cubic-bezier(.22,.68,.32,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{font-family:'Archivo',sans-serif;background:var(--cream);color:var(--body);line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:'Fraunces',serif;color:var(--ink);font-weight:500;line-height:1.12;text-wrap:balance}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+::selection{background:var(--blush-soft);color:var(--ink)}
+:focus-visible{outline:2px solid var(--merlot-deep);outline-offset:3px;border-radius:2px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--cream);padding:12px 22px;z-index:200;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.skip:focus{left:0}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--merlot-ink);display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);flex:none}
+.eyebrow.on-dark{color:var(--merlot-ink)}
+.center-h .eyebrow{justify-content:center}
+.center-h .eyebrow::after{content:"";width:22px;height:1px;background:var(--gold);flex:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 30px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;cursor:pointer;border:1px solid transparent;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s,color .25s,border-color .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-m)}
+.btn:active{transform:translateY(0);box-shadow:var(--shadow-s)}
+.btn-primary{background:var(--merlot-deep);color:#fff}
+.btn-primary:hover{background:var(--merlot-ink)}
+.btn-gold{background:linear-gradient(120deg,var(--gold) 0%,var(--gold-soft) 130%);color:var(--ink-deep)}
+.btn-gold:hover{background:linear-gradient(120deg,#BC9251 0%,var(--gold) 130%)}
+.btn-outline{border-color:var(--merlot-deep);color:var(--merlot-ink)}
+.btn-outline:hover{background:var(--merlot-deep);color:#fff}
+.btn-outline-dark{border-color:var(--merlot);color:var(--merlot-ink)}
+.btn-outline-dark:hover{background:var(--merlot-deep);border-color:var(--merlot-deep);color:var(--cream)}
+.rule{width:56px;height:2px;background:linear-gradient(90deg,var(--gold),var(--blush));margin:18px 0 22px}
+.ph{background:linear-gradient(145deg,#EBD2CA 0%,#DFB3A8 55%,#D49388 100%);position:relative;overflow:hidden}
+.ph::after{content:attr(data-label);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(69,50,48,.6);font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-align:center;padding:20px}
+.ph::before{content:"";position:absolute;inset:14px;border:1px solid rgba(255,255,255,.55);z-index:1}
+/* drop an <img> or <video> inside any .ph box to replace the placeholder */
+.ph>img,.ph>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ph:has(>img)::after,.ph:has(>video)::after{display:none}
+.topbar{background:var(--ink-deep);color:var(--cream);font-size:12.5px;letter-spacing:.06em;padding:10px 16px;text-align:center;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+.topbar::-webkit-scrollbar{display:none}
+.topbar b{color:var(--gold-soft);font-weight:600}
+.topbar .mkt{cursor:pointer;padding:2px 4px;transition:color .2s}
+.topbar .mkt:hover,.topbar .mkt:focus-visible{color:var(--gold-soft)}
+.topbar .sep{color:var(--blush);margin:0 6px}
+nav{background:rgba(255,255,255,.86);backdrop-filter:blur(14px) saturate(1.5);-webkit-backdrop-filter:blur(14px) saturate(1.5);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;transition:box-shadow .3s var(--ease)}
+nav.scrolled{box-shadow:0 10px 30px rgba(69,50,48,.09)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:32px;padding:16px 24px;max-width:1320px;margin:0 auto}
+.brand{font-family:'Fraunces',serif;font-size:22px;color:var(--ink);cursor:pointer;flex:none;white-space:nowrap}
+.brand span{color:var(--merlot-deep)}
+.nav-links{display:flex;gap:18px;list-style:none;align-items:center}
+.nav-links>li{position:relative}
+.nav-links a{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink);padding:6px 0;border-bottom:2px solid transparent;cursor:pointer;display:inline-block;white-space:nowrap;transition:color .2s,border-color .2s}
+.nav-links a:hover,.nav-links a.active{border-color:var(--gold);color:var(--merlot-ink)}
+.drop{display:block;visibility:hidden;opacity:0;transform:translateY(6px);position:absolute;top:100%;left:-14px;background:#fff;border:1px solid var(--line);min-width:220px;padding:10px 0;box-shadow:var(--shadow-m);z-index:60;transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s}
+.has-drop:hover .drop,.has-drop:focus-within .drop{visibility:visible;opacity:1;transform:none}
+.drop a{display:block;padding:9px 18px;border-bottom:none!important;font-size:11.5px}
+.drop a:hover,.drop a:focus-visible{background:var(--cream-2);color:var(--merlot-ink)}
+.nav-cta{background:var(--merlot-deep);color:var(--cream)!important;padding:10px 16px!important;border-bottom:none!important;transition:background .25s,box-shadow .25s!important}
+.nav-cta:hover{background:var(--merlot-ink);box-shadow:var(--shadow-s)}
+.burger{display:none;background:none;border:none;color:var(--ink);cursor:pointer;padding:8px;line-height:0}
+.burger svg{width:24px;height:24px}
+.page{display:none}
+.page.active{display:block;animation:pagein .5s var(--ease)}
+@keyframes pagein{from{opacity:0}to{opacity:1}}
+.hero{background:linear-gradient(150deg,#FBF3EF 0%,#F5DFD8 55%,#EFCFC6 100%);color:var(--ink);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-140px;top:-140px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(212,147,136,.45),transparent 68%);animation:drift 14s ease-in-out infinite alternate}
+.hero::after{content:"";position:absolute;left:-120px;bottom:-180px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(201,161,94,.22),transparent 70%)}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-40px,30px) scale(1.06)}}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;padding:88px 0 72px;position:relative;z-index:2}
+.hero h1{color:var(--ink);font-size:clamp(42px,6vw,72px);font-weight:400}
+.hero h1 em{font-style:italic;color:var(--merlot-deep)}
+.hero .pos{font-size:14px;letter-spacing:.3em;text-transform:uppercase;color:var(--merlot-ink);margin:18px 0 20px;font-weight:600}
+.hero p.lede{color:var(--body);font-size:18px;max-width:520px;margin-bottom:34px}
+.hero-ctas{display:flex;gap:16px;flex-wrap:wrap}
+.hero-badges{display:flex;gap:22px;flex-wrap:wrap;margin-top:34px;font-size:12px;letter-spacing:.08em;color:var(--merlot-ink);font-weight:600}
+.hero-badges span{display:inline-flex;align-items:center;gap:8px}
+.hero-badges svg{width:15px;height:15px;color:var(--gold-deep)}
+.hero-photo{aspect-ratio:4/5;box-shadow:var(--shadow-l)}
+.hero-photo::before{inset:16px;border-color:rgba(255,255,255,.7)}
+.proof{background:linear-gradient(120deg,#3D2B29 0%,#543B37 100%);color:var(--cream);position:relative;overflow:hidden}
+.proof::before{content:"";position:absolute;inset:0;background:radial-gradient(640px 220px at 78% 0%,rgba(201,161,94,.16),transparent)}
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;position:relative}
+.proof-item{padding:40px 20px;border-left:1px solid rgba(251,247,243,.12)}
+.proof-item:first-child{border-left:none}
+.proof-item .num{font-family:'Fraunces',serif;font-size:44px;color:var(--gold-soft);line-height:1;font-variant-numeric:tabular-nums}
+.proof-item .lbl{font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-top:10px;color:rgba(251,247,243,.72)}
+section{padding:84px 0}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.split h2{font-size:clamp(30px,3.6vw,44px)}
+.split p{margin:16px 0 26px;max-width:480px}
+.tall{aspect-ratio:4/5;box-shadow:var(--shadow-m)}
+.wide{aspect-ratio:16/10;box-shadow:var(--shadow-m)}
+.alt{background:var(--cream-2)}
+.dark{background:var(--blush-soft);color:var(--ink)}
+.dark h2,.dark h3{color:var(--ink)}
+.dark p{color:var(--body)}
+.center-h{text-align:center}
+.center-h h2{font-size:clamp(28px,3.4vw,40px);margin-top:10px}
+.video-frame{aspect-ratio:16/9;margin-top:36px;cursor:pointer;box-shadow:var(--shadow-m);transition:box-shadow .3s var(--ease)}
+.video-frame:hover{box-shadow:var(--shadow-l)}
+.play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:var(--merlot-deep);display:flex;align-items:center;justify-content:center;z-index:2;transition:background .25s,transform .25s var(--ease);cursor:pointer}
+.play::before{content:"";position:absolute;inset:-11px;border-radius:50%;border:1px solid rgba(176,94,81,.45);animation:pulse 2.6s var(--ease) infinite}
+@keyframes pulse{0%{transform:scale(.9);opacity:0}35%{opacity:1}100%{transform:scale(1.18);opacity:0}}
+.play::after{content:"";border-left:20px solid #fff;border-top:12px solid transparent;border-bottom:12px solid transparent;margin-left:5px}
+.video-frame:hover .play,.ph:hover .play{background:var(--merlot-ink);transform:translate(-50%,-50%) scale(1.06)}
+.stars{display:flex;gap:3px;color:var(--gold);margin-bottom:14px}
+.stars svg{width:15px;height:15px;fill:currentColor;stroke:none}
+.tst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:44px}
+.tst{background:var(--cream);padding:36px 30px;border-top:3px solid var(--gold);box-shadow:var(--shadow-s);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.tst:hover{transform:translateY(-4px);box-shadow:var(--shadow-m)}
+.tst blockquote{font-family:'Fraunces',serif;font-size:18px;color:var(--ink);line-height:1.5;font-style:italic}
+.tst .who{margin-top:18px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--merlot-ink)}
+.dark .tst{background:#fff}
+.dark .tst blockquote{color:var(--ink)}
+.dark .tst .who{color:var(--merlot-ink)}
+.eco-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px}
+.eco{background:#fff;border:1px solid var(--line);padding:34px 28px;transition:border-color .25s,transform .3s var(--ease),box-shadow .3s var(--ease);position:relative}
+.eco:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow-m)}
+.eco h3{font-size:22px;margin-bottom:10px}
+.eco p{font-size:14.5px;margin-bottom:18px}
+.eco a{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--merlot-ink);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.eco a::after{content:"";width:16px;height:2px;background:currentColor;clip-path:polygon(0 40%,72% 40%,72% 0,100% 50%,72% 100%,72% 60%,0 60%);transition:transform .25s var(--ease)}
+.eco a:hover::after{transform:translateX(4px)}
+.eco .tag{position:absolute;top:0;right:0;background:var(--merlot-deep);color:#fff;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:5px 12px}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:44px}
+.res-card{background:#fff;border:1px solid var(--line);cursor:pointer;transition:border-color .25s,transform .3s var(--ease),box-shadow .3s var(--ease);overflow:hidden}
+.res-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow-m)}
+.res-card .ph{aspect-ratio:16/10;transition:transform .5s var(--ease)}
+.res-card:hover .ph{transform:scale(1.03)}
+.res-card .body{padding:24px;position:relative;background:#fff;z-index:2}
+.res-card .cat{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold-deep);margin-bottom:8px}
+.res-card h3{font-size:19px;line-height:1.3}
+.res-card p{font-size:14px;margin-top:8px}
+.final{background:linear-gradient(120deg,var(--merlot-ink),var(--merlot-deep) 55%,var(--blush));color:#fff;text-align:center;position:relative;overflow:hidden}
+.final::before{content:"";position:absolute;right:-100px;top:-120px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%)}
+.final h2{color:#fff;font-size:clamp(30px,4vw,48px);max-width:720px;margin:0 auto;position:relative}
+.final p{max-width:560px;margin:18px auto 34px;color:rgba(255,255,255,.92);position:relative}
+.final .btn-outline{border-color:rgba(255,255,255,.75);color:#fff}
+.final .btn-outline:hover{background:#fff;color:var(--merlot-ink)}
+.page-hero{background:linear-gradient(150deg,#FBF3EF 0%,#F4DCD4 100%);color:var(--ink);padding:68px 0 54px;position:relative;overflow:hidden}
+.page-hero::before{content:"";position:absolute;right:-160px;top:-160px;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(212,147,136,.35),transparent 68%)}
+.page-hero>.wrap{position:relative}
+.page-hero h1{color:var(--ink);font-size:clamp(34px,4.4vw,54px);font-weight:400;max-width:780px}
+.page-hero h1 em{color:var(--merlot-deep)}
+.page-hero p{max-width:640px;margin-top:16px;color:var(--body);font-size:17px}
+.form-card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);padding:44px;box-shadow:var(--shadow-m)}
+.form-card h3{font-size:24px;margin-bottom:6px}
+.form-card .sub{font-size:14px;margin-bottom:26px}
+.fld{margin-bottom:16px}
+.fld label{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink);margin-bottom:6px}
+.fld input,.fld select,.fld textarea{width:100%;padding:13px 14px;border:1px solid var(--line);background:var(--cream);font-family:'Archivo';font-size:15px;color:var(--ink);transition:border-color .2s,background .2s,box-shadow .2s}
+.fld input:hover,.fld select:hover,.fld textarea:hover{border-color:rgba(69,50,48,.3)}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--merlot-deep);background:#fff;box-shadow:0 0 0 3px rgba(176,94,81,.15)}
+.fld input::placeholder,.fld textarea::placeholder{color:rgba(92,75,71,.55)}
+.fld-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;margin:18px 0 22px;cursor:pointer}
+.consent input{margin-top:3px;accent-color:var(--merlot-deep);width:15px;height:15px;flex:none}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:44px}
+.step{border-top:2px solid var(--gold);padding-top:20px;transition:transform .3s var(--ease)}
+.step:hover{transform:translateY(-3px)}
+.step .k{font-family:'Fraunces',serif;font-size:15px;color:var(--merlot-ink);font-style:italic;margin-bottom:8px}
+.step h3{font-size:19px;margin-bottom:8px}
+.step p{font-size:14px}
+.dark .step h3{color:var(--ink)}
+.topics{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:44px}
+.topic{background:#fff;border:1px solid var(--line);border-left:3px solid var(--gold);padding:30px 28px;transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .25s}
+.topic:hover{transform:translateY(-3px);box-shadow:var(--shadow-m);border-left-color:var(--merlot-deep)}
+.topic h3{font-size:21px;color:var(--merlot-ink);margin-bottom:8px}
+.topic p{font-size:14px}
+.topic .fit{display:inline-block;margin-top:12px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-deep);font-weight:700}
+.faq{max-width:760px;margin:0 auto}
+.faq details{border-bottom:1px solid var(--line);padding:20px 0}
+.faq summary{font-family:'Fraunces',serif;font-size:19px;color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:color .2s}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{color:var(--merlot-ink)}
+.faq summary::after{content:"";flex:none;width:14px;height:14px;background:var(--gold-deep);clip-path:polygon(45% 0,55% 0,55% 45%,100% 45%,100% 55%,55% 55%,55% 100%,45% 100%,45% 55%,0 55%,0 45%,45% 45%);transition:transform .3s var(--ease)}
+.faq details[open] summary::after{transform:rotate(135deg)}
+.faq details p{margin-top:12px;font-size:15px;max-width:680px}
+.dark .faq details{border-color:rgba(69,50,48,.18)}
+.dark .faq summary{color:var(--ink)}
+.rev-filter{display:flex;gap:10px;flex-wrap:wrap;margin-top:36px}
+.chip{padding:9px 18px;border:1px solid var(--line);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer;background:#fff;transition:background .2s,color .2s,border-color .2s,transform .2s var(--ease)}
+.chip:hover{border-color:var(--merlot);color:var(--merlot-ink);transform:translateY(-1px)}
+.chip.on{background:var(--merlot-deep);color:var(--cream);border-color:var(--merlot-deep)}
+.page-hero .chip{background:rgba(255,255,255,.55);border-color:rgba(69,50,48,.2);color:var(--ink)}
+.page-hero .chip.on{background:var(--merlot-deep);color:#fff;border-color:var(--merlot-deep)}
+.prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:44px}
+.prod{background:#fff;border:1px solid var(--line);padding:0;display:flex;flex-direction:column;transition:border-color .25s,transform .3s var(--ease),box-shadow .3s var(--ease)}
+.prod:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow-m)}
+.prod .ph{aspect-ratio:4/3}
+.prod .body{padding:26px;display:flex;flex-direction:column;flex:1}
+.prod .aud{font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--gold-deep);margin-bottom:8px}
+.prod h3{font-size:20px;margin-bottom:6px}
+.prod .prob{font-size:13px;font-style:italic;color:var(--merlot-ink);margin-bottom:10px;font-family:'Fraunces',serif}
+.prod p{font-size:14px;flex:1}
+.prod .btn{margin-top:18px;text-align:center}
+.cats{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.cat-pill{padding:8px 18px;background:#fff;border:1px solid var(--line);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.dark .cat-pill{background:#fff;border-color:var(--line);color:var(--ink)}
+.press-strip{display:flex;gap:20px;flex-wrap:wrap;margin-top:36px}
+.press-logo{flex:1;min-width:150px;height:72px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--body);font-weight:600;transition:border-color .25s,box-shadow .3s var(--ease)}
+.press-logo:hover{border-color:var(--gold);box-shadow:var(--shadow-s)}
+.lead-mag{background:linear-gradient(120deg,var(--merlot-ink),var(--merlot-deep));color:#fff;padding:44px;display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:center;margin-top:56px;box-shadow:var(--shadow-m)}
+.lead-mag h3{color:#fff;font-size:26px}
+.lead-mag p{color:rgba(255,255,255,.9);margin-top:10px;font-size:15px}
+.lead-mag .eyebrow::before{background:var(--gold-soft)}
+.lead-mag .fld input{background:#fff;border:none}
+.checklist{list-style:none;margin-top:24px}
+.checklist li{padding:12px 0 12px 34px;position:relative;border-bottom:1px solid var(--line);font-size:15px}
+.checklist li::before{content:"";position:absolute;left:2px;top:19px;width:15px;height:10px;border-left:2px solid var(--gold-deep);border-bottom:2px solid var(--gold-deep);transform:rotate(-45deg)}
+.dark .checklist li{border-color:rgba(69,50,48,.18);color:var(--body)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+.info-card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);padding:32px;box-shadow:var(--shadow-s)}
+.info-card h3{font-size:20px;margin-bottom:10px}
+.info-card p{font-size:14.5px}
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:44px}
+footer{background:#3D2B29;color:rgba(251,247,243,.75);padding:64px 0 32px;font-size:14px}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:38px;padding-bottom:44px;border-bottom:1px solid rgba(246,241,231,.12)}
+footer h4{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--blush);margin-bottom:16px;font-weight:700}
+footer ul{list-style:none}
+footer li{margin-bottom:10px}
+footer a{cursor:pointer;transition:color .2s}
+footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
+.foot-brand{font-family:'Fraunces',serif;font-size:22px;color:#FBF7F3}
+.foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:26px;font-size:12px;color:rgba(246,241,231,.5)}
+#backtop{position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:50%;background:var(--ink);color:var(--cream);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-m);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s var(--ease),transform .3s var(--ease),background .25s;z-index:80}
+#backtop.show{opacity:1;pointer-events:auto;transform:none}
+#backtop:hover{background:var(--merlot-deep)}
+#backtop svg{width:18px;height:18px}
+
+/* moving ticker tape */
+.ticker{background:linear-gradient(120deg,#3D2B29 0%,#543B37 100%);color:var(--cream);overflow:hidden;padding:20px 0;position:relative}
+.ticker-track{display:flex;width:max-content;animation:tickermove 40s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker-group{display:flex;align-items:center;flex:none}
+.ticker-group span{display:inline-flex;align-items:center;white-space:nowrap;padding:0 26px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:rgba(251,247,243,.8)}
+.ticker-group span b{color:var(--gold-soft);font-family:'Fraunces',serif;font-size:22px;font-weight:500;letter-spacing:0;margin-right:12px;font-variant-numeric:tabular-nums}
+.ticker-group span::after{content:"";width:6px;height:6px;background:var(--gold);transform:rotate(45deg);margin-left:52px}
+@keyframes tickermove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){
+  .ticker-track{animation:none;width:auto;flex-wrap:wrap;justify-content:center}
+  .ticker-group{flex-wrap:wrap;justify-content:center}
+  .ticker-group[aria-hidden]{display:none}
+}
+
+/* full-body cutout photo (transparent background) */
+.cutout{position:relative;aspect-ratio:4/5;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:radial-gradient(62% 52% at 50% 66%,rgba(212,147,136,.55),transparent 74%)}
+.cutout svg{height:90%;width:auto;display:block}
+.cutout>img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom}
+.cutout::after{content:attr(data-label);position:absolute;left:0;right:0;bottom:14px;text-align:center;color:rgba(69,50,48,.55);font-size:11px;letter-spacing:.2em;text-transform:uppercase;pointer-events:none}
+.cutout:has(>img) svg,.cutout:has(>img)::after{display:none}
+
+/* homepage thumbnail gallery strip */
+.thumb-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:44px}
+.thumb-strip .g{position:relative;cursor:pointer;overflow:hidden}
+.thumb-strip .ph{aspect-ratio:1/1;transition:transform .5s var(--ease)}
+.thumb-strip .ph::before{inset:8px}
+.thumb-strip .ph::after{font-size:9px;letter-spacing:.14em;padding:10px}
+.thumb-strip .g:hover .ph{transform:scale(1.05)}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* two-column page heroes with media */
+.hero2{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+.hero-media{aspect-ratio:4/3;box-shadow:var(--shadow-l);width:100%}
+/* gallery */
+.gal{columns:3;column-gap:18px;margin-top:44px}
+.gal .g{break-inside:avoid;margin-bottom:18px;position:relative;cursor:pointer;overflow:hidden}
+.gal .g .ph{width:100%;transition:transform .5s var(--ease)}
+.gal .g:hover .ph{transform:scale(1.04)}
+.gal .cap,.thumb-strip .cap{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(51,36,35,.85));color:#fff;padding:34px 16px 14px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;opacity:0;transition:opacity .3s;z-index:3}
+.thumb-strip .cap{padding:26px 12px 10px;font-size:9px}
+.gal .g:hover .cap,.gal .g:focus-visible .cap,.thumb-strip .g:hover .cap,.thumb-strip .g:focus-visible .cap{opacity:1}
+
+@media(max-width:1279px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--cream);flex-direction:column;padding:20px 24px;border-bottom:1px solid var(--line);gap:14px;align-items:flex-start;max-height:70vh;overflow:auto;box-shadow:var(--shadow-m)}
+  .nav-links.open{display:flex}
+  .nav-links a{font-size:12px;letter-spacing:.12em}
+  .drop{visibility:visible;opacity:1;transform:none;position:static;box-shadow:none;border:none;background:transparent;padding:4px 0 0 14px;min-width:0;transition:none}
+  .burger{display:block}
+}
+@media(max-width:920px){
+  .hero-grid,.split,.foot-grid,.two-col,.lead-mag{grid-template-columns:1fr}
+  .hero-grid{padding:56px 0 48px;gap:36px}
+  .tst-grid,.eco-grid,.res-grid,.steps,.prod-grid,.contact-grid{grid-template-columns:1fr}
+  .topics,.fld-row{grid-template-columns:1fr}
+  .hero2{grid-template-columns:1fr}
+  .thumb-strip{grid-template-columns:repeat(3,1fr)}
+  .gal{columns:2}
+  .proof-grid{grid-template-columns:1fr}
+  .proof-item{border-left:none;border-top:1px solid rgba(251,247,243,.12)}
+  .proof-item:first-child{border-top:none}
+  section{padding:54px 0}
+  .form-card{padding:32px 24px}
+}
+@media(max-width:560px){
+  .gal{columns:1}
+  .thumb-strip{grid-template-columns:repeat(2,1fr)}
+  .hero-ctas .btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="topbar"><span class="mkt" onclick="go('loc-atlanta')">Atlanta Metro</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-gwinnett')">Gwinnett County</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-gwinnett')">Lawrenceville</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-fayette')">Peachtree City / Fayette</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('Sandy Springs / Roswell / Alpharetta local page — coming soon (mockup)')">Sandy Springs / Roswell / Alpharetta</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('East Cobb / Marietta local page — coming soon (mockup)')">East Cobb / Marietta</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('Brookhaven / Decatur / Tucker local page — coming soon (mockup)')">Brookhaven / Decatur / Tucker</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('McDonough / Henry local page — coming soon (mockup)')">McDonough / Henry</span>  ·  <b><?= cms_e('global.phone') ?></b></div>
+<nav>
+<div class="nav-inner">
+<a class="brand" onclick="go('home')">Erika<span>K</span>Page</a>
+<button aria-controls="nl" aria-expanded="false" aria-label="Toggle navigation menu" class="burger"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewbox="0 0 24 24"><line x1="3" x2="21" y1="6" y2="6"></line><line x1="3" x2="21" y1="12" y2="12"></line><line x1="3" x2="21" y1="18" y2="18"></line></svg></button>
+<ul class="nav-links" id="nl">
+<li><a class="active" data-p="home" onclick="go('home')">Home</a></li>
+<li class="has-drop"><a data-p="sell" onclick="go('sell')">Sell ▾</a>
+<div class="drop"><a onclick="go('sell')">Sell Your Home</a><a onclick="go('homevalue')">Home Value Strategy</a></div></li>
+<li><a data-p="buy" onclick="go('buy')">Buy</a></li>
+<li><a data-p="speaking" onclick="go('speaking')">Speaking</a></li>
+<li class="has-drop"><a data-p="lifestyle" onclick="go('lifestyle')">Lifestyle &amp; Media ▾</a>
+<div class="drop"><a onclick="go('lifestyle')">Lifestyle Magazine</a><a onclick="go('media')">Media &amp; Press</a><a onclick="go('collaborations')">Collaborations</a></div></li>
+<li class="has-drop"><a data-p="resources" onclick="go('resources')">Resources ▾</a>
+<div class="drop"><a onclick="go('resources')">All Resources</a><a onclick="go('products')">Digital Products</a><a onclick="go('explains')">Erika Explains</a><a onclick="go('mentorship')">Mentorship</a><a onclick="go('investing')">Investing / C&amp;A</a><a onclick="go('pm')">Property Management</a><a onclick="go('transportation')">Transportation &amp; Logistics</a><a onclick="go('living')">Escaluxe Living</a></div></li>
+<li><a data-p="gallery" onclick="go('gallery')">Gallery</a></li>
+<li><a data-p="testimonials" onclick="go('testimonials')">Testimonials</a></li>
+<li><a data-p="contact" onclick="go('contact')">Contact</a></li>
+<li><a class="nav-cta" onclick="go('homevalue')">Home Value Strategy</a></li>
+</ul>
+</div>
+</nav>
+<main id="main">
+<!-- ==================== HOME / ==================== -->
+<div class="page active" id="page-home">
+<header class="hero">
+<div class="wrap hero-grid">
+<div>
+<p class="eyebrow on-dark"><?= cms_e('home.atlanta-metro-established-au.eyebrow1') ?></p>
+<h1 style="margin-top:14px"><?= cms_rich('home.atlanta-metro-established-au.heading1') ?></h1>
+<p class="pos"><?= cms_e('home.atlanta-metro-established-au.eyebrow2') ?></p>
+<p class="lede"><?= cms_rich('home.atlanta-metro-established-au.p1') ?></p>
+<div class="hero-ctas">
+<a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('home.atlanta-metro-established-au.btn1') ?></a>
+<a class="btn btn-outline" onclick="go('speaking')"><?= cms_e('home.atlanta-metro-established-au.btn2') ?></a>
+<a class="btn btn-outline" onclick="document.getElementById('ecosystem').scrollIntoView({behavior:'smooth'})"><?= cms_e('home.atlanta-metro-established-au.btn3') ?></a>
+</div>
+<div class="hero-badges">
+<span><svg aria-hidden="true" fill="currentColor" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><?= cms_e('home.atlanta-metro-established-au.badge1') ?></span>
+<span><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><?= cms_e('home.atlanta-metro-established-au.badge2') ?></span>
+<span><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M3 11l9-8 9 8"></path><path d="M5 9.5V21h14V9.5"></path></svg><?= cms_e('home.atlanta-metro-established-au.badge3') ?></span>
+</div>
+</div>
+<!-- Any .ph box (this headshot, the page heroes, listing photos...) accepts real media:
+           photo: <div class="ph hero-photo"><img src="erika-headshot.jpg" alt="Erika Page"></div>
+           video: <div class="ph hero-photo"><video src="intro.mp4" autoplay muted loop playsinline></video></div> -->
+<div class="ph hero-photo" data-label="Erika — Headshot · Photo or Video"><?= cms_img('home.atlanta-metro-established-au.img-erika-headshot-photo-o') ?></div>
+</div>
+</header>
+<div aria-label="Erika Page career highlights" class="ticker">
+<div class="ticker-track">
+<div class="ticker-group"><span><?= cms_rich('home.ticker.item1') ?></span><span><?= cms_rich('home.ticker.item2') ?></span><span><?= cms_rich('home.ticker.item3') ?></span><span><?= cms_rich('home.ticker.item4') ?></span><span><?= cms_rich('home.ticker.item5') ?></span><span><?= cms_rich('home.ticker.item6') ?></span><span><?= cms_rich('home.ticker.item7') ?></span><span><?= cms_rich('home.ticker.item8') ?></span></div>
+<div aria-hidden="true" class="ticker-group"><span><?= cms_rich('home.ticker.item1') ?></span><span><?= cms_rich('home.ticker.item2') ?></span><span><?= cms_rich('home.ticker.item3') ?></span><span><?= cms_rich('home.ticker.item4') ?></span><span><?= cms_rich('home.ticker.item5') ?></span><span><?= cms_rich('home.ticker.item6') ?></span><span><?= cms_rich('home.ticker.item7') ?></span><span><?= cms_rich('home.ticker.item8') ?></span></div>
+</div>
+</div>
+<section>
+<div class="wrap split">
+<div class="ph tall" data-label="Atlanta Luxury Listing Photo"><?= cms_img('home.sellers-first.img-atlanta-luxury-listing') ?></div>
+<div>
+<p class="eyebrow"><?= cms_e('home.sellers-first.eyebrow1') ?></p>
+<h2><?= cms_e('home.sellers-first.heading1') ?></h2>
+<div class="rule"></div>
+<p><?= cms_rich('home.sellers-first.p1') ?></p>
+<a class="btn btn-primary" onclick="go('homevalue')"><?= cms_e('home.sellers-first.btn1') ?></a>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap split">
+<div>
+<p class="eyebrow"><?= cms_e('home.speaking-influence.eyebrow1') ?></p>
+<h2><?= cms_e('home.speaking-influence.heading1') ?></h2>
+<div class="rule"></div>
+<p><?= cms_rich('home.speaking-influence.p1') ?></p>
+<a class="btn btn-outline-dark" onclick="go('speaking')"><?= cms_e('home.speaking-influence.btn1') ?></a>
+</div>
+<div class="cutout" data-label="Erika — Full-Body Photo · No Background"><?= cms_img('home.speaking-influence.img-erika-full-body-photo') ?>
+<svg aria-hidden="true" viewbox="0 0 200 320"><ellipse cx="100" cy="306" fill="rgba(69,50,48,.14)" rx="66" ry="10"></ellipse><circle cx="100" cy="40" fill="#C98D80" r="23"></circle><path d="M100 66c-27 0-39 19-41 45l-6 72c-1 10 4 16 12 16h9l7 108h38l7-108h9c8 0 13-6 12-16l-6-72c-2-26-14-45-41-45z" fill="#C98D80"></path></svg>
+</div>
+</div>
+</section>
+<section>
+<div class="wrap center-h" style="max-width:760px">
+<p class="eyebrow"><?= cms_e('home.meet-erika.eyebrow1') ?></p>
+<h2><?= cms_e('home.meet-erika.heading1') ?></h2>
+<div class="ph video-frame" data-label="60–90 second video intro (with on-page transcript for AI search)"><?= cms_img('home.meet-erika.img-60-90-second-video-int') ?><div class="play"></div></div>
+</div>
+</section>
+<section class="alt" id="ecosystem">
+<div class="wrap">
+<p class="eyebrow"><?= cms_e('home.one-name-every-lane.eyebrow1') ?></p>
+<h2 style="font-size:clamp(28px,3.4vw,40px);margin-top:10px"><?= cms_e('home.one-name-every-lane.heading1') ?></h2>
+<div class="eco-grid">
+<div class="eco"><div class="tag">Priority</div><h3><?= cms_e('home.one-name-every-lane.eco1-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco1-text') ?></p><a onclick="go('sell')"><?= cms_e('home.one-name-every-lane.eco1-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco2-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco2-text') ?></p><a onclick="go('speaking')"><?= cms_e('home.one-name-every-lane.eco2-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco3-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco3-text') ?></p><a onclick="go('mentorship')"><?= cms_e('home.one-name-every-lane.eco3-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco4-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco4-text') ?></p><a onclick="go('investing')"><?= cms_e('home.one-name-every-lane.eco4-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco5-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco5-text') ?></p><a onclick="go('pm')"><?= cms_e('home.one-name-every-lane.eco5-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco6-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco6-text') ?></p><a onclick="go('products')"><?= cms_e('home.one-name-every-lane.eco6-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco7-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco7-text') ?></p><a onclick="go('collaborations')"><?= cms_e('home.one-name-every-lane.eco7-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco8-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco8-text') ?></p><a onclick="go('transportation')"><?= cms_e('home.one-name-every-lane.eco8-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('home.one-name-every-lane.eco9-title') ?></h3><p><?= cms_e('home.one-name-every-lane.eco9-text') ?></p><a onclick="go('living')"><?= cms_e('home.one-name-every-lane.eco9-btn') ?></a></div>
+</div>
+</div>
+</section>
+<section>
+<div class="wrap">
+<p class="eyebrow"><?= cms_e('home.erika-explains-latest-resour.eyebrow1') ?></p>
+<h2 style="font-size:clamp(28px,3.4vw,40px);margin-top:10px"><?= cms_e('home.erika-explains-latest-resour.heading1') ?></h2>
+<div class="res-grid">
+<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Video Thumbnail"><?= cms_img('home.erika-explains-latest-resour.img-video-thumbnail') ?></div><div class="body"><div class="cat"><?= cms_e('home.erika-explains-latest-resour.res1-cat') ?></div><h3><?= cms_e('home.erika-explains-latest-resour.res1-title') ?></h3><p><?= cms_e('home.erika-explains-latest-resour.res1-text') ?></p></div></div>
+<div class="res-card" onclick="go('resources')"><div class="ph" data-label="Article Image"><?= cms_img('home.erika-explains-latest-resour.img-article-image') ?></div><div class="body"><div class="cat"><?= cms_e('home.erika-explains-latest-resour.res2-cat') ?></div><h3><?= cms_e('home.erika-explains-latest-resour.res2-title') ?></h3><p><?= cms_e('home.erika-explains-latest-resour.res2-text') ?></p></div></div>
+<div class="res-card" onclick="go('loc-gwinnett')"><div class="ph" data-label="Guide Cover"><?= cms_img('home.erika-explains-latest-resour.img-guide-cover') ?></div><div class="body"><div class="cat"><?= cms_e('home.erika-explains-latest-resour.res3-cat') ?></div><h3><?= cms_e('home.erika-explains-latest-resour.res3-title') ?></h3><p><?= cms_e('home.erika-explains-latest-resour.res3-text') ?></p></div></div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('home.moments-stages.eyebrow1') ?></p><h2><?= cms_e('home.moments-stages.heading1') ?></h2></div>
+<div class="thumb-strip">
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Keynote — Atlanta Summit"><?= cms_img('home.moments-stages.img-keynote-atlanta-summit') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap1') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Industry Panel"><?= cms_img('home.moments-stages.img-industry-panel') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap2') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="ADTV — On Set"><?= cms_img('home.moments-stages.img-adtv-on-set') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap3') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Women's Summit"><?= cms_img('home.moments-stages.img-women-s-summit') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap4') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Agent Mastermind"><?= cms_img('home.moments-stages.img-agent-mastermind') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap5') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Community Event"><?= cms_img('home.moments-stages.img-community-event') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap6') ?></div></div>
+</div>
+<div style="text-align:center;margin-top:36px"><a class="btn btn-outline-dark" onclick="go('gallery')"><?= cms_e('home.moments-stages.btn1') ?></a></div>
+</div>
+</section>
+<section class="dark">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow on-dark"><?= cms_e('home.client-stories.eyebrow1') ?></p><h2><?= cms_e('home.client-stories.heading1') ?></h2></div>
+<div class="tst-grid">
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('home.client-stories.tst1-quote') ?></blockquote><div class="who"><?= cms_e('home.client-stories.tst1-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('home.client-stories.tst2-quote') ?></blockquote><div class="who"><?= cms_e('home.client-stories.tst2-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('home.client-stories.tst3-quote') ?></blockquote><div class="who"><?= cms_e('home.client-stories.tst3-who') ?></div></div>
+</div>
+<div style="text-align:center;margin-top:40px"><a class="btn btn-outline" onclick="go('testimonials')"><?= cms_e('home.client-stories.btn1') ?></a></div>
+</div>
+</section>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('home.questions.eyebrow1') ?></p><h2><?= cms_e('home.questions.heading1') ?></h2></div>
+<div class="faq" style="margin-top:24px">
+<details open=""><summary><?= cms_e('home.questions.faq1-q') ?></summary><p><?= cms_rich('home.questions.faq1-a') ?></p></details>
+<details><summary><?= cms_e('home.questions.faq2-q') ?></summary><p><?= cms_rich('home.questions.faq2-a') ?></p></details>
+<details><summary><?= cms_e('home.questions.faq3-q') ?></summary><p><?= cms_rich('home.questions.faq3-a') ?></p></details>
+<details><summary><?= cms_e('home.questions.faq4-q') ?></summary><p><?= cms_rich('home.questions.faq4-a') ?></p></details>
+</div>
+</div>
+</section>
+<section class="final">
+<div class="wrap">
+<h2><?= cms_e('home.thinking-about-selling-your.heading1') ?></h2>
+<p><?= cms_rich('home.thinking-about-selling-your.p1') ?></p>
+<a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('home.thinking-about-selling-your.btn1') ?></a>
+</div>
+</section>
+</div>
+<!-- ==================== ABOUT /about ==================== -->
+<div class="page" id="page-about">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('about.about-erika-page.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('about.about-erika-page.heading1') ?></h1>
+<p><?= cms_rich('about.about-erika-page.p1') ?></p>
+</div><div class="ph hero-media" data-label="Erika's Story — Featured Video"><?= cms_img('about.about-erika-page.img-erika-s-story-featured') ?><div class="play"></div></div></div>
+</header>
+<section>
+<div class="wrap split" style="align-items:flex-start">
+<div class="ph tall" data-label="Erika — Editorial Portrait"><?= cms_img('about.professional-bio.img-erika-editorial-portra') ?></div>
+<div>
+<p class="eyebrow"><?= cms_e('about.professional-bio.eyebrow1') ?></p>
+<h2><?= cms_e('about.professional-bio.heading1') ?></h2>
+<div class="rule"></div>
+<p><?= cms_rich('about.professional-bio.p1') ?></p>
+<p><?= cms_rich('about.professional-bio.p2') ?></p>
+<a class="btn btn-primary" onclick="go('contact')"><?= cms_e('about.professional-bio.btn1') ?></a>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('about.career-proof.eyebrow1') ?></p><h2><?= cms_e('about.career-proof.heading1') ?></h2></div>
+<div class="steps">
+<div class="step"><div class="k"><?= cms_e('about.career-proof.step1-k') ?></div><h3><?= cms_e('about.career-proof.step1-title') ?></h3><p><?= cms_e('about.career-proof.step1-text') ?></p></div>
+<div class="step"><div class="k"><?= cms_e('about.career-proof.step2-k') ?></div><h3><?= cms_e('about.career-proof.step2-title') ?></h3><p><?= cms_e('about.career-proof.step2-text') ?></p></div>
+<div class="step"><div class="k"><?= cms_e('about.career-proof.step3-k') ?></div><h3><?= cms_e('about.career-proof.step3-title') ?></h3><p><?= cms_e('about.career-proof.step3-text') ?></p></div>
+<div class="step"><div class="k"><?= cms_e('about.career-proof.step4-k') ?></div><h3><?= cms_e('about.career-proof.step4-title') ?></h3><p><?= cms_e('about.career-proof.step4-text') ?></p></div>
+</div>
+</div>
+</section>
+<section>
+<div class="wrap split">
+<div>
+<p class="eyebrow"><?= cms_e('about.entrepreneurship-ecosystem.eyebrow1') ?></p>
+<h2><?= cms_e('about.entrepreneurship-ecosystem.heading1') ?></h2>
+<div class="rule"></div>
+<p><?= cms_rich('about.entrepreneurship-ecosystem.p1') ?></p>
+<p><?= cms_rich('about.entrepreneurship-ecosystem.p2') ?></p>
+</div>
+<div class="ph tall" data-label="Escaluxe Ecosystem / Team Photo"><?= cms_img('about.entrepreneurship-ecosystem.img-escaluxe-ecosystem-tea') ?></div>
+</div>
+</section>
+<section class="dark">
+<div class="wrap split">
+<div class="ph wide" data-label="Featured Video — Erika's Story"><?= cms_img('about.speaking-media-authority.img-featured-video-erika-s') ?></div>
+<div>
+<p class="eyebrow on-dark"><?= cms_e('about.speaking-media-authority.eyebrow1') ?></p>
+<h2><?= cms_e('about.speaking-media-authority.heading1') ?></h2>
+<div class="rule"></div>
+<p><?= cms_rich('about.speaking-media-authority.p1') ?></p>
+<a class="btn btn-outline" onclick="go('speaking')"><?= cms_e('about.speaking-media-authority.btn1') ?></a>
+</div>
+</div>
+</section>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('about.lifestyle-values.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px)"><?= cms_e('about.lifestyle-values.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('about.lifestyle-values.p1') ?></p>
+</div>
+<div>
+<p class="eyebrow"><?= cms_e('about.lifestyle-values.eyebrow2') ?></p>
+<div class="press-strip" style="margin-top:20px">
+<div class="press-logo">ADTV</div><div class="press-logo">Podcast Feature</div><div class="press-logo">Media Outlet</div><div class="press-logo">Press Logo</div>
+</div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('about.questions.eyebrow1') ?></p><h2><?= cms_e('about.questions.heading1') ?></h2></div>
+<div class="faq" style="margin-top:24px">
+<details open=""><summary><?= cms_e('about.questions.faq1-q') ?></summary><p><?= cms_rich('about.questions.faq1-a') ?></p></details>
+<details><summary><?= cms_e('about.questions.faq2-q') ?></summary><p><?= cms_rich('about.questions.faq2-a') ?></p></details>
+<details><summary><?= cms_e('about.questions.faq3-q') ?></summary><p><?= cms_rich('about.questions.faq3-a') ?></p></details>
+</div>
+</div>
+</section>
+<section class="final">
+<div class="wrap">
+<h2><?= cms_e('about.ready-to-work-with-erika.heading1') ?></h2>
+<p><?= cms_rich('about.ready-to-work-with-erika.p1') ?></p>
+<a class="btn btn-gold" onclick="go('contact')"><?= cms_e('about.ready-to-work-with-erika.btn1') ?></a>  <a class="btn btn-outline" onclick="go('speaking')"><?= cms_e('about.ready-to-work-with-erika.btn2') ?></a>
+</div>
+</section>
+</div>
+<!-- ==================== SELL /sell ==================== -->
+<div class="page" id="page-sell">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('sell.sell-with-erika.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('sell.sell-with-erika.heading1') ?></h1>
+<p><?= cms_rich('sell.sell-with-erika.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('sell.sell-with-erika.btn1') ?></a></div>
+</div>
+<div class="form-card">
+<h3><?= cms_e('sell.sell-with-erika.heading2') ?></h3>
+<p class="sub"><?= cms_rich('sell.sell-with-erika.p2') ?></p>
+<div class="fld-row">
+<div class="fld"><label>First name</label><input placeholder="First name"/></div>
+<div class="fld"><label>Last name</label><input placeholder="Last name"/></div>
+</div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Phone</label><input placeholder="(___) ___-____"/></div>
+<div class="fld"><label>Property address</label><input placeholder="Street, City, GA"/></div>
+<div class="fld"><label>Ideal selling timeline</label>
+<select><option>Now</option><option>30–60 days</option><option>3–6 months</option><option>6+ months</option><option>Not sure yet</option></select></div>
+<label class="consent"><input type="checkbox"/> I agree to be contacted by Erika Page about selling my home. Your information stays private.</label>
+<a class="btn btn-primary" onclick="alert('Submits to CRM · fires seller form event (mockup)')" style="width:100%;text-align:center"><?= cms_e('sell.sell-with-erika.btn2') ?></a>
+<p style="font-size:12px;margin-top:14px;text-align:center"><?= cms_rich('sell.sell-with-erika.p3') ?></p>
+</div></div>
+</header>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('sell.why-strategy-matters.eyebrow1') ?></p><h2><?= cms_e('sell.why-strategy-matters.heading1') ?></h2></div>
+<p style="max-width:680px;margin:18px auto 0;text-align:center"><?= cms_rich('sell.why-strategy-matters.p1') ?></p>
+<div class="steps">
+<div class="step"><div class="k"><?= cms_e('sell.why-strategy-matters.step1-k') ?></div><h3><?= cms_e('sell.why-strategy-matters.step1-title') ?></h3><p><?= cms_e('sell.why-strategy-matters.step1-text') ?></p></div>
+<div class="step"><div class="k"><?= cms_e('sell.why-strategy-matters.step2-k') ?></div><h3><?= cms_e('sell.why-strategy-matters.step2-title') ?></h3><p><?= cms_e('sell.why-strategy-matters.step2-text') ?></p></div>
+<div class="step"><div class="k"><?= cms_e('sell.why-strategy-matters.step3-k') ?></div><h3><?= cms_e('sell.why-strategy-matters.step3-title') ?></h3><p><?= cms_e('sell.why-strategy-matters.step3-text') ?></p></div>
+<div class="step"><div class="k"><?= cms_e('sell.why-strategy-matters.step4-k') ?></div><h3><?= cms_e('sell.why-strategy-matters.step4-title') ?></h3><p><?= cms_e('sell.why-strategy-matters.step4-text') ?></p></div>
+</div>
+</div>
+</section>
+<section class="dark">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow on-dark"><?= cms_e('sell.seller-stories.eyebrow1') ?></p><h2><?= cms_e('sell.seller-stories.heading1') ?></h2></div>
+<div class="tst-grid">
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('sell.seller-stories.tst1-quote') ?></blockquote><div class="who"><?= cms_e('sell.seller-stories.tst1-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('sell.seller-stories.tst2-quote') ?></blockquote><div class="who"><?= cms_e('sell.seller-stories.tst2-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('sell.seller-stories.tst3-quote') ?></blockquote><div class="who"><?= cms_e('sell.seller-stories.tst3-who') ?></div></div>
+</div>
+<div class="center-h" style="margin-top:56px"><p class="eyebrow on-dark"><?= cms_e('sell.seller-stories.eyebrow2') ?></p></div>
+<div class="res-grid">
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Seller Video Story 1"><?= cms_img('sell.seller-stories.img-seller-video-story-1') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('sell.seller-stories.res1-cat') ?></div><h3><?= cms_e('sell.seller-stories.res1-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Seller Video Story 2"><?= cms_img('sell.seller-stories.img-seller-video-story-2') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('sell.seller-stories.res2-cat') ?></div><h3><?= cms_e('sell.seller-stories.res2-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Seller Video Story 3"><?= cms_img('sell.seller-stories.img-seller-video-story-3') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('sell.seller-stories.res3-cat') ?></div><h3><?= cms_e('sell.seller-stories.res3-title') ?></h3></div></div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('sell.seller-questions.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('sell.seller-questions.heading1') ?></h2>
+<div class="faq" style="margin:24px 0 0;max-width:none">
+<details open=""><summary><?= cms_e('sell.seller-questions.faq1-q') ?></summary><p><?= cms_rich('sell.seller-questions.faq1-a') ?></p></details>
+<details><summary><?= cms_e('sell.seller-questions.faq2-q') ?></summary><p><?= cms_rich('sell.seller-questions.faq2-a') ?></p></details>
+<details><summary><?= cms_e('sell.seller-questions.faq3-q') ?></summary><p><?= cms_rich('sell.seller-questions.faq3-a') ?></p></details>
+<details><summary><?= cms_e('sell.seller-questions.faq4-q') ?></summary><p><?= cms_rich('sell.seller-questions.faq4-a') ?></p></details>
+<details><summary><?= cms_e('sell.seller-questions.faq5-q') ?></summary><p><?= cms_rich('sell.seller-questions.faq5-a') ?></p></details>
+</div>
+</div>
+<div class="ph tall" data-label="Sold Atlanta Listing — Photo or Video"><?= cms_img('sell.seller-questions.img-sold-atlanta-listing-p') ?></div>
+</div>
+</section>
+</div>
+<!-- ==================== HOME VALUE /home-value ==================== -->
+<div class="page" id="page-homevalue">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('homevalue.atlanta-home-value-strategy.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('homevalue.atlanta-home-value-strategy.heading1') ?></h1>
+<p><?= cms_rich('homevalue.atlanta-home-value-strategy.p1') ?></p>
+</div><div class="ph hero-media" data-label="Erika Preparing a Home Valuation"><?= cms_img('homevalue.atlanta-home-value-strategy.img-erika-preparing-a-home') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('homevalue.why-online-estimates-are-not.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('homevalue.why-online-estimates-are-not.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('homevalue.why-online-estimates-are-not.p1') ?></p>
+<p class="eyebrow" style="margin-top:34px"><?= cms_e('homevalue.why-online-estimates-are-not.eyebrow2') ?></p>
+<ul class="checklist">
+<li><?= cms_e('homevalue.why-online-estimates-are-not.check1') ?></li>
+<li><?= cms_e('homevalue.why-online-estimates-are-not.check2') ?></li>
+<li><?= cms_e('homevalue.why-online-estimates-are-not.check3') ?></li>
+<li><?= cms_e('homevalue.why-online-estimates-are-not.check4') ?></li>
+<li><?= cms_e('homevalue.why-online-estimates-are-not.check5') ?></li>
+</ul>
+<div class="info-card" style="margin-top:34px">
+<h3><?= cms_e('homevalue.why-online-estimates-are-not.info1-title') ?></h3>
+<p><?= cms_rich('homevalue.why-online-estimates-are-not.info1-text') ?></p>
+</div>
+</div>
+<div>
+<div class="form-card">
+<h3><?= cms_e('homevalue.why-online-estimates-are-not.heading2') ?></h3>
+<p class="sub"><?= cms_rich('homevalue.why-online-estimates-are-not.p2') ?></p>
+<div class="fld-row">
+<div class="fld"><label>First name *</label><input placeholder="First name"/></div>
+<div class="fld"><label>Last name *</label><input placeholder="Last name"/></div>
+</div>
+<div class="fld"><label>Email *</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Phone *</label><input placeholder="(___) ___-____"/></div>
+<div class="fld"><label>Property address *</label><input placeholder="Street, City, GA"/></div>
+<div class="fld"><label>Ideal selling timeline *</label>
+<select><option>Now</option><option>30–60 days</option><option>3–6 months</option><option>6+ months</option><option>Not sure yet</option></select></div>
+<div class="fld"><label>Estimated home value (optional)</label><input placeholder="$"/></div>
+<div class="fld"><label>What matters most? (optional)</label>
+<select><option>Price</option><option>Timing</option><option>Privacy</option><option>Repairs</option><option>Relocation</option><option>Divorce / probate</option><option>Investment</option><option>Other</option></select></div>
+<label class="consent"><input type="checkbox"/> I consent to be contacted by Erika Page by phone, text, or email about my home value strategy. *</label>
+<a class="btn btn-primary" onclick="alert('Fires home_value_form_submit → CRM (mockup)')" style="width:100%;text-align:center"><?= cms_e('homevalue.why-online-estimates-are-not.btn1') ?></a>
+</div>
+<div class="info-card" style="margin-top:20px;text-align:center">
+<h3><?= cms_e('homevalue.why-online-estimates-are-not.info2-title') ?></h3>
+<p><?= cms_rich('homevalue.why-online-estimates-are-not.info2-text') ?></p>
+<a class="btn btn-outline-dark" onclick="alert('Opens Google Workspace booking (Calendly backup) — mockup')" style="margin-top:14px"><?= cms_e('homevalue.why-online-estimates-are-not.btn2') ?></a>
+</div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('homevalue.trusted-by-1-000-families.eyebrow1') ?></p><h2><?= cms_e('homevalue.trusted-by-1-000-families.heading1') ?></h2></div>
+<div class="tst-grid">
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('homevalue.trusted-by-1-000-families.tst1-quote') ?></blockquote><div class="who"><?= cms_e('homevalue.trusted-by-1-000-families.tst1-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('homevalue.trusted-by-1-000-families.tst2-quote') ?></blockquote><div class="who"><?= cms_e('homevalue.trusted-by-1-000-families.tst2-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('homevalue.trusted-by-1-000-families.tst3-quote') ?></blockquote><div class="who"><?= cms_e('homevalue.trusted-by-1-000-families.tst3-who') ?></div></div>
+</div>
+<div class="faq" style="margin-top:64px">
+<details open=""><summary><?= cms_e('homevalue.trusted-by-1-000-families.faq1-q') ?></summary><p><?= cms_rich('homevalue.trusted-by-1-000-families.faq1-a') ?></p></details>
+<details><summary><?= cms_e('homevalue.trusted-by-1-000-families.faq2-q') ?></summary><p><?= cms_rich('homevalue.trusted-by-1-000-families.faq2-a') ?></p></details>
+<details><summary><?= cms_e('homevalue.trusted-by-1-000-families.faq3-q') ?></summary><p><?= cms_rich('homevalue.trusted-by-1-000-families.faq3-a') ?></p></details>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== BUY /buy ==================== -->
+<div class="page" id="page-buy">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('buy.buy-with-erika.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('buy.buy-with-erika.heading1') ?></h1>
+<p><?= cms_rich('buy.buy-with-erika.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('contact')"><?= cms_e('buy.buy-with-erika.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Links to Axen Realty / Lofty IDX home search (mockup)')"><?= cms_e('buy.buy-with-erika.btn2') ?></a></div>
+</div><div class="ph hero-media" data-label="Buyers Touring an Atlanta Home"><?= cms_img('buy.buy-with-erika.img-buyers-touring-an-atla') ?></div></div>
+</header>
+<section>
+<div class="wrap split">
+<div>
+<p class="eyebrow"><?= cms_e('buy.buying-strategy.eyebrow1') ?></p>
+<h2><?= cms_e('buy.buying-strategy.heading1') ?></h2>
+<div class="rule"></div>
+<p><?= cms_rich('buy.buying-strategy.p1') ?></p>
+<ul class="checklist">
+<li><?= cms_e('buy.buying-strategy.check1') ?></li>
+<li><?= cms_e('buy.buying-strategy.check2') ?></li>
+<li><?= cms_e('buy.buying-strategy.check3') ?></li>
+</ul>
+</div>
+<div class="ph tall" data-label="Buyers at New Home — Keys Photo"><?= cms_img('buy.buying-strategy.img-buyers-at-new-home-key') ?></div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('buy.every-kind-of-buyer.eyebrow1') ?></p><h2><?= cms_e('buy.every-kind-of-buyer.heading1') ?></h2></div>
+<div class="eco-grid">
+<div class="eco"><h3><?= cms_e('buy.every-kind-of-buyer.eco1-title') ?></h3><p><?= cms_e('buy.every-kind-of-buyer.eco1-text') ?></p><a onclick="go('contact')"><?= cms_e('buy.every-kind-of-buyer.eco1-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('buy.every-kind-of-buyer.eco2-title') ?></h3><p><?= cms_e('buy.every-kind-of-buyer.eco2-text') ?></p><a onclick="go('contact')"><?= cms_e('buy.every-kind-of-buyer.eco2-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('buy.every-kind-of-buyer.eco3-title') ?></h3><p><?= cms_e('buy.every-kind-of-buyer.eco3-text') ?></p><a onclick="alert('Opens Axen / Lofty IDX (mockup)')"><?= cms_e('buy.every-kind-of-buyer.eco3-btn') ?></a></div>
+</div>
+</div>
+</section>
+<section class="dark">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow on-dark"><?= cms_e('buy.buyer-stories.eyebrow1') ?></p><h2><?= cms_e('buy.buyer-stories.heading1') ?></h2></div>
+<div class="tst-grid">
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('buy.buyer-stories.tst1-quote') ?></blockquote><div class="who"><?= cms_e('buy.buyer-stories.tst1-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('buy.buyer-stories.tst2-quote') ?></blockquote><div class="who"><?= cms_e('buy.buyer-stories.tst2-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('buy.buyer-stories.tst3-quote') ?></blockquote><div class="who"><?= cms_e('buy.buyer-stories.tst3-who') ?></div></div>
+</div>
+</div>
+</section>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('buy.buyer-questions.eyebrow1') ?></p><h2><?= cms_e('buy.buyer-questions.heading1') ?></h2></div>
+<div class="faq" style="margin-top:24px">
+<details open=""><summary><?= cms_e('buy.buyer-questions.faq1-q') ?></summary><p><?= cms_rich('buy.buyer-questions.faq1-a') ?></p></details>
+<details><summary><?= cms_e('buy.buyer-questions.faq2-q') ?></summary><p><?= cms_rich('buy.buyer-questions.faq2-a') ?></p></details>
+<details><summary><?= cms_e('buy.buyer-questions.faq3-q') ?></summary><p><?= cms_rich('buy.buyer-questions.faq3-a') ?></p></details>
+</div>
+<div style="text-align:center;margin-top:44px"><a class="btn btn-primary" onclick="go('contact')"><?= cms_e('buy.buyer-questions.btn1') ?></a></div>
+</div>
+</section>
+</div>
+<!-- ==================== SPEAKING /speaking ==================== -->
+<div class="page" id="page-speaking">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('speaking.speaking.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('speaking.speaking.heading1') ?></h1>
+<p><?= cms_rich('speaking.speaking.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('spk-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('speaking.speaking.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Downloads speaker one-sheet PDF (mockup)')"><?= cms_e('speaking.speaking.btn2') ?></a></div>
+</div><div class="ph hero-media" data-label="Speaker Reel — Preview"><?= cms_img('speaking.speaking.img-speaker-reel-preview') ?><div class="play"></div></div></div>
+</header>
+<section>
+<div class="wrap split">
+<div class="ph tall" data-label="Erika Keynote — Stage Photo"><?= cms_img('speaking.speaker-bio.img-erika-keynote-stage-ph') ?></div>
+<div>
+<p class="eyebrow"><?= cms_e('speaking.speaker-bio.eyebrow1') ?></p>
+<h2><?= cms_e('speaking.speaker-bio.heading1') ?></h2>
+<div class="rule"></div>
+<p><?= cms_rich('speaking.speaker-bio.p1') ?></p>
+<p><?= cms_rich('speaking.speaker-bio.p2') ?></p>
+<a class="btn btn-outline-dark" onclick="alert('Downloads one-sheet (mockup)')"><?= cms_e('speaking.speaker-bio.btn1') ?></a>
+</div>
+</div>
+</section>
+<section class="dark">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow on-dark"><?= cms_e('speaking.signature-topics.eyebrow1') ?></p><h2><?= cms_e('speaking.signature-topics.heading1') ?></h2></div>
+<div class="topics">
+<div class="topic"><h3><?= cms_e('speaking.signature-topics.topic1-title') ?></h3><p><?= cms_e('speaking.signature-topics.topic1-text') ?></p><span class="fit"><?= cms_e('speaking.signature-topics.topic1-fit') ?></span></div>
+<div class="topic"><h3><?= cms_e('speaking.signature-topics.topic2-title') ?></h3><p><?= cms_e('speaking.signature-topics.topic2-text') ?></p><span class="fit"><?= cms_e('speaking.signature-topics.topic2-fit') ?></span></div>
+<div class="topic"><h3><?= cms_e('speaking.signature-topics.topic3-title') ?></h3><p><?= cms_e('speaking.signature-topics.topic3-text') ?></p><span class="fit"><?= cms_e('speaking.signature-topics.topic3-fit') ?></span></div>
+<div class="topic"><h3><?= cms_e('speaking.signature-topics.topic4-title') ?></h3><p><?= cms_e('speaking.signature-topics.topic4-text') ?></p><span class="fit"><?= cms_e('speaking.signature-topics.topic4-fit') ?></span></div>
+<div class="topic"><h3><?= cms_e('speaking.signature-topics.topic5-title') ?></h3><p><?= cms_e('speaking.signature-topics.topic5-text') ?></p><span class="fit"><?= cms_e('speaking.signature-topics.topic5-fit') ?></span></div>
+<div class="topic"><h3><?= cms_e('speaking.signature-topics.topic6-title') ?></h3><p><?= cms_e('speaking.signature-topics.topic6-text') ?></p><span class="fit"><?= cms_e('speaking.signature-topics.topic6-fit') ?></span></div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap split">
+<div class="ph wide" data-label="Speaker Reel / Stage Clips"><?= cms_img('speaking.audience-types.img-speaker-reel-stage-cli') ?><div class="play"></div></div>
+<div>
+<p class="eyebrow"><?= cms_e('speaking.audience-types.eyebrow1') ?></p>
+<h2><?= cms_e('speaking.audience-types.heading1') ?></h2>
+<div class="rule"></div>
+<ul class="checklist">
+<li><?= cms_e('speaking.audience-types.check1') ?></li>
+<li><?= cms_e('speaking.audience-types.check2') ?></li>
+<li><?= cms_e('speaking.audience-types.check3') ?></li>
+<li><?= cms_e('speaking.audience-types.check4') ?></li>
+<li><?= cms_e('speaking.audience-types.check5') ?></li>
+</ul>
+</div>
+</div>
+</section>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('speaking.event-planner-proof.eyebrow1') ?></p><h2><?= cms_e('speaking.event-planner-proof.heading1') ?></h2></div>
+<div class="tst-grid">
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('speaking.event-planner-proof.tst1-quote') ?></blockquote><div class="who"><?= cms_e('speaking.event-planner-proof.tst1-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('speaking.event-planner-proof.tst2-quote') ?></blockquote><div class="who"><?= cms_e('speaking.event-planner-proof.tst2-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('speaking.event-planner-proof.tst3-quote') ?></blockquote><div class="who"><?= cms_e('speaking.event-planner-proof.tst3-who') ?></div></div>
+</div>
+</div>
+</section>
+<section class="alt" id="spk-form">
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('speaking.speaking-questions.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('speaking.speaking-questions.heading1') ?></h2>
+<div class="faq" style="margin:24px 0 0;max-width:none">
+<details open=""><summary><?= cms_e('speaking.speaking-questions.faq1-q') ?></summary><p><?= cms_rich('speaking.speaking-questions.faq1-a') ?></p></details>
+<details><summary><?= cms_e('speaking.speaking-questions.faq2-q') ?></summary><p><?= cms_rich('speaking.speaking-questions.faq2-a') ?></p></details>
+<details><summary><?= cms_e('speaking.speaking-questions.faq3-q') ?></summary><p><?= cms_rich('speaking.speaking-questions.faq3-a') ?></p></details>
+<details><summary><?= cms_e('speaking.speaking-questions.faq4-q') ?></summary><p><?= cms_rich('speaking.speaking-questions.faq4-a') ?></p></details>
+</div>
+</div>
+<div class="form-card">
+<h3><?= cms_e('speaking.speaking-questions.heading2') ?></h3>
+<p class="sub"><?= cms_rich('speaking.speaking-questions.p1') ?></p>
+<div class="fld-row">
+<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Organization</label><input placeholder="Company / event"/></div>
+</div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Event date &amp; location</label><input placeholder="Date · City"/></div>
+<div class="fld"><label>Audience &amp; format</label><textarea placeholder="Who's in the room? Keynote, panel, or workshop?" rows="3"></textarea></div>
+<a class="btn btn-primary" onclick="alert('Fires speaking_inquiry_submit → routed to Erika (mockup)')" style="width:100%;text-align:center"><?= cms_e('speaking.speaking-questions.btn1') ?></a>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== COLLABORATIONS /collaborations ==================== -->
+<div class="page" id="page-collaborations">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('collaborations.collaborations.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('collaborations.collaborations.heading1') ?></h1>
+<p><?= cms_rich('collaborations.collaborations.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('collab-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('collaborations.collaborations.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Brand Collaboration Shoot"><?= cms_img('collaborations.collaborations.img-brand-collaboration-sh') ?></div></div>
+</header>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('collaborations.collaboration-lanes.eyebrow1') ?></p><h2><?= cms_e('collaborations.collaboration-lanes.heading1') ?></h2></div>
+<div class="eco-grid">
+<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco1-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco1-text') ?></p><a onclick="document.getElementById('collab-form').scrollIntoView()"><?= cms_e('collaborations.collaboration-lanes.eco1-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco2-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco2-text') ?></p><a onclick="go('media')"><?= cms_e('collaborations.collaboration-lanes.eco2-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco3-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco3-text') ?></p><a onclick="go('speaking')"><?= cms_e('collaborations.collaboration-lanes.eco3-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco4-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco4-text') ?></p><a onclick="document.getElementById('collab-form').scrollIntoView()"><?= cms_e('collaborations.collaboration-lanes.eco4-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco5-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco5-text') ?></p><a onclick="document.getElementById('collab-form').scrollIntoView()"><?= cms_e('collaborations.collaboration-lanes.eco5-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('collaborations.collaboration-lanes.eco6-title') ?></h3><p><?= cms_e('collaborations.collaboration-lanes.eco6-text') ?></p><a onclick="document.getElementById('collab-form').scrollIntoView()"><?= cms_e('collaborations.collaboration-lanes.eco6-btn') ?></a></div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('collaborations.brand-safe-positioning.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('collaborations.brand-safe-positioning.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('collaborations.brand-safe-positioning.p1') ?></p>
+<div class="info-card" style="margin-top:30px">
+<h3><?= cms_e('collaborations.brand-safe-positioning.info1-title') ?></h3>
+<p><?= cms_rich('collaborations.brand-safe-positioning.info1-text') ?></p>
+</div>
+</div>
+<div class="form-card" id="collab-form">
+<h3><?= cms_e('collaborations.brand-safe-positioning.heading2') ?></h3>
+<p class="sub"><?= cms_rich('collaborations.brand-safe-positioning.p2') ?></p>
+<div class="fld-row">
+<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Brand / company</label><input placeholder="Brand name"/></div>
+</div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Collaboration type</label>
+<select><option>Brand partnership</option><option>Media / interview</option><option>Panel / event</option><option>Content collaboration</option><option>Luxury / local Atlanta</option><option>Other</option></select></div>
+<div class="fld"><label>Tell us about the idea</label><textarea placeholder="Goals, timing, audience..." rows="3"></textarea></div>
+<a class="btn btn-primary" onclick="alert('Fires collaboration_inquiry_submit (mockup)')" style="width:100%;text-align:center"><?= cms_e('collaborations.brand-safe-positioning.btn1') ?></a>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== LIFESTYLE /lifestyle ==================== -->
+<div class="page" id="page-lifestyle">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('lifestyle.lifestyle-magazine.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('lifestyle.lifestyle-magazine.heading1') ?></h1>
+<p><?= cms_rich('lifestyle.lifestyle-magazine.p1') ?></p>
+<div class="rev-filter">
+<span class="chip on">All</span><span class="chip">Atlanta Living</span><span class="chip">Real Estate</span><span class="chip">Wealth &amp; Investing</span><span class="chip">Luxury Lifestyle</span><span class="chip">Travel &amp; Hospitality</span><span class="chip">Agent Growth</span><span class="chip">Leadership &amp; Speaking</span>
+</div>
+</div><div class="ph hero-media" data-label="Atlanta Lifestyle Editorial"><?= cms_img('lifestyle.lifestyle-magazine.img-atlanta-lifestyle-edit') ?></div></div>
+</header>
+<section>
+<div class="wrap">
+<p class="eyebrow"><?= cms_e('lifestyle.featured-stories.eyebrow1') ?></p>
+<div class="res-grid">
+<div class="res-card"><div class="ph" data-label="Atlanta Skyline Feature"><?= cms_img('lifestyle.featured-stories.img-atlanta-skyline-featur') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res1-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res1-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res1-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Luxury Interior Feature"><?= cms_img('lifestyle.featured-stories.img-luxury-interior-featur') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res2-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res2-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res2-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Travel Feature"><?= cms_img('lifestyle.featured-stories.img-travel-feature') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res3-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res3-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res3-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Wealth Feature"><?= cms_img('lifestyle.featured-stories.img-wealth-feature') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res4-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res4-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res4-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Food Feature"><?= cms_img('lifestyle.featured-stories.img-food-feature') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res5-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res5-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res5-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Leadership Feature"><?= cms_img('lifestyle.featured-stories.img-leadership-feature') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res6-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res6-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res6-text') ?></p></div></div>
+</div>
+</div>
+</section>
+<section class="final">
+<div class="wrap">
+<h2><?= cms_e('lifestyle.create-something-with-erika.heading1') ?></h2>
+<p><?= cms_rich('lifestyle.create-something-with-erika.p1') ?></p>
+<a class="btn btn-gold" onclick="go('collaborations')"><?= cms_e('lifestyle.create-something-with-erika.btn1') ?></a>  <a class="btn btn-outline" onclick="go('explains')"><?= cms_e('lifestyle.create-something-with-erika.btn2') ?></a>
+</div>
+</section>
+</div>
+<!-- ==================== MEDIA /media ==================== -->
+<div class="page" id="page-media">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('media.media-press.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('media.media-press.heading1') ?></h1>
+<p><?= cms_rich('media.media-press.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('speaking')"><?= cms_e('media.media-press.btn1') ?></a>  <a class="btn btn-outline" onclick="go('contact')"><?= cms_e('media.media-press.btn2') ?></a></div>
+</div><div class="ph hero-media" data-label="ADTV Feature Clip"><?= cms_img('media.media-press.img-adtv-feature-clip') ?><div class="play"></div></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('media.media-bio.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('media.media-bio.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:500px"><?= cms_rich('media.media-bio.p1') ?></p>
+<p style="font-size:13px;color:var(--merlot)"><?= cms_rich('media.media-bio.p2') ?></p>
+</div>
+<div>
+<p class="eyebrow"><?= cms_e('media.media-bio.eyebrow2') ?></p>
+<div class="press-strip" style="margin-top:20px">
+<div class="press-logo">Headshot Pack</div><div class="press-logo">Logo Files</div><div class="press-logo">One-Sheet PDF</div>
+</div>
+<a class="btn btn-outline-dark" onclick="alert('Downloads media kit (mockup)')" style="margin-top:22px"><?= cms_e('media.media-bio.btn1') ?></a>
+</div>
+</div>
+</section>
+<section class="dark">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow on-dark"><?= cms_e('media.on-screen-on-air.eyebrow1') ?></p><h2><?= cms_e('media.on-screen-on-air.heading1') ?></h2></div>
+<div class="res-grid">
+<div class="res-card" style="background:#fff"><div class="ph" data-label="ADTV Clip"><?= cms_img('media.on-screen-on-air.img-adtv-clip') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('media.on-screen-on-air.res1-cat') ?></div><h3><?= cms_e('media.on-screen-on-air.res1-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Podcast Episode"><?= cms_img('media.on-screen-on-air.img-podcast-episode') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('media.on-screen-on-air.res2-cat') ?></div><h3><?= cms_e('media.on-screen-on-air.res2-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Press Feature"><?= cms_img('media.on-screen-on-air.img-press-feature') ?></div><div class="body"><div class="cat"><?= cms_e('media.on-screen-on-air.res3-cat') ?></div><h3><?= cms_e('media.on-screen-on-air.res3-title') ?></h3></div></div>
+</div>
+<p style="text-align:center;margin-top:36px;font-size:14px"><?= cms_rich('media.on-screen-on-air.p1') ?></p>
+</div>
+</section>
+<section class="alt">
+<div class="wrap" style="max-width:680px">
+<div class="form-card">
+<h3><?= cms_e('media.section-4.heading1') ?></h3>
+<p class="sub"><?= cms_rich('media.section-4.p1') ?></p>
+<div class="fld-row">
+<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Outlet / show</label><input placeholder="Publication or podcast"/></div>
+</div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Topic &amp; deadline</label><textarea placeholder="What's the story? When do you need Erika?" rows="3"></textarea></div>
+<a class="btn btn-primary" onclick="alert('Routes to media inbox (mockup)')" style="width:100%;text-align:center"><?= cms_e('media.section-4.btn1') ?></a>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== TESTIMONIALS /testimonials ==================== -->
+<div class="page" id="page-testimonials">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('testimonials.google-zillow-video-testimon.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('testimonials.google-zillow-video-testimon.heading1') ?></h1>
+<p><?= cms_rich('testimonials.google-zillow-video-testimon.p1') ?></p>
+<div class="rev-filter">
+<span class="chip on">All</span><span class="chip">Sellers</span><span class="chip">Buyers</span><span class="chip">Investors</span><span class="chip">Mentorship</span><span class="chip">Luxury</span>
+</div>
+</div><div class="ph hero-media" data-label="Client Story Highlight — Video"><?= cms_img('testimonials.google-zillow-video-testimon.img-client-story-highlight') ?><div class="play"></div></div></div>
+</header>
+<section>
+<div class="wrap">
+<p class="eyebrow"><?= cms_e('testimonials.video-testimonials.eyebrow1') ?></p>
+<div class="res-grid">
+<div class="res-card"><div class="ph" data-label="Video Testimonial 1"><?= cms_img('testimonials.video-testimonials.img-video-testimonial-1') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('testimonials.video-testimonials.res1-cat') ?></div><h3><?= cms_e('testimonials.video-testimonials.res1-title') ?></h3><p><?= cms_e('testimonials.video-testimonials.res1-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Video Testimonial 2"><?= cms_img('testimonials.video-testimonials.img-video-testimonial-2') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('testimonials.video-testimonials.res2-cat') ?></div><h3><?= cms_e('testimonials.video-testimonials.res2-title') ?></h3><p><?= cms_e('testimonials.video-testimonials.res2-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Video Testimonial 3"><?= cms_img('testimonials.video-testimonials.img-video-testimonial-3') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('testimonials.video-testimonials.res3-cat') ?></div><h3><?= cms_e('testimonials.video-testimonials.res3-title') ?></h3><p><?= cms_e('testimonials.video-testimonials.res3-text') ?></p></div></div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap">
+<p class="eyebrow"><?= cms_e('testimonials.written-testimonials.eyebrow1') ?></p>
+<div class="tst-grid">
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('testimonials.written-testimonials.tst1-quote') ?></blockquote><div class="who"><?= cms_e('testimonials.written-testimonials.tst1-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('testimonials.written-testimonials.tst2-quote') ?></blockquote><div class="who"><?= cms_e('testimonials.written-testimonials.tst2-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('testimonials.written-testimonials.tst3-quote') ?></blockquote><div class="who"><?= cms_e('testimonials.written-testimonials.tst3-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('testimonials.written-testimonials.tst4-quote') ?></blockquote><div class="who"><?= cms_e('testimonials.written-testimonials.tst4-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('testimonials.written-testimonials.tst5-quote') ?></blockquote><div class="who"><?= cms_e('testimonials.written-testimonials.tst5-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('testimonials.written-testimonials.tst6-quote') ?></blockquote><div class="who"><?= cms_e('testimonials.written-testimonials.tst6-who') ?></div></div>
+</div>
+<p style="text-align:center;margin-top:36px;font-size:14px"><?= cms_rich('testimonials.written-testimonials.p1') ?></p>
+</div>
+</section>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('testimonials.testimonial-questions.eyebrow1') ?></p><h2><?= cms_e('testimonials.testimonial-questions.heading1') ?></h2></div>
+<div class="faq" style="margin-top:24px">
+<details open=""><summary><?= cms_e('testimonials.testimonial-questions.faq1-q') ?></summary><p><?= cms_rich('testimonials.testimonial-questions.faq1-a') ?></p></details>
+<details><summary><?= cms_e('testimonials.testimonial-questions.faq2-q') ?></summary><p><?= cms_rich('testimonials.testimonial-questions.faq2-a') ?></p></details>
+<details><summary><?= cms_e('testimonials.testimonial-questions.faq3-q') ?></summary><p><?= cms_rich('testimonials.testimonial-questions.faq3-a') ?></p></details>
+</div>
+<div style="text-align:center;margin-top:44px"><a class="btn btn-primary" onclick="go('homevalue')"><?= cms_e('testimonials.testimonial-questions.btn1') ?></a></div>
+</div>
+</section>
+</div>
+<!-- ==================== RESOURCES /resources ==================== -->
+<div class="page" id="page-resources">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('resources.resources.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('resources.resources.heading1') ?></h1>
+<p><?= cms_rich('resources.resources.p1') ?></p>
+<div class="rev-filter">
+<span class="chip on">All</span><span class="chip">Seller</span><span class="chip">Buyer</span><span class="chip">Agent Tools</span><span class="chip">Wealth / Investing</span><span class="chip">Lifestyle</span><span class="chip">Speaking / Leadership</span>
+</div>
+</div><div class="ph hero-media" data-label="Guides &amp; Resources Flat-Lay"><?= cms_img('resources.resources.img-guides-resources-flat') ?></div></div>
+</header>
+<section>
+<div class="wrap">
+<p class="eyebrow"><?= cms_e('resources.featured-guides.eyebrow1') ?></p>
+<div class="res-grid">
+<div class="res-card"><div class="ph" data-label="Seller Guide Cover"><?= cms_img('resources.featured-guides.img-seller-guide-cover') ?></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res1-cat') ?></div><h3><?= cms_e('resources.featured-guides.res1-title') ?></h3><p><?= cms_e('resources.featured-guides.res1-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Buyer Guide Cover"><?= cms_img('resources.featured-guides.img-buyer-guide-cover') ?></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res2-cat') ?></div><h3><?= cms_e('resources.featured-guides.res2-title') ?></h3><p><?= cms_e('resources.featured-guides.res2-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Investing Guide Cover"><?= cms_img('resources.featured-guides.img-investing-guide-cover') ?></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res3-cat') ?></div><h3><?= cms_e('resources.featured-guides.res3-title') ?></h3><p><?= cms_e('resources.featured-guides.res3-text') ?></p></div></div>
+</div>
+<p class="eyebrow" style="margin-top:56px"><?= cms_e('resources.featured-guides.eyebrow2') ?></p>
+<div class="res-grid">
+<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Erika Explains Ep. 12"><?= cms_img('resources.featured-guides.img-erika-explains-ep-12') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res4-cat') ?></div><h3><?= cms_e('resources.featured-guides.res4-title') ?></h3></div></div>
+<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Erika Explains Ep. 11"><?= cms_img('resources.featured-guides.img-erika-explains-ep-11') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res5-cat') ?></div><h3><?= cms_e('resources.featured-guides.res5-title') ?></h3></div></div>
+<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Erika Explains Ep. 10"><?= cms_img('resources.featured-guides.img-erika-explains-ep-10') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res6-cat') ?></div><h3><?= cms_e('resources.featured-guides.res6-title') ?></h3></div></div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap">
+<div class="two-col" style="align-items:center">
+<div>
+<p class="eyebrow"><?= cms_e('resources.digital-products.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('resources.digital-products.heading1') ?></h2>
+<p style="margin-top:14px;max-width:460px"><?= cms_rich('resources.digital-products.p1') ?></p>
+<a class="btn btn-primary" onclick="go('products')" style="margin-top:10px"><?= cms_e('resources.digital-products.btn1') ?></a>
+</div>
+<div class="ph wide" data-label="Digital Products Preview"><?= cms_img('resources.digital-products.img-digital-products-previ') ?></div>
+</div>
+<div class="lead-mag">
+<div>
+<p class="eyebrow" style="color:#fff"><?= cms_e('resources.digital-products.eyebrow2') ?></p>
+<h3><?= cms_e('resources.digital-products.heading2') ?></h3>
+<p><?= cms_rich('resources.digital-products.p2') ?></p>
+</div>
+<div>
+<div class="fld"><input placeholder="Your email address"/></div>
+<a class="btn btn-gold" onclick="alert('Adds to email list + sends checklist (mockup)')" style="width:100%;text-align:center"><?= cms_e('resources.digital-products.btn2') ?></a>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('resources.resource-questions.eyebrow1') ?></p><h2><?= cms_e('resources.resource-questions.heading1') ?></h2></div>
+<div class="faq" style="margin-top:24px">
+<details open=""><summary><?= cms_e('resources.resource-questions.faq1-q') ?></summary><p><?= cms_rich('resources.resource-questions.faq1-a') ?></p></details>
+<details><summary><?= cms_e('resources.resource-questions.faq2-q') ?></summary><p><?= cms_rich('resources.resource-questions.faq2-a') ?></p></details>
+<details><summary><?= cms_e('resources.resource-questions.faq3-q') ?></summary><p><?= cms_rich('resources.resource-questions.faq3-a') ?></p></details>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== DIGITAL PRODUCTS /resources/digital-products ==================== -->
+<div class="page" id="page-products">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('products.resources-digital-products.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('products.resources-digital-products.heading1') ?></h1>
+<p><?= cms_rich('products.resources-digital-products.p1') ?></p>
+<div class="rev-filter">
+<span class="chip on">All</span><span class="chip">Home Seller</span><span class="chip">Buyer &amp; Relocation</span><span class="chip">Agent Tools</span><span class="chip">Wealth / Investing</span><span class="chip">Mindset / Reinvention</span><span class="chip">Workshops</span>
+</div>
+</div><div class="ph hero-media" data-label="Digital Product Mockups"><?= cms_img('products.resources-digital-products.img-digital-product-mockup') ?></div></div>
+</header>
+<section>
+<div class="wrap">
+<div class="prod-grid">
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod1-aud') ?></div><h3><?= cms_e('products.section-2.prod1-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod1-prob') ?></div><p><?= cms_e('products.section-2.prod1-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product · fires stan_store_click + UTM (mockup)')"><?= cms_e('products.section-2.prod1-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-2') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod2-aud') ?></div><h3><?= cms_e('products.section-2.prod2-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod2-prob') ?></div><p><?= cms_e('products.section-2.prod2-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod2-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-3') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod3-aud') ?></div><h3><?= cms_e('products.section-2.prod3-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod3-prob') ?></div><p><?= cms_e('products.section-2.prod3-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod3-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-4') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod4-aud') ?></div><h3><?= cms_e('products.section-2.prod4-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod4-prob') ?></div><p><?= cms_e('products.section-2.prod4-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod4-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-5') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod5-aud') ?></div><h3><?= cms_e('products.section-2.prod5-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod5-prob') ?></div><p><?= cms_e('products.section-2.prod5-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod5-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-6') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod6-aud') ?></div><h3><?= cms_e('products.section-2.prod6-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod6-prob') ?></div><p><?= cms_e('products.section-2.prod6-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan Store (mockup)')"><?= cms_e('products.section-2.prod6-btn') ?></a></div></div>
+</div>
+<p style="text-align:center;margin-top:40px;font-size:14px"><?= cms_rich('products.section-2.p1') ?></p>
+</div>
+</section>
+<section class="alt">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('products.product-questions.eyebrow1') ?></p><h2><?= cms_e('products.product-questions.heading1') ?></h2></div>
+<div class="faq" style="margin-top:24px">
+<details open=""><summary><?= cms_e('products.product-questions.faq1-q') ?></summary><p><?= cms_rich('products.product-questions.faq1-a') ?></p></details>
+<details><summary><?= cms_e('products.product-questions.faq2-q') ?></summary><p><?= cms_rich('products.product-questions.faq2-a') ?></p></details>
+<details><summary><?= cms_e('products.product-questions.faq3-q') ?></summary><p><?= cms_rich('products.product-questions.faq3-a') ?></p></details>
+</div>
+<div style="text-align:center;margin-top:40px"><p class="eyebrow"><?= cms_e('products.product-questions.eyebrow2') ?></p><div style="margin-top:16px"><a class="btn btn-outline-dark" onclick="go('resources')"><?= cms_e('products.product-questions.btn1') ?></a>  <a class="btn btn-outline-dark" onclick="go('explains')"><?= cms_e('products.product-questions.btn2') ?></a></div></div>
+</div>
+</section>
+</div>
+<!-- ==================== ERIKA EXPLAINS /resources/erika-explains ==================== -->
+<div class="page" id="page-explains">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('explains.resources-erika-explains.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('explains.resources-erika-explains.heading1') ?></h1>
+<p><?= cms_rich('explains.resources-erika-explains.p1') ?></p>
+</div><div class="ph hero-media" data-label="Erika Explains — Series Trailer"><?= cms_img('explains.resources-erika-explains.img-erika-explains-series') ?><div class="play"></div></div></div>
+</header>
+<section>
+<div class="wrap">
+<div class="center-h" style="max-width:820px;margin:0 auto">
+<p class="eyebrow"><?= cms_e('explains.latest-episode.eyebrow1') ?></p>
+<div class="ph video-frame" data-label="Ep. 12 — Why Online Estimates Miss the Mark (full transcript below)"><?= cms_img('explains.latest-episode.img-ep-12-why-online-estim') ?><div class="play"></div></div>
+<p style="margin-top:20px;max-width:640px;margin-left:auto;margin-right:auto"><?= cms_rich('explains.latest-episode.p1') ?></p>
+</div>
+<p class="eyebrow" style="margin-top:64px"><?= cms_e('explains.latest-episode.eyebrow2') ?></p>
+<div class="res-grid">
+<div class="res-card"><div class="ph" data-label="Ep. 11"><?= cms_img('explains.latest-episode.img-ep-11') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res1-cat') ?></div><h3><?= cms_e('explains.latest-episode.res1-title') ?></h3><p><?= cms_e('explains.latest-episode.res1-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 10"><?= cms_img('explains.latest-episode.img-ep-10') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res2-cat') ?></div><h3><?= cms_e('explains.latest-episode.res2-title') ?></h3><p><?= cms_e('explains.latest-episode.res2-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 9"><?= cms_img('explains.latest-episode.img-ep-9') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res3-cat') ?></div><h3><?= cms_e('explains.latest-episode.res3-title') ?></h3><p><?= cms_e('explains.latest-episode.res3-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 8"><?= cms_img('explains.latest-episode.img-ep-8') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res4-cat') ?></div><h3><?= cms_e('explains.latest-episode.res4-title') ?></h3><p><?= cms_e('explains.latest-episode.res4-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 7"><?= cms_img('explains.latest-episode.img-ep-7') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res5-cat') ?></div><h3><?= cms_e('explains.latest-episode.res5-title') ?></h3><p><?= cms_e('explains.latest-episode.res5-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 6"><?= cms_img('explains.latest-episode.img-ep-6') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res6-cat') ?></div><h3><?= cms_e('explains.latest-episode.res6-title') ?></h3><p><?= cms_e('explains.latest-episode.res6-text') ?></p></div></div>
+</div>
+</div>
+</section>
+<section class="final">
+<div class="wrap">
+<h2><?= cms_e('explains.have-a-question-erika-should.heading1') ?></h2>
+<p><?= cms_rich('explains.have-a-question-erika-should.p1') ?></p>
+<a class="btn btn-gold" onclick="go('contact')"><?= cms_e('explains.have-a-question-erika-should.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Links to YouTube channel (mockup)')"><?= cms_e('explains.have-a-question-erika-should.btn2') ?></a>
+</div>
+</section>
+</div>
+<!-- ==================== MENTORSHIP /mentorship ==================== -->
+<div class="page" id="page-mentorship">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('mentorship.mentorship.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('mentorship.mentorship.heading1') ?></h1>
+<p><?= cms_rich('mentorship.mentorship.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('ment-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('mentorship.mentorship.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Erika Coaching Agents — Photo"><?= cms_img('mentorship.mentorship.img-erika-coaching-agents') ?></div></div>
+</header>
+<section>
+<div class="wrap split">
+<div class="ph tall" data-label="Erika Coaching / Mastermind Photo"><?= cms_img('mentorship.who-it-s-for.img-erika-coaching-masterm') ?></div>
+<div>
+<p class="eyebrow"><?= cms_e('mentorship.who-it-s-for.eyebrow1') ?></p>
+<h2><?= cms_e('mentorship.who-it-s-for.heading1') ?></h2>
+<div class="rule"></div>
+<ul class="checklist">
+<li><?= cms_e('mentorship.who-it-s-for.check1') ?></li>
+<li><?= cms_e('mentorship.who-it-s-for.check2') ?></li>
+<li><?= cms_e('mentorship.who-it-s-for.check3') ?></li>
+<li><?= cms_e('mentorship.who-it-s-for.check4') ?></li>
+</ul>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('mentorship.what-erika-teaches.eyebrow1') ?></p><h2><?= cms_e('mentorship.what-erika-teaches.heading1') ?></h2></div>
+<div class="steps">
+<div class="step"><div class="k"><?= cms_e('mentorship.what-erika-teaches.step1-k') ?></div><h3><?= cms_e('mentorship.what-erika-teaches.step1-title') ?></h3><p><?= cms_e('mentorship.what-erika-teaches.step1-text') ?></p></div>
+<div class="step"><div class="k"><?= cms_e('mentorship.what-erika-teaches.step2-k') ?></div><h3><?= cms_e('mentorship.what-erika-teaches.step2-title') ?></h3><p><?= cms_e('mentorship.what-erika-teaches.step2-text') ?></p></div>
+<div class="step"><div class="k"><?= cms_e('mentorship.what-erika-teaches.step3-k') ?></div><h3><?= cms_e('mentorship.what-erika-teaches.step3-title') ?></h3><p><?= cms_e('mentorship.what-erika-teaches.step3-text') ?></p></div>
+<div class="step"><div class="k"><?= cms_e('mentorship.what-erika-teaches.step4-k') ?></div><h3><?= cms_e('mentorship.what-erika-teaches.step4-title') ?></h3><p><?= cms_e('mentorship.what-erika-teaches.step4-text') ?></p></div>
+</div>
+</div>
+</section>
+<section class="dark">
+<div class="wrap split">
+<div>
+<p class="eyebrow on-dark"><?= cms_e('mentorship.agent-results.eyebrow1') ?></p>
+<h2><?= cms_e('mentorship.agent-results.heading1') ?></h2>
+<div class="rule"></div>
+<div class="tst" style="margin-bottom:20px"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('mentorship.agent-results.tst1-quote') ?></blockquote><div class="who"><?= cms_e('mentorship.agent-results.tst1-who') ?></div></div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('mentorship.agent-results.tst2-quote') ?></blockquote><div class="who"><?= cms_e('mentorship.agent-results.tst2-who') ?></div></div>
+</div>
+<div class="ph tall" data-label="Mentorship Video — Program Overview"><?= cms_img('mentorship.agent-results.img-mentorship-video-progr') ?><div class="play"></div></div>
+</div>
+</section>
+<section class="alt" id="ment-form">
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('mentorship.related-resources.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('mentorship.related-resources.heading1') ?></h2>
+<p style="margin-top:14px;max-width:440px"><?= cms_rich('mentorship.related-resources.p1') ?></p>
+<div style="margin-top:20px"><a class="btn btn-outline-dark" onclick="go('products')"><?= cms_e('mentorship.related-resources.btn1') ?></a>  <a class="btn btn-outline-dark" onclick="go('explains')"><?= cms_e('mentorship.related-resources.btn2') ?></a></div>
+</div>
+<div class="form-card">
+<h3><?= cms_e('mentorship.related-resources.heading2') ?></h3>
+<p class="sub"><?= cms_rich('mentorship.related-resources.p2') ?></p>
+<div class="fld-row">
+<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Brokerage</label><input placeholder="Brokerage / team"/></div>
+</div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Years in real estate</label><select><option>New / pre-license</option><option>0–2 years</option><option>3–7 years</option><option>8+ years</option></select></div>
+<div class="fld"><label>Biggest challenge right now</label><textarea placeholder="Listings, leads, systems, brand..." rows="3"></textarea></div>
+<a class="btn btn-primary" onclick="alert('Routes mentorship inquiry (mockup)')" style="width:100%;text-align:center"><?= cms_e('mentorship.related-resources.btn3') ?></a>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== INVESTING / C&A /investing-capital-acquisitions ==================== -->
+<div class="page" id="page-investing">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('investing.investing-capital-acquisitio.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('investing.investing-capital-acquisitio.heading1') ?></h1>
+<p><?= cms_rich('investing.investing-capital-acquisitio.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('inv-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('investing.investing-capital-acquisitio.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Atlanta Investment Property"><?= cms_img('investing.investing-capital-acquisitio.img-atlanta-investment-pro') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('investing.who-should-inquire.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('investing.who-should-inquire.heading1') ?></h2>
+<div class="rule"></div>
+<ul class="checklist">
+<li><?= cms_e('investing.who-should-inquire.check1') ?></li>
+<li><?= cms_e('investing.who-should-inquire.check2') ?></li>
+<li><?= cms_e('investing.who-should-inquire.check3') ?></li>
+<li><?= cms_e('investing.who-should-inquire.check4') ?></li>
+</ul>
+<p style="margin-top:26px;font-size:14px"><?= cms_rich('investing.who-should-inquire.p1') ?></p>
+</div>
+<div>
+<p class="eyebrow"><?= cms_e('investing.who-should-inquire.eyebrow2') ?></p>
+<div class="eco-grid" style="grid-template-columns:1fr;margin-top:20px">
+<div class="eco"><h3><?= cms_e('investing.who-should-inquire.eco1-title') ?></h3><p><?= cms_e('investing.who-should-inquire.eco1-text') ?></p><a onclick="document.getElementById('inv-form').scrollIntoView()"><?= cms_e('investing.who-should-inquire.eco1-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('investing.who-should-inquire.eco2-title') ?></h3><p><?= cms_e('investing.who-should-inquire.eco2-text') ?></p><a onclick="document.getElementById('inv-form').scrollIntoView()"><?= cms_e('investing.who-should-inquire.eco2-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('investing.who-should-inquire.eco3-title') ?></h3><p><?= cms_e('investing.who-should-inquire.eco3-text') ?></p><a onclick="document.getElementById('inv-form').scrollIntoView()"><?= cms_e('investing.who-should-inquire.eco3-btn') ?></a></div>
+</div>
+</div>
+</div>
+</section>
+<section class="alt" id="inv-form">
+<div class="wrap" style="max-width:680px">
+<div class="form-card">
+<h3><?= cms_e('investing.section-3.heading1') ?></h3>
+<p class="sub"><?= cms_rich('investing.section-3.p1') ?></p>
+<div class="fld-row">
+<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Phone</label><input placeholder="(___) ___-____"/></div>
+</div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>I am a...</label><select><option>Investor seeking opportunities</option><option>Owner selling investment property</option><option>Homeowner exploring off-market sale</option><option>Potential partner</option></select></div>
+<div class="fld"><label>Details</label><textarea placeholder="Property, capital, or opportunity details..." rows="3"></textarea></div>
+<a class="btn btn-primary" onclick="alert('Routes to Escaluxe C&amp;A inbox (mockup)')" style="width:100%;text-align:center"><?= cms_e('investing.section-3.btn1') ?></a>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== PROPERTY MANAGEMENT /property-management ==================== -->
+<div class="page" id="page-pm">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('pm.property-management.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('pm.property-management.heading1') ?></h1>
+<p><?= cms_rich('pm.property-management.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="alert('Links to dedicated PM website (mockup)')"><?= cms_e('pm.property-management.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Managed Property — Exterior"><?= cms_img('pm.property-management.img-managed-property-exter') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('pm.who-it-s-for.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('pm.who-it-s-for.heading1') ?></h2>
+<div class="rule"></div>
+<ul class="checklist">
+<li><?= cms_e('pm.who-it-s-for.check1') ?></li>
+<li><?= cms_e('pm.who-it-s-for.check2') ?></li>
+<li><?= cms_e('pm.who-it-s-for.check3') ?></li>
+<li><?= cms_e('pm.who-it-s-for.check4') ?></li>
+</ul>
+</div>
+<div>
+<p class="eyebrow"><?= cms_e('pm.who-it-s-for.eyebrow2') ?></p>
+<div class="eco-grid" style="grid-template-columns:1fr 1fr;margin-top:20px">
+<div class="eco"><h3><?= cms_e('pm.who-it-s-for.eco1-title') ?></h3><p><?= cms_e('pm.who-it-s-for.eco1-text') ?></p></div>
+<div class="eco"><h3><?= cms_e('pm.who-it-s-for.eco2-title') ?></h3><p><?= cms_e('pm.who-it-s-for.eco2-text') ?></p></div>
+<div class="eco"><h3><?= cms_e('pm.who-it-s-for.eco3-title') ?></h3><p><?= cms_e('pm.who-it-s-for.eco3-text') ?></p></div>
+<div class="eco"><h3><?= cms_e('pm.who-it-s-for.eco4-title') ?></h3><p><?= cms_e('pm.who-it-s-for.eco4-text') ?></p></div>
+</div>
+<p style="margin-top:22px;font-size:14px"><?= cms_rich('pm.who-it-s-for.p1') ?></p>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap" style="max-width:680px">
+<div class="form-card">
+<h3><?= cms_e('pm.section-3.heading1') ?></h3>
+<p class="sub"><?= cms_rich('pm.section-3.p1') ?></p>
+<div class="fld-row">
+<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Phone</label><input placeholder="(___) ___-____"/></div>
+</div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Property address</label><input placeholder="Street, City, GA"/></div>
+<div class="fld"><label>Current status</label><select><option>Vacant</option><option>Tenant in place</option><option>Owner-occupied (moving soon)</option><option>Multiple properties</option></select></div>
+<a class="btn btn-primary" onclick="alert('Routes PM referral (mockup)')" style="width:100%;text-align:center"><?= cms_e('pm.section-3.btn1') ?></a>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== ESCALUXE TRANSPORTATION & LOGISTICS /transportation-logistics ==================== -->
+<div class="page" id="page-transportation">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('transportation.escaluxe-transportation-logi.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('transportation.escaluxe-transportation-logi.heading1') ?></h1>
+<p><?= cms_rich('transportation.escaluxe-transportation-logi.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('tl-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('transportation.escaluxe-transportation-logi.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('tel:678-404-1562 · fires phone_click (mockup)')"><?= cms_e('transportation.escaluxe-transportation-logi.btn2') ?></a></div>
+</div><div class="ph hero-media" data-label="Executive Fleet — Photo or Video"><?= cms_img('transportation.escaluxe-transportation-logi.img-executive-fleet-photo') ?></div></div>
+</header>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('transportation.services.eyebrow1') ?></p><h2><?= cms_e('transportation.services.heading1') ?></h2></div>
+<div class="eco-grid">
+<div class="eco"><h3><?= cms_e('transportation.services.eco1-title') ?></h3><p><?= cms_e('transportation.services.eco1-text') ?></p><a onclick="document.getElementById('tl-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('transportation.services.eco1-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('transportation.services.eco2-title') ?></h3><p><?= cms_e('transportation.services.eco2-text') ?></p><a onclick="document.getElementById('tl-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('transportation.services.eco2-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('transportation.services.eco3-title') ?></h3><p><?= cms_e('transportation.services.eco3-text') ?></p><a onclick="document.getElementById('tl-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('transportation.services.eco3-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('transportation.services.eco4-title') ?></h3><p><?= cms_e('transportation.services.eco4-text') ?></p><a onclick="document.getElementById('tl-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('transportation.services.eco4-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('transportation.services.eco5-title') ?></h3><p><?= cms_e('transportation.services.eco5-text') ?></p><a onclick="document.getElementById('tl-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('transportation.services.eco5-btn') ?></a></div>
+<div class="eco"><h3><?= cms_e('transportation.services.eco6-title') ?></h3><p><?= cms_e('transportation.services.eco6-text') ?></p><a onclick="document.getElementById('tl-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('transportation.services.eco6-btn') ?></a></div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('transportation.the-escaluxe-standard.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('transportation.the-escaluxe-standard.heading1') ?></h2>
+<div class="rule"></div>
+<ul class="checklist">
+<li><?= cms_e('transportation.the-escaluxe-standard.check1') ?></li>
+<li><?= cms_e('transportation.the-escaluxe-standard.check2') ?></li>
+<li><?= cms_e('transportation.the-escaluxe-standard.check3') ?></li>
+<li><?= cms_e('transportation.the-escaluxe-standard.check4') ?></li>
+</ul>
+<div class="info-card" style="margin-top:30px">
+<h3><?= cms_e('transportation.the-escaluxe-standard.info1-title') ?></h3>
+<p><?= cms_rich('transportation.the-escaluxe-standard.info1-text') ?></p>
+</div>
+</div>
+<div class="form-card" id="tl-form">
+<h3><?= cms_e('transportation.the-escaluxe-standard.heading2') ?></h3>
+<p class="sub"><?= cms_rich('transportation.the-escaluxe-standard.p1') ?></p>
+<div class="fld-row">
+<div class="fld"><label>Your name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Phone</label><input placeholder="(___) ___-____"/></div>
+</div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Service needed</label>
+<select><option>Executive transportation</option><option>Airport transfer</option><option>Moving services</option><option>Courier &amp; delivery</option><option>Specialty logistics</option><option>Event transportation</option><option>Not sure yet</option></select></div>
+<div class="fld"><label>Date needed</label><input placeholder="Date &amp; time"/></div>
+<div class="fld"><label>Details</label><textarea placeholder="Pickup, drop-off, passengers or items..." rows="3"></textarea></div>
+<a class="btn btn-primary" onclick="alert('Routes to Escaluxe Transportation &amp; Logistics dispatch (mockup)')" style="width:100%;text-align:center"><?= cms_e('transportation.the-escaluxe-standard.btn1') ?></a>
+</div>
+</div>
+</section>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('transportation.questions.eyebrow1') ?></p><h2><?= cms_e('transportation.questions.heading1') ?></h2></div>
+<div class="faq" style="margin-top:24px">
+<details open=""><summary><?= cms_e('transportation.questions.faq1-q') ?></summary><p><?= cms_rich('transportation.questions.faq1-a') ?></p></details>
+<details><summary><?= cms_e('transportation.questions.faq2-q') ?></summary><p><?= cms_rich('transportation.questions.faq2-a') ?></p></details>
+<details><summary><?= cms_e('transportation.questions.faq3-q') ?></summary><p><?= cms_rich('transportation.questions.faq3-a') ?></p></details>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== ESCALUXE LIVING /escaluxe-living ==================== -->
+<div class="page" id="page-living">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('living.escaluxe-living.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('living.escaluxe-living.heading1') ?></h1>
+<p><?= cms_rich('living.escaluxe-living.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop · fires shop_click + UTM (mockup)')"><?= cms_e('living.escaluxe-living.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Escaluxe Living — Product Editorial · Photo or Video"><?= cms_img('living.escaluxe-living.img-escaluxe-living-produc') ?></div></div>
+</header>
+<section>
+<div class="wrap">
+<div class="center-h"><p class="eyebrow"><?= cms_e('living.the-collection.eyebrow1') ?></p><h2><?= cms_e('living.the-collection.heading1') ?></h2></div>
+<div class="prod-grid">
+<div class="prod"><div class="ph" data-label="Body Care Collection"><?= cms_img('living.the-collection.img-body-care-collection') ?></div><div class="body"><div class="aud"><?= cms_e('living.the-collection.prod1-aud') ?></div><h3><?= cms_e('living.the-collection.prod1-title') ?></h3><div class="prob"><?= cms_e('living.the-collection.prod1-prob') ?></div><p><?= cms_e('living.the-collection.prod1-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-collection.prod1-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Home Fragrance Collection"><?= cms_img('living.the-collection.img-home-fragrance-collect') ?></div><div class="body"><div class="aud"><?= cms_e('living.the-collection.prod2-aud') ?></div><h3><?= cms_e('living.the-collection.prod2-title') ?></h3><div class="prob"><?= cms_e('living.the-collection.prod2-prob') ?></div><p><?= cms_e('living.the-collection.prod2-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-collection.prod2-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Living Essentials Collection"><?= cms_img('living.the-collection.img-living-essentials-coll') ?></div><div class="body"><div class="aud"><?= cms_e('living.the-collection.prod3-aud') ?></div><h3><?= cms_e('living.the-collection.prod3-title') ?></h3><div class="prob"><?= cms_e('living.the-collection.prod3-prob') ?></div><p><?= cms_e('living.the-collection.prod3-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-collection.prod3-btn') ?></a></div></div>
+</div>
+</div>
+</section>
+<section class="alt">
+<div class="wrap split">
+<div class="ph tall" data-label="Escaluxe Living — Lifestyle Photo"><?= cms_img('living.the-story.img-escaluxe-living-lifest') ?></div>
+<div>
+<p class="eyebrow"><?= cms_e('living.the-story.eyebrow1') ?></p>
+<h2><?= cms_e('living.the-story.heading1') ?></h2>
+<div class="rule"></div>
+<p><?= cms_rich('living.the-story.p1') ?></p>
+<p><?= cms_rich('living.the-story.p2') ?></p>
+<a class="btn btn-primary" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-story.btn1') ?></a>
+</div>
+</div>
+</section>
+<section class="final">
+<div class="wrap">
+<h2><?= cms_e('living.give-the-gift-of-escaluxe.heading1') ?></h2>
+<p><?= cms_rich('living.give-the-gift-of-escaluxe.p1') ?></p>
+<a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.give-the-gift-of-escaluxe.btn1') ?></a>  <a class="btn btn-outline" onclick="go('contact')"><?= cms_e('living.give-the-gift-of-escaluxe.btn2') ?></a>
+</div>
+</section>
+</div>
+<!-- ==================== LOCATION: ATLANTA METRO ==================== -->
+<div class="page" id="page-loc-atlanta">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('loc-atlanta.locations-atlanta-metro.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('loc-atlanta.locations-atlanta-metro.heading1') ?></h1>
+<p><?= cms_rich('loc-atlanta.locations-atlanta-metro.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('loc-atlanta.locations-atlanta-metro.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Atlanta Skyline — Photo"><?= cms_img('loc-atlanta.locations-atlanta-metro.img-atlanta-skyline-photo') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('loc-atlanta.selling-in-atlanta-metro.p1') ?></p>
+<p class="eyebrow" style="margin-top:30px"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.eyebrow2') ?></p>
+<p style="max-width:480px;margin-top:10px"><?= cms_rich('loc-atlanta.selling-in-atlanta-metro.p2') ?></p>
+<div style="margin-top:24px"><a class="btn btn-outline-dark" onclick="go('loc-gwinnett')"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.btn1') ?></a>  <a class="btn btn-outline-dark" onclick="go('loc-fayette')"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.btn2') ?></a></div>
+</div>
+<div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('loc-atlanta.selling-in-atlanta-metro.tst1-quote') ?></blockquote><div class="who"><?= cms_e('loc-atlanta.selling-in-atlanta-metro.tst1-who') ?></div></div>
+<div class="faq" style="margin-top:34px;max-width:none">
+<details open=""><summary><?= cms_e('loc-atlanta.selling-in-atlanta-metro.faq1-q') ?></summary><p><?= cms_rich('loc-atlanta.selling-in-atlanta-metro.faq1-a') ?></p></details>
+<details><summary><?= cms_e('loc-atlanta.selling-in-atlanta-metro.faq2-q') ?></summary><p><?= cms_rich('loc-atlanta.selling-in-atlanta-metro.faq2-a') ?></p></details>
+<details><summary><?= cms_e('loc-atlanta.selling-in-atlanta-metro.faq3-q') ?></summary><p><?= cms_rich('loc-atlanta.selling-in-atlanta-metro.faq3-a') ?></p></details>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== LOCATION: LAWRENCEVILLE / GWINNETT ==================== -->
+<div class="page" id="page-loc-gwinnett">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('loc-gwinnett.locations-lawrenceville-gwin.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('loc-gwinnett.locations-lawrenceville-gwin.heading1') ?></h1>
+<p><?= cms_rich('loc-gwinnett.locations-lawrenceville-gwin.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('loc-gwinnett.locations-lawrenceville-gwin.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Downtown Lawrenceville Square"><?= cms_img('loc-gwinnett.locations-lawrenceville-gwin.img-downtown-lawrenceville') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('loc-gwinnett.selling-in-gwinnett.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('loc-gwinnett.selling-in-gwinnett.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('loc-gwinnett.selling-in-gwinnett.p1') ?></p>
+<p class="eyebrow" style="margin-top:30px"><?= cms_e('loc-gwinnett.selling-in-gwinnett.eyebrow2') ?></p>
+<p style="max-width:480px;margin-top:10px"><?= cms_rich('loc-gwinnett.selling-in-gwinnett.p2') ?></p>
+</div>
+<div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('loc-gwinnett.selling-in-gwinnett.tst1-quote') ?></blockquote><div class="who"><?= cms_e('loc-gwinnett.selling-in-gwinnett.tst1-who') ?></div></div>
+<div class="faq" style="margin-top:34px;max-width:none">
+<details open=""><summary><?= cms_e('loc-gwinnett.selling-in-gwinnett.faq1-q') ?></summary><p><?= cms_rich('loc-gwinnett.selling-in-gwinnett.faq1-a') ?></p></details>
+<details><summary><?= cms_e('loc-gwinnett.selling-in-gwinnett.faq2-q') ?></summary><p><?= cms_rich('loc-gwinnett.selling-in-gwinnett.faq2-a') ?></p></details>
+<details><summary><?= cms_e('loc-gwinnett.selling-in-gwinnett.faq3-q') ?></summary><p><?= cms_rich('loc-gwinnett.selling-in-gwinnett.faq3-a') ?></p></details>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== LOCATION: FAYETTE / PEACHTREE CITY ==================== -->
+<div class="page" id="page-loc-fayette">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('loc-fayette.locations-fayette-county-pea.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('loc-fayette.locations-fayette-county-pea.heading1') ?></h1>
+<p><?= cms_rich('loc-fayette.locations-fayette-county-pea.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="go('homevalue')"><?= cms_e('loc-fayette.locations-fayette-county-pea.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Peachtree City — Golf Cart Path"><?= cms_img('loc-fayette.locations-fayette-county-pea.img-peachtree-city-golf-ca') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('loc-fayette.selling-in-fayette-peachtree.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('loc-fayette.selling-in-fayette-peachtree.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('loc-fayette.selling-in-fayette-peachtree.p1') ?></p>
+<p class="eyebrow" style="margin-top:30px"><?= cms_e('loc-fayette.selling-in-fayette-peachtree.eyebrow2') ?></p>
+<p style="max-width:480px;margin-top:10px"><?= cms_rich('loc-fayette.selling-in-fayette-peachtree.p2') ?></p>
+</div>
+<div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('loc-fayette.selling-in-fayette-peachtree.tst1-quote') ?></blockquote><div class="who"><?= cms_e('loc-fayette.selling-in-fayette-peachtree.tst1-who') ?></div></div>
+<div class="faq" style="margin-top:34px;max-width:none">
+<details open=""><summary><?= cms_e('loc-fayette.selling-in-fayette-peachtree.faq1-q') ?></summary><p><?= cms_rich('loc-fayette.selling-in-fayette-peachtree.faq1-a') ?></p></details>
+<details><summary><?= cms_e('loc-fayette.selling-in-fayette-peachtree.faq2-q') ?></summary><p><?= cms_rich('loc-fayette.selling-in-fayette-peachtree.faq2-a') ?></p></details>
+<details><summary><?= cms_e('loc-fayette.selling-in-fayette-peachtree.faq3-q') ?></summary><p><?= cms_rich('loc-fayette.selling-in-fayette-peachtree.faq3-a') ?></p></details>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== CONTACT /contact ==================== -->
+<div class="page" id="page-contact">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('contact.contact.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('contact.contact.heading1') ?></h1>
+<p><?= cms_rich('contact.contact.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="alert('Opens Google Workspace booking link (Calendly backup) — mockup')"><?= cms_e('contact.contact.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('tel:678-404-1562 · fires phone_click (mockup)')"><?= cms_e('contact.contact.btn2') ?></a></div>
+</div><div class="ph hero-media" data-label="Erika — Welcome Photo"><?= cms_img('contact.contact.img-erika-welcome-photo') ?></div></div>
+</header>
+<section>
+<div class="wrap">
+<div class="contact-grid">
+<div class="form-card">
+<h3><?= cms_e('contact.section-2.heading1') ?></h3>
+<p class="sub"><?= cms_rich('contact.section-2.p1') ?></p>
+<div class="fld"><label>Name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Property address</label><input placeholder="Street, City, GA"/></div>
+<a class="btn btn-primary" onclick="go('homevalue')" style="width:100%;text-align:center"><?= cms_e('contact.section-2.btn1') ?></a>
+</div>
+<div class="form-card">
+<h3><?= cms_e('contact.section-2.heading2') ?></h3>
+<p class="sub"><?= cms_rich('contact.section-2.p2') ?></p>
+<div class="fld"><label>Name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Event &amp; date</label><input placeholder="Event · Date"/></div>
+<a class="btn btn-primary" onclick="alert('Fires speaking_inquiry_submit (mockup)')" style="width:100%;text-align:center"><?= cms_e('contact.section-2.btn2') ?></a>
+</div>
+<div class="form-card">
+<h3><?= cms_e('contact.section-2.heading3') ?></h3>
+<p class="sub"><?= cms_rich('contact.section-2.p3') ?></p>
+<div class="fld"><label>Name</label><input placeholder="Full name"/></div>
+<div class="fld"><label>Email</label><input placeholder="you@email.com"/></div>
+<div class="fld"><label>Brand / idea</label><input placeholder="Tell us briefly"/></div>
+<a class="btn btn-primary" onclick="alert('Fires collaboration_inquiry_submit (mockup)')" style="width:100%;text-align:center"><?= cms_e('contact.section-2.btn3') ?></a>
+</div>
+</div>
+<div class="two-col" style="margin-top:56px">
+<div class="info-card">
+<h3><?= cms_e('contact.section-2.info1-title') ?></h3>
+<p><?= cms_rich('contact.section-2.info1-text') ?></p>
+</div>
+<div class="info-card">
+<h3><?= cms_e('contact.section-2.info2-title') ?></h3>
+<p><?= cms_rich('contact.section-2.info2-text') ?></p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== GALLERY /gallery ==================== -->
+<div class="page" id="page-gallery">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('gallery.gallery.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('gallery.gallery.heading1') ?></h1>
+<p><?= cms_rich('gallery.gallery.p1') ?></p>
+<div class="rev-filter">
+<span class="chip on">All</span><span class="chip">Listings</span><span class="chip">Sold</span><span class="chip">Speaking</span><span class="chip">Lifestyle</span><span class="chip">Atlanta</span><span class="chip">Videos</span><span class="chip">Behind the Scenes</span>
+</div>
+</div><div class="ph hero-media" data-label="Featured — Gallery Highlight"><?= cms_img('gallery.gallery.img-featured-gallery-highl') ?></div></div>
+</header>
+<section>
+<div class="wrap">
+<div class="gal">
+<div class="g"><div class="ph" data-label="Luxury Listing — Exterior" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-luxury-listing-exterio') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap1') ?></div></div>
+<div class="g"><div class="ph" data-label="Erika On Stage" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-erika-on-stage') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap2') ?></div></div>
+<div class="g"><div class="ph" data-label="Sold — Family Home" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-sold-family-home') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap3') ?></div></div>
+<div class="g"><div class="ph" data-label="Video · Speaker Reel" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-speaker-reel') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap4') ?></div></div>
+<div class="g"><div class="ph" data-label="Atlanta Skyline at Dusk" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-atlanta-skyline-at-dus') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap5') ?></div></div>
+<div class="g"><div class="ph" data-label="Staged Interior — Living Room" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-staged-interior-living') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap6') ?></div></div>
+<div class="g"><div class="ph" data-label="Erika — Editorial Portrait" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-erika-editorial-portra') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap7') ?></div></div>
+<div class="g"><div class="ph" data-label="Video · Client Story" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-client-story') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap8') ?></div></div>
+<div class="g"><div class="ph" data-label="Peachtree City — Golf Cart Path" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-peachtree-city-golf-ca') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap9') ?></div></div>
+<div class="g"><div class="ph" data-label="Closing Day — Keys Handoff" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-closing-day-keys-hando') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap10') ?></div></div>
+<div class="g"><div class="ph" data-label="Luxury Kitchen Detail" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-luxury-kitchen-detail') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap11') ?></div></div>
+<div class="g"><div class="ph" data-label="Panel Discussion" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-panel-discussion') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap12') ?></div></div>
+<div class="g"><div class="ph" data-label="Lifestyle Shoot — Atlanta Dining" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-lifestyle-shoot-atlant') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap13') ?></div></div>
+<div class="g"><div class="ph" data-label="Video · Erika Explains BTS" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-erika-explains-b') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap14') ?></div></div>
+<div class="g"><div class="ph" data-label="Sold — Gwinnett Colonial" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-sold-gwinnett-colonial') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap15') ?></div></div>
+</div>
+<p style="text-align:center;margin-top:36px;font-size:14px"><?= cms_rich('gallery.section-2.p1') ?></p>
+<div style="text-align:center;margin-top:24px"><a class="btn btn-primary" onclick="go('homevalue')"><?= cms_e('gallery.section-2.btn1') ?></a></div>
+</div>
+</section>
+</div>
+</main>
+<!-- ==================== FOOTER ==================== -->
+<footer>
+<div class="wrap">
+<div class="foot-grid">
+<div>
+<div class="foot-brand"><?= cms_e('global.footer.brand') ?></div>
+<p style="margin-top:8px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--blush)"><?= cms_rich('global.footer.p1') ?></p>
+<p style="margin-top:16px"><?= cms_rich('global.footer.p2') ?></p>
+</div>
+<div>
+<h4>Quick Links</h4>
+<ul><li><a onclick="go('about')">About</a></li><li><a onclick="go('sell')">Sell</a></li><li><a onclick="go('homevalue')">Home Value</a></li><li><a onclick="go('speaking')">Speaking</a></li><li><a onclick="go('testimonials')">Testimonials</a></li><li><a onclick="go('gallery')">Gallery</a></li><li><a onclick="go('resources')">Resources</a></li><li><a onclick="go('contact')">Contact</a></li></ul>
+</div>
+<div>
+<h4>Ecosystem</h4>
+<ul><li><a onclick="go('pm')">Property Management</a></li><li><a onclick="go('investing')">Capital &amp; Acquisitions</a></li><li><a onclick="go('transportation')">Transportation &amp; Logistics</a></li><li><a onclick="go('living')">Escaluxe Living</a></li><li><a onclick="alert('Axen Realty / Lofty (mockup)')">Axen Realty / Lofty</a></li><li><a onclick="alert('stan.store/erikakpage (mockup)')">Stan Store</a></li><li><a onclick="go('explains')">Erika Explains</a></li><li><a onclick="go('mentorship')">Mentorship</a></li></ul>
+</div>
+<div>
+<h4>Local Expertise</h4>
+<ul><li><a onclick="go('loc-atlanta')">Atlanta Metro</a></li><li><a onclick="go('loc-gwinnett')">Gwinnett County / Lawrenceville</a></li><li><a onclick="go('loc-fayette')">Peachtree City / Fayette</a></li><li><a onclick="alert('Local page coming soon (mockup)')">Sandy Springs / Roswell / Alpharetta</a></li><li><a onclick="alert('Local page coming soon (mockup)')">East Cobb / Marietta</a></li><li><a onclick="alert('Local page coming soon (mockup)')">Brookhaven / Decatur / Tucker</a></li><li><a onclick="alert('Local page coming soon (mockup)')">McDonough / Henry</a></li><li><a onclick="go('lifestyle')">Lifestyle &amp; Magazine</a></li><li><a onclick="go('media')">Media &amp; Press</a></li><li><a onclick="go('collaborations')">Collaborations</a></li></ul>
+</div>
+<div>
+<h4>Follow</h4>
+<ul><li><a>Instagram</a></li><li><a>Facebook</a></li><li><a>YouTube</a></li><li><a>LinkedIn</a></li><li><a>TikTok</a></li></ul>
+</div>
+</div>
+<div class="foot-bottom">
+<span><?= cms_e('global.footer.bottom1') ?></span>
+<span><?= cms_e('global.footer.bottom2') ?></span>
+</div>
+</div>
+</footer>
+<button aria-label="Back to top" id="backtop"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24"><path d="M18 15l-6-6-6 6"></path></svg></button>
+<script>
+(function(){
+var navEl=document.querySelector('nav');
+var nl=document.getElementById('nl');
+var burger=document.querySelector('.burger');
+var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- page routing (with hash deep-links) ---------- */
+function closeNav(){nl.classList.remove('open');burger.setAttribute('aria-expanded','false');}
+window.go=function(p){
+  var t=document.getElementById('page-'+p);
+  if(!t)return;
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active')});
+  t.classList.add('active');
+  var map={homevalue:'sell',media:'lifestyle',collaborations:'lifestyle',products:'resources',explains:'resources',mentorship:'resources',investing:'resources',pm:'resources',transportation:'resources',living:'resources','loc-atlanta':'home','loc-gwinnett':'home','loc-fayette':'home',about:'home'};
+  var key=map[p]||p;
+  document.querySelectorAll('.nav-links a[data-p]').forEach(function(a){a.classList.toggle('active',a.dataset.p===key)});
+  closeNav();
+  if(history.replaceState)history.replaceState(null,'','#/'+p);
+  window.scrollTo({top:0,behavior:'instant'});
+};
+function fromHash(){var m=location.hash.match(/^#\/(.+)$/);if(m&&document.getElementById('page-'+m[1]))go(m[1]);}
+window.addEventListener('hashchange',fromHash);
+fromHash();
+
+/* ---------- mobile nav ---------- */
+burger.addEventListener('click',function(){
+  var open=nl.classList.toggle('open');
+  burger.setAttribute('aria-expanded',String(open));
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeNav();});
+
+/* ---------- keyboard access for script-driven links ---------- */
+document.querySelectorAll('a[onclick]:not([href])').forEach(function(a){
+  a.setAttribute('tabindex','0');
+  a.setAttribute('role','button');
+  a.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();a.click();}
+  });
+});
+
+/* ---------- filter chips ---------- */
+document.querySelectorAll('.chip').forEach(function(c){
+  c.setAttribute('tabindex','0');
+  c.setAttribute('role','button');
+  function activate(){
+    c.parentElement.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});
+    c.classList.add('on');
+  }
+  c.addEventListener('click',activate);
+  c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();activate();}});
+});
+
+/* ---------- scroll reveal ---------- */
+if(!reduced&&'IntersectionObserver' in window){
+  var sel='.split>*,.center-h,.tst,.eco,.res-card,.step,.prod,.topic,.gal .g,.thumb-strip .g,.form-card,.info-card,.two-col>*,.press-logo,.lead-mag,.faq';
+  var els=document.querySelectorAll(sel);
+  els.forEach(function(el){
+    el.classList.add('reveal');
+    var i=Array.prototype.indexOf.call(el.parentElement.children,el);
+    el.style.transitionDelay=Math.min(i*60,360)+'ms';
+  });
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}
+    });
+  },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+  els.forEach(function(el){io.observe(el);});
+}
+
+/* ---------- animated stat counters ---------- */
+function animateCount(el){
+  var target=parseFloat(el.dataset.count),
+      prefix=el.dataset.prefix||'',
+      suffix=el.dataset.suffix||'',
+      dur=1400,start=null;
+  function step(ts){
+    if(!start)start=ts;
+    var p=Math.min((ts-start)/dur,1),
+        eased=1-Math.pow(1-p,3);
+    el.textContent=prefix+Math.round(target*eased).toLocaleString('en-US')+suffix;
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+if(!reduced&&'IntersectionObserver' in window){
+  var cio=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        en.target.querySelectorAll('[data-count]').forEach(animateCount);
+        cio.unobserve(en.target);
+      }
+    });
+  },{threshold:.4});
+  document.querySelectorAll('.proof').forEach(function(p){cio.observe(p);});
+}
+
+/* ---------- nav shadow + back to top ---------- */
+var backtop=document.getElementById('backtop');
+window.addEventListener('scroll',function(){
+  navEl.classList.toggle('scrolled',window.scrollY>8);
+  backtop.classList.toggle('show',window.scrollY>600);
+},{passive:true});
+backtop.addEventListener('click',function(){
+  window.scrollTo({top:0,behavior:reduced?'instant':'smooth'});
+});
+})();
+</script>
+</body>
+</html>
