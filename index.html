@@ -1791,21 +1791,38 @@ var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- page routing (with hash deep-links) ---------- */
 function closeNav(){nl.classList.remove('open');burger.setAttribute('aria-expanded','false');}
-window.go=function(p){
+/* show a page without touching history (used on load + back/forward) */
+function render(p){
   var t=document.getElementById('page-'+p);
-  if(!t)return;
+  if(!t)return false;
   document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active')});
   t.classList.add('active');
   var map={homevalue:'sell',media:'lifestyle',collaborations:'lifestyle',products:'resources',explains:'resources',mentorship:'resources',investing:'resources',pm:'resources',transportation:'resources',living:'resources','loc-atlanta':'home','loc-gwinnett':'home','loc-fayette':'home',about:'home'};
   var key=map[p]||p;
   document.querySelectorAll('.nav-links a[data-p]').forEach(function(a){a.classList.toggle('active',a.dataset.p===key)});
   closeNav();
-  if(history.replaceState)history.replaceState(null,'','#/'+p);
+  return true;
+}
+/* navigate: push a history entry so the browser Back/Forward buttons work */
+window.go=function(p){
+  if(!render(p))return;
+  if(history.pushState)history.pushState({p:p},'','#/'+p);
   window.scrollTo({top:0,behavior:'instant'});
 };
-function fromHash(){var m=location.hash.match(/^#\/(.+)$/);if(m&&document.getElementById('page-'+m[1]))go(m[1]);}
-window.addEventListener('hashchange',fromHash);
-fromHash();
+/* Back / Forward */
+window.addEventListener('popstate',function(e){
+  var m=location.hash.match(/^#\/(.+)$/);
+  var p=(e.state&&e.state.p)||(m&&m[1])||'home';
+  render(p);
+  window.scrollTo({top:0,behavior:'instant'});
+});
+/* initial load: honor a deep-link hash, seed history state */
+(function(){
+  var m=location.hash.match(/^#\/(.+)$/);
+  var start=(m&&document.getElementById('page-'+m[1]))?m[1]:'home';
+  if(history.replaceState)history.replaceState({p:start},'','#/'+start);
+  render(start);
+})();
 
 /* ---------- mobile nav ---------- */
 burger.addEventListener('click',function(){
