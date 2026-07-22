@@ -76,7 +76,7 @@ button:hover{background:#9C4A3E}
 $pages = manifest();
 $pageIds = array_keys($pages);
 $cur = $_GET['page'] ?? 'home';
-if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email'], true)) $cur = 'home';
+if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty'], true)) $cur = 'home';
 
 /* ---------- change password ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_password'])) {
@@ -113,6 +113,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_smtp'])) {
         else { $err = 'Settings saved, but the test email failed: ' . $mErr; $flash = ''; }
     }
     $cur = 'email';
+}
+
+/* ---------- save Lofty CRM settings ---------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_lofty'])) {
+    csrf_check();
+    set_setting('lofty.enabled', isset($_POST['lofty_enabled']) ? '1' : '0');
+    set_setting('lofty.source_default', trim((string) ($_POST['lofty_source_default'] ?? 'Website')));
+    set_setting('lofty.tags_default', trim((string) ($_POST['lofty_tags_default'] ?? 'Website')));
+    if (($_POST['lofty_key'] ?? '') !== '') set_setting('lofty.key', trim((string) $_POST['lofty_key']));
+    // per-form source/tags/on
+    foreach (all_forms() as $f) {
+        $fk = $f['key'];
+        if (isset($_POST['f_source'][$fk])) set_setting('lofty.form.' . $fk . '.source', trim((string) $_POST['f_source'][$fk]));
+        if (isset($_POST['f_tags'][$fk]))   set_setting('lofty.form.' . $fk . '.tags', trim((string) $_POST['f_tags'][$fk]));
+        set_setting('lofty.form.' . $fk . '.on', isset($_POST['f_on'][$fk]) ? '1' : '0');
+    }
+    $flash = 'Lofty settings saved.';
+    if (($_POST['do_lofty'] ?? '') === 'test') {
+        if (!lofty_enabled()) {
+            $err = 'Settings saved, but enable Lofty and enter an API key first to send a test lead.'; $flash = '';
+        } else {
+            [$lok, $ld] = send_to_lofty([
+                'firstName' => 'Website', 'lastName' => 'Test Lead',
+                'email' => 'test+website@erikakpage.com', 'phone' => '000-000-0000',
+                'source' => setting('lofty.source_default', 'Website'),
+                'tags' => ['Website', 'Test'],
+                'note' => 'Test lead from the ErikaKPage website admin, sent ' . date('M j, Y g:i a') . '. Safe to delete.',
+            ]);
+            crm_log_add('Admin test lead', 'test+website@erikakpage.com', $lok, $ld);
+            if ($lok) $flash = 'Settings saved and a test lead was sent to Lofty (' . $ld . '). Check your Lofty leads.';
+            else { $err = 'Settings saved, but the test lead failed: ' . $ld; $flash = ''; }
+        }
+    }
+    $cur = 'lofty';
 }
 
 /* ---------- save content ---------- */
@@ -166,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     }
 }
 
-$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : $pages[$cur]['title']);
+$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : $pages[$cur]['title']));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -245,6 +279,7 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
     <?php endforeach; ?>
     <div class="grp">Account</div>
     <a href="admin.php?page=email" class="<?= $cur === 'email' ? 'on' : '' ?>">Email / Forms</a>
+    <a href="admin.php?page=lofty" class="<?= $cur === 'lofty' ? 'on' : '' ?>">CRM / Lofty</a>
     <a href="admin.php?page=settings" class="<?= $cur === 'settings' ? 'on' : '' ?>">Settings</a>
   </nav>
 
@@ -294,6 +329,64 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
           </div>
         </form>
       </div>
+
+    <?php elseif ($cur === 'lofty'): ?>
+      <h1>CRM / Lofty</h1>
+      <p class="hint">When a website form is submitted it's emailed to you <b>and</b> added to Lofty as a lead — with the person's details, tags, and a note containing everything they entered. Get your API key in Lofty under <b>Settings → Integrations → API</b>, paste it below, and turn this on.</p>
+      <div class="setcard" style="max-width:720px">
+        <form method="post">
+          <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+          <label class="rm" style="font-size:14px;color:#453230;margin-bottom:16px"><input type="checkbox" name="lofty_enabled" value="1" <?= setting('lofty.enabled') === '1' ? 'checked' : '' ?>> &nbsp;Send website leads to Lofty</label>
+          <div class="fld"><label>Lofty API key <?= setting('lofty.key') !== '' ? '<span style="color:#3E6B36;font-weight:400;text-transform:none;letter-spacing:0">(saved — leave blank to keep)</span>' : '' ?></label><input type="password" name="lofty_key" value="" placeholder="<?= setting('lofty.key') !== '' ? '••••••••••••' : 'paste your Lofty API key' ?>" autocomplete="off" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="fld"><label>Default source</label><input type="text" name="lofty_source_default" value="<?= esc(setting('lofty.source_default', 'Website')) ?>" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+            <div class="fld"><label>Default tags (comma-separated)</label><input type="text" name="lofty_tags_default" value="<?= esc(setting('lofty.tags_default', 'Website')) ?>" style="width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></div>
+          </div>
+
+          <p class="hint" style="margin:22px 0 8px"><b>Per-form source &amp; tags</b> — customize how each form's leads are labeled in Lofty. Uncheck a form to keep it email-only.</p>
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:13px">
+              <thead><tr style="text-align:left;color:#8a746f">
+                <th style="padding:6px 8px 6px 0;font-weight:600">On</th>
+                <th style="padding:6px 8px;font-weight:600">Form</th>
+                <th style="padding:6px 8px;font-weight:600">Source</th>
+                <th style="padding:6px 8px;font-weight:600">Tags (comma-separated)</th>
+              </tr></thead>
+              <tbody>
+              <?php foreach (all_forms() as $f): $fk = $f['key']; $map = lofty_mapping($f['page'], $f['name']); ?>
+                <tr style="border-top:1px solid rgba(69,50,48,.1)">
+                  <td style="padding:8px 8px 8px 0"><input type="checkbox" name="f_on[<?= esc($fk) ?>]" value="1" <?= $map['on'] ? 'checked' : '' ?>></td>
+                  <td style="padding:8px 8px;white-space:nowrap"><?= esc($f['name']) ?><br><span style="color:#9a8a86;font-size:11px"><?= esc($f['page']) ?></span></td>
+                  <td style="padding:8px 8px"><input type="text" name="f_source[<?= esc($fk) ?>]" value="<?= esc($map['source']) ?>" style="width:150px;padding:8px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></td>
+                  <td style="padding:8px 8px"><input type="text" name="f_tags[<?= esc($fk) ?>]" value="<?= esc(implode(', ', $map['tags'])) ?>" style="width:220px;padding:8px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3"></td>
+                </tr>
+              <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="savebar" style="position:static;box-shadow:none;border:none;padding:0;gap:10px;margin-top:20px">
+            <button name="do_lofty" value="save">Save settings</button>
+            <button name="do_lofty" value="test" style="background:#8F6B2E">Save &amp; send test lead</button>
+          </div>
+        </form>
+      </div>
+
+      <?php $log = crm_log_recent(25); if ($log): ?>
+      <div class="setcard" style="max-width:720px;margin-top:22px">
+        <h3 style="margin:0 0 10px;font-size:15px">Recent CRM syncs</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+          <?php foreach ($log as $r): ?>
+          <tr style="border-top:1px solid rgba(69,50,48,.08)">
+            <td style="padding:6px 8px;white-space:nowrap;color:#8a746f"><?= esc($r['created']) ?></td>
+            <td style="padding:6px 8px"><?= esc($r['form']) ?></td>
+            <td style="padding:6px 8px;color:#8a746f"><?= esc($r['email']) ?></td>
+            <td style="padding:6px 8px;white-space:nowrap"><?= $r['ok'] ? '<span style="color:#3E6B36">✓ synced</span>' : '<span style="color:#8C3B32">✗ failed</span>' ?></td>
+          </tr>
+          <?php endforeach; ?>
+        </table>
+      </div>
+      <?php endif; ?>
 
     <?php else: ?>
       <h1><?= esc($pages[$cur]['title']) ?></h1>

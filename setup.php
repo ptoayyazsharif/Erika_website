@@ -32,9 +32,11 @@ if (!$err && !$done && $_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($driver === 'sqlite') {
             db()->exec('CREATE TABLE IF NOT EXISTS content (k TEXT PRIMARY KEY, v TEXT)');
             db()->exec('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, pass_hash TEXT)');
+            db()->exec('CREATE TABLE IF NOT EXISTS crm_log (id INTEGER PRIMARY KEY AUTOINCREMENT, created TEXT, form TEXT, email TEXT, ok INTEGER, detail TEXT)');
         } else {
             db()->exec('CREATE TABLE IF NOT EXISTS content (k VARCHAR(160) PRIMARY KEY, v MEDIUMTEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
             db()->exec('CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(60) UNIQUE, pass_hash VARCHAR(255)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+            db()->exec('CREATE TABLE IF NOT EXISTS crm_log (id INT AUTO_INCREMENT PRIMARY KEY, created DATETIME, form VARCHAR(160), email VARCHAR(160), ok TINYINT, detail TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         }
         db()->prepare('INSERT INTO users (username, pass_hash) VALUES (?, ?)')
             ->execute([$u, password_hash($p, PASSWORD_DEFAULT)]);

@@ -29,6 +29,7 @@ $pretty = function (string $k): string {
     return ucwords(trim(str_replace('_', ' ', $k)));
 };
 $rows = [];
+$raw = [];
 $replyEmail = '';
 $replyName = '';
 foreach ($_POST as $k => $v) {
@@ -36,6 +37,8 @@ foreach ($_POST as $k => $v) {
     if (is_array($v)) $v = implode(', ', $v);
     $v = trim((string) $v);
     if ($v === '') continue;
+    $short = preg_replace('/^f_/', '', $k);
+    $raw[$short] = $v;
     $label = $pretty($k);
     $rows[$label] = $v;
     if ($replyEmail === '' && filter_var($v, FILTER_VALIDATE_EMAIL)) $replyEmail = $v;
@@ -68,6 +71,41 @@ $htmlBody = '<div style="font-family:system-ui,Arial,sans-serif;color:#453230">'
     . '</div>';
 
 [$ok, $err] = send_mail($subject, $htmlBody, $textBody, $replyEmail, $replyName);
+
+// --- also create a lead in Lofty CRM (secondary; never blocks the visitor) ---
+if (lofty_enabled()) {
+    $map = lofty_mapping($pageId, $formName);
+    if ($map['on']) {
+        // name: prefer explicit first/last, else split a single "name" field
+        $first = $raw['first_name'] ?? '';
+        $last  = $raw['last_name'] ?? '';
+        if ($first === '' && $last === '') {
+            $whole = $raw['your_name'] ?? $raw['name'] ?? $replyName;
+            if ($whole !== '') {
+                $parts = preg_split('/\s+/', trim($whole), 2);
+                $first = $parts[0];
+                $last  = $parts[1] ?? '';
+            }
+        }
+        $phone = $raw['phone'] ?? '';
+
+        // note = every submitted field + which form/page, so nothing is lost
+        $noteLines = ['Website form: ' . $formName . ' (' . $pageLabel . ' page)'];
+        foreach ($rows as $label => $val) $noteLines[] = $label . ': ' . $val;
+        $noteLines[] = 'Submitted ' . date('M j, Y g:i a');
+
+        [$lok, $ldetail] = send_to_lofty([
+            'firstName' => $first,
+            'lastName'  => $last,
+            'email'     => $replyEmail,
+            'phone'     => $phone,
+            'source'    => $map['source'],
+            'tags'      => $map['tags'],
+            'note'      => implode("\n", $noteLines),
+        ]);
+        crm_log_add($formName . ' (' . $pageLabel . ')', $replyEmail, $lok, $ldetail);
+    }
+}
 
 if ($ok) back_to($pageId, 'sent=1');
 back_to($pageId, 'senterr=' . (stripos($err, 'not configured') !== false ? 'config' : '1'));

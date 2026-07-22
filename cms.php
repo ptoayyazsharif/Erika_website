@@ -231,6 +231,149 @@ function csrf_check(): void {
     }
 }
 
+/* ---------- Lofty CRM (create a lead when a form is submitted) ---------- */
+
+const LOFTY_ENDPOINT = 'https://api.lofty.com/v1.0/leads';
+
+/** Per-form default Source + Tags (used until the admin overrides them). */
+function lofty_form_defaults(): array {
+    return [
+        'sell'           => ['Website – Seller',        'Website,Seller'],
+        'homevalue'      => ['Website – Home Value',    'Website,Seller,Home Value'],
+        'buy'            => ['Website – Buyer',         'Website,Buyer'],
+        'speaking'       => ['Website – Speaking',      'Website,Speaking'],
+        'collaborations' => ['Website – Collaboration', 'Website,Collaboration'],
+        'media'          => ['Website – Media',         'Website,Media'],
+        'resources'      => ['Website – Checklist',     'Website,Lead Magnet'],
+        'mentorship'     => ['Website – Mentorship',    'Website,Mentorship,Agent'],
+        'investing'      => ['Website – Investing',     'Website,Investor'],
+        'pm'             => ['Website – Property Mgmt', 'Website,Property Management'],
+        'transportation' => ['Website – Transportation','Website,Transportation'],
+        'contact'        => ['Website – Contact',       'Website,Contact'],
+    ];
+}
+
+/** Stable per-form key shared by submit.php and the admin table. */
+function form_key(string $page, string $formName): string {
+    $s = strtolower($page . '-' . $formName);
+    $s = preg_replace('/[^a-z0-9]+/', '-', $s);
+    return trim($s, '-');
+}
+
+function lofty_enabled(): bool {
+    return setting('lofty.enabled') === '1' && trim(setting('lofty.key')) !== '';
+}
+
+/** Resolve the Source + Tags[] for a given form, honoring admin overrides. */
+function lofty_mapping(string $page, string $formName): array {
+    $fk = form_key($page, $formName);
+    $defaults = lofty_form_defaults();
+    [$dSource, $dTags] = $defaults[$page] ?? [setting('lofty.source_default', 'Website'), setting('lofty.tags_default', 'Website')];
+    $source = setting('lofty.form.' . $fk . '.source', $dSource) ?: $dSource;
+    $tagsRaw = setting('lofty.form.' . $fk . '.tags', $dTags);
+    if ($tagsRaw === '') $tagsRaw = $dTags;
+    $tags = array_values(array_filter(array_map('trim', explode(',', $tagsRaw))));
+    $on = setting('lofty.form.' . $fk . '.on', '1') !== '0';
+    return ['source' => $source, 'tags' => $tags, 'on' => $on];
+}
+
+/**
+ * Create a lead in Lofty. Returns [ok, detail].
+ * $lead: firstName, lastName, email, phone, source, tags[], note.
+ * Never throws; short timeout so a slow API can't hang the thank-you page.
+ */
+function send_to_lofty(array $lead, ?string $endpoint = null): array {
+    $key = trim(setting('lofty.key'));
+    if ($key === '') return [false, 'No Lofty API key set.'];
+    $url = $endpoint ?: (setting('lofty.endpoint', '') ?: LOFTY_ENDPOINT);
+
+    // Lofty create-lead payload. Field names verified against the live API via
+    // the "Send test lead" button; kept in one place so a rename is a one-liner.
+    $payload = array_filter([
+        'firstName' => $lead['firstName'] ?? '',
+        'lastName'  => $lead['lastName'] ?? '',
+        'email'     => $lead['email'] ?? '',
+        'phone'     => $lead['phone'] ?? '',
+        'source'    => $lead['source'] ?? 'Website',
+        'tags'      => $lead['tags'] ?? [],
+        'note'      => $lead['note'] ?? '',
+    ], fn($v) => $v !== '' && $v !== []);
+
+    $body = json_encode($payload);
+    $headers = ['Authorization: token ' . $key, 'Content-Type: application/json', 'Accept: application/json'];
+
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $body,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 6,
+            CURLOPT_TIMEOUT => 10,
+        ]);
+        $resp = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $cErr = curl_error($ch);
+        curl_close($ch);
+        if ($resp === false) return [false, 'Connection failed: ' . $cErr];
+        if ($code >= 200 && $code < 300) return [true, 'HTTP ' . $code];
+        return [false, 'HTTP ' . $code . ': ' . substr((string) $resp, 0, 300)];
+    }
+
+    // Fallback without cURL
+    $ctx = stream_context_create(['http' => [
+        'method' => 'POST', 'header' => implode("\r\n", $headers),
+        'content' => $body, 'timeout' => 10, 'ignore_errors' => true,
+    ]]);
+    $resp = @file_get_contents($url, false, $ctx);
+    $code = 0;
+    if (isset($http_response_header[0]) && preg_match('/\s(\d{3})\s/', $http_response_header[0], $m)) $code = (int) $m[1];
+    if ($resp !== false && $code >= 200 && $code < 300) return [true, 'HTTP ' . $code];
+    return [false, 'HTTP ' . $code . ': ' . substr((string) $resp, 0, 300)];
+}
+
+/** Record one CRM sync attempt (best-effort; ignores errors). */
+function crm_log_add(string $form, string $email, bool $ok, string $detail): void {
+    try {
+        $driver = cfg()['driver'] ?? 'mysql';
+        if ($driver === 'sqlite') {
+            db()->exec('CREATE TABLE IF NOT EXISTS crm_log (id INTEGER PRIMARY KEY AUTOINCREMENT, created TEXT, form TEXT, email TEXT, ok INTEGER, detail TEXT)');
+        } else {
+            db()->exec('CREATE TABLE IF NOT EXISTS crm_log (id INT AUTO_INCREMENT PRIMARY KEY, created DATETIME, form VARCHAR(160), email VARCHAR(160), ok TINYINT, detail TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        }
+        db()->prepare('INSERT INTO crm_log (created, form, email, ok, detail) VALUES (?,?,?,?,?)')
+            ->execute([date('Y-m-d H:i:s'), $form, $email, $ok ? 1 : 0, substr($detail, 0, 500)]);
+    } catch (Throwable $e) { /* logging must never break a submission */ }
+}
+
+function crm_log_recent(int $limit = 25): array {
+    try {
+        $stmt = db()->query('SELECT * FROM crm_log ORDER BY id DESC LIMIT ' . (int) $limit);
+        return $stmt->fetchAll();
+    } catch (Throwable $e) { return []; }
+}
+
+/** Every website form as [page, name, key], read from index.php so it stays in sync. */
+function all_forms(): array {
+    static $forms;
+    if ($forms !== null) return $forms;
+    $forms = [];
+    $seen = [];
+    $html = @file_get_contents(__DIR__ . '/index.php') ?: '';
+    if (preg_match_all('/name="_form" value="([^"]*)">\s*<input type="hidden" name="_page" value="([^"]*)"/', $html, $m, PREG_SET_ORDER)) {
+        foreach ($m as $row) {
+            $name = html_entity_decode($row[1], ENT_QUOTES);
+            $page = $row[2];
+            $fk = form_key($page, $name);
+            if (isset($seen[$fk])) continue;
+            $seen[$fk] = true;
+            $forms[] = ['page' => $page, 'name' => $name, 'key' => $fk];
+        }
+    }
+    return $forms;
+}
+
 /* ---------- uploads ---------- */
 
 const MAX_UPLOAD_BYTES = 300 * 1024 * 1024; // 300 MB
