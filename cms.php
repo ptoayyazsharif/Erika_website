@@ -291,7 +291,11 @@ function lofty_mapping(string $page, string $formName): array {
 function lofty_http(string $url, array $payload): array {
     $key = trim(setting('lofty.key'));
     $body = json_encode($payload);
-    $schemes = ['Bearer ', 'token '];
+    // A user-managed API Key authenticates as "Authorization: token <key>";
+    // an OAuth access token uses "Bearer <token>". Try the API-key scheme first
+    // (that's what the admin generates), then Bearer. A non-2xx never creates a
+    // lead, so trying both schemes can't produce duplicates.
+    $schemes = ['token ', 'Bearer '];
     $last = [false, 0, ''];
     foreach ($schemes as $scheme) {
         $headers = ['Authorization: ' . $scheme . $key, 'Content-Type: application/json', 'Accept: application/json'];
@@ -318,7 +322,7 @@ function lofty_http(string $url, array $payload): array {
         }
         if ($code >= 200 && $code < 300) return [true, $code, (string) $resp];
         $last = [false, $code, (string) $resp];
-        if ($code !== 401) break; // only the auth scheme is worth retrying
+        // fall through to the next auth scheme on any non-2xx (safe: nothing was created)
     }
     return $last;
 }
