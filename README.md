@@ -52,10 +52,13 @@ Each form has an editable **Source** and **Tags** (per-form table), and can be t
 off to stay email-only. Every lead includes the person's name/email/phone plus a **note**
 containing the full submission (address, timeline, message, etc.) and which form/page it
 came from. Leads post directly to `https://api.lofty.com/v1.0/leads` with the header
-`Authorization: Bearer <key>` (falls back to the `token` scheme automatically), then the
-full submission is attached as a note via the separate `POST /v1.0/notes` endpoint using
-the new lead's id — no Zapier or middleman. A **Recent CRM syncs** log at the bottom of
-the page shows what synced (including the created lead id). The API key is stored in the database (same trust
+`Authorization: Bearer <key>` (falls back to the `token` scheme automatically) — no
+Zapier or middleman. The payload matches Lofty's Create Lead schema: `emails`/`phones`
+arrays, `source`, `tags`, `leadTypes` (Seller/Buyer/Investor/Agent/Landlord inferred from
+the form), and the full submission attached inline as the lead's note via `content` +
+`isPin`. `firstName` is required by Lofty, so email-only forms fall back to the email name.
+A **Recent CRM syncs** log at the bottom of the page shows what synced (including the
+created lead id). The API key is stored in the database (same trust
 model as the SMTP password). If Lofty is ever unreachable, the email still sends and the
 visitor still sees the thank-you page — a CRM outage never loses or blocks a lead.
 

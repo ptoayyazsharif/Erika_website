@@ -94,6 +94,10 @@ if (lofty_enabled()) {
         foreach ($rows as $label => $val) $noteLines[] = $label . ': ' . $val;
         $noteLines[] = 'Submitted ' . date('M j, Y g:i a');
 
+        // Lofty leadType IDs by form: Seller(1), Buyer(2), Investor(6), Agent(7), Landlord(9)
+        $leadTypesMap = ['sell' => [1], 'homevalue' => [1], 'buy' => [2],
+                         'mentorship' => [7], 'investing' => [6], 'pm' => [9]];
+
         [$lok, $ldetail] = send_to_lofty([
             'firstName' => $first,
             'lastName'  => $last,
@@ -101,6 +105,7 @@ if (lofty_enabled()) {
             'phone'     => $phone,
             'source'    => $map['source'],
             'tags'      => $map['tags'],
+            'leadTypes' => $leadTypesMap[$pageId] ?? [],
             'note'      => implode("\n", $noteLines),
         ]);
         crm_log_add($formName . ' (' . $pageLabel . ')', $replyEmail, $lok, $ldetail);

@@ -335,44 +335,47 @@ function lofty_extract_lead_id(string $resp): string {
 }
 
 /**
- * Create a lead in Lofty (and, if a note is supplied, attach it via the
- * separate Notes endpoint). Returns [ok, detail]. Never throws; short timeout.
- * $lead: firstName, lastName, email, phone, source, tags[], note.
+ * Create a lead in Lofty. Returns [ok, detail]. Never throws; short timeout.
+ * $lead keys: firstName, lastName, email, phone, source, tags[], leadTypes[], note.
+ *
+ * Field names/shape match Lofty's Create Lead schema (POST /v1.0/leads):
+ * emails/phones are arrays; the note is attached inline via `content` + `isPin`
+ * (the create-lead body accepts a note), so no second request is needed.
  */
 function send_to_lofty(array $lead, ?string $endpoint = null): array {
     $key = trim(setting('lofty.key'));
     if ($key === '') return [false, 'No Lofty API key set.'];
     $leadsUrl = $endpoint ?: (setting('lofty.endpoint', '') ?: LOFTY_ENDPOINT);
 
-    // Core lead fields (name/email/phone/source/tags). Note is also included here
-    // as a courtesy in case the account accepts it inline; the reliable path is
-    // the separate Notes call below.
+    $email = trim((string) ($lead['email'] ?? ''));
+    $phone = trim((string) ($lead['phone'] ?? ''));
+    // firstName is required by Lofty — fall back so email-only forms aren't rejected.
+    $first = trim((string) ($lead['firstName'] ?? ''));
+    if ($first === '') $first = $email !== '' ? explode('@', $email)[0] : 'Website Lead';
+    $note = (string) ($lead['note'] ?? '');
+    if (strlen($note) > 2000) $note = substr($note, 0, 1997) . '...';
+
     $payload = array_filter([
-        'firstName' => $lead['firstName'] ?? '',
+        'firstName' => $first,
         'lastName'  => $lead['lastName'] ?? '',
-        'email'     => $lead['email'] ?? '',
-        'phone'     => $lead['phone'] ?? '',
+        'emails'    => $email !== '' ? [$email] : [],
+        'phones'    => $phone !== '' ? [$phone] : [],
         'source'    => $lead['source'] ?? 'Website',
         'tags'      => $lead['tags'] ?? [],
-        'note'      => $lead['note'] ?? '',
+        'leadTypes' => $lead['leadTypes'] ?? [],
     ], fn($v) => $v !== '' && $v !== []);
+    if ($note !== '') {                 // inline note (create-lead accepts content + isPin)
+        $payload['content'] = $note;
+        $payload['isPin'] = false;
+    }
 
     [$ok, $code, $resp] = lofty_http($leadsUrl, $payload);
     if (!$ok) return [false, ($code ? 'HTTP ' . $code . ': ' : '') . substr($resp, 0, 240)];
 
     $detail = 'lead HTTP ' . $code;
     $leadId = lofty_extract_lead_id($resp);
-
-    // Attach the full submission as a Note on the new lead (separate endpoint).
-    if (($lead['note'] ?? '') !== '' && $leadId !== '') {
-        $notesUrl = str_contains($leadsUrl, '/leads')
-            ? str_replace('/leads', '/notes', $leadsUrl)
-            : 'https://api.lofty.com/v1.0/notes';
-        [$nok, $ncode, ] = lofty_http($notesUrl, ['leadId' => $leadId, 'content' => $lead['note']]);
-        $detail .= ' · lead #' . $leadId . ' · note ' . ($nok ? 'added' : 'HTTP ' . $ncode);
-    } elseif ($leadId !== '') {
-        $detail .= ' · lead #' . $leadId;
-    }
+    if ($leadId !== '') $detail .= ' · lead #' . $leadId;
+    if ($note !== '')   $detail .= ' · note attached';
     return [true, $detail];
 }
 
