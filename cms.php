@@ -282,13 +282,71 @@ function lofty_mapping(string $page, string $formName): array {
  * $lead: firstName, lastName, email, phone, source, tags[], note.
  * Never throws; short timeout so a slow API can't hang the thank-you page.
  */
+/**
+ * Low-level authenticated POST to Lofty. Returns [ok, httpCode, responseBody].
+ * The Lofty API Reference documents `Authorization: Bearer <token>` on every
+ * endpoint; we try Bearer first and fall back to the `token` scheme on a 401,
+ * so it works whichever the account's key expects.
+ */
+function lofty_http(string $url, array $payload): array {
+    $key = trim(setting('lofty.key'));
+    $body = json_encode($payload);
+    $schemes = ['Bearer ', 'token '];
+    $last = [false, 0, ''];
+    foreach ($schemes as $scheme) {
+        $headers = ['Authorization: ' . $scheme . $key, 'Content-Type: application/json', 'Accept: application/json'];
+        if (function_exists('curl_init')) {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_POST => true, CURLOPT_POSTFIELDS => $body, CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 6, CURLOPT_TIMEOUT => 10,
+            ]);
+            $resp = curl_exec($ch);
+            $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $cErr = curl_error($ch);
+            curl_close($ch);
+            if ($resp === false) return [false, 0, 'Connection failed: ' . $cErr];
+        } else {
+            $ctx = stream_context_create(['http' => [
+                'method' => 'POST', 'header' => implode("\r\n", $headers),
+                'content' => $body, 'timeout' => 10, 'ignore_errors' => true,
+            ]]);
+            $resp = @file_get_contents($url, false, $ctx);
+            $code = 0;
+            if (isset($http_response_header[0]) && preg_match('/\s(\d{3})\s/', $http_response_header[0], $m)) $code = (int) $m[1];
+            if ($resp === false) return [false, 0, 'Connection failed'];
+        }
+        if ($code >= 200 && $code < 300) return [true, $code, (string) $resp];
+        $last = [false, $code, (string) $resp];
+        if ($code !== 401) break; // only the auth scheme is worth retrying
+    }
+    return $last;
+}
+
+/** Pull a lead id out of Lofty's response envelope, wherever it lives. */
+function lofty_extract_lead_id(string $resp): string {
+    $j = json_decode($resp, true);
+    if (!is_array($j)) return '';
+    $cands = [$j['data']['id'] ?? null, $j['data']['leadId'] ?? null, $j['data'] ?? null, $j['id'] ?? null, $j['leadId'] ?? null];
+    foreach ($cands as $c) {
+        if (is_int($c) || (is_string($c) && $c !== '')) return (string) $c;
+    }
+    return '';
+}
+
+/**
+ * Create a lead in Lofty (and, if a note is supplied, attach it via the
+ * separate Notes endpoint). Returns [ok, detail]. Never throws; short timeout.
+ * $lead: firstName, lastName, email, phone, source, tags[], note.
+ */
 function send_to_lofty(array $lead, ?string $endpoint = null): array {
     $key = trim(setting('lofty.key'));
     if ($key === '') return [false, 'No Lofty API key set.'];
-    $url = $endpoint ?: (setting('lofty.endpoint', '') ?: LOFTY_ENDPOINT);
+    $leadsUrl = $endpoint ?: (setting('lofty.endpoint', '') ?: LOFTY_ENDPOINT);
 
-    // Lofty create-lead payload. Field names verified against the live API via
-    // the "Send test lead" button; kept in one place so a rename is a one-liner.
+    // Core lead fields (name/email/phone/source/tags). Note is also included here
+    // as a courtesy in case the account accepts it inline; the reliable path is
+    // the separate Notes call below.
     $payload = array_filter([
         'firstName' => $lead['firstName'] ?? '',
         'lastName'  => $lead['lastName'] ?? '',
@@ -299,38 +357,23 @@ function send_to_lofty(array $lead, ?string $endpoint = null): array {
         'note'      => $lead['note'] ?? '',
     ], fn($v) => $v !== '' && $v !== []);
 
-    $body = json_encode($payload);
-    $headers = ['Authorization: token ' . $key, 'Content-Type: application/json', 'Accept: application/json'];
+    [$ok, $code, $resp] = lofty_http($leadsUrl, $payload);
+    if (!$ok) return [false, ($code ? 'HTTP ' . $code . ': ' : '') . substr($resp, 0, 240)];
 
-    if (function_exists('curl_init')) {
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $body,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CONNECTTIMEOUT => 6,
-            CURLOPT_TIMEOUT => 10,
-        ]);
-        $resp = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $cErr = curl_error($ch);
-        curl_close($ch);
-        if ($resp === false) return [false, 'Connection failed: ' . $cErr];
-        if ($code >= 200 && $code < 300) return [true, 'HTTP ' . $code];
-        return [false, 'HTTP ' . $code . ': ' . substr((string) $resp, 0, 300)];
+    $detail = 'lead HTTP ' . $code;
+    $leadId = lofty_extract_lead_id($resp);
+
+    // Attach the full submission as a Note on the new lead (separate endpoint).
+    if (($lead['note'] ?? '') !== '' && $leadId !== '') {
+        $notesUrl = str_contains($leadsUrl, '/leads')
+            ? str_replace('/leads', '/notes', $leadsUrl)
+            : 'https://api.lofty.com/v1.0/notes';
+        [$nok, $ncode, ] = lofty_http($notesUrl, ['leadId' => $leadId, 'content' => $lead['note']]);
+        $detail .= ' · lead #' . $leadId . ' · note ' . ($nok ? 'added' : 'HTTP ' . $ncode);
+    } elseif ($leadId !== '') {
+        $detail .= ' · lead #' . $leadId;
     }
-
-    // Fallback without cURL
-    $ctx = stream_context_create(['http' => [
-        'method' => 'POST', 'header' => implode("\r\n", $headers),
-        'content' => $body, 'timeout' => 10, 'ignore_errors' => true,
-    ]]);
-    $resp = @file_get_contents($url, false, $ctx);
-    $code = 0;
-    if (isset($http_response_header[0]) && preg_match('/\s(\d{3})\s/', $http_response_header[0], $m)) $code = (int) $m[1];
-    if ($resp !== false && $code >= 200 && $code < 300) return [true, 'HTTP ' . $code];
-    return [false, 'HTTP ' . $code . ': ' . substr((string) $resp, 0, 300)];
+    return [true, $detail];
 }
 
 /** Record one CRM sync attempt (best-effort; ignores errors). */
