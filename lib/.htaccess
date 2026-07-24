@@ -1,0 +1,2 @@
+# /lib holds credentials and server-only code. Never web-servable.
+Require all denied

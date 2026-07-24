@@ -1,0 +1,4 @@
+lib/config.php
+tests/config.local.php
+*.log
+router_index.cache
