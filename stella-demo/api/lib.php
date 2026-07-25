@@ -406,21 +406,36 @@ function chunk_for_tts(string $text, ?int $maxChars = null): array {
     $maxChars = $maxChars ?? TTS_CHUNK_CHARS;
     $paras  = preg_split('/\R\s*\R/', trim($text)) ?: [];
     $chunks = [];
+    $buf    = '';
+
+    $flush = function () use (&$buf, &$chunks) {
+        if (trim($buf) !== '') $chunks[] = trim($buf);
+        $buf = '';
+    };
 
     foreach ($paras as $para) {
         $para = trim($para);
         if ($para === '') continue;
 
-        if (mb_strlen($para) <= $maxChars) { $chunks[] = $para; continue; }
-
-        $sentences = preg_split('/(?<=[.!?])\s+/', $para) ?: [$para];
-        $buf = '';
-        foreach ($sentences as $s) {
-            if ($buf !== '' && mb_strlen($buf . ' ' . $s) > $maxChars) { $chunks[] = $buf; $buf = $s; }
-            else $buf = $buf === '' ? $s : $buf . ' ' . $s;
+        // Pack as many paragraphs into one request as will fit. Each request
+        // costs a unit of the daily quota, so a whole reading should normally
+        // come out as a single chunk.
+        if ($buf !== '' && mb_strlen($buf . "\n\n" . $para) <= $maxChars) {
+            $buf .= "\n\n" . $para;
+            continue;
         }
-        if (trim($buf) !== '') $chunks[] = trim($buf);
+        if (mb_strlen($para) <= $maxChars) { $flush(); $buf = $para; continue; }
+
+        // A single paragraph over the limit still has to be broken up.
+        $flush();
+        $sentences = preg_split('/(?<=[.!?])\s+/', $para) ?: [$para];
+        foreach ($sentences as $s) {
+            if ($buf !== '' && mb_strlen($buf . ' ' . $s) > $maxChars) $flush();
+            $buf = $buf === '' ? $s : $buf . ' ' . $s;
+        }
+        $flush();
     }
+    $flush();
     return $chunks;
 }
 

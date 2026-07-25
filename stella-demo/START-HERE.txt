@@ -1,0 +1,52 @@
+MANIFEST — Erika Page manifestation demo
+========================================
+
+UPLOAD (FTP)
+------------
+1. Upload the whole "stella-demo" folder into public_html/
+   You should end up with:  public_html/stella-demo/index.html
+
+2. In cPanel -> MultiPHP Manager, set the domain to PHP 8.1 or newer.
+
+3. Set permissions on ONE folder (right-click in File Manager, or your FTP
+   client's "chmod" / "file permissions"):
+        stella-demo/audio/generated/   ->  775
+   Without this the site still works, but it can't save generated audio.
+
+4. Open:  https://yourdomain.com/stella-demo/
+
+
+IS IT WORKING?
+--------------
+Open:  https://yourdomain.com/stella-demo/api/status.php
+
+You want to see:
+   "llm": "gemini", "tts": true, "audio_writable": true, "demo_ready": true
+
+If "audio_writable" is false, redo step 3.
+
+
+YOUR KEY IS ALREADY IN
+----------------------
+The Google AI Studio key is in  api/config.local.php  — the story and the
+voice both come from it. Nothing else to configure.
+
+
+FOR THE DEMO
+------------
+"Play Erika's reading" on the home screen plays a reading that is already
+generated and included in this zip, so it starts in about 8 seconds.
+
+If you change her answers, or want a fresh one, open this first and leave the
+tab open for a minute or two:
+        https://yourdomain.com/stella-demo/api/prewarm.php
+
+Google's free tier gives about 10 narrations a day. A live quiz run that
+can't get audio in time falls back to the browser's own voice — it never
+breaks, it just sounds less good.
+
+
+MORE
+----
+README.md  — what everything is and how it works
+DEPLOY.md  — the long version of this file, plus troubleshooting
