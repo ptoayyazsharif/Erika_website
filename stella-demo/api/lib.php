@@ -127,7 +127,10 @@ function area_note(string $area): string {
 function story_user_prompt(array $profile): string {
     $json = json_encode($profile, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     $note = area_note($profile['area'] ?? '');
-    return "{$json}\n\n{$note}";
+    $min  = STORY_MIN_WORDS; $max = STORY_MAX_WORDS;
+    // Smaller models consistently undershoot unless the length is restated
+    // here, in the turn they actually answer.
+    return "{$json}\n\n{$note}\n\nLength: {$min}–{$max} words — six or seven full paragraphs. Do not stop short of {$min} words. Remember the contrast beat.";
 }
 
 /* ---------- LLM ---------------------------------------------------------- */
@@ -136,11 +139,22 @@ function active_provider(): string {
     $p = LLM_PROVIDER;
     if ($p === 'anthropic' && ANTHROPIC_API_KEY !== '') return 'anthropic';
     if ($p === 'openai'    && OPENAI_API_KEY    !== '') return 'openai';
+    if ($p === 'gemini'    && GEMINI_API_KEY    !== '') return 'gemini';
     if ($p === 'auto') {
         if (ANTHROPIC_API_KEY !== '') return 'anthropic';
         if (OPENAI_API_KEY    !== '') return 'openai';
+        if (GEMINI_API_KEY    !== '') return 'gemini';
     }
     return 'none';
+}
+
+function llm_model_name(string $provider): string {
+    return match ($provider) {
+        'anthropic' => ANTHROPIC_MODEL,
+        'openai'    => OPENAI_MODEL,
+        'gemini'    => GEMINI_MODEL,
+        default     => '',
+    };
 }
 
 /**
@@ -156,6 +170,9 @@ function llm_story(array $profile): array {
     }
     if ($provider === 'openai') {
         return openai_call($system, $user);
+    }
+    if ($provider === 'gemini') {
+        return gemini_call($system, $user);
     }
     return ['ok' => false, 'text' => '', 'error' => 'no_api_key', 'model' => ''];
 }
@@ -226,6 +243,45 @@ function openai_call(string $system, string $user): array {
     $text = trim($data['choices'][0]['message']['content'] ?? '');
     if ($text === '') return ['ok' => false, 'text' => '', 'error' => 'openai_empty', 'model' => OPENAI_MODEL];
     return ['ok' => true, 'text' => $text, 'error' => '', 'model' => OPENAI_MODEL];
+}
+
+function gemini_call(string $system, string $user): array {
+    $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode(GEMINI_MODEL) . ':generateContent';
+    $r = curl_json($url, [
+        'x-goog-api-key: ' . GEMINI_API_KEY,
+        'Content-Type: application/json',
+    ], [
+        'system_instruction' => ['parts' => [['text' => $system]]],
+        'contents' => [['role' => 'user', 'parts' => [['text' => $user]]]],
+        'generationConfig' => [
+            'temperature'     => LLM_TEMPERATURE,
+            'maxOutputTokens' => 2400,
+        ],
+    ]);
+
+    if ($r['body'] === false || $r['code'] !== 200) {
+        $msg = 'gemini_http_' . $r['code'];
+        if (is_string($r['body'])) {
+            $j = json_decode($r['body'], true);
+            if (!empty($j['error']['message'])) $msg .= ': ' . mb_substr($j['error']['message'], 0, 160);
+        }
+        if ($r['curl_error']) $msg .= ' (' . $r['curl_error'] . ')';
+        return ['ok' => false, 'text' => '', 'error' => $msg, 'model' => GEMINI_MODEL];
+    }
+
+    $data = json_decode($r['body'], true);
+    $text = '';
+    foreach (($data['candidates'][0]['content']['parts'] ?? []) as $part) {
+        $text .= $part['text'] ?? '';
+    }
+    $text = trim($text);
+    if ($text === '') {
+        // Usually a safety block, or a thinking model that spent the whole
+        // budget before writing anything.
+        $why = $data['candidates'][0]['finishReason'] ?? ($data['promptFeedback']['blockReason'] ?? 'empty');
+        return ['ok' => false, 'text' => '', 'error' => 'gemini_' . strtolower($why), 'model' => GEMINI_MODEL];
+    }
+    return ['ok' => true, 'text' => $text, 'error' => '', 'model' => GEMINI_MODEL];
 }
 
 /* ---------- offline fallback story --------------------------------------
@@ -315,6 +371,247 @@ function resolve_voice_id(string $voice): ?string {
     $id  = trim((string)($VOICES[$key] ?? ''));
     if ($id === '' || str_starts_with($id, 'REPLACE')) return null;
     return $id;
+}
+
+/** Which voice engine is actually usable right now. */
+function tts_provider(): string {
+    $want = TTS_PROVIDER;
+    $hasEleven = ELEVENLABS_API_KEY !== '' && resolve_voice_id(DEFAULT_VOICE) !== null;
+    $hasGemini = GEMINI_API_KEY !== '';
+
+    if ($want === 'browser')                 return 'none';
+    if ($want === 'elevenlabs')              return $hasEleven ? 'elevenlabs' : 'none';
+    if ($want === 'gemini')                  return $hasGemini ? 'gemini' : 'none';
+    if ($hasEleven)                          return 'elevenlabs';   // auto
+    if ($hasGemini)                          return 'gemini';
+    return 'none';
+}
+
+function resolve_gemini_voice(string $voice): string {
+    global $GEMINI_VOICES;
+    if (!is_array($GEMINI_VOICES)) return 'Aoede';
+    return $GEMINI_VOICES[$voice] ?? ($GEMINI_VOICES[DEFAULT_VOICE] ?? 'Aoede');
+}
+
+/* ---------- Gemini speech ------------------------------------------------
+   Gemini returns raw 16-bit PCM, one call at a time, and a full reading takes
+   over a minute if you ask for it in one go. So the story is cut at paragraph
+   boundaries and the chunks are requested in parallel, then stitched back
+   together with a beat of silence between them and wrapped in a WAV header.
+   Wall time ends up close to the slowest chunk instead of the sum.
+   ------------------------------------------------------------------------ */
+
+/** Split into TTS-sized pieces, preferring paragraph then sentence breaks. */
+function chunk_for_tts(string $text, ?int $maxChars = null): array {
+    $maxChars = $maxChars ?? TTS_CHUNK_CHARS;
+    $paras  = preg_split('/\R\s*\R/', trim($text)) ?: [];
+    $chunks = [];
+
+    foreach ($paras as $para) {
+        $para = trim($para);
+        if ($para === '') continue;
+
+        if (mb_strlen($para) <= $maxChars) { $chunks[] = $para; continue; }
+
+        $sentences = preg_split('/(?<=[.!?])\s+/', $para) ?: [$para];
+        $buf = '';
+        foreach ($sentences as $s) {
+            if ($buf !== '' && mb_strlen($buf . ' ' . $s) > $maxChars) { $chunks[] = $buf; $buf = $s; }
+            else $buf = $buf === '' ? $s : $buf . ' ' . $s;
+        }
+        if (trim($buf) !== '') $chunks[] = trim($buf);
+    }
+    return $chunks;
+}
+
+/** Run several POSTs at once. Returns results in the order given. */
+function curl_multi_post(array $requests, int $concurrency = 4): array {
+    $results = [];
+    foreach (array_chunk($requests, max(1, $concurrency), true) as $batch) {
+        $mh      = curl_multi_init();
+        $handles = [];
+        foreach ($batch as $i => $req) {
+            $ch = curl_init($req['url']);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST           => true,
+                CURLOPT_HTTPHEADER     => $req['headers'],
+                CURLOPT_POSTFIELDS     => json_encode($req['payload'], JSON_UNESCAPED_UNICODE),
+                CURLOPT_TIMEOUT        => HTTP_TIMEOUT,
+                CURLOPT_CONNECTTIMEOUT => 15,
+            ]);
+            curl_multi_add_handle($mh, $ch);
+            $handles[$i] = $ch;
+        }
+        do {
+            $status = curl_multi_exec($mh, $running);
+            if ($running) curl_multi_select($mh, 1.0);
+        } while ($running && $status === CURLM_OK);
+
+        foreach ($handles as $i => $ch) {
+            $results[$i] = [
+                'body'       => curl_multi_getcontent($ch),
+                'code'       => curl_getinfo($ch, CURLINFO_HTTP_CODE),
+                'curl_error' => curl_error($ch),
+            ];
+            curl_multi_remove_handle($mh, $ch);
+            curl_close($ch);
+        }
+        curl_multi_close($mh);
+    }
+    ksort($results);
+    return $results;
+}
+
+/** Configured model first, then the spares — each has its own daily quota. */
+function gemini_tts_models(): array {
+    global $GEMINI_TTS_FALLBACKS;
+    $models = array_merge([GEMINI_TTS_MODEL], is_array($GEMINI_TTS_FALLBACKS) ? $GEMINI_TTS_FALLBACKS : []);
+    return array_values(array_unique(array_filter($models)));
+}
+
+/** True for "you've spent this model's quota" — worth trying another model. */
+function is_quota_error(string $error): bool {
+    return str_contains($error, '_429') || stripos($error, 'quota') !== false;
+}
+
+function gemini_tts_request(string $voiceName, string $chunk, string $model): array {
+    return [
+        'url'     => 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($model) . ':generateContent',
+        'headers' => ['x-goog-api-key: ' . GEMINI_API_KEY, 'Content-Type: application/json'],
+        'payload' => [
+            'contents' => [['parts' => [['text' => GEMINI_TTS_STYLE . "\n\n" . $chunk]]]],
+            'generationConfig' => [
+                'responseModalities' => ['AUDIO'],
+                'speechConfig' => [
+                    'voiceConfig' => ['prebuiltVoiceConfig' => ['voiceName' => $voiceName]],
+                ],
+            ],
+        ],
+    ];
+}
+
+/** @return array{pcm:string, rate:int, error:string} */
+function gemini_tts_decode(array $r): array {
+    if ($r['body'] === false || $r['code'] !== 200) {
+        $msg = 'gemini_tts_http_' . $r['code'];
+        if (is_string($r['body'])) {
+            $j = json_decode($r['body'], true);
+            if (!empty($j['error']['message'])) $msg .= ': ' . mb_substr($j['error']['message'], 0, 120);
+        }
+        return ['pcm' => '', 'rate' => 24000, 'error' => $msg];
+    }
+    $data = json_decode($r['body'], true);
+    $inline = $data['candidates'][0]['content']['parts'][0]['inlineData'] ?? null;
+    if (!$inline || empty($inline['data'])) {
+        return ['pcm' => '', 'rate' => 24000, 'error' => 'gemini_tts_no_audio'];
+    }
+    $rate = 24000;
+    if (preg_match('/rate=(\d+)/', $inline['mimeType'] ?? '', $m)) $rate = (int)$m[1];
+    $pcm = base64_decode($inline['data'], true);
+    if ($pcm === false || $pcm === '') return ['pcm' => '', 'rate' => $rate, 'error' => 'gemini_tts_bad_base64'];
+    return ['pcm' => $pcm, 'rate' => $rate, 'error' => ''];
+}
+
+/** 16-bit mono PCM → a .wav browsers will play. */
+function pcm_to_wav(string $pcm, int $rate = 24000, int $channels = 1, int $bits = 16): string {
+    $byteRate   = $rate * $channels * ($bits / 8);
+    $blockAlign = $channels * ($bits / 8);
+    return 'RIFF' . pack('V', 36 + strlen($pcm)) . 'WAVE'
+         . 'fmt ' . pack('V', 16) . pack('v', 1) . pack('v', $channels)
+         . pack('V', $rate) . pack('V', $byteRate) . pack('v', $blockAlign) . pack('v', $bits)
+         . 'data' . pack('V', strlen($pcm)) . $pcm;
+}
+
+function silence_pcm(int $rate, float $seconds): string {
+    return str_repeat("\x00\x00", max(0, (int)round($rate * $seconds)));
+}
+
+/**
+ * @param bool $paced  Space the chunk requests out instead of bursting them.
+ *                     Slower, but it survives the free tier's per-minute cap.
+ * @return array{ok:bool, bytes:string, error:string, chunks:int}
+ */
+function gemini_tts(string $voice, string $text, bool $paced = false): array {
+    $voiceName = resolve_gemini_voice($voice);
+    $chunks    = chunk_for_tts($text);
+    if (!$chunks) return ['ok' => false, 'bytes' => '', 'error' => 'tts_empty_text', 'chunks' => 0];
+
+    $lastError = 'gemini_tts_failed';
+
+    foreach (gemini_tts_models() as $model) {
+        $attempt = gemini_tts_attempt($voiceName, $chunks, $model, $paced);
+        if ($attempt['ok']) return $attempt + ['model' => $model];
+        $lastError = $attempt['error'];
+        // Only worth moving to the next model if this one is out of quota;
+        // anything else would fail there too.
+        if (!is_quota_error($lastError)) break;
+    }
+
+    return ['ok' => false, 'bytes' => '', 'error' => $lastError, 'chunks' => count($chunks), 'model' => ''];
+}
+
+/** One full pass over the chunks with a single model. */
+function gemini_tts_attempt(string $voiceName, array $chunks, string $model, bool $paced): array {
+    $requests = [];
+    foreach ($chunks as $i => $chunk) $requests[$i] = gemini_tts_request($voiceName, $chunk, $model);
+
+    if ($paced || count($requests) === 1) {
+        $results = [];
+        foreach ($requests as $i => $req) {
+            if ($i > 0 && $paced && TTS_PACE_MS > 0) usleep(TTS_PACE_MS * 1000);
+            $results[$i] = curl_json($req['url'], $req['headers'], $req['payload']);
+        }
+    } else {
+        $results = curl_multi_post($requests, TTS_CONCURRENCY);
+    }
+
+    // Parts are kept in slots, never appended — a chunk recovered by the retry
+    // below has to land back in its own place or the story plays out of order.
+    $parts  = [];
+    $rate   = 24000;
+    $failed = [];
+
+    foreach ($chunks as $i => $chunk) {
+        $d = gemini_tts_decode($results[$i] ?? ['body' => false, 'code' => 0, 'curl_error' => 'missing']);
+        if ($d['error'] !== '') { $failed[$i] = $d['error']; continue; }
+        $rate      = $d['rate'];
+        $parts[$i] = $d['pcm'];
+    }
+
+    // Retry the stragglers with backoff — but not when the model is simply out
+    // of quota for the day, because waiting will not fix that.
+    if ($failed && !is_quota_error((string)reset($failed))) {
+        foreach ([600000, 2000000, 4000000] as $wait) {
+            if (!$failed) break;
+            foreach (array_keys($failed) as $i) {
+                usleep($wait);
+                $d = gemini_tts_decode(curl_json($requests[$i]['url'], $requests[$i]['headers'], $requests[$i]['payload']));
+                if ($d['error'] === '') {
+                    $rate      = $d['rate'];
+                    $parts[$i] = $d['pcm'];
+                    unset($failed[$i]);
+                }
+            }
+        }
+    }
+
+    // A missing chunk is a hole in the middle of someone's story. Never cache
+    // that — report failure and let the caller fall back to the browser voice.
+    if ($failed) {
+        return [
+            'ok'     => false,
+            'bytes'  => '',
+            'error'  => count($chunks) === 1
+                ? (string)reset($failed)
+                : sprintf('gemini_tts_incomplete_%d_of_%d (%s)', count($failed), count($chunks), reset($failed)),
+            'chunks' => count($chunks),
+        ];
+    }
+
+    ksort($parts);
+    $pcm = implode(silence_pcm($rate, 0.45), $parts);   // a beat between paragraphs
+    return ['ok' => true, 'bytes' => pcm_to_wav($pcm, $rate), 'error' => '', 'chunks' => count($chunks)];
 }
 
 /** ElevenLabs returns raw audio bytes, not JSON. */

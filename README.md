@@ -12,7 +12,8 @@ Design mockup for Erika Page, Atlanta Metro Real Estate Expert, Speaker & Mentor
 Open `index.html` in any browser — no build step or server required.
 
 The manifestation demo needs PHP: `php -S localhost:8000 -t stella-demo`, then
-open <http://localhost:8000/>. It runs with no API keys configured.
+open <http://localhost:8000/>. It runs with no API keys configured, and a single
+free Google AI Studio key makes it write *and* narrate the reading.
 
 ## v5.1 — Ecosystem expansion
 

@@ -11,10 +11,22 @@ story reveal (text fades line-by-line + voice) → player (loop + ambience) →
 paywall mock. Build ONE screen fully before starting the next.
 
 ## Backend
-Two endpoints: `generate-story.php` (LLM → text) and `synthesize.php`
-(ElevenLabs → cached mp3), plus `status.php` (config doctor). Keys live in
-`api/config.php`. TTS is cached by `sha256(model|voice|speed|text)` so replays
-are instant and free.
+`generate-story.php` (LLM → text), `synthesize.php` (TTS → cached audio),
+`status.php` (config doctor), `prewarm.php` (generate + narrate ahead of time).
+Keys live in `api/config.php`, or `api/config.local.php` when the folder is in
+a repo. TTS is cached by `sha256(model|voice|speed|text)` so replays are free.
+
+Story: Anthropic → OpenAI → Gemini → template.
+Voice: ElevenLabs → Gemini → browser speech.
+
+Gemini free-tier facts that shaped the design (measured, not guessed):
+- 10 TTS requests **per day per model**, so a reading goes out as ONE request
+  (`TTS_CHUNK_CHARS` is deliberately larger than a whole story) and three TTS
+  models are tried in turn.
+- ~35s to narrate a full reading — too slow to hold the reveal, hence
+  `prewarm.php` and the `demo-reading.json` the landing page looks for.
+- Never cache a partial narration. A story with a hole in it is worse than the
+  browser voice.
 
 ## Audio
 Two `<audio>` elements (voice + ambience) routed through Web Audio GainNodes.

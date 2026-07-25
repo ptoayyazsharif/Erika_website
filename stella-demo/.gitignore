@@ -1,2 +1,7 @@
 # generated TTS cache — keep the folder, not the audio
 audio/generated/*.mp3
+audio/generated/*.wav
+
+# real API keys live here, never in the repo
+api/config.local.php
+audio/generated/demo-reading.json

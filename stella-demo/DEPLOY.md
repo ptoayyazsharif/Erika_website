@@ -16,16 +16,24 @@ You should end up with `public_html/stella-demo/index.html`.
 
 ## 3. Paste your keys
 
-Edit `api/config.php` in File Manager (right-click → Edit):
+Edit `api/config.php` in File Manager (right-click → Edit). The cheapest
+working setup is a single free Google AI Studio key
+(<https://aistudio.google.com/apikey>) — it writes the story *and* speaks it:
 
 ```php
-define('LLM_PROVIDER',      'auto');       // uses whichever key you fill in
-define('ANTHROPIC_API_KEY', 'sk-ant-…');   // or:
-define('OPENAI_API_KEY',    'sk-…');
-define('ELEVENLABS_API_KEY', '…');
+defined('GEMINI_API_KEY') or define('GEMINI_API_KEY', 'AQ.…');
 ```
 
-Then the voices. Pick two or three from
+Any of these work too, and take precedence in this order:
+
+```php
+defined('LLM_PROVIDER') or define('LLM_PROVIDER', 'auto');   // uses whichever key you fill in
+defined('ANTHROPIC_API_KEY') or define('ANTHROPIC_API_KEY', 'sk-ant-…');
+defined('OPENAI_API_KEY')    or define('OPENAI_API_KEY',    'sk-…');
+defined('ELEVENLABS_API_KEY') or define('ELEVENLABS_API_KEY', '…');
+```
+
+If you use ElevenLabs, pick two or three voices from
 <https://elevenlabs.io/app/voice-library>, audition them reading a sample
 sentence first — the voice is half the product — and paste the IDs:
 
@@ -36,6 +44,11 @@ $VOICES = [
   'confident' => 'pFZP5JQG7iQjIQuC4Bku',
 ];
 ```
+
+**Keeping keys out of git:** if this folder is in a repository, put the keys in
+`api/config.local.php` instead (same `define()` lines). It loads first, it wins
+over `config.php`, and it is gitignored — then upload that single file to the
+server separately.
 
 ## 4. Make the cache writable
 
@@ -49,24 +62,42 @@ voice and `status.php` reports `audio_writable: false`.
 Open `https://yourdomain.com/stella-demo/api/status.php`. You want:
 
 ```json
-{ "llm": "anthropic", "tts": true, "audio_writable": true, "curl": true }
+{ "llm": "gemini", "tts": true, "tts_engine": "gemini",
+  "audio_writable": true, "curl": true, "demo_ready": true }
 ```
 
 - `"llm": "none"` → no LLM key found (or the key is in the wrong constant)
-- `"tts": false` → no ElevenLabs key, or the voice IDs are still placeholders
+- `"tts": false` → no ElevenLabs or Gemini key, or the ElevenLabs voice IDs are still placeholders
 - `"audio_writable": false` → step 4
 - `"curl": false` → rare on GoDaddy; ask support to enable the cURL extension
+- `"demo_ready": false` → you haven't pre-warmed yet (step 7)
 
 ## 6. Ambience (optional)
 
 Drop `cafe.mp3`, `rain.mp3`, `waves.mp3` into `audio/ambience/`. If you don't,
 the player synthesises the beds in the browser and the demo still works.
 
-## 7. Run through it once
+## 7. Pre-warm before you demo (Gemini voice only)
+
+Google's free tier answers a whole narration in about 35 seconds — too long to
+hold the reveal — and allows 10 TTS requests per day per model. So generate the
+demo reading *before* anyone is watching:
+
+```
+https://yourdomain.com/stella-demo/api/prewarm.php
+```
+
+Leave the tab open for a minute or two. It writes the story and the audio into
+the cache, and afterwards **Play Erika's reading** starts in about 8 seconds in
+the real voice. The `?debug=1` panel has the same button.
+
+Skip this step entirely if you're using ElevenLabs — it's fast enough to run live.
+
+## 8. Run through it once
 
 Open `https://yourdomain.com/stella-demo/`, click **Play Erika's reading**, and
-listen to the whole thing. The first generation costs a few cents; every replay
-after that is served from the cache and costs nothing.
+listen to the whole thing. Every replay after that is served from the cache and
+costs nothing.
 
 ---
 

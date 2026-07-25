@@ -20,7 +20,11 @@ php -S localhost:8000 -t stella-demo
 
 It runs with **zero API keys**. With none configured you get a template-written
 story and the browser's own voice; fill in `api/config.php` and the same flow
-switches to a live LLM and an ElevenLabs narration without touching anything else.
+switches to a live LLM and a real narration without touching anything else.
+
+**One free Google AI Studio key covers both** — Gemini writes the story *and*
+speaks it. Anthropic, OpenAI and ElevenLabs are all wired too; whichever keys
+you fill in get used, in that order of preference.
 
 ## The flow
 
@@ -39,6 +43,32 @@ Plain PHP 8.1+ (cURL, file-based caching, no MySQL) · vanilla JS + GSAP from CD
 Web Audio API for mixing · Google Fonts (Fraunces + Inter). No build step, no
 framework — the folder uploads straight into `public_html` and works.
 
+## Providers
+
+| Job | Options, in order of preference | Configured in |
+|---|---|---|
+| Story | Anthropic → OpenAI → **Gemini** → built-in template | `LLM_PROVIDER`, keys |
+| Voice | ElevenLabs → **Gemini** → browser speech | `TTS_PROVIDER`, keys |
+
+Measured on the free Gemini tier (`gemini-3.5-flash-lite` + `gemini-2.5-flash-preview-tts`):
+
+- **Story:** ~3 seconds, 420–430 words. Comfortably inside the 6-second reading theatre.
+- **Voice:** ~35 seconds for a whole reading, ~2.4 minutes of audio out. Complete readings only — a partial narration is never cached.
+- **Free quota:** 10 TTS requests *per day, per model*. A whole reading is deliberately sent as **one** request, and three TTS models are tried in turn, so that's roughly 30 free readings a day. Cached replays cost nothing.
+
+Because 35 seconds is too long to hold the reveal, **pre-warm before a demo**:
+
+```bash
+php api/prewarm.php          # or open /stella-demo/api/prewarm.php in a browser
+```
+
+That writes the story and the audio into the cache and leaves a
+`demo-reading.json` behind. "Play Erika's reading" then finds it and starts in
+about 8 seconds, in the real voice. The debug panel has the same button.
+
+For unlimited, instant, higher-quality narration, add an ElevenLabs key — it
+answers in a few seconds and takes over automatically.
+
 ## Files
 
 ```
@@ -53,13 +83,23 @@ stella-demo/
 │   └── anim.js             GSAP transitions + starfield
 ├── api/
 │   ├── config.php          ← ALL API KEYS HERE
+│   ├── config.local.php    untracked key overrides (loaded first, wins)
 │   ├── lib.php             cURL, prompt, cache, rate limit, fallback story
 │   ├── generate-story.php  profile → story text
-│   ├── synthesize.php      text → cached mp3
+│   ├── synthesize.php      text → cached mp3/wav
+│   ├── prewarm.php         generate + narrate ahead of time, CLI or browser
 │   └── status.php          pre-demo doctor: what's configured, what's writable
 ├── audio/ambience/         cafe.mp3, rain.mp3, waves.mp3 (optional — synthesised if absent)
 └── audio/generated/        TTS cache, chmod 775
 ```
+
+### Where the keys go
+
+`api/config.php` is the file to edit, and it is fine to put keys straight in it
+for a demo. If this folder lives in a git repository, put them in
+`api/config.local.php` instead — it is loaded first, anything it defines wins,
+and it is gitignored so a key never reaches GitHub. Copy that one file to the
+server by hand.
 
 ## Two endpoints, split on purpose
 
@@ -86,7 +126,10 @@ Every external dependency has a floor under it:
 | If this fails | You get |
 |---|---|
 | No LLM key, or the API errors | The template story, written from the same fifteen answers |
-| No ElevenLabs key, or TTS errors | The browser's own voice, still paced to the reveal |
+| A TTS model's daily quota is spent | The next TTS model, automatically |
+| No voice key at all, or TTS errors | The browser's own voice, still paced to the reveal |
+| Narration comes back incomplete | Nothing cached, browser voice instead — a story with a hole in it never ships |
+| Voice finishes rendering after the reveal started | A quiet "studio voice is ready" prompt; "Read it again" plays it |
 | No speech synthesis at all | A silent, time-paced reveal — the words still land in rhythm |
 | No ambience mp3s | Beds synthesised from filtered noise in the browser |
 | `audio/generated/` not writable | Browser voice, and `status.php` says exactly why |

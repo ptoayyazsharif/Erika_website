@@ -76,6 +76,21 @@ const Story = (() => {
     return postJSON(API.status, { action: 'clear-cache' }, 20000);
   }
 
+  /** The reading left behind by api/prewarm.php, if there is one. */
+  async function warmedReading() {
+    try {
+      const res = await fetch('audio/generated/demo-reading.json', { cache: 'no-store' });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return (data && data.story && data.url) ? data : null;
+    } catch { return null; }
+  }
+
+  /** Generate + synthesise ahead of time and cache both (slow, runs once). */
+  async function prewarm(profile, voice) {
+    return postJSON('api/prewarm.php', { profile, voice }, 300000);
+  }
+
   /* ---- client-side template story -------------------------
      Mirrors fallback_story() in api/lib.php. Keep the two in
      step if you edit the wording.
@@ -158,5 +173,6 @@ const Story = (() => {
     } catch { return null; }
   }
 
-  return { generate, synthesize, status, clearCache, toLines, countWords, encodeProfile, decodeProfile, localStory };
+  return { generate, synthesize, status, clearCache, warmedReading, prewarm,
+           toLines, countWords, encodeProfile, decodeProfile, localStory };
 })();

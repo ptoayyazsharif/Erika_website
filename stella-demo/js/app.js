@@ -10,7 +10,10 @@
   const SCREENS = ['landing', 'quiz', 'reading', 'reveal', 'player', 'paywall'];
   const STORE_KEY = 'manifest.profile.v1';
   const MIN_THEATRE = 6200;      // the reading is non-negotiable
-  const MAX_AUDIO_WAIT = 12000;  // …but we don't hold the reveal forever
+  // How long we'll hold the reveal waiting on the voice. ElevenLabs answers in
+  // a few seconds; Gemini takes ~35s for a whole reading, so it gets a longer
+  // leash — and pre-warming (api/prewarm.php) makes it instant either way.
+  const AUDIO_WAIT = { elevenlabs: 12000, gemini: 20000, browser: 1000 };
 
   const state = {
     screen: 'landing',
@@ -176,7 +179,8 @@
     'Almost. This part shouldn’t be rushed…'
   ];
 
-  async function startReading() {
+  /** @param {object} [warm] a pre-warmed { story, url } to replay instead of generating */
+  async function startReading(warm) {
     if (state.generating) return;
     state.generating = true;
 
@@ -196,15 +200,26 @@
     let result = null, audio = null;
 
     try {
-      result = await Story.generate(state.profile);
-      state.story = result.story;
-      state.lines = Story.toLines(result.story);
-      syncDebug(result);
+      if (warm) {
+        // Already written and already narrated — just play it.
+        result = { story: warm.story, source: 'prewarmed', model: warm.engine || 'cache', words: warm.words || 0 };
+        state.story = warm.story;
+        state.lines = Story.toLines(warm.story);
+        syncDebug(result);
+        audio = { url: warm.url, mode: 'file', engine: warm.engine || 'cache' };
+      } else {
+        result = await Story.generate(state.profile);
+        state.story = result.story;
+        state.lines = Story.toLines(result.story);
+        syncDebug(result);
 
-      const ttsPromise = Story.synthesize(result.story, state.voice);
-      const capped = new Promise(res => setTimeout(() => res(null), MAX_AUDIO_WAIT));
-      audio = await Promise.race([ttsPromise, capped]);
-      if (!audio) ttsPromise.then(a => lateAudio(a));   // arrived after we gave up waiting
+        const engine  = (state.server && state.server.tts_engine) || 'browser';
+        const waitFor = AUDIO_WAIT[engine] ?? 12000;
+        const ttsPromise = Story.synthesize(result.story, state.voice);
+        const capped = new Promise(res => setTimeout(() => res(null), waitFor));
+        audio = await Promise.race([ttsPromise, capped]);
+        if (!audio) ttsPromise.then(a => lateAudio(a));   // arrived after we gave up waiting
+      }
     } catch (err) {
       state.story = Story.localStory(state.profile);
       state.lines = Story.toLines(state.story);
@@ -229,9 +244,14 @@
     if (!a || !a.url || state.audioUrl) return;
     state.audioUrl = a.url;
     state.audioMode = 'file';
-    // Swap the voice in only if nothing is playing yet — never yank audio
-    // out from under a reveal that's already running.
-    if (!Player.isPlaying()) Player.loadVoice(a.url, state.story);
+    $('#player-note').textContent = '';
+    // Swap the voice in only if nothing is playing yet — never yank audio out
+    // from under a reveal that's already running. If it is, offer the replay.
+    if (!Player.isPlaying()) {
+      Player.loadVoice(a.url, state.story);
+    } else {
+      toast('The studio voice is ready — "Read it again" to hear it.', 5000);
+    }
   }
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -349,7 +369,11 @@
       : "A morning in the life you're building";
 
     const note = [];
-    if (state.audioMode !== 'file') note.push('Narrated by your browser — add an ElevenLabs key in api/config.php for the studio voice.');
+    if (state.audioMode !== 'file') {
+      note.push((state.server && state.server.tts_engine === 'gemini')
+        ? 'Narrated by your browser — the studio voice was still rendering. Run api/prewarm.php before a demo and it plays instantly.'
+        : 'Narrated by your browser — add an ElevenLabs or Gemini key in api/config.php for the studio voice.');
+    }
     if (state.server && state.server.llm === 'none') note.push('Story written from the built-in template — add an LLM key to write it fresh each time.');
     $('#player-note').textContent = note.join(' ');
 
@@ -406,12 +430,16 @@
 
       switch (action) {
         case 'start':      startQuiz(true); break;
-        case 'demo':
+        case 'demo': {
           state.profile = { ...Quiz.DEMO_PROFILE };
           state.index = Quiz.QUESTIONS.length - 1;
           saveProfile();
-          startReading();
+          // Play the pre-warmed reading if one has been generated — that's the
+          // one that starts instantly, in the real voice.
+          const warm = await Story.warmedReading();
+          startReading(warm || undefined);
           break;
+        }
         case 'quiz-exit':  go('landing'); break;
         case 'next':       next(); break;
         case 'prev':       prev(); break;
@@ -453,6 +481,22 @@
           try { const r = await Story.clearCache(); toast(`Cleared ${r.cleared} cached file(s).`); }
           catch (err) { toast('Could not clear cache.'); }
           break;
+        case 'dbg-prewarm': {
+          const status = $('#dbg-status');
+          status.textContent = 'pre-warming… this takes a minute or two, leave the tab open';
+          toast('Pre-warming Erika’s reading — takes a minute or two.', 5000);
+          try {
+            const r = await Story.prewarm(Quiz.DEMO_PROFILE, state.voice);
+            status.textContent = r.ok
+              ? `warmed · ${r.words} words · ${r.engine} · ${r.seconds}s`
+              : `warm failed · ${r.note || 'unknown'}`;
+            toast(r.ok ? 'Ready — "Play Erika\'s reading" is instant now.' : 'Warm-up failed, see the panel.', 5000);
+          } catch (err) {
+            status.textContent = 'warm failed · ' + (err.message || err);
+            toast('Warm-up failed.');
+          }
+          break;
+        }
       }
     });
 
