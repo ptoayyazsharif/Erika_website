@@ -1,0 +1,2 @@
+# generated TTS cache — keep the folder, not the audio
+audio/generated/*.mp3

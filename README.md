@@ -5,10 +5,14 @@ Design mockup for Erika Page, Atlanta Metro Real Estate Expert, Speaker & Mentor
 ## What's here
 
 - `index.html` — the complete single-file site mockup (v4 Refined Edition). All pages (Home, About, Sell, Home Value, Buy, Speaking, Collaborations, Lifestyle, Media, Reviews, Resources, Digital Products, Erika Explains, Mentorship, Investing, Property Management, location pages, Gallery, Contact) live in this one file with a lightweight client-side router. Photos and content are placeholders.
+- `stella-demo/` — **Manifest**, a working personalized manifestation product demo (15-question quiz → AI-written present-tense story → narrated reveal → player → paywall mock). Plain PHP + vanilla JS, built to drop into GoDaddy cPanel. See [stella-demo/README.md](stella-demo/README.md).
 
 ## How to preview
 
 Open `index.html` in any browser — no build step or server required.
+
+The manifestation demo needs PHP: `php -S localhost:8000 -t stella-demo`, then
+open <http://localhost:8000/>. It runs with no API keys configured.
 
 ## v5.1 — Ecosystem expansion
 

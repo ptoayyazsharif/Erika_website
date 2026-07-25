@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B0E23">
+<title>Manifest — a reading of the life you're already living</title>
+<meta name="description" content="A short set of questions, then your own life narrated back to you. A personalized manifestation reading by Erika Page.">
+<meta property="og:title" content="Manifest — by Erika Page">
+<meta property="og:description" content="Answer fifteen questions. Hear the life you're building, in present tense, in a calm voice.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ambient background layers -->
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<main id="main">
+
+<!-- ══════════════════ 1. LANDING ══════════════════ -->
+<section class="screen" id="screen-landing" data-screen="landing">
+  <div class="wrap landing-wrap">
+    <p class="eyebrow reveal-item">Erika Page · Manifestation Studio</p>
+    <h1 class="display reveal-item">You already know<br><em>what it looks like.</em></h1>
+    <p class="lede reveal-item">Fifteen quiet questions. Then your life &mdash; the names, the places, the numbers you just gave me &mdash; read back to you as though it has already happened.</p>
+    <div class="landing-actions reveal-item">
+      <button class="btn btn-gold" data-action="start">Begin your reading</button>
+      <button class="btn btn-ghost" data-action="demo">Play Erika's reading</button>
+    </div>
+    <p class="micro reveal-item">Takes about three minutes. Sound on, if you can.</p>
+    <ul class="landing-marks reveal-item">
+      <li><span>01</span> Fifteen questions</li>
+      <li><span>02</span> Written in your own words</li>
+      <li><span>03</span> Narrated aloud</li>
+    </ul>
+  </div>
+  <div class="scroll-hint" aria-hidden="true"></div>
+</section>
+
+<!-- ══════════════════ 2. QUIZ ══════════════════ -->
+<section class="screen" id="screen-quiz" data-screen="quiz" hidden>
+  <header class="quiz-head">
+    <button class="icon-btn" data-action="quiz-exit" aria-label="Leave the quiz">&larr;</button>
+    <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="15" aria-valuenow="1" aria-label="Question progress">
+      <div class="progress-bar"><i id="progress-fill"></i></div>
+      <span class="progress-label"><b id="q-index">1</b> <span aria-hidden="true">/</span> <span class="sr-only">of</span> 15</span>
+    </div>
+    <div class="quiz-group" id="q-group">Setting</div>
+  </header>
+
+  <div class="wrap quiz-wrap">
+    <div class="q-stage" id="q-stage" aria-live="polite"><!-- question injected --></div>
+  </div>
+
+  <footer class="quiz-foot">
+    <button class="btn btn-ghost sm" data-action="prev">Back</button>
+    <div class="quiz-foot-right">
+      <button class="btn-text" data-action="skip">Skip this one</button>
+      <button class="btn btn-gold sm" data-action="next">Continue</button>
+    </div>
+  </footer>
+  <p class="quiz-hint">Press <kbd>Enter</kbd> to continue</p>
+</section>
+
+<!-- ══════════════════ 3. THE READING (loading theatre) ══════════════════ -->
+<section class="screen center" id="screen-reading" data-screen="reading" hidden>
+  <div class="reading-orb" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="reading-copy" aria-live="polite">
+    <p class="reading-line" id="reading-line">Reading your intentions&hellip;</p>
+  </div>
+  <div class="reading-progress" aria-hidden="true"><i id="reading-fill"></i></div>
+</section>
+
+<!-- ══════════════════ 4. STORY REVEAL ══════════════════ -->
+<section class="screen reveal-screen" id="screen-reveal" data-screen="reveal" hidden>
+  <div class="reveal-inner">
+    <div class="story" id="story-lines" aria-live="polite"></div>
+  </div>
+  <div class="reveal-foot">
+    <button class="btn btn-ghost sm" data-action="to-player">Open the player</button>
+  </div>
+</section>
+
+<!-- ══════════════════ 5. PLAYER ══════════════════ -->
+<section class="screen" id="screen-player" data-screen="player" hidden>
+  <div class="wrap player-wrap">
+    <p class="eyebrow">Your reading</p>
+    <h2 class="display sm" id="player-title">A morning in the life you're building</h2>
+
+    <div class="player-card">
+      <div class="player-main">
+        <button class="play-btn" data-action="playpause" aria-label="Play">
+          <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+          <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg>
+        </button>
+        <div class="player-track">
+          <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="scrub-fill"></i></div>
+          <div class="times"><span id="t-now">0:00</span><span id="t-total">0:00</span></div>
+        </div>
+        <button class="icon-btn loop" data-action="loop" aria-pressed="false" aria-label="Loop the reading">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zM17 17H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg>
+        </button>
+      </div>
+
+      <div class="player-ambience">
+        <p class="row-label">Ambience</p>
+        <div class="chips" role="radiogroup" aria-label="Ambience">
+          <button class="chip" role="radio" aria-checked="false" data-amb="none">Silence</button>
+          <button class="chip is-on" role="radio" aria-checked="true" data-amb="cafe">Caf&eacute;</button>
+          <button class="chip" role="radio" aria-checked="false" data-amb="rain">Rain</button>
+          <button class="chip" role="radio" aria-checked="false" data-amb="waves">Waves</button>
+        </div>
+        <label class="vol">
+          <span class="sr-only">Ambience volume</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/></svg>
+          <input type="range" id="amb-vol" min="0" max="100" value="25">
+        </label>
+      </div>
+    </div>
+
+    <div class="player-actions">
+      <button class="btn-text" data-action="reread">Read it again</button>
+      <button class="btn-text" data-action="download">Save the words</button>
+      <button class="btn-text" data-action="share">Copy share link</button>
+      <button class="btn btn-gold sm" data-action="to-paywall">Continue</button>
+    </div>
+    <p class="micro" id="player-note"></p>
+  </div>
+</section>
+
+<!-- ══════════════════ 6. PAYWALL MOCK ══════════════════ -->
+<section class="screen" id="screen-paywall" data-screen="paywall" hidden>
+  <div class="wrap pay-wrap">
+    <p class="eyebrow">Mock screen &mdash; this is what a customer would see</p>
+    <h2 class="display sm">Keep hearing it,<br><em>every morning.</em></h2>
+    <p class="lede narrow">One reading changes an afternoon. A daily one changes what you believe is normal.</p>
+
+    <div class="plans">
+      <article class="plan">
+        <h3>Weekly</h3>
+        <p class="price">$10<span>/week</span></p>
+        <ul>
+          <li>A fresh reading every morning</li>
+          <li>Three ambience beds</li>
+          <li>Your library, saved</li>
+        </ul>
+        <button class="btn btn-ghost sm" data-action="mock-pay">Choose weekly</button>
+      </article>
+      <article class="plan featured">
+        <span class="plan-flag">Most chosen</span>
+        <h3>Yearly</h3>
+        <p class="price">$79<span>/year</span></p>
+        <ul>
+          <li>Everything weekly, at 6 weeks' price</li>
+          <li>Seasonal re-readings as your goals shift</li>
+          <li>Share a reading with someone you love</li>
+        </ul>
+        <button class="btn btn-gold sm" data-action="mock-pay">Choose yearly</button>
+      </article>
+    </div>
+
+    <p class="micro">Nothing here charges anything &mdash; it's a mock of the paywall, so you can see where the money would sit.</p>
+    <div class="pay-actions">
+      <button class="btn-text" data-action="restart">Start a new reading</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- audio elements (routed through Web Audio) -->
+<audio id="voice" preload="auto" crossorigin="anonymous"></audio>
+<audio id="ambience" preload="auto" loop crossorigin="anonymous"></audio>
+
+<!-- toast -->
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- debug panel (?debug=1) -->
+<aside class="debug" id="debug" hidden>
+  <header>Demo controls <button class="icon-btn xs" data-action="debug-close" aria-label="Close">&times;</button></header>
+  <div class="debug-body">
+    <label>Voice
+      <select id="dbg-voice"><option value="calm">calm</option><option value="warm">warm</option><option value="confident">confident</option></select>
+    </label>
+    <div class="debug-row">
+      <button class="btn-text" data-action="dbg-prefill">Load Erika's profile</button>
+      <button class="btn-text" data-action="dbg-regen">Regenerate story</button>
+      <button class="btn-text" data-action="dbg-cache">Clear TTS cache</button>
+    </div>
+    <p class="debug-status" id="dbg-status">idle</p>
+    <details><summary>Profile JSON</summary><pre id="dbg-json">{}</pre></details>
+    <details><summary>Story text</summary><pre id="dbg-story"></pre></details>
+  </div>
+</aside>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="js/anim.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/story.js"></script>
+<script src="js/player.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
