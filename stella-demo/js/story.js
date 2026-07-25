@@ -88,7 +88,7 @@ const Story = (() => {
 
   /** Generate + synthesise ahead of time and cache both (slow, runs once). */
   async function prewarm(profile, voice) {
-    return postJSON('api/prewarm.php', { profile, voice }, 300000);
+    return postJSON('api/prewarm.php?json=1', { profile, voice }, 300000);
   }
 
   /* ---- client-side template story -------------------------

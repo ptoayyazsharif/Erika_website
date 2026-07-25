@@ -15,6 +15,15 @@ UPLOAD (FTP)
 
 4. Open:  https://yourdomain.com/stella-demo/
 
+   ^ THAT is the app. Everything under /api/ is backend plumbing --
+     status.php and prewarm.php are prep tools, not pages to demo.
+
+   If the folder URL gives "403 Forbidden", your host isn't serving
+   index.html by default. The included .htaccess fixes it -- make sure
+   it uploaded (it starts with a dot, so some FTP clients hide it; turn
+   on "show hidden files"). Or just use:
+        https://yourdomain.com/stella-demo/index.html
+
 
 IS IT WORKING?
 --------------

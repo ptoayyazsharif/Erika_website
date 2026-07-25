@@ -112,6 +112,75 @@ if ($payload['ok']) {
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 }
 
+/* Opened in a browser? Show a page, not a wall of JSON. Add ?json=1 for the
+   raw payload (that's what the debug panel asks for). */
+$wantsHtml = !$isCli
+          && !isset($_GET['json'])
+          && str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'text/html');
+
+if ($wantsHtml) {
+    $ok      = $payload['ok'];
+    $quota   = str_contains((string)($payload['note'] ?? ''), '429')
+            || stripos((string)($payload['note'] ?? ''), 'quota') !== false;
+    $esc     = fn($s) => htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
+    $warmed  = is_file(AUDIO_DIR . 'demo-reading.json');
+
+    header('Content-Type: text/html; charset=utf-8');
+    ?><!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pre-warm — Manifest</title>
+<style>
+  :root{color-scheme:dark}
+  body{margin:0;padding:6vh 6vw;background:linear-gradient(168deg,#0B0E23,#2A1733);
+       color:#F5F0E8;font:16px/1.6 system-ui,-apple-system,sans-serif;min-height:100vh}
+  .wrap{max-width:44rem;margin:0 auto}
+  h1{font:300 clamp(28px,5vw,42px)/1.1 Georgia,serif;margin:0 0 6px}
+  .tag{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#C9A961;margin-bottom:22px}
+  .card{background:rgba(245,240,232,.05);border:1px solid rgba(245,240,232,.14);
+        border-radius:16px;padding:24px;margin:24px 0}
+  .ok{color:#9BD3A4}.warn{color:#E8C98A}
+  dl{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:0;font-size:14.5px}
+  dt{color:rgba(245,240,232,.5)}
+  a.btn{display:inline-block;margin-top:8px;padding:15px 30px;border-radius:999px;
+        background:linear-gradient(122deg,#C9A961,#E2C68B);color:#1C1406;text-decoration:none;
+        font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+  a.plain{color:#E2C68B}
+  pre{white-space:pre-wrap;font:14px/1.7 Georgia,serif;color:rgba(245,240,232,.8);
+      max-height:220px;overflow:auto;margin:0}
+  p{max-width:36rem}
+</style></head><body><div class="wrap">
+  <p class="tag">Manifest &middot; behind the scenes</p>
+  <h1><?= $ok ? 'Reading is warmed and cached.' : ($quota ? 'Voice quota is spent for today.' : 'Warm-up did not finish.') ?></h1>
+
+  <p><strong>This page is not the app.</strong> It's the prep script that
+  generates a reading ahead of time so the demo starts instantly.</p>
+
+  <p><a class="btn" href="../index.html">Open the app &rarr;</a></p>
+
+  <div class="card">
+    <dl>
+      <dt>Story</dt><dd class="ok"><?= $esc($payload['words']) ?> words via <?= $esc($payload['source']) ?></dd>
+      <dt>Voice</dt><dd class="<?= $ok ? 'ok' : 'warn' ?>"><?= $ok ? $esc($payload['engine']) . ' &mdash; cached' : 'browser voice (' . $esc($payload['note'] ?? 'unavailable') . ')' ?></dd>
+      <dt>Took</dt><dd><?= $esc($payload['seconds']) ?>s</dd>
+      <dt>Demo ready</dt><dd class="<?= $warmed ? 'ok' : 'warn' ?>"><?= $warmed ? 'yes — "Play Erika\'s reading" uses the cached narration' : 'not yet' ?></dd>
+    </dl>
+  </div>
+
+  <?php if (!$ok && $quota): ?>
+  <p class="warn">Google's free tier allows about ten narrations a day, and
+  they're used up. <?= $warmed
+      ? 'The reading already cached on this server still plays perfectly — nothing was lost by running this.'
+      : 'Until the quota resets (midnight US Pacific), readings are narrated by the browser voice.' ?></p>
+  <?php endif; ?>
+
+  <div class="card"><pre><?= $esc($payload['story']) ?></pre></div>
+  <p><a class="plain" href="status.php">Check configuration</a> &middot;
+     <a class="plain" href="?json=1">Raw JSON</a></p>
+</div></body></html><?php
+    exit;
+}
+
 if ($isCli) {
     echo "Manifest pre-warm\n";
     echo str_repeat('-', 46), "\n";
