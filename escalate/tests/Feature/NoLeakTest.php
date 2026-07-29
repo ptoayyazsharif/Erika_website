@@ -98,6 +98,26 @@ class NoLeakTest extends TestCase
         $this->assertStringContainsString('/media/narration/', $body);
     }
 
+    public function test_private_media_is_never_marked_publicly_cacheable(): void
+    {
+        Storage::fake('private');
+
+        $user = $this->user();
+        $narration = $this->makeReadyNarration($this->makeReadyStory($user));
+
+        $cacheControl = $this->actingAs($user)
+            ->get(route('media.narration', $narration))
+            ->assertOk()
+            ->headers->get('Cache-Control');
+
+        // "public" here would invite shared caches to keep a recording of
+        // somebody's journal. Symfony's BinaryFileResponse adds it by default,
+        // so this assertion is guarding against a framework default, not a typo.
+        $this->assertStringNotContainsString('public', $cacheControl);
+        $this->assertStringContainsString('private', $cacheControl);
+        $this->assertStringContainsString('no-store', $cacheControl);
+    }
+
     public function test_user_written_content_is_encrypted_at_rest(): void
     {
         $user = $this->user();

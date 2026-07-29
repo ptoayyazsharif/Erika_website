@@ -41,12 +41,11 @@ class MediaController extends Controller
 
         // BinaryFileResponse handles Range requests, which is what lets the
         // player scrub without downloading the whole file again.
-        return response()->file($absolute, [
+        return $this->private(response()->file($absolute, [
             'Content-Type'        => 'audio/mpeg',
-            'Cache-Control'       => 'private, no-store',
             'Content-Disposition' => 'inline; filename="reading.mp3"',
             'Accept-Ranges'       => 'bytes',
-        ]);
+        ]));
     }
 
     public function image(Request $request, DesireImage $image): BinaryFileResponse
@@ -64,11 +63,33 @@ class MediaController extends Controller
         $mime = @mime_content_type($absolute) ?: 'application/octet-stream';
         abort_unless(in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true), 404);
 
-        return response()->file($absolute, [
-            'Content-Type'              => $mime,
-            'Cache-Control'             => 'private, no-store',
-            'Content-Disposition'       => 'inline',
-            'X-Content-Type-Options'    => 'nosniff',
-        ]);
+        return $this->private(response()->file($absolute, [
+            'Content-Type'           => $mime,
+            'Content-Disposition'    => 'inline',
+            'X-Content-Type-Options' => 'nosniff',
+        ]));
+    }
+
+    /**
+     * Force a response to be uncacheable by anything but the requesting client.
+     *
+     * Passing Cache-Control in the headers array is not enough. Symfony's
+     * BinaryFileResponse takes $public = true as its fourth constructor
+     * argument, and Laravel's response()->file() passes it — so the response
+     * calls setPublic() on itself and stamps "public" into Cache-Control,
+     * whatever we asked for. The result observed before this fix was
+     * "no-store, public", which is both contradictory and exactly the wrong
+     * instruction for a recording of somebody's private journal.
+     *
+     * setPrivate() drops the public flag; the explicit header then leaves no
+     * room for interpretation.
+     */
+    private function private(BinaryFileResponse $response): BinaryFileResponse
+    {
+        $response->setPrivate();
+        $response->headers->set('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+        $response->headers->set('Pragma', 'no-cache');
+
+        return $response;
     }
 }
