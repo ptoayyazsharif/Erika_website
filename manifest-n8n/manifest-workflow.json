@@ -1,0 +1,207 @@
+{
+  "name": "Manifest — Backend (Story + Voice)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "manifest/story",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "POST /manifest/story",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-460, -160],
+      "webhookId": "a1000000-0000-4000-8000-000000000001"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Build the story prompt from the 15 quiz answers ──────────────\n// The crown jewel. Everything the reading is depends on this prompt.\n\nconst MIN_WORDS = 400;\nconst MAX_WORDS = 550;\n\nconst KEYS = [\n  'name', 'city', 'spot', 'partner', 'people', 'desire', 'area', 'milestone',\n  'milestone_location', 'proof_number', 'work_vision', 'success_place',\n  'sensory_detail', 'good_news_caller', 'scarcity_habit',\n];\n\nconst raw = $input.first().json;\nconst body = raw.body ?? raw;\nconst src = body.profile ?? body;\n\n// Never trust the client: known keys only, control chars stripped, length capped.\nconst profile = {};\nfor (const k of KEYS) {\n  let v = src[k];\n  if (typeof v !== 'string') v = '';\n  v = v.replace(/[\\u0000-\\u001F\\u007F]/g, '').replace(/\\s+/g, ' ').trim();\n  profile[k] = v.slice(0, 400);\n}\n\nif (!profile.name && !profile.desire) {\n  throw new Error('Need at least a name or a desire to write from.');\n}\n\nconst AREA_NOTES = {\n  money:   'Tone: steady and unbothered. Money appears as ease and margin, never as bragging.',\n  career:  'Tone: competent and calm. Work is craft that finally fits.',\n  love:    'Tone: warm and close. Small domestic gestures carry the weight.',\n  home:    'Tone: rooted and sensory. The rooms themselves do the talking.',\n  freedom: 'Tone: spacious and unhurried. Time is the luxury on display.',\n  health:  'Tone: physical and clear. The body feels different than it used to.',\n};\nconst areaNote = AREA_NOTES[(profile.area || '').toLowerCase()] || 'Tone: steady, warm, unhurried.';\n\nconst system = [\n  'You write a single first-person, present-tense narrative in which the reader is ALREADY living the life they described — it has happened, it is happening now, today. Not a prediction, not a fantasy. A quiet, real morning in their achieved life.',\n  '',\n  'Rules:',\n  '- First person, present tense throughout. Never \"you will,\" never \"imagine,\" never \"one day.\"',\n  '- Weave the real names, places, and numbers from their profile in naturally, the way a person thinks about their own life. Don\\'t list them — let them surface in an ordinary moment.',\n  '- Include one CONTRAST beat: a short reflection on how they used to act from scarcity (\"Three years ago, I would have…\"), then how effortless it is now. This is the emotional center. Do not skip it.',\n  '- Ground everything in small mundane sensory details — a phone buzzing, a glass of wine, a framed photo, a parking text. The ordinariness makes it real.',\n  '- Use concrete numbers where given. Counted success feels true; vague abundance feels fake.',\n  '- Short, calm cadence suitable for slow narration. No mysticism, no exclamation marks, no advice, no addressing the reader as \"you.\"',\n  '- Write in plain paragraphs separated by a blank line. No headings, no lists, no title.',\n  `- ${MIN_WORDS}–${MAX_WORDS} words. End on a quiet, grounded, human moment — not a triumphant one.`,\n  '',\n  'You\\'ll receive the profile as JSON. Return ONLY the story text.',\n].join('\\n');\n\nconst user = [\n  JSON.stringify(profile, null, 2),\n  '',\n  areaNote,\n  '',\n  `Length: ${MIN_WORDS}–${MAX_WORDS} words — six or seven full paragraphs. Do not stop short of ${MIN_WORDS} words. Remember the contrast beat.`,\n].join('\\n');\n\nreturn [{ json: { system, user, profile } }];"
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Build Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-240, -160]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-sonnet-5', max_tokens: 1400, system: $json.system, messages: [{ role: 'user', content: $json.user }] }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Anthropic — Write Story",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-20, -160],
+      "notes": "Pick your Anthropic credential in the dropdown. Swap the model here (claude-opus-5 for the top tier, claude-haiku-4-5 for cheapest)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Tidy the model output and split it for the line-by-line reveal ──\n\nconst res = $input.first().json;\nconst profile = $('Build Prompt').first().json.profile;\n\nlet story = (res.content || [])\n  .filter((b) => b.type === 'text')\n  .map((b) => b.text)\n  .join('')\n  .trim();\n\n// Strip anything the model wrapped it in.\nstory = story\n  .replace(/^```[a-z]*\\s*/i, '')\n  .replace(/\\s*```$/i, '')\n  .replace(/^(here(?:'s| is)[^\\n]*:|story:)\\s*/i, '')\n  .replace(/\\n{3,}/g, '\\n\\n')\n  .trim();\n\nif (story.split(/\\s+/).filter(Boolean).length < 120) {\n  throw new Error('Model returned too little text to be a reading.');\n}\n\n// Paragraphs, with long ones split at sentence boundaries so no single\n// block dumps eight lines onto the reveal screen at once.\nconst countWords = (s) => (s.trim().match(/\\S+/g) || []).length;\nconst MAX_LINE_WORDS = 55;\nconst lines = [];\n\nfor (const para of story.split(/\\n\\s*\\n/).map((s) => s.trim()).filter(Boolean)) {\n  if (countWords(para) <= MAX_LINE_WORDS) { lines.push(para); continue; }\n  const sentences = para.match(/[^.!?]+[.!?]+[\"']?\\s*|[^.!?]+$/g) || [para];\n  let buf = '';\n  for (const s of sentences) {\n    if (buf && countWords(buf + s) > MAX_LINE_WORDS) { lines.push(buf.trim()); buf = s; }\n    else buf += s;\n  }\n  if (buf.trim()) lines.push(buf.trim());\n}\n\nreturn [{\n  json: {\n    story,\n    lines,\n    words: countWords(story),\n    model: res.model || 'claude',\n    name: profile.name || '',\n  },\n}];"
+      },
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "Tidy Story",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [200, -160]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "name": "Return Story",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [420, -160]
+    },
+
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "manifest/voice",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "b2000000-0000-4000-8000-000000000001",
+      "name": "POST /manifest/voice",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-460, 220],
+      "webhookId": "b2000000-0000-4000-8000-000000000001"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Resolve the voice and sanity-check the text ─────────────────────\n// Replace these with voice IDs you have actually auditioned — the voice\n// is half the product. https://elevenlabs.io/app/voice-library\n\nconst VOICES = {\n  calm:      'EXAVITQu4vr4xnSDxMaL', // Sarah   — soft, unhurried\n  warm:      'XrExE9yKIg1WjnnlVkGX', // Matilda — warm, close-mic\n  confident: 'pFZP5JQG7iQjIQuC4Bku', // Lily    — clear, grounded\n};\nconst DEFAULT_VOICE = 'calm';\nconst MAX_CHARS = 5000; // ElevenLabs per-request ceiling\n\nconst raw = $input.first().json;\nconst body = raw.body ?? raw;\n\nlet text = String(body.text || '').trim();\nif (!text) throw new Error('Nothing to say.');\nif (text.length > MAX_CHARS) text = text.slice(0, MAX_CHARS);\n\nconst key = String(body.voice || DEFAULT_VOICE).toLowerCase().replace(/[^a-z_]/g, '');\nconst voiceId = VOICES[key] || VOICES[DEFAULT_VOICE];\n\nreturn [{ json: { text, voiceId, voice: VOICES[key] ? key : DEFAULT_VOICE } }];"
+      },
+      "id": "b2000000-0000-4000-8000-000000000002",
+      "name": "Resolve Voice",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-240, 220]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.elevenlabs.io/v1/text-to-speech/{{ $json.voiceId }}?output_format=mp3_44100_128",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: $json.text, model_id: 'eleven_flash_v2_5', voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.1, speed: 0.92, use_speaker_boost: true } }) }}",
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "id": "b2000000-0000-4000-8000-000000000003",
+      "name": "ElevenLabs — Narrate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-20, 220],
+      "notes": "Header Auth credential: Name = xi-api-key, Value = your ElevenLabs key. Returns raw mp3 bytes, not JSON — that is why Response Format is set to File."
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "audio/mpeg"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "public, max-age=31536000"
+              }
+            ]
+          }
+        }
+      },
+      "id": "b2000000-0000-4000-8000-000000000004",
+      "name": "Return Audio",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [200, 220]
+    }
+  ],
+  "connections": {
+    "POST /manifest/story": {
+      "main": [[{ "node": "Build Prompt", "type": "main", "index": 0 }]]
+    },
+    "Build Prompt": {
+      "main": [[{ "node": "Anthropic — Write Story", "type": "main", "index": 0 }]]
+    },
+    "Anthropic — Write Story": {
+      "main": [[{ "node": "Tidy Story", "type": "main", "index": 0 }]]
+    },
+    "Tidy Story": {
+      "main": [[{ "node": "Return Story", "type": "main", "index": 0 }]]
+    },
+    "POST /manifest/voice": {
+      "main": [[{ "node": "Resolve Voice", "type": "main", "index": 0 }]]
+    },
+    "Resolve Voice": {
+      "main": [[{ "node": "ElevenLabs — Narrate", "type": "main", "index": 0 }]]
+    },
+    "ElevenLabs — Narrate": {
+      "main": [[{ "node": "Return Audio", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "manifest-erika-page"
+  },
+  "tags": []
+}

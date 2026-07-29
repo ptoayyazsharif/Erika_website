@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B0E23">
+<title>Manifest — a reading of the life you're already living</title>
+<meta name="description" content="Fifteen questions, then your own life narrated back to you. A personalized manifestation reading.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════
+   Manifest — night sky, warm gold, cream serif.
+   Single file: no build step, no dependencies except GSAP + fonts.
+   ══════════════════════════════════════════════════════════════ */
+:root{
+  --midnight:#0B0E23; --midnight-2:#131A3A; --plum:#2A1733; --plum-2:#3B2145;
+  --cream:#F5F0E8; --cream-dim:rgba(245,240,232,.72); --cream-faint:rgba(245,240,232,.46);
+  --gold:#C9A961; --gold-soft:#E2C68B; --gold-deep:#9C7C3C; --gold-glow:rgba(201,169,97,.28);
+  --surface:rgba(245,240,232,.045); --surface-2:rgba(245,240,232,.08);
+  --line:rgba(245,240,232,.14); --line-soft:rgba(245,240,232,.08);
+  --ease:cubic-bezier(.22,.68,.32,1); --radius:18px; --step:clamp(20px,4vw,40px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--midnight);color:var(--cream);
+  line-height:1.6;min-height:100svh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-3;background:
+  radial-gradient(120% 80% at 12% 4%,#1A2044 0%,transparent 55%),
+  radial-gradient(100% 70% at 88% 96%,var(--plum-2) 0%,transparent 60%),
+  linear-gradient(168deg,var(--midnight) 0%,var(--midnight-2) 38%,var(--plum) 82%,#1A0F22 100%)}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.85}
+.vignette{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(120% 100% at 50% 45%,transparent 40%,rgba(4,5,14,.55) 100%)}
+
+.display{font-family:'Fraunces',Georgia,serif;font-weight:300;font-size:clamp(40px,7vw,74px);
+  line-height:1.06;letter-spacing:-.015em;text-wrap:balance}
+.display em{font-style:italic;color:var(--gold-soft)}
+.display.sm{font-size:clamp(30px,4.6vw,48px)}
+.lede{font-size:clamp(16px,1.6vw,18.5px);color:var(--cream-dim);max-width:34rem;line-height:1.72}
+.eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);
+  display:inline-flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);opacity:.65}
+.micro{font-size:12.5px;color:var(--cream-faint)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+:focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px;border-radius:4px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:inherit;
+  font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;padding:17px 34px;
+  border:1px solid transparent;border-radius:999px;cursor:pointer;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease),background .3s,color .3s,border-color .3s}
+.btn.sm{padding:13px 26px;font-size:11.5px}
+.btn-gold{background:linear-gradient(122deg,var(--gold),var(--gold-soft));color:#1C1406}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 40px var(--gold-glow)}
+.btn-ghost{border-color:var(--line);color:var(--cream-dim);background:transparent}
+.btn-ghost:hover{border-color:var(--gold);color:var(--cream);background:var(--surface)}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-text{background:none;border:0;font:inherit;font-size:12.5px;letter-spacing:.08em;
+  color:var(--cream-faint);cursor:pointer;padding:8px 2px;border-bottom:1px solid transparent;
+  transition:color .25s,border-color .25s}
+.btn-text:hover{color:var(--gold-soft);border-color:var(--gold-deep)}
+.icon-btn{background:none;border:1px solid var(--line);border-radius:999px;color:var(--cream-dim);
+  width:42px;height:42px;display:grid;place-items:center;cursor:pointer;font-size:16px;
+  transition:border-color .25s,color .25s,background .25s}
+.icon-btn:hover{border-color:var(--gold);color:var(--cream)}
+.icon-btn svg{width:18px;height:18px;fill:currentColor}
+
+.screen{position:relative;min-height:100svh;width:100%;padding:calc(var(--step)*1.4) var(--step);
+  display:flex;flex-direction:column;justify-content:center}
+.screen[hidden]{display:none}
+.screen.center{align-items:center;text-align:center}
+.wrap{width:100%;max-width:64rem;margin:0 auto}
+
+/* landing */
+.landing-wrap{max-width:58rem}
+.landing-wrap .display{margin:22px 0 26px}
+.landing-actions{display:flex;flex-wrap:wrap;gap:14px;margin:38px 0 16px}
+.landing-marks{list-style:none;display:flex;flex-wrap:wrap;gap:14px 40px;margin-top:56px;
+  padding-top:26px;border-top:1px solid var(--line-soft);font-size:12.5px;color:var(--cream-faint)}
+.landing-marks span{font-family:'Fraunces',serif;color:var(--gold);margin-right:10px}
+
+/* quiz */
+#screen-quiz{justify-content:flex-start;padding-top:calc(var(--step)*.8)}
+.quiz-head{display:flex;align-items:center;gap:20px;max-width:64rem;width:100%;margin:0 auto 6vh}
+.progress{flex:1;display:flex;align-items:center;gap:14px}
+.progress-bar{flex:1;height:2px;background:var(--line-soft);border-radius:2px;overflow:hidden;max-width:26rem}
+.progress-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-deep),var(--gold-soft))}
+.progress-label{font-size:11.5px;letter-spacing:.16em;color:var(--cream-faint);font-variant-numeric:tabular-nums}
+.progress-label b{color:var(--gold);font-weight:500}
+.quiz-group{font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--cream-faint);
+  border:1px solid var(--line-soft);border-radius:999px;padding:7px 15px;white-space:nowrap}
+.quiz-wrap{flex:1;display:flex;align-items:center;max-width:52rem}
+.q-stage{width:100%}
+.q-num{font-family:'Fraunces',serif;font-size:13px;letter-spacing:.2em;color:var(--gold);display:block;margin-bottom:18px}
+.q-title{font-family:'Fraunces',serif;font-weight:300;font-size:clamp(27px,4.4vw,44px);
+  line-height:1.16;text-wrap:balance}
+.q-help{margin-top:14px;font-size:14px;color:var(--cream-faint);max-width:32rem}
+.q-field{margin-top:38px}
+.q-input,.q-textarea{width:100%;max-width:38rem;background:transparent;border:0;
+  border-bottom:1px solid var(--line);color:var(--cream);font-family:'Fraunces',serif;font-weight:300;
+  font-size:clamp(20px,2.6vw,28px);padding:12px 2px;transition:border-color .3s var(--ease)}
+.q-input::placeholder,.q-textarea::placeholder{color:rgba(245,240,232,.24)}
+.q-input:focus,.q-textarea:focus{outline:0;border-color:var(--gold)}
+.q-textarea{resize:none;line-height:1.5;min-height:5.6em;border:1px solid var(--line);
+  border-radius:14px;padding:18px 20px;font-size:clamp(17px,2vw,21px)}
+.q-options{display:flex;flex-wrap:wrap;gap:12px;max-width:44rem}
+.q-option{background:var(--surface);border:1px solid var(--line-soft);border-radius:999px;
+  color:var(--cream-dim);font:inherit;font-size:14px;padding:14px 24px;cursor:pointer;
+  transition:border-color .25s,color .25s,background .25s,transform .25s var(--ease)}
+.q-option:hover{border-color:var(--gold-deep);color:var(--cream);transform:translateY(-2px)}
+.q-option.is-on{background:linear-gradient(122deg,var(--gold),var(--gold-soft));border-color:transparent;color:#1C1406}
+.q-option small{display:block;font-size:11px;opacity:.7;margin-top:2px}
+.q-error{color:#E8A598;font-size:13px;margin-top:14px;min-height:1.2em}
+.quiz-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;
+  max-width:52rem;width:100%;margin:0 auto;padding-top:26px}
+.quiz-foot-right{display:flex;align-items:center;gap:22px}
+.quiz-hint{text-align:center;font-size:11px;letter-spacing:.1em;color:rgba(245,240,232,.28);margin-top:18px}
+@media(max-width:600px){.quiz-hint{display:none}.quiz-group{display:none}}
+
+/* reading theatre */
+.reading-orb{position:relative;width:min(46vw,230px);aspect-ratio:1;margin-bottom:54px}
+.reading-orb i{position:absolute;inset:0;border-radius:50%;border:1px solid var(--gold-deep);
+  opacity:.5;animation:orb 5.2s var(--ease) infinite}
+.reading-orb i:nth-child(2){animation-delay:1.5s;border-color:var(--gold)}
+.reading-orb i:nth-child(3){animation-delay:3s;border-color:var(--cream-faint)}
+.reading-orb::after{content:"";position:absolute;inset:22%;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,var(--gold-soft),rgba(201,169,97,.08) 62%,transparent 72%);
+  filter:blur(6px);animation:pulse 3.6s ease-in-out infinite}
+@keyframes orb{0%{transform:scale(.55);opacity:0}22%{opacity:.55}100%{transform:scale(1.25);opacity:0}}
+@keyframes pulse{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:.95;transform:scale(1.04)}}
+.reading-copy{min-height:4.4em;display:grid;place-items:center;padding:0 var(--step)}
+.reading-line{font-family:'Fraunces',serif;font-weight:300;font-style:italic;
+  font-size:clamp(20px,3vw,30px);color:var(--cream-dim);max-width:26rem;line-height:1.4}
+.reading-progress{width:min(60vw,220px);height:1px;background:var(--line-soft);margin-top:54px;overflow:hidden}
+.reading-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-deep),var(--gold-soft))}
+
+/* reveal — sacred, no chrome */
+.reveal-screen{background:rgba(4,5,14,.72);justify-content:flex-start;padding:22vh var(--step) 22vh}
+.reveal-inner{width:100%;max-width:40rem;margin:0 auto}
+.story{font-family:'Fraunces',Georgia,serif;font-weight:300;font-size:clamp(19px,2.5vw,26px);
+  line-height:1.85}
+.story p{margin:0 0 1.15em;opacity:0}
+.story p.is-lit{opacity:1}
+.story p.is-past{opacity:.42;transition:opacity 1.2s var(--ease)}
+.reveal-foot{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;
+  padding:64px 24px 26px;background:linear-gradient(transparent,rgba(4,5,14,.97) 62%);
+  opacity:0;pointer-events:none;transition:opacity .8s var(--ease)}
+.reveal-foot.is-shown{opacity:1;pointer-events:auto}
+
+/* player */
+.player-wrap{max-width:44rem}
+.player-wrap .display{margin:20px 0 34px}
+.player-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
+  padding:clamp(22px,3.4vw,34px);backdrop-filter:blur(14px)}
+.player-main{display:flex;align-items:center;gap:22px}
+.play-btn{flex:none;width:66px;height:66px;border-radius:50%;border:0;cursor:pointer;display:grid;
+  place-items:center;background:linear-gradient(122deg,var(--gold),var(--gold-soft));color:#1C1406;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.play-btn:hover{transform:scale(1.05);box-shadow:0 12px 34px var(--gold-glow)}
+.play-btn svg{width:26px;height:26px;fill:currentColor;grid-area:1/1}
+.play-btn .ico-pause{display:none}
+.play-btn.is-playing .ico-play{display:none}
+.play-btn.is-playing .ico-pause{display:block}
+.player-track{flex:1;min-width:0}
+.scrub{height:4px;background:var(--line-soft);border-radius:4px;cursor:pointer;position:relative}
+.scrub i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-deep),var(--gold-soft));border-radius:4px}
+.times{display:flex;justify-content:space-between;margin-top:9px;font-size:11.5px;
+  color:var(--cream-faint);font-variant-numeric:tabular-nums}
+.loop[aria-pressed="true"]{border-color:var(--gold);color:var(--gold-soft);background:var(--surface-2)}
+.player-ambience{margin-top:30px;padding-top:26px;border-top:1px solid var(--line-soft)}
+.row-label{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--cream-faint);margin-bottom:14px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:transparent;border:1px solid var(--line);border-radius:999px;color:var(--cream-dim);
+  font:inherit;font-size:12.5px;padding:10px 20px;cursor:pointer;transition:border-color .25s,color .25s,background .25s}
+.chip:hover{border-color:var(--gold-deep);color:var(--cream)}
+.chip.is-on{border-color:var(--gold);color:var(--gold-soft);background:var(--surface-2)}
+.vol{display:flex;align-items:center;gap:12px;margin-top:20px;max-width:20rem}
+.vol svg{width:17px;height:17px;fill:var(--cream-faint);flex:none}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:3px;
+  background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--gold-soft);box-shadow:0 0 0 4px rgba(201,169,97,.16)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:var(--gold-soft)}
+.player-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 26px;margin-top:32px}
+.player-actions .btn{margin-left:auto}
+#player-note{margin-top:18px;min-height:1.2em}
+
+/* paywall */
+.pay-wrap{max-width:58rem}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin:42px 0 26px}
+.plan{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
+  padding:32px 28px;position:relative;backdrop-filter:blur(12px)}
+.plan.featured{border-color:var(--gold-deep);background:linear-gradient(168deg,rgba(201,169,97,.10),var(--surface) 62%)}
+.plan-flag{position:absolute;top:-11px;left:28px;background:linear-gradient(122deg,var(--gold),var(--gold-soft));
+  color:#1C1406;font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:5px 13px;border-radius:999px}
+.plan h3{font-family:'Fraunces',serif;font-weight:400;font-size:15px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.price{font-family:'Fraunces',serif;font-weight:300;font-size:52px;line-height:1}
+.price span{font-size:14px;color:var(--cream-faint);font-family:'Inter',sans-serif}
+.plan ul{list-style:none;margin:26px 0 30px;display:grid;gap:12px}
+.plan li{font-size:14.5px;color:var(--cream-dim);padding-left:22px;position:relative;line-height:1.5}
+.plan li::before{content:"";position:absolute;left:0;top:.62em;width:9px;height:1px;background:var(--gold)}
+
+.toast{position:fixed;left:50%;bottom:34px;transform:translate(-50%,14px);z-index:120;
+  background:rgba(11,14,35,.92);border:1px solid var(--line);border-radius:999px;padding:13px 24px;
+  font-size:13px;opacity:0;backdrop-filter:blur(10px);
+  transition:opacity .35s var(--ease),transform .35s var(--ease);max-width:90vw;text-align:center}
+.toast.is-shown{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:720px){
+  .player-main{flex-wrap:wrap}
+  .player-track{order:3;width:100%;flex-basis:100%;margin-top:6px}
+  .player-actions .btn{margin-left:0;width:100%}
+  .landing-actions .btn{width:100%}
+  .landing-marks{flex-direction:column;gap:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+  .story p{opacity:1!important}
+  .reveal-foot{opacity:1;pointer-events:auto}
+}
+</style>
+</head>
+<body>
+
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+
+<main>
+<!-- 1 ─ LANDING -->
+<section class="screen" id="screen-landing">
+  <div class="wrap landing-wrap">
+    <p class="eyebrow reveal-item">Erika Page · Manifestation Studio</p>
+    <h1 class="display reveal-item">You already know<br><em>what it looks like.</em></h1>
+    <p class="lede reveal-item">Fifteen quiet questions. Then your life &mdash; the names, the places, the numbers you just gave me &mdash; read back to you as though it has already happened.</p>
+    <div class="landing-actions reveal-item">
+      <button class="btn btn-gold" data-action="start">Begin your reading</button>
+      <button class="btn btn-ghost" data-action="demo">Play Erika's reading</button>
+    </div>
+    <p class="micro reveal-item">Takes about three minutes. Sound on, if you can.</p>
+    <ul class="landing-marks reveal-item">
+      <li><span>01</span> Fifteen questions</li>
+      <li><span>02</span> Written in your own words</li>
+      <li><span>03</span> Narrated aloud</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 2 ─ QUIZ -->
+<section class="screen" id="screen-quiz" hidden>
+  <header class="quiz-head">
+    <button class="icon-btn" data-action="quiz-exit" aria-label="Leave the quiz">&larr;</button>
+    <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="15" aria-valuenow="1">
+      <div class="progress-bar"><i id="progress-fill"></i></div>
+      <span class="progress-label"><b id="q-index">1</b> <span aria-hidden="true">/</span> 15</span>
+    </div>
+    <div class="quiz-group" id="q-group">Setting</div>
+  </header>
+  <div class="wrap quiz-wrap"><div class="q-stage" id="q-stage" aria-live="polite"></div></div>
+  <footer class="quiz-foot">
+    <button class="btn btn-ghost sm" data-action="prev">Back</button>
+    <div class="quiz-foot-right">
+      <button class="btn-text" data-action="skip">Skip this one</button>
+      <button class="btn btn-gold sm" data-action="next">Continue</button>
+    </div>
+  </footer>
+  <p class="quiz-hint">Press <kbd>Enter</kbd> to continue</p>
+</section>
+
+<!-- 3 ─ READING THEATRE -->
+<section class="screen center" id="screen-reading" hidden>
+  <div class="reading-orb" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="reading-copy" aria-live="polite"><p class="reading-line" id="reading-line">Reading your intentions&hellip;</p></div>
+  <div class="reading-progress" aria-hidden="true"><i id="reading-fill"></i></div>
+</section>
+
+<!-- 4 ─ REVEAL -->
+<section class="screen reveal-screen" id="screen-reveal" hidden>
+  <div class="reveal-inner"><div class="story" id="story-lines" aria-live="polite"></div></div>
+  <div class="reveal-foot"><button class="btn btn-ghost sm" data-action="to-player">Open the player</button></div>
+</section>
+
+<!-- 5 ─ PLAYER -->
+<section class="screen" id="screen-player" hidden>
+  <div class="wrap player-wrap">
+    <p class="eyebrow">Your reading</p>
+    <h2 class="display sm" id="player-title">A morning in the life you're building</h2>
+    <div class="player-card">
+      <div class="player-main">
+        <button class="play-btn" data-action="playpause" aria-label="Play">
+          <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+          <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg>
+        </button>
+        <div class="player-track">
+          <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="scrub-fill"></i></div>
+          <div class="times"><span id="t-now">0:00</span><span id="t-total">0:00</span></div>
+        </div>
+        <button class="icon-btn loop" data-action="loop" aria-pressed="false" aria-label="Loop the reading">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zM17 17H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg>
+        </button>
+      </div>
+      <div class="player-ambience">
+        <p class="row-label">Ambience</p>
+        <div class="chips" role="radiogroup" aria-label="Ambience">
+          <button class="chip" role="radio" aria-checked="false" data-amb="none">Silence</button>
+          <button class="chip is-on" role="radio" aria-checked="true" data-amb="cafe">Caf&eacute;</button>
+          <button class="chip" role="radio" aria-checked="false" data-amb="rain">Rain</button>
+          <button class="chip" role="radio" aria-checked="false" data-amb="waves">Waves</button>
+        </div>
+        <label class="vol"><span class="sr-only">Ambience volume</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/></svg>
+          <input type="range" id="amb-vol" min="0" max="100" value="25">
+        </label>
+      </div>
+    </div>
+    <div class="player-actions">
+      <button class="btn-text" data-action="reread">Read it again</button>
+      <button class="btn-text" data-action="download">Save the words</button>
+      <button class="btn btn-gold sm" data-action="to-paywall">Continue</button>
+    </div>
+    <p class="micro" id="player-note"></p>
+  </div>
+</section>
+
+<!-- 6 ─ PAYWALL MOCK -->
+<section class="screen" id="screen-paywall" hidden>
+  <div class="wrap pay-wrap">
+    <p class="eyebrow">Mock screen &mdash; this is what a customer would see</p>
+    <h2 class="display sm">Keep hearing it,<br><em>every morning.</em></h2>
+    <p class="lede">One reading changes an afternoon. A daily one changes what you believe is normal.</p>
+    <div class="plans">
+      <article class="plan">
+        <h3>Weekly</h3><p class="price">$10<span>/week</span></p>
+        <ul><li>A fresh reading every morning</li><li>Three ambience beds</li><li>Your library, saved</li></ul>
+        <button class="btn btn-ghost sm" data-action="mock-pay">Choose weekly</button>
+      </article>
+      <article class="plan featured">
+        <span class="plan-flag">Most chosen</span>
+        <h3>Yearly</h3><p class="price">$79<span>/year</span></p>
+        <ul><li>Everything weekly, at 6 weeks' price</li><li>Seasonal re-readings as your goals shift</li><li>Share a reading with someone you love</li></ul>
+        <button class="btn btn-gold sm" data-action="mock-pay">Choose yearly</button>
+      </article>
+    </div>
+    <p class="micro">Nothing here charges anything &mdash; it's a mock of the paywall.</p>
+    <div style="margin-top:26px"><button class="btn-text" data-action="restart">Start a new reading</button></div>
+  </div>
+</section>
+</main>
+
+<audio id="voice" preload="auto"></audio>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   CONFIG — paste your two n8n Production webhook URLs here.
+   n8n → open the workflow → click a Webhook node → copy "Production URL".
+   ══════════════════════════════════════════════════════════════════════ */
+const API = {
+  story: 'https://YOUR-N8N-HOST/webhook/manifest/story',
+  voice: 'https://YOUR-N8N-HOST/webhook/manifest/voice',
+};
+const VOICE = 'calm';           // calm | warm | confident
+const MIN_THEATRE = 6200;       // the loading moment is non-negotiable
+</script>
+
+<script>
+/* ── the fifteen questions ─────────────────────────────────────────── */
+const QUESTIONS = [
+  { key:'name', group:'Setting', type:'text', title:'First, what should I call you?',
+    help:'Your first name. It goes in the story exactly as you write it.', placeholder:'Erika', required:true, max:40 },
+  { key:'city', group:'Setting', type:'text', title:'Which city are you in — or moving to?',
+    help:'Where this life happens day to day.', placeholder:'Atlanta', required:true, max:60 },
+  { key:'spot', group:'Setting', type:'text', title:'And a spot there you love.',
+    help:'A neighbourhood, a restaurant, a walk. Specific enough that only you would name it.',
+    placeholder:'a little wine shop in Buckhead', max:120 },
+  { key:'partner', group:'People', type:'text', title:'Who is closest to you?',
+    help:'A name, or a nickname only you use. Leave it blank if you would rather not.',
+    placeholder:'C Arnez B', max:60 },
+  { key:'people', group:'People', type:'textarea', title:'Who else is beside you in this life?',
+    help:'Names and how you know them — family, friends, your people.',
+    placeholder:'my daughter Maya, and Tyler and Liam', max:220 },
+  { key:'desire', group:'The dream', type:'textarea', title:'What are you manifesting right now?',
+    help:'The real one. In your own words, not the polished version.',
+    placeholder:'financial freedom and a thriving real estate business', required:true, max:260 },
+  { key:'area', group:'The dream', type:'choice', title:'Which part of life is that?',
+    help:'This sets the tone of the reading.', required:true, options:[
+      {value:'money',label:'Money',note:'ease, margin'},{value:'career',label:'Career',note:'craft, standing'},
+      {value:'love',label:'Love',note:'closeness'},{value:'home',label:'Home',note:'rooms, roots'},
+      {value:'freedom',label:'Freedom',note:'time, space'},{value:'health',label:'Health',note:'the body'}] },
+  { key:'milestone', group:'The dream', type:'text', title:'What is the thing that means "I made it"?',
+    help:'A specific purchase or milestone. Specific beats grand.',
+    placeholder:'a beachfront villa in Costa Rica', required:true, max:140 },
+  { key:'milestone_location', group:'The dream', type:'text', title:'And where in the world is it?',
+    help:'The place that goes with the last answer.', placeholder:'Costa Rica', max:80 },
+  { key:'proof_number', group:'The dream', type:'text', title:'Give me a number that would prove it is working.',
+    help:'Counted success feels true. Vague abundance feels fake.',
+    placeholder:'47 agents signed this quarter', required:true, max:120 },
+  { key:'work_vision', group:'The dream', type:'textarea', title:'What does your work look like at its best?',
+    help:'The shape of the days — what you are actually building.',
+    placeholder:'an AI recruiting arm and a real estate acquisitions business', max:260 },
+  { key:'success_place', group:'Sensory anchors', type:'text', title:'Where are you when you feel it?',
+    help:'The actual room or place. Be plain about it.', placeholder:'my home office, laptop open', max:140 },
+  { key:'sensory_detail', group:'Sensory anchors', type:'text', title:'One small detail from that place.',
+    help:'A smell, a sound, an object. The ordinariness is what makes it real.',
+    placeholder:'a framed photo from last Thanksgiving', max:140 },
+  { key:'good_news_caller', group:'Sensory anchors', type:'textarea', title:'Who calls with good news — and what do they say?',
+    help:'One line. The kind of message that lands mid-morning.',
+    placeholder:'my assistant, telling me the new deal video hit 50k views', max:220 },
+  { key:'scarcity_habit', group:'The contrast', type:'textarea',
+    title:"Last one. When you want something you can't have yet, what do you do right now?",
+    help:'The small scarcity habit — the tab-comparing, the balance-checking. This is the line the whole reading turns on.',
+    placeholder:'open three tabs comparing prices before I buy anything', required:true, max:260 },
+];
+
+const DEMO_PROFILE = {
+  name:'Erika', city:'Atlanta', spot:'a little wine shop in Buckhead', partner:'C Arnez B',
+  people:'my daughter Maya, and Tyler and Liam',
+  desire:'financial freedom and a thriving real estate business', area:'money',
+  milestone:'a beachfront villa in Costa Rica', milestone_location:'Costa Rica',
+  proof_number:'47 agents signed this quarter',
+  work_vision:'an AI recruiting arm and a real estate acquisitions business',
+  success_place:'my home office, laptop open', sensory_detail:'a framed photo from last Thanksgiving',
+  good_news_caller:'my assistant, telling me the new deal video hit 50k views',
+  scarcity_habit:'open three tabs comparing prices before I buy anything',
+};
+
+const DEFAULTS = {
+  spot:'the coffee place I always end up at', work_vision:'work that finally looks like me',
+  success_place:'my kitchen, early, before anyone else is up',
+  sensory_detail:'the light coming across the counter', good_news_caller:'someone on my team, with news',
+};
+</script>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   Audio cache — IndexedDB. A reading already generated never costs again
+   on this device, so replays are free even after a reload.
+   ══════════════════════════════════════════════════════════════════════ */
+const Cache = (() => {
+  const DB = 'manifest-audio', STORE = 'clips';
+  let dbp = null;
+  function db() {
+    if (dbp) return dbp;
+    dbp = new Promise((res, rej) => {
+      const r = indexedDB.open(DB, 1);
+      r.onupgradeneeded = () => r.result.createObjectStore(STORE);
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    }).catch(() => null);
+    return dbp;
+  }
+  async function key(text, voice) {
+    const buf = new TextEncoder().encode(voice + '|' + text.trim());
+    if (!crypto.subtle) return voice + '|' + text.length;   // http:// fallback
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  async function get(k) {
+    const d = await db(); if (!d) return null;
+    return new Promise(res => {
+      const r = d.transaction(STORE).objectStore(STORE).get(k);
+      r.onsuccess = () => res(r.result || null);
+      r.onerror = () => res(null);
+    });
+  }
+  async function put(k, blob) {
+    const d = await db(); if (!d) return;
+    try { d.transaction(STORE, 'readwrite').objectStore(STORE).put(blob, k); } catch {}
+  }
+  return { key, get, put };
+})();
+
+/* ══════════════════════════════════════════════════════════════════════
+   Ambience — synthesised from filtered noise. No mp3 files to host.
+   ══════════════════════════════════════════════════════════════════════ */
+const Ambience = (() => {
+  let ctx = null, gain = null, node = null, level = .25;
+  function ensure() {
+    if (ctx) return ctx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC();
+    gain = ctx.createGain(); gain.gain.value = level; gain.connect(ctx.destination);
+    return ctx;
+  }
+  function noise(seconds, kind) {
+    const len = Math.floor(ctx.sampleRate * seconds);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    if (kind === 'brown') {
+      let last = 0;
+      for (let i = 0; i < len; i++) { const w = Math.random()*2-1; last = (last + .02*w)/1.02; d[i] = last*3.5; }
+    } else {
+      let b0=0,b1=0,b2=0;
+      for (let i = 0; i < len; i++) {
+        const w = Math.random()*2-1;
+        b0=.99765*b0+w*.0990460; b1=.96300*b1+w*.2965164; b2=.57000*b2+w*1.0526913;
+        d[i] = (b0+b1+b2+w*.1848)*.22;
+      }
+    }
+    return buf;
+  }
+  function stop() {
+    if (!node) return;
+    const n = node; node = null;
+    try {
+      const t = ctx.currentTime;
+      n.out.gain.cancelScheduledValues(t);
+      n.out.gain.setValueAtTime(n.out.gain.value, t);
+      n.out.gain.linearRampToValueAtTime(0, t + .5);
+    } catch {}
+    clearTimeout(n.timer);
+    setTimeout(() => { try { n.src.stop(); } catch {} n.parts.forEach(p => { try { p.disconnect(); } catch {} }); }, 600);
+  }
+  function set(name) {
+    if (!ensure()) return;
+    if (ctx.state === 'suspended') ctx.resume();
+    stop();
+    if (name === 'none') return;
+    const out = ctx.createGain(); out.gain.value = 0; out.connect(gain);
+    const src = ctx.createBufferSource();
+    src.buffer = noise(4, name === 'waves' ? 'brown' : 'pink'); src.loop = true;
+    const filter = ctx.createBiquadFilter(), swell = ctx.createGain(), parts = [src, filter, swell, out];
+    let timer = null;
+    if (name === 'rain') {
+      filter.type='bandpass'; filter.frequency.value=1400; filter.Q.value=.6; swell.gain.value=.9;
+      const hi = ctx.createBiquadFilter(); hi.type='highpass'; hi.frequency.value=700;
+      src.connect(hi); hi.connect(filter); parts.push(hi);
+    } else if (name === 'waves') {
+      filter.type='lowpass'; filter.frequency.value=520; filter.Q.value=.3; swell.gain.value=.55;
+      const lfo = ctx.createOscillator(), lg = ctx.createGain();
+      lfo.frequency.value = 1/11; lg.gain.value = .42;
+      lfo.connect(lg); lg.connect(swell.gain); lfo.start(); parts.push(lfo, lg);
+      src.connect(filter);
+    } else { // cafe
+      filter.type='lowpass'; filter.frequency.value=820; filter.Q.value=.4; swell.gain.value=.8;
+      const m = ctx.createBiquadFilter(); m.type='peaking'; m.frequency.value=320; m.gain.value=6; m.Q.value=.8;
+      src.connect(m); m.connect(filter); parts.push(m);
+      const clink = () => {
+        if (!ctx) return;
+        const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime;
+        o.type='triangle'; o.frequency.value = 900 + Math.random()*1600;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(.05 + Math.random()*.05, t + .006);
+        g.gain.exponentialRampToValueAtTime(.0001, t + .32);
+        o.connect(g); g.connect(out); o.start(t); o.stop(t + .36);
+        timer = setTimeout(clink, 2600 + Math.random()*7000);
+      };
+      timer = setTimeout(clink, 1800 + Math.random()*3000);
+    }
+    filter.connect(swell); swell.connect(out); src.start();
+    out.gain.linearRampToValueAtTime(1, ctx.currentTime + 1.6);   // fade in, never snap
+    node = { src, out, parts, timer };
+  }
+  function volume(v) {
+    level = Math.max(0, Math.min(1, v));
+    if (gain) gain.gain.setTargetAtTime(level, ctx.currentTime, .08);
+  }
+  function resume() { if (ensure() && ctx.state === 'suspended') ctx.resume(); }
+  return { set, volume, resume };
+})();
+</script>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   App — flow controller
+   ══════════════════════════════════════════════════════════════════════ */
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const g = window.gsap;
+  const voiceEl = $('#voice');
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  const state = { screen:'landing', profile:{}, index:0, story:'', lines:[], lit:-1, busy:false, schedule:[] };
+
+  /* ── screens ─────────────────────────────────────────────── */
+  async function go(name) {
+    if (name === state.screen) return;
+    const from = $('#screen-' + state.screen), to = $('#screen-' + name);
+    if (!to) return;
+    if (from && g && !reduced) await new Promise(r => g.to(from, {opacity:0,duration:.28,onComplete:r}));
+    if (from) { from.hidden = true; from.style.opacity = ''; }
+    to.hidden = false; state.screen = name;
+    if (g && !reduced) {
+      g.fromTo(to, {opacity:0}, {opacity:1,duration:.7,ease:'power2.out'});
+      const items = to.querySelectorAll('.reveal-item');
+      if (items.length) g.fromTo(items, {opacity:0,y:18}, {opacity:1,y:0,duration:.9,ease:'expo.out',stagger:.085,delay:.12});
+    }
+    scrollTo({ top: 0 });
+  }
+
+  let toastTimer;
+  function toast(msg, ms = 2800) {
+    const el = $('#toast'); el.textContent = msg; el.hidden = false;
+    requestAnimationFrame(() => el.classList.add('is-shown'));
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.classList.remove('is-shown'); setTimeout(() => el.hidden = true, 400); }, ms);
+  }
+
+  /* ── quiz ────────────────────────────────────────────────── */
+  function paint(back = false) {
+    const stage = $('#q-stage'), q = QUESTIONS[state.index], old = stage.firstElementChild;
+    const node = document.createElement('div');
+    node.innerHTML = `<span class="q-num">${String(state.index+1).padStart(2,'0')} — ${q.group}</span>
+      <h2 class="q-title">${q.title}</h2>${q.help ? `<p class="q-help">${q.help}</p>` : ''}
+      <div class="q-field"></div><p class="q-error" role="alert"></p>`;
+    const field = node.querySelector('.q-field');
+
+    if (q.type === 'choice') {
+      const box = document.createElement('div');
+      box.className = 'q-options'; box.setAttribute('role','radiogroup');
+      q.options.forEach(o => {
+        const b = document.createElement('button');
+        b.type='button'; b.className = 'q-option' + (state.profile[q.key]===o.value ? ' is-on' : '');
+        b.setAttribute('role','radio'); b.setAttribute('aria-checked', String(state.profile[q.key]===o.value));
+        b.innerHTML = `${o.label}${o.note ? `<small>${o.note}</small>` : ''}`;
+        b.onclick = () => {
+          box.querySelectorAll('.q-option').forEach(x => { x.classList.remove('is-on'); x.setAttribute('aria-checked','false'); });
+          b.classList.add('is-on'); b.setAttribute('aria-checked','true');
+          state.profile[q.key] = o.value; save(); next();
+        };
+        box.appendChild(b);
+      });
+      field.appendChild(box);
+    } else {
+      const el = document.createElement(q.type === 'textarea' ? 'textarea' : 'input');
+      el.className = q.type === 'textarea' ? 'q-textarea' : 'q-input';
+      if (q.type !== 'textarea') el.type = 'text';
+      el.placeholder = q.placeholder || ''; el.value = state.profile[q.key] || '';
+      el.maxLength = q.max || 200; el.autocomplete = 'off'; el.spellcheck = false;
+      el.setAttribute('aria-label', q.title);
+      el.oninput = () => { state.profile[q.key] = el.value; $('.q-error', node).textContent = ''; save(); };
+      el.onkeydown = e => { if (e.key === 'Enter' && (q.type !== 'textarea' || !e.shiftKey)) { e.preventDefault(); next(); } };
+      field.appendChild(el);
+    }
+
+    const mount = () => {
+      stage.appendChild(node);
+      if (g && !reduced) g.fromTo(node.querySelectorAll('.q-num,.q-title,.q-help,.q-field'),
+        {opacity:0,y:back?-16:22}, {opacity:1,y:0,duration:.7,ease:'expo.out',stagger:.07});
+      setTimeout(() => { const f = node.querySelector('input,textarea,.q-option'); if (f) f.focus({preventScroll:true}); }, 120);
+    };
+    if (old && g && !reduced) g.to(old, {opacity:0,y:-26,duration:.34,onComplete:() => { old.remove(); mount(); }});
+    else { if (old) old.remove(); mount(); }
+
+    $('#q-index').textContent = state.index + 1;
+    $('#q-group').textContent = q.group;
+    $('.progress').setAttribute('aria-valuenow', state.index + 1);
+    const pct = ((state.index + 1) / QUESTIONS.length) * 100;
+    if (g && !reduced) g.to($('#progress-fill'), {width:pct+'%',duration:.6,ease:'expo.out'});
+    else $('#progress-fill').style.width = pct + '%';
+    $('[data-action="prev"]').disabled = state.index === 0;
+    $('[data-action="skip"]').hidden = !!q.required;
+    $('[data-action="next"]').textContent = state.index === QUESTIONS.length - 1 ? 'Read my intentions' : 'Continue';
+  }
+
+  function next() {
+    const q = QUESTIONS[state.index], v = state.profile[q.key];
+    if (q.required && !String(v || '').trim()) {
+      $('.q-error', $('#q-stage')).textContent = q.type === 'choice'
+        ? 'Pick the one that fits closest.'
+        : 'This one shapes the whole reading — a few words is plenty.';
+      return;
+    }
+    if (state.index < QUESTIONS.length - 1) { state.index++; paint(); }
+    else generate();
+  }
+
+  const save = () => { try { localStorage.setItem('manifest.profile', JSON.stringify(state.profile)); } catch {} };
+
+  /* ── the reading ─────────────────────────────────────────── */
+  const THEATRE = [
+    'Reading your intentions…', 'Listening for the names you gave me…',
+    'Finding the ordinary morning inside it…', 'Setting the table, pouring the coffee…',
+    'Putting the numbers where you can see them…', 'Writing it in present tense…',
+    'Almost. This part shouldn’t be rushed…',
+  ];
+
+  async function generate() {
+    if (state.busy) return;
+    state.busy = true;
+    await go('reading');
+    Ambience.resume();
+
+    const lineEl = $('#reading-line');
+    let i = 0;
+    lineEl.textContent = THEATRE[0];
+    const rotate = setInterval(() => {
+      i = (i + 1) % THEATRE.length;
+      if (g && !reduced) g.to(lineEl, {opacity:0,y:-10,duration:.45,onComplete:() => {
+        lineEl.textContent = THEATRE[i];
+        g.fromTo(lineEl, {opacity:0,y:12}, {opacity:1,y:0,duration:.8,ease:'expo.out'});
+      }});
+      else lineEl.textContent = THEATRE[i];
+    }, 2600);
+    if (g && !reduced) g.fromTo($('#reading-fill'), {width:'0%'}, {width:'92%',duration:12,ease:'power1.inOut'});
+
+    const began = Date.now();
+    try {
+      const res = await fetch(API.story, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ profile: state.profile }),
+      });
+      if (!res.ok) throw new Error('Story service returned ' + res.status);
+      const data = await res.json();
+      if (!data.story) throw new Error('No story came back.');
+      state.story = data.story;
+      state.lines = data.lines && data.lines.length ? data.lines : data.story.split(/\n\s*\n/).filter(Boolean);
+
+      await fetchVoice(state.story);
+    } catch (err) {
+      clearInterval(rotate);
+      state.busy = false;
+      console.error(err);
+      toast('Could not reach the reading service. Check the webhook URLs.', 6000);
+      await go('landing');
+      return;
+    }
+
+    const waited = Date.now() - began;
+    if (waited < MIN_THEATRE) await sleep(MIN_THEATRE - waited);
+    clearInterval(rotate);
+    if (g && !reduced) g.to($('#reading-fill'), {width:'100%',duration:.35});
+    await sleep(500);
+    state.busy = false;
+    await reveal();
+  }
+
+  async function fetchVoice(text) {
+    const key = await Cache.key(text, VOICE);
+    let blob = await Cache.get(key);
+    if (!blob) {
+      const res = await fetch(API.voice, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ text, voice: VOICE }),
+      });
+      if (!res.ok) throw new Error('Voice service returned ' + res.status);
+      blob = await res.blob();
+      if (blob.size < 1024) throw new Error('Voice service returned no audio.');
+      Cache.put(key, blob);
+    }
+    if (voiceEl.src) URL.revokeObjectURL(voiceEl.src);
+    voiceEl.src = URL.createObjectURL(blob);
+    await new Promise(r => {
+      const done = () => r();
+      voiceEl.addEventListener('loadedmetadata', done, {once:true});
+      voiceEl.addEventListener('error', done, {once:true});
+      setTimeout(done, 6000);
+    });
+  }
+
+  /* ── reveal ──────────────────────────────────────────────── */
+  async function reveal() {
+    const box = $('#story-lines');
+    box.innerHTML = ''; state.lit = -1;
+    state.lines.forEach(t => { const p = document.createElement('p'); p.textContent = t; box.appendChild(p); });
+    $('.reveal-foot').classList.remove('is-shown');
+    await go('reveal');
+
+    Ambience.resume();
+    Ambience.set(currentAmb());
+    try { await voiceEl.play(); }
+    catch { toast('Tap anywhere to start the voice.', 4000); document.addEventListener('pointerdown', () => voiceEl.play(), {once:true}); }
+
+    schedule();
+    setTimeout(() => $('.reveal-foot').classList.add('is-shown'), 9000);
+  }
+
+  // Lines are lit in proportion to word count across the voice's real
+  // duration, so the text tracks the narration instead of a fixed timer.
+  function schedule() {
+    const counts = state.lines.map(l => (l.match(/\S+/g) || []).length);
+    const total = counts.reduce((a,b) => a+b, 0) || 1;
+    const dur = isFinite(voiceEl.duration) && voiceEl.duration ? voiceEl.duration : total / 2.35;
+    let acc = 0;
+    state.schedule = counts.map(c => { const at = (acc/total)*dur - 0.35; acc += c; return Math.max(0, at); });
+  }
+
+  setInterval(() => {
+    const t = voiceEl.currentTime || 0, d = isFinite(voiceEl.duration) ? voiceEl.duration : 0;
+    if (state.screen === 'reveal' && state.schedule.length) {
+      const ps = $('#story-lines').children;
+      for (let i = 0; i < state.schedule.length; i++) {
+        if (t >= state.schedule[i] && i > state.lit) {
+          const prev = ps[state.lit];
+          if (prev) { prev.classList.remove('is-lit'); prev.classList.add('is-past'); if (g && !reduced) g.to(prev,{opacity:.42,duration:1.2}); }
+          state.lit = i;
+          const p = ps[i];
+          if (p) {
+            p.classList.add('is-lit');
+            if (g && !reduced) g.fromTo(p, {opacity:0,y:16,filter:'blur(6px)'}, {opacity:1,y:0,filter:'blur(0px)',duration:1.5,ease:'power2.out'});
+            else p.style.opacity = 1;
+            const r = p.getBoundingClientRect();
+            if (r.bottom > innerHeight*.72 || r.top < innerHeight*.18)
+              p.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block:'center'});
+          }
+        }
+      }
+      if (state.lit >= state.schedule.length - 1) $('.reveal-foot').classList.add('is-shown');
+    }
+    const pct = d ? Math.min(100, (t/d)*100) : 0;
+    $('#scrub-fill').style.width = pct + '%';
+    $('#scrub').setAttribute('aria-valuenow', Math.round(pct));
+    $('#t-now').textContent = fmt(t); $('#t-total').textContent = fmt(d);
+    $('[data-action="playpause"]').classList.toggle('is-playing', !voiceEl.paused && !voiceEl.ended);
+  }, 150);
+
+  const fmt = s => { s = Math.max(0, Math.floor(s||0)); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
+  const currentAmb = () => ($('.chip.is-on') || {dataset:{amb:'cafe'}}).dataset.amb;
+
+  /* ── wiring ──────────────────────────────────────────────── */
+  document.addEventListener('click', async e => {
+    const btn = e.target.closest('[data-action]'); if (!btn) return;
+    switch (btn.dataset.action) {
+      case 'start': state.profile = {}; state.index = 0; try{localStorage.removeItem('manifest.profile')}catch{}; await go('quiz'); paint(); break;
+      case 'demo': state.profile = {...DEMO_PROFILE}; save(); generate(); break;
+      case 'quiz-exit': go('landing'); break;
+      case 'next': next(); break;
+      case 'prev': if (state.index > 0) { state.index--; paint(true); } break;
+      case 'skip': {
+        const q = QUESTIONS[state.index];
+        if (q.required) break;
+        if (!state.profile[q.key]) state.profile[q.key] = DEFAULTS[q.key] || '';
+        save(); next(); break;
+      }
+      case 'to-player': {
+        const n = (state.profile.name || '').trim();
+        $('#player-title').textContent = n ? `A morning in ${n}'s life` : "A morning in the life you're building";
+        await go('player'); break;
+      }
+      case 'playpause': voiceEl.paused ? voiceEl.play() : voiceEl.pause(); break;
+      case 'loop': {
+        const on = btn.getAttribute('aria-pressed') !== 'true';
+        btn.setAttribute('aria-pressed', String(on)); voiceEl.loop = on;
+        toast(on ? 'Looping.' : 'Loop off.'); break;
+      }
+      case 'reread': voiceEl.currentTime = 0; state.lit = -1; await reveal(); break;
+      case 'download': {
+        const name = (state.profile.name || 'your').replace(/[^\w\- ]/g,'');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([state.story + '\n'], {type:'text/plain'}));
+        a.download = `${name || 'manifest'}-reading.txt`;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        toast('Saved to your downloads.'); break;
+      }
+      case 'to-paywall': go('paywall'); break;
+      case 'mock-pay': toast('Mock screen — nothing was charged.'); break;
+      case 'restart': voiceEl.pause(); state.story=''; state.lines=[]; state.profile={}; state.index=0;
+        try{localStorage.removeItem('manifest.profile')}catch{}; await go('quiz'); paint(); break;
+    }
+  });
+
+  $$('.chip').forEach(c => c.onclick = () => {
+    $$('.chip').forEach(x => { x.classList.remove('is-on'); x.setAttribute('aria-checked','false'); });
+    c.classList.add('is-on'); c.setAttribute('aria-checked','true');
+    Ambience.set(c.dataset.amb);
+  });
+  $('#amb-vol').oninput = e => Ambience.volume(e.target.value / 100);
+  $('#scrub').onclick = e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    if (isFinite(voiceEl.duration)) voiceEl.currentTime = ((e.clientX - r.left)/r.width) * voiceEl.duration;
+  };
+  addEventListener('keydown', e => {
+    if (e.target.matches('input,textarea,select')) return;
+    if (e.code === 'Space' && (state.screen === 'player' || state.screen === 'reveal')) {
+      e.preventDefault(); voiceEl.paused ? voiceEl.play() : voiceEl.pause();
+    }
+  });
+
+  /* ── starfield ───────────────────────────────────────────── */
+  (function starfield() {
+    const c = $('#starfield'), ctx = c.getContext('2d');
+    let stars = [], w = 0, h = 0, raf;
+    function build() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      w = c.clientWidth; h = c.clientHeight;
+      c.width = w*dpr; c.height = h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+      stars = Array.from({length: Math.round(Math.min(200, w*h/9000))}, () => ({
+        x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.25+.25,
+        a:Math.random()*.5+.12, tw:Math.random()*.012+.003, dir:Math.random()>.5?1:-1,
+        warm:Math.random()>.72,
+      }));
+    }
+    function paint() {
+      ctx.clearRect(0,0,w,h);
+      for (const s of stars) {
+        if (!reduced) { s.a += s.tw*s.dir; if (s.a > .72 || s.a < .08) s.dir *= -1; }
+        ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fillStyle = s.warm ? `rgba(226,198,139,${s.a})` : `rgba(245,240,232,${s.a*.8})`;
+        ctx.fill();
+      }
+      if (!reduced) raf = requestAnimationFrame(paint);
+    }
+    const start = () => { cancelAnimationFrame(raf); build(); paint(); };
+    let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(start, 180); });
+    start();
+  })();
+
+  /* ── boot ────────────────────────────────────────────────── */
+  try { const raw = localStorage.getItem('manifest.profile'); if (raw) state.profile = JSON.parse(raw) || {}; } catch {}
+  if (g && !reduced) {
+    g.fromTo('#screen-landing', {opacity:0}, {opacity:1,duration:.7});
+    g.fromTo('#screen-landing .reveal-item', {opacity:0,y:18}, {opacity:1,y:0,duration:.9,ease:'expo.out',stagger:.085,delay:.12});
+  }
+  if (API.story.includes('YOUR-N8N-HOST')) {
+    setTimeout(() => toast('Set your n8n webhook URLs in the CONFIG block at the top of this file.', 8000), 1200);
+  }
+})();
+</script>
+</body>
+</html>
