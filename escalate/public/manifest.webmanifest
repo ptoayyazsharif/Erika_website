@@ -1,0 +1,46 @@
+{
+  "name": "Escalate",
+  "short_name": "Escalate",
+  "description": "A private sanctuary for the life you are writing into being. Manifestation stories, daily affirmations, gratitude, and a living record of what came true.",
+  "id": "/?source=pwa",
+  "start_url": "/today?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "theme_color": "#101521",
+  "background_color": "#101521",
+  "categories": ["lifestyle", "health", "productivity"],
+  "dir": "ltr",
+  "lang": "en",
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Today",
+      "short_name": "Today",
+      "description": "Your affirmation cards and what is unfolding",
+      "url": "/today?source=shortcut",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Write a gratitude",
+      "short_name": "Gratitude",
+      "description": "Record something you are grateful for",
+      "url": "/gratitude/create?source=shortcut",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Name a desire",
+      "short_name": "New desire",
+      "description": "Begin a new manifestation",
+      "url": "/desires/create?source=shortcut",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

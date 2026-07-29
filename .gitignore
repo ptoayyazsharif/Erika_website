@@ -4,3 +4,10 @@ manifest-n8n.zip
 
 # Local API keys for the PHP demo (see stella-demo/api/config.php)
 stella-demo/api/config.local.php
+
+# SQLite dev database — never a deliverable
+/escalate/database/database.sqlite
+/escalate/database/*.sqlite-journal
+
+# Installed skill bundles (cloned from upstream, see docs/SKILLS.md)
+/.claude/skills/
