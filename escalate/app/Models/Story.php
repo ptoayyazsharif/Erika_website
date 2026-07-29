@@ -8,6 +8,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Story extends Model
 {
+    /**
+     * User-editable fields only.
+     *
+     * `state`, `desire_id`, `model`, token counts and the rest are set by the
+     * server through the methods below, using forceFill. Widening this list to
+     * include them would make mass assignment meaningless — a future
+     * `create($request->all())` could then point a story at another user's
+     * desire, or declare it ready without one having been written.
+     */
     protected $fillable = ['title', 'body', 'edited_body', 'favourite'];
 
     protected function casts(): array
@@ -86,5 +95,25 @@ class Story extends Model
     public function estimatedSeconds(): int
     {
         return (int) round($this->words() / 2.6);
+    }
+
+    /* ── state transitions ───────────────────────────────────────────────
+       All server-controlled, so all forceFill. Going through named methods
+       rather than update() means the set of legal transitions is visible in
+       one place, and a typo'd column name fails loudly instead of vanishing. */
+
+    public function markWriting(): void
+    {
+        $this->forceFill(['state' => 'writing', 'failure_reason' => null])->save();
+    }
+
+    public function markFailed(string $reason): void
+    {
+        $this->forceFill(['state' => 'failed', 'failure_reason' => $reason])->save();
+    }
+
+    public function markQueued(): void
+    {
+        $this->forceFill(['state' => 'queued', 'failure_reason' => null])->save();
     }
 }

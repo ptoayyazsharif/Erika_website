@@ -3,6 +3,10 @@
 use App\Http\Controllers\Auth\AdminSessionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\DesireController;
+use App\Http\Controllers\MediaController;
+use App\Http\Controllers\StoryController;
+use App\Http\Controllers\WorldController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,15 +50,46 @@ Route::get('/', fn () => redirect()->route(auth()->check() ? 'today' : 'login'))
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    // Placeholders so the navigation resolves while the feature slices land.
-    // Each is replaced by its real controller in the commit that builds it.
+    /* My World */
+    Route::get('/world', [WorldController::class, 'edit'])->name('world.edit');
+    Route::put('/world', [WorldController::class, 'update'])->name('world.update');
+
+    /* Desires + the Manifestation Archive */
+    Route::get('/desires', [DesireController::class, 'index'])->name('desires.index');
+    Route::get('/desires/create', [DesireController::class, 'create'])->name('desires.create');
+    Route::post('/desires', [DesireController::class, 'store'])->name('desires.store');
+    Route::get('/desires/{desire}', [DesireController::class, 'show'])->name('desires.show');
+    Route::get('/desires/{desire}/edit', [DesireController::class, 'edit'])->name('desires.edit');
+    Route::put('/desires/{desire}', [DesireController::class, 'update'])->name('desires.update');
+    Route::patch('/desires/{desire}/status', [DesireController::class, 'status'])->name('desires.status');
+    Route::delete('/desires/{desire}', [DesireController::class, 'destroy'])->name('desires.destroy');
+
+    /* Stories. Generation is rate-limited on top of the per-user daily quota —
+       the quota protects the bill, the throttle protects the queue. */
+    Route::get('/stories', [StoryController::class, 'index'])->name('stories.index');
+    Route::post('/desires/{desire}/stories', [StoryController::class, 'store'])
+        ->middleware('throttle:12,60')->name('stories.store');
+    Route::get('/stories/{story}', [StoryController::class, 'show'])->name('stories.show');
+    Route::get('/stories/{story}/state', [StoryController::class, 'state'])->name('stories.state');
+    Route::post('/stories/{story}/narrate', [StoryController::class, 'narrate'])
+        ->middleware('throttle:12,60')->name('stories.narrate');
+    Route::post('/stories/{story}/regenerate', [StoryController::class, 'regenerate'])
+        ->middleware('throttle:12,60')->name('stories.regenerate');
+    Route::get('/stories/{story}/edit', [StoryController::class, 'edit'])->name('stories.edit');
+    Route::put('/stories/{story}', [StoryController::class, 'update'])->name('stories.update');
+    Route::post('/stories/{story}/favourite', [StoryController::class, 'favourite'])->name('stories.favourite');
+    Route::post('/stories/{story}/played', [StoryController::class, 'played'])->name('stories.played');
+    Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('stories.destroy');
+
+    /* Private media. The only route that reads the private disk. */
+    Route::get('/media/narration/{narration}', [MediaController::class, 'narration'])->name('media.narration');
+    Route::get('/media/image/{image}', [MediaController::class, 'image'])->name('media.image');
+
+    /* Still to build — the navigation resolves so the shell stays whole. */
     Route::view('/today', 'placeholder', ['heading' => 'Today'])->name('today');
-    Route::view('/stories', 'placeholder', ['heading' => 'My Stories'])->name('stories.index');
-    Route::view('/desires', 'placeholder', ['heading' => 'Desires'])->name('desires.index');
     Route::view('/gratitude', 'placeholder', ['heading' => 'Gratitude'])->name('gratitude.index');
     Route::view('/rewinds', 'placeholder', ['heading' => 'My Rewinds'])->name('rewinds.index');
     Route::view('/journey', 'placeholder', ['heading' => 'My Journey'])->name('journey');
-    Route::view('/world', 'placeholder', ['heading' => 'My World'])->name('world.edit');
 
     /* admin door — reachable only by an admin, invisible to everyone else */
     Route::get('/admin/login', [AdminSessionController::class, 'create'])->name('admin.login');

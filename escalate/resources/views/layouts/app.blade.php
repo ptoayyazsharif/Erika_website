@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#101521">
     <meta name="color-scheme" content="dark light">
     <meta name="robots" content="noindex, nofollow">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title.' · Escalate' : 'Escalate' }}</title>
 
     <link rel="manifest" href="/manifest.webmanifest">

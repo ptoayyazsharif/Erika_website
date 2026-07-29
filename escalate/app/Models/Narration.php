@@ -16,11 +16,55 @@ use Illuminate\Support\Facades\Storage;
  */
 class Narration extends Model
 {
-    protected $fillable = ['voice', 'state', 'content_hash'];
+    /**
+     * Nothing is mass-assignable.
+     *
+     * Every field on a narration is derived by the server — the voice comes from
+     * the profile, the path from a hash, the rest from the provider response.
+     * No request payload should ever reach any of them, so the list is empty and
+     * the writers below use forceFill.
+     */
+    protected $fillable = [];
 
     protected function casts(): array
     {
         return ['failure_reason' => 'encrypted'];
+    }
+
+    /** Create a queued narration for a story in a given voice. */
+    public static function queueFor(Story $story, string $voice): self
+    {
+        // A query rather than firstOrNew: firstOrNew would fill() the lookup
+        // attributes, and nothing on this model is mass-assignable.
+        $narration = static::query()
+            ->where('story_id', $story->id)
+            ->where('voice', $voice)
+            ->first() ?? new static;
+
+        $narration->forceFill([
+            'story_id'       => $story->id,
+            'user_id'        => $story->user_id,
+            'voice'          => $voice,
+            'state'          => 'queued',
+            'failure_reason' => null,
+        ])->save();
+
+        return $narration;
+    }
+
+    public function markRendering(string $hash): void
+    {
+        $this->forceFill(['state' => 'rendering', 'content_hash' => $hash])->save();
+    }
+
+    public function markReady(array $attributes): void
+    {
+        $this->forceFill(['state' => 'ready', 'failure_reason' => null, ...$attributes])->save();
+    }
+
+    public function markFailed(string $reason): void
+    {
+        $this->forceFill(['state' => 'failed', 'failure_reason' => $reason])->save();
     }
 
     public function story(): BelongsTo
