@@ -35,6 +35,43 @@
     },
     {
       "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-sonnet-5"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.user }}",
+              "role": "user"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {
+          "system": "={{ $json.system }}",
+          "maxTokens": 1400
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Anthropic — Write Story",
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -160
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "bnIEeVkctWQLHOux",
+          "name": "Anthropic account"
+        }
+      },
+      "notes": "Model is set by ID so it isn't pinned to whatever the dropdown cached. If the API 404s on claude-sonnet-5, switch the Model field to 'From List' and pick what your account has. Simplify is off so the response carries model + usage for logging."
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://api.anthropic.com/v1/messages",
         "authentication": "predefinedCredentialType",
@@ -55,15 +92,16 @@
           "timeout": 120000
         }
       },
-      "id": "a1000000-0000-4000-8000-000000000003",
-      "name": "Anthropic — Write Story",
+      "id": "a1000000-0000-4000-8000-000000000009",
+      "name": "Anthropic — HTTP alternative (spare)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
         -20,
-        -160
+        90
       ],
-      "notes": "Pick your Anthropic credential in the dropdown. Swap the model here (claude-opus-5 for the top tier, claude-haiku-4-5 for cheapest)."
+      "notes": "Unconnected spare. Use only if the native node's model list lacks the model you want, or the langchain node isn't available. Needs an Anthropic credential.",
+      "disabled": true
     },
     {
       "parameters": {

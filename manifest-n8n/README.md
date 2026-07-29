@@ -16,30 +16,35 @@ no database, no server code to deploy.
 
 n8n → **Workflows** → **Import from File** → pick `manifest-workflow.json`.
 
-You'll get ten nodes in two chains (one is an unconnected spare):
+You'll get eleven nodes in two chains (two are unconnected spares):
 
 ```
 POST /manifest/story  →  Build Prompt  →  Anthropic  →  Tidy Story  →  Return Story
 POST /manifest/voice  →  Resolve Voice →  ElevenLabs →  Return Audio
 ```
 
-## 2. Attach the two credentials
+## 2. Credentials — nothing to do
 
-**ElevenLabs** — nothing to do. The node is the official
-`@elevenlabs/n8n-nodes-elevenlabs` node you already have installed, and the
-workflow is pre-linked to your existing **ElevenLabs account** credential
-(`tSjllSgEqaLtsFMJ`). It should connect on import.
+Both nodes are the native ones already installed on your instance, pre-linked to
+the credentials you already have:
 
-**Anthropic** — open the **Anthropic — Write Story** node. Under *Credential for
-Anthropic API*, pick your credential from the dropdown. That's the only manual
-credential step.
+| Node | Type | Credential |
+|---|---|---|
+| Anthropic — Write Story | `@n8n/n8n-nodes-langchain.anthropic` | Anthropic account (`bnIEeVkctWQLHOux`) |
+| ElevenLabs — Narrate | `@elevenlabs/n8n-nodes-elevenlabs` | ElevenLabs account (`tSjllSgEqaLtsFMJ`) |
 
-> There is a disabled **ElevenLabs — HTTP alternative (spare)** node sitting
-> unconnected below the main chain. Ignore it unless the community node ever
-> breaks — then delete the native node, drag the spare into its place, and give
-> it a Header Auth credential (Name `xi-api-key`, Value = your key).
+They should connect on import. If either dropdown lands empty, just re-select the
+credential — the pre-linked IDs only resolve on the instance they came from.
 
-## 3. Add your voice IDs
+> Two disabled **HTTP alternative (spare)** nodes sit unconnected below the main
+> chains. They call the same APIs over plain HTTP and exist only as escape
+> hatches — ignore them unless a native node is unavailable.
+
+## 3. Check the model, add your voice IDs
+
+The story model is set by **ID** to `claude-sonnet-5` rather than pinned to a
+cached dropdown entry. If the API 404s on it, that model isn't enabled on the
+account — switch the Model field to *From List* and pick what's available.
 
 The narration model is set to **Flash v2.5** at speed 0.92 inside the
 **ElevenLabs — Narrate** node — half the credit cost of multilingual v2, and the
@@ -112,7 +117,7 @@ already the right shape for it.
 
 ## Changing the model
 
-In **Anthropic — Write Story**, edit the JSON body:
+In **Anthropic — Write Story**, edit the Model field:
 
 | Want | Set `model` to | ~cost per reading |
 |---|---|---|
@@ -141,5 +146,6 @@ the reason question 15 exists — don't cut it.
 | CORS error in the browser console | The Webhook node's **Allowed Origins (CORS)** is set to `*` in this template — check it survived import. |
 | 401 from ElevenLabs | Re-select the credential in the **ElevenLabs — Narrate** node — the pre-linked ID only matches on the instance the template was built for. |
 | "Unrecognized node type: @elevenlabs/…" | The community node isn't installed on this n8n instance. Install it (Settings → Community nodes → `@elevenlabs/n8n-nodes-elevenlabs`), or swap in the spare HTTP node. |
+| 404 / "model not found" from Anthropic | `claude-sonnet-5` isn't enabled on that account. Switch the Model field to *From List* and pick one. |
 | Audio plays but no text appears | The story chain returned no `lines`. Open the execution log on the **Tidy Story** node. |
 | Voice never starts on iPhone | Safari blocks autoplay; the app catches this and shows "Tap anywhere to start the voice." |
