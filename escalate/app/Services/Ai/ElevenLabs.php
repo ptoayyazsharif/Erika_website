@@ -100,7 +100,13 @@ class ElevenLabs
     private function explain(string $code, array $detail): string
     {
         return match ($code) {
-            'quota_exceeded' => 'The narration account is out of credits, so the voice cannot be recorded. The words are still here to read.',
+            // Careful with the wording here: ElevenLabs returns quota_exceeded
+            // both when the account is empty AND when the individual API key
+            // has its own credit cap — and a key capped at 10 credits on an
+            // account with 363,000 spare is a far more common cause. Saying
+            // "the account is out of credits" sends whoever reads this to the
+            // wrong screen, so name both possibilities.
+            'quota_exceeded' => 'Narration has no credits left — either the account is empty or this API key has its own credit cap. The words are still here to read.',
             'missing_permissions', 'unauthorized', 'authentication_error', 'invalid_api_key' =>
                 'Narration is not set up correctly on this account. The words are still here to read.',
             'too_many_requests', 'rate_limit_exceeded' =>
