@@ -16,7 +16,7 @@ no database, no server code to deploy.
 
 n8n → **Workflows** → **Import from File** → pick `manifest-workflow.json`.
 
-You'll get nine nodes in two chains:
+You'll get ten nodes in two chains (one is an unconnected spare):
 
 ```
 POST /manifest/story  →  Build Prompt  →  Anthropic  →  Tidy Story  →  Return Story
@@ -25,21 +25,25 @@ POST /manifest/voice  →  Resolve Voice →  ElevenLabs →  Return Audio
 
 ## 2. Attach the two credentials
 
+**ElevenLabs** — nothing to do. The node is the official
+`@elevenlabs/n8n-nodes-elevenlabs` node you already have installed, and the
+workflow is pre-linked to your existing **ElevenLabs account** credential
+(`tSjllSgEqaLtsFMJ`). It should connect on import.
+
 **Anthropic** — open the **Anthropic — Write Story** node. Under *Credential for
-Anthropic API*, pick the credential you already created. Nothing else to change.
+Anthropic API*, pick your credential from the dropdown. That's the only manual
+credential step.
 
-**ElevenLabs** — open the **ElevenLabs — Narrate** node. It uses **Header Auth**
-(not the community ElevenLabs node, which has known 401 issues). If you don't
-have a Header Auth credential yet, create one:
-
-| Field | Value |
-|---|---|
-| Name | `xi-api-key` |
-| Value | your ElevenLabs API key |
-
-Then select it in the node.
+> There is a disabled **ElevenLabs — HTTP alternative (spare)** node sitting
+> unconnected below the main chain. Ignore it unless the community node ever
+> breaks — then delete the native node, drag the spare into its place, and give
+> it a Header Auth credential (Name `xi-api-key`, Value = your key).
 
 ## 3. Add your voice IDs
+
+The narration model is set to **Flash v2.5** at speed 0.92 inside the
+**ElevenLabs — Narrate** node — half the credit cost of multilingual v2, and the
+right cadence for slow reading. Leave it unless you want the more expensive model.
 
 Open the **Resolve Voice** node. At the top:
 
@@ -135,6 +139,7 @@ the reason question 15 exists — don't cut it.
 |---|---|
 | "Could not reach the reading service" | URLs still say `YOUR-N8N-HOST`, or the workflow isn't Active. Test URLs only work while the canvas is open with *Listen for Test Event* running. |
 | CORS error in the browser console | The Webhook node's **Allowed Origins (CORS)** is set to `*` in this template — check it survived import. |
-| 401 from ElevenLabs | Header Auth name must be exactly `xi-api-key`, lowercase. |
+| 401 from ElevenLabs | Re-select the credential in the **ElevenLabs — Narrate** node — the pre-linked ID only matches on the instance the template was built for. |
+| "Unrecognized node type: @elevenlabs/…" | The community node isn't installed on this n8n instance. Install it (Settings → Community nodes → `@elevenlabs/n8n-nodes-elevenlabs`), or swap in the spare HTTP node. |
 | Audio plays but no text appears | The story chain returned no `lines`. Open the execution log on the **Tidy Story** node. |
 | Voice never starts on iPhone | Safari blocks autoplay; the app catches this and shows "Tap anywhere to start the voice." |

@@ -14,7 +14,10 @@
       "name": "POST /manifest/story",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [-460, -160],
+      "position": [
+        -460,
+        -160
+      ],
       "webhookId": "a1000000-0000-4000-8000-000000000001"
     },
     {
@@ -25,7 +28,10 @@
       "name": "Build Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-240, -160]
+      "position": [
+        -240,
+        -160
+      ]
     },
     {
       "parameters": {
@@ -53,7 +59,10 @@
       "name": "Anthropic — Write Story",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-20, -160],
+      "position": [
+        -20,
+        -160
+      ],
       "notes": "Pick your Anthropic credential in the dropdown. Swap the model here (claude-opus-5 for the top tier, claude-haiku-4-5 for cheapest)."
     },
     {
@@ -64,7 +73,10 @@
       "name": "Tidy Story",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [200, -160]
+      "position": [
+        200,
+        -160
+      ]
     },
     {
       "parameters": {
@@ -89,9 +101,11 @@
       "name": "Return Story",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [420, -160]
+      "position": [
+        420,
+        -160
+      ]
     },
-
     {
       "parameters": {
         "httpMethod": "POST",
@@ -105,7 +119,10 @@
       "name": "POST /manifest/voice",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [-460, 220],
+      "position": [
+        -460,
+        220
+      ],
       "webhookId": "b2000000-0000-4000-8000-000000000001"
     },
     {
@@ -116,7 +133,47 @@
       "name": "Resolve Voice",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-240, 220]
+      "position": [
+        -240,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "operation": "textToSpeech",
+        "voice": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.voiceId }}"
+        },
+        "text": "={{ $json.text }}",
+        "additionalOptions": {
+          "model": {
+            "__rl": true,
+            "mode": "id",
+            "value": "eleven_flash_v2_5"
+          },
+          "outputFormat": "mp3_44100_128",
+          "voiceSettings": "{\n  \"stability\": 0.5,\n  \"similarity_boost\": 0.75,\n  \"style\": 0.1,\n  \"use_speaker_boost\": true,\n  \"speed\": 0.92\n}"
+        },
+        "requestOptions": {}
+      },
+      "id": "b2000000-0000-4000-8000-000000000003",
+      "name": "ElevenLabs — Narrate",
+      "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        220
+      ],
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "tSjllSgEqaLtsFMJ",
+          "name": "ElevenLabs account"
+        }
+      },
+      "notes": "Flash v2.5 at speed 0.92 — half the credit cost of multilingual v2 and the right cadence for slow narration. Outputs mp3 as binary property 'data'."
     },
     {
       "parameters": {
@@ -137,12 +194,16 @@
           }
         }
       },
-      "id": "b2000000-0000-4000-8000-000000000003",
-      "name": "ElevenLabs — Narrate",
+      "id": "b2000000-0000-4000-8000-000000000009",
+      "name": "ElevenLabs — HTTP alternative (spare)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-20, 220],
-      "notes": "Header Auth credential: Name = xi-api-key, Value = your ElevenLabs key. Returns raw mp3 bytes, not JSON — that is why Response Format is set to File."
+      "position": [
+        -20,
+        470
+      ],
+      "notes": "Unconnected spare. Only needed if the ElevenLabs community node is ever unavailable: delete the native node, drag this into its place, and give it a Header Auth credential (Name: xi-api-key, Value: your key).",
+      "disabled": true
     },
     {
       "parameters": {
@@ -170,30 +231,89 @@
       "name": "Return Audio",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [200, 220]
+      "position": [
+        200,
+        220
+      ]
     }
   ],
   "connections": {
     "POST /manifest/story": {
-      "main": [[{ "node": "Build Prompt", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Build Prompt": {
-      "main": [[{ "node": "Anthropic — Write Story", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Anthropic — Write Story",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Anthropic — Write Story": {
-      "main": [[{ "node": "Tidy Story", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Tidy Story",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Tidy Story": {
-      "main": [[{ "node": "Return Story", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Return Story",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "POST /manifest/voice": {
-      "main": [[{ "node": "Resolve Voice", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Resolve Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Resolve Voice": {
-      "main": [[{ "node": "ElevenLabs — Narrate", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "ElevenLabs — Narrate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "ElevenLabs — Narrate": {
-      "main": [[{ "node": "Return Audio", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Return Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
