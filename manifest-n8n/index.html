@@ -357,8 +357,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:0;border-radiu
    n8n → open the workflow → click a Webhook node → copy "Production URL".
    ══════════════════════════════════════════════════════════════════════ */
 const API = {
-  story: 'https://YOUR-N8N-HOST/webhook/manifest/story',
-  voice: 'https://YOUR-N8N-HOST/webhook/manifest/voice',
+  story: 'https://n8n.dot-kode.com/webhook/manifest/story',
+  voice: 'https://n8n.dot-kode.com/webhook/manifest/voice',
 };
 const VOICE = 'calm';           // calm | warm | confident
 const MIN_THEATRE = 6200;       // the loading moment is non-negotiable
@@ -665,10 +665,32 @@ const Ambience = (() => {
       return;
     }
     if (state.index < QUESTIONS.length - 1) { state.index++; paint(); }
-    else generate();
+    else generate({ fresh: true });   // finishing the quiz always buys a new reading
   }
 
   const save = () => { try { localStorage.setItem('manifest.profile', JSON.stringify(state.profile)); } catch {} };
+
+  /* The last reading, kept so a reload replays it instead of buying a new one.
+     The audio cache is keyed on the story text, so regenerating the words —
+     Claude writes something different every time — would orphan the cached mp3
+     and bill the full 17c again. Answers unchanged means reading unchanged. */
+  const profileKey = p => JSON.stringify(Object.keys(p).sort().map(k => [k, String(p[k] ?? '').trim()]));
+
+  function saveReading() {
+    try {
+      localStorage.setItem('manifest.reading', JSON.stringify({
+        key: profileKey(state.profile), story: state.story, lines: state.lines,
+      }));
+    } catch {}
+  }
+
+  function savedReading() {
+    try {
+      const r = JSON.parse(localStorage.getItem('manifest.reading') || 'null');
+      if (r && r.story && r.key === profileKey(state.profile)) return r;
+    } catch {}
+    return null;
+  }
 
   /* ── the reading ─────────────────────────────────────────── */
   const THEATRE = [
@@ -678,9 +700,10 @@ const Ambience = (() => {
     'Almost. This part shouldn’t be rushed…',
   ];
 
-  async function generate() {
+  async function generate(opts = {}) {
     if (state.busy) return;
     state.busy = true;
+    const reuse = opts.fresh ? null : savedReading();
     await go('reading');
     Ambience.resume();
 
@@ -699,17 +722,23 @@ const Ambience = (() => {
 
     const began = Date.now();
     try {
-      const res = await fetch(API.story, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ profile: state.profile }),
-      });
-      if (!res.ok) throw new Error('Story service returned ' + res.status);
-      const data = await res.json();
-      if (!data.story) throw new Error('No story came back.');
-      state.story = data.story;
-      state.lines = data.lines && data.lines.length ? data.lines : data.story.split(/\n\s*\n/).filter(Boolean);
+      if (reuse) {
+        state.story = reuse.story;
+        state.lines = reuse.lines && reuse.lines.length ? reuse.lines : reuse.story.split(/\n\s*\n/).filter(Boolean);
+      } else {
+        const res = await fetch(API.story, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ profile: state.profile }),
+        });
+        if (!res.ok) throw new Error('Story service returned ' + res.status);
+        const data = await res.json();
+        if (!data.story) throw new Error('No story came back.');
+        state.story = data.story;
+        state.lines = data.lines && data.lines.length ? data.lines : data.story.split(/\n\s*\n/).filter(Boolean);
+      }
 
       await fetchVoice(state.story);
+      saveReading();
     } catch (err) {
       clearInterval(rotate);
       state.busy = false;

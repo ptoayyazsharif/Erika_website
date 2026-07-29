@@ -75,17 +75,19 @@ https://your-n8n.app/webhook/manifest/voice
 
 ## 5. Point the frontend at them
 
-Open `index.html`, find the CONFIG block near the top (~line 358):
+Already done for `n8n.dot-kode.com`. The CONFIG block near the top of
+`index.html` (~line 358) reads:
 
 ```js
 const API = {
-  story: 'https://YOUR-N8N-HOST/webhook/manifest/story',
-  voice: 'https://YOUR-N8N-HOST/webhook/manifest/voice',
+  story: 'https://n8n.dot-kode.com/webhook/manifest/story',
+  voice: 'https://n8n.dot-kode.com/webhook/manifest/voice',
 };
 const VOICE = 'calm';           // calm | warm | confident
 ```
 
-Paste your two URLs. That's the entire setup — open the file and it works.
+If the workflow moves to another instance, paste the two URLs from step 4 here.
+That's the entire setup — open the file and it works.
 
 Host it anywhere static: the existing GoDaddy folder, Netlify, Vercel, S3, or
 just double-click it locally.
@@ -101,15 +103,50 @@ just double-click it locally.
 4. The reveal lights each line in proportion to its word count across the
    voice's real duration, so text tracks the narration instead of a fixed timer.
 
+## Verified live
+
+Run against `n8n.dot-kode.com` on 29 Jul 2026, real Anthropic and ElevenLabs
+credentials, headless Chromium at 430×932:
+
+| Check | Result |
+|---|---|
+| `POST /webhook/manifest/story` | 200, `{story, lines, words, model}` |
+| Story length | 514 words, 12 lines, contrast beat present |
+| Model actually served | `claude-sonnet-5` — does not 404 on this account |
+| Story latency | 17–21 s |
+| `POST /webhook/manifest/voice` | 200, `audio/mpeg`, ~3.1 MB |
+| Audio | real MPEG-1 Layer III, 128 kbps mono 44.1 kHz, **3 min 19 s** |
+| Voice latency | 5–8 s |
+| CORS preflight | 204, `allow-origin` reflects the caller — browser is happy |
+| Full quiz → reveal → player | all six screens, narration playing, timer 0:11 / 3:25 |
+| Second run after reload | **0 requests**, identical audio |
+
+One thing to know: **the loading screen runs about 26 seconds** end to end
+(~20 s story + ~6 s voice), not the 6.2 s `MIN_THEATRE` floor. The rotating
+copy covers it, but if that feels long the fix is to start the reveal the
+moment the story lands and let the voice arrive underneath it — worth doing
+before this goes in front of a paying user.
+
 ## Cost, and the cache that controls it
 
 Roughly **17¢ per fresh reading** — about 1¢ Claude, about 16¢ ElevenLabs.
 
 The frontend stores every generated mp3 in **IndexedDB**, keyed by
-`sha256(text + voice)`. A reading already generated on a device never bills
-again, no matter how many times it's replayed or how many reloads happen in
-between. Verified: a second run of the same reading makes **zero** requests to
-the voice webhook.
+`sha256(text + voice)`, and the reading itself (story + lines) in
+`localStorage`, keyed by a fingerprint of the fifteen answers.
+
+Those two work as a pair, and the pairing is the whole point. Claude writes a
+different story every time it's asked, so a regenerated story would produce a
+new hash and orphan the cached mp3 — the audio cache alone would almost never
+hit. Because the reading is pinned to the answers:
+
+- **Answers unchanged → nothing bills.** Reload, reopen tomorrow, replay, hit
+  *Play Erika's reading* again: zero requests to either webhook.
+- **Finishing the quiz always buys a new reading**, even with identical
+  answers. Deliberate action, deliberate spend.
+
+Measured on the live instance: run one made two calls (story + voice), run two
+after a full page reload made **zero**, and played back byte-identical audio.
 
 That's per-device. To dedupe across users, add an S3/R2 upload after the
 ElevenLabs node and check for the object before calling out — the hash key is
@@ -142,7 +179,8 @@ the reason question 15 exists — don't cut it.
 
 | Symptom | Cause |
 |---|---|
-| "Could not reach the reading service" | URLs still say `YOUR-N8N-HOST`, or the workflow isn't Active. Test URLs only work while the canvas is open with *Listen for Test Event* running. |
+| "Could not reach the reading service" | The workflow isn't Active, or the URLs point somewhere else. Test URLs (`/webhook-test/…`) only work while the canvas is open with *Listen for Test Event* running — the app uses the Production ones. |
+| The same reading keeps playing | Working as designed — same answers, cached reading, no spend. Take the quiz again for a new one. |
 | CORS error in the browser console | The Webhook node's **Allowed Origins (CORS)** is set to `*` in this template — check it survived import. |
 | 401 from ElevenLabs | Re-select the credential in the **ElevenLabs — Narrate** node — the pre-linked ID only matches on the instance the template was built for. |
 | "Unrecognized node type: @elevenlabs/…" | The community node isn't installed on this n8n instance. Install it (Settings → Community nodes → `@elevenlabs/n8n-nodes-elevenlabs`), or swap in the spare HTTP node. |
