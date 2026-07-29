@@ -1,0 +1,6 @@
+# Build artifact — rebuilt from manifest-n8n/ with:
+#   cd manifest-n8n && zip -r ../manifest-n8n.zip index.html manifest-workflow.json README.md
+manifest-n8n.zip
+
+# Local API keys for the PHP demo (see stella-demo/api/config.php)
+stella-demo/api/config.local.php
