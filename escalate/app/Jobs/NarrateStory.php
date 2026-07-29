@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Narration;
 use App\Services\Ai\ElevenLabs;
+use App\Services\Ai\NarrationFailed;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Storage;
@@ -78,7 +79,21 @@ class NarrateStory implements ShouldQueue
         $voiceId = config("escalate.voices.{$this->narration->voice}.id")
             ?? config('escalate.voices.still.id');
 
-        $bytes = $tts->narrate($text, $voiceId, $this->narration->user);
+        try {
+            $bytes = $tts->narrate($text, $voiceId, $this->narration->user);
+        } catch (NarrationFailed $e) {
+            // An empty account or a bad key will fail identically on every
+            // retry, and each attempt leaves the user watching "being
+            // recorded…" for nothing. Stop now and say what is actually wrong.
+            if (! $e->worthRetrying()) {
+                $this->narration->markFailed($e->getMessage());
+                $this->fail($e);
+
+                return;
+            }
+
+            throw $e;
+        }
 
         // Path includes the user id so a directory listing groups by owner, and
         // the filename is the hash so it reveals nothing about the content.
@@ -96,8 +111,12 @@ class NarrateStory implements ShouldQueue
 
     public function failed(?Throwable $e): void
     {
+        // A NarrationFailed already carries a message written for the user, and
+        // it is more specific than anything this method could say.
         $this->narration->markFailed(
-            'The narration could not be rendered just now. The words are still here to read.',
+            $e instanceof NarrationFailed
+                ? $e->getMessage()
+                : 'The narration could not be recorded just now. The words are still here to read.',
         );
 
         report($e);

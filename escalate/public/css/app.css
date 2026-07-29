@@ -145,6 +145,12 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* The `hidden` attribute is only a default `display: none`, so any element
+   carrying an inline or class-based `display` silently ignores it. That bites
+   hardest where it matters most — a hidden loading state stacked above the
+   finished content it was meant to be replaced by. Make hidden mean hidden. */
+[hidden] { display: none !important; }
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;

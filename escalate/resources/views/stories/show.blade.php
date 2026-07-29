@@ -37,8 +37,15 @@
 
     <section data-phase="ready" @if (! $story->isReady()) hidden @endif>
         <div class="page-head" data-enter-hero>
-            <p class="eyebrow">{{ $story->desire?->title ? Str::limit($story->desire->title, 46) : 'Your reading' }}</p>
+            {{-- A desire title is a sentence, not a label: set in the serif at
+                 normal case rather than as an uppercase eyebrow, which turns a
+                 long title into two ragged lines of shouting. --}}
             <h1 class="sr-only">Your reading</h1>
+            @if (filled($story->desire?->title))
+                <p class="serif muted" style="font-size:var(--t-base);margin-bottom:var(--s-2)">
+                    {{ $story->desire->title }}
+                </p>
+            @endif
             <p class="small faint">
                 <span data-word-count>{{ $story->words() }}</span> words
                 @if ($story->isEdited()) · edited by you @endif

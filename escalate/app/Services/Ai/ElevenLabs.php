@@ -60,10 +60,17 @@ class ElevenLabs
         }
 
         if (! $response->successful()) {
-            $code = (string) $response->status();
+            // ElevenLabs returns 401 for three very different situations —
+            // a bad key, a key missing a permission, and a key with no credits
+            // left. Recording them all as "401" makes the ledger useless for
+            // the one question worth asking of it, so read the real code out of
+            // the body. Note the body is JSON even when we asked for audio.
+            $detail = $response->json('detail') ?? [];
+            $code = (string) ($detail['code'] ?? $detail['status'] ?? $response->status());
+
             $this->record($for, $model, false, $code, $began, $chars);
 
-            throw new RuntimeException("The narration service refused the request ({$code}).");
+            throw new NarrationFailed($this->explain($code, $detail), $code);
         }
 
         $bytes = $response->body();
@@ -80,6 +87,28 @@ class ElevenLabs
         $this->record($for, $model, true, null, $began, $chars);
 
         return $bytes;
+    }
+
+    /**
+     * A sentence for the person waiting.
+     *
+     * Deliberately different per cause, because the right next action is
+     * different: an empty account needs someone to top it up, a rate limit
+     * needs a minute, and a bad key needs an administrator. Telling all three
+     * "try again in a moment" wastes the user's time on two of them.
+     */
+    private function explain(string $code, array $detail): string
+    {
+        return match ($code) {
+            'quota_exceeded' => 'The narration account is out of credits, so the voice cannot be recorded. The words are still here to read.',
+            'missing_permissions', 'unauthorized', 'authentication_error', 'invalid_api_key' =>
+                'Narration is not set up correctly on this account. The words are still here to read.',
+            'too_many_requests', 'rate_limit_exceeded' =>
+                'The narration service is busy. Try again in a minute — the words are here in the meantime.',
+            'invalid_uid', 'voice_not_found' =>
+                'That voice is no longer available. Choose another in My World.',
+            default => 'The narration could not be recorded just now. The words are still here to read.',
+        };
     }
 
     private function record(?User $for, string $model, bool $ok, ?string $error, float $began, int $chars): void
