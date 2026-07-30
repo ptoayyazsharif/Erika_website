@@ -11,3 +11,6 @@ stella-demo/api/config.local.php
 
 # Installed skill bundles (cloned from upstream, see docs/SKILLS.md)
 /.claude/skills/
+
+# UI tour screenshots — regenerate, do not version (4.6MB of PNGs)
+/docs/screens/

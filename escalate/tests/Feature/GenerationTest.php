@@ -49,6 +49,27 @@ class GenerationTest extends TestCase
         return str_repeat("\xFF\xFB\x90\x64".str_repeat("\x00", 413), 200);
     }
 
+    public function test_a_new_desire_records_when_its_status_was_set(): void
+    {
+        $user = $this->user();
+
+        $this->actingAs($user)->post(route('desires.store'), [
+            'title' => 'A quiet house',
+            'category' => 'home',
+            'timeframe' => 'this_year',
+            'story_length' => 'medium',
+            'perspective' => 'first',
+            'tone' => 'grounded',
+            // A client trying to declare it already manifested must be ignored.
+            'status' => 'manifested',
+        ])->assertRedirect();
+
+        $desire = $user->desires()->first();
+
+        $this->assertSame('desired', $desire->status, 'A posted status was honoured.');
+        $this->assertNotNull($desire->status_changed_at, 'status_changed_at was silently dropped.');
+    }
+
     public function test_a_story_is_written_and_lands_ready(): void
     {
         $this->fakeStory("It is early and the house is quiet.\n\nThree years ago I would have checked the balance first.\n\nI rinse the cup and set it down.");

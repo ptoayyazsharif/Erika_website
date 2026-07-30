@@ -76,11 +76,17 @@ class DesireController extends Controller
     {
         $data = $this->validated($request);
 
-        $desire = $request->user()->desires()->create([
-            ...$data,
+        // status and status_changed_at are not mass-assignable — a client must
+        // never be able to declare a desire "Manifested" on creation — so they
+        // are set with forceFill after the validated fields are filled. Passing
+        // them to create() looks right and silently does nothing: status would
+        // survive only on the column default, and status_changed_at would stay
+        // null forever.
+        $desire = $request->user()->desires()->make($data);
+        $desire->forceFill([
             'status' => 'desired',
             'status_changed_at' => now(),
-        ]);
+        ])->save();
 
         return redirect()
             ->route('desires.show', $desire)
