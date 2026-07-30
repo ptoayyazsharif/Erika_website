@@ -40,17 +40,33 @@ class GratitudeEntry extends Model
         return $this->belongsTo(Desire::class);
     }
 
-    /** Keeps `tag_index` in step with `tags` whenever the model is saved. */
+    /**
+     * Keeps `tags` and `tag_index` in step, and clean, on every save.
+     *
+     * The cleaning happens here rather than only in the controller because the
+     * two columns must never disagree. A blank string surviving in `tags`
+     * renders as an empty chip in the archive — a bare circle with no label —
+     * while `tag_index` correctly drops it, so the entry appears to carry a tag
+     * that no filter can ever match.
+     */
     protected static function booted(): void
     {
         static::saving(function (GratitudeEntry $entry) {
             $tags = collect($entry->tags ?? [])
+                ->map(fn ($t) => trim((string) $t))
+                ->filter()
+                ->unique()
+                ->values();
+
+            $entry->tags = $tags->all();
+
+            $normalised = $tags
                 ->map(fn ($t) => Str::of($t)->lower()->replaceMatches('/[^a-z0-9 ]/', '')->squish()->value())
                 ->filter()
                 ->unique()
                 ->values();
 
-            $entry->tag_index = $tags->isEmpty() ? null : '|'.$tags->implode('|').'|';
+            $entry->tag_index = $normalised->isEmpty() ? null : '|'.$normalised->implode('|').'|';
         });
     }
 

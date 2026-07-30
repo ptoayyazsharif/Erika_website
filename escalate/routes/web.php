@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AdminSessionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DesireController;
+use App\Http\Controllers\GratitudeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\WorldController;
@@ -87,9 +88,14 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::get('/media/narration/{narration}', [MediaController::class, 'narration'])->name('media.narration');
     Route::get('/media/image/{image}', [MediaController::class, 'image'])->name('media.image');
 
+    /* Gratitude */
+    Route::get('/gratitude', [GratitudeController::class, 'index'])->name('gratitude.index');
+    Route::post('/gratitude', [GratitudeController::class, 'store'])->name('gratitude.store');
+    Route::put('/gratitude/{entry}', [GratitudeController::class, 'update'])->name('gratitude.update');
+    Route::delete('/gratitude/{entry}', [GratitudeController::class, 'destroy'])->name('gratitude.destroy');
+
     /* Still to build — the navigation resolves so the shell stays whole. */
     Route::view('/today', 'placeholder', ['heading' => 'Today'])->name('today');
-    Route::view('/gratitude', 'placeholder', ['heading' => 'Gratitude'])->name('gratitude.index');
     Route::view('/rewinds', 'placeholder', ['heading' => 'My Rewinds'])->name('rewinds.index');
     Route::view('/journey', 'placeholder', ['heading' => 'My Journey'])->name('journey');
 

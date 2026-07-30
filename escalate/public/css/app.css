@@ -609,6 +609,37 @@ a.card:active, button.card:active { transform: translateY(0); }
 .option:has(input[type='checkbox']) .tick { border-radius: 6px; }
 .option:has(input[type='checkbox']:checked) .tick::after { border-radius: 3px; }
 
+/* ── week dots (gratitude streak) ────────────────────────────────────────
+   Deliberately low-contrast for days not written. A missed day should read as
+   "nothing here", not as a failure — this is a reflection app, not a habit
+   tracker with a guilt mechanic. */
+
+.week-dot {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  font-size: var(--t-xs);
+  color: var(--text-faint);
+  background: var(--surface-sunk);
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.week-dot.is-written {
+  background: color-mix(in srgb, var(--accent) 24%, var(--surface));
+  border-color: var(--accent-quiet);
+  color: var(--text);
+}
+
+.week-dot.is-today {
+  border-color: var(--brass);
+  color: var(--text);
+}
+
+.week-dot.is-future { opacity: .45; }
+
 /* ── chips & pills ───────────────────────────────────────────────────────── */
 
 .chips { display: flex; flex-wrap: wrap; gap: var(--s-2); }
