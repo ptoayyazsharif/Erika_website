@@ -25,19 +25,32 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         /*
-        | Behind Cloudflare or a host that terminates TLS upstream, the origin
-        | sees plain HTTP. Without this, $request->secure() is false, so
-        | SecurityHeaders never emits HSTS and generated URLs can come out as
-        | http://. Trusting the forwarded headers is safe here because the app
-        | is only ever reached through that proxy.
+        | Proxy trust — configured, never wildcarded.
+        |
+        | This used to be `at: '*'`, which was wrong and dangerous. Trusting
+        | every proxy means $request->ip() becomes whatever the caller puts in
+        | X-Forwarded-For, and every IP-keyed limit in the app collapses with
+        | it: the five-attempt login lockout, the register throttle, the
+        | generation throttles, and the password confirmation guarding data
+        | export and account deletion. Rotate the header per request and none
+        | of them ever fire.
+        |
+        | "But it is only reachable through Cloudflare" does not save it.
+        | Symfony takes the LEFTMOST X-Forwarded-For entry when everything is
+        | trusted, and Cloudflare appends rather than replaces — so a forged
+        | left-hand entry still wins. And on shared hosting the origin is
+        | usually still reachable directly by IP.
+        |
+        | Default is null: trust nothing, use the real REMOTE_ADDR. That is
+        | correct for a directly-served cPanel origin. If a CDN is put in
+        | front, set TRUSTED_PROXIES to its ranges — not to '*'.
         */
         $middleware->trustProxies(
-            at: '*',
+            at: array_filter(explode(',', (string) env('TRUSTED_PROXIES', ''))) ?: null,
             headers: Request::HEADER_X_FORWARDED_FOR
                 | Request::HEADER_X_FORWARDED_HOST
                 | Request::HEADER_X_FORWARDED_PORT
-                | Request::HEADER_X_FORWARDED_PROTO
-                | Request::HEADER_X_FORWARDED_AWS_ELB,
+                | Request::HEADER_X_FORWARDED_PROTO,
         );
 
         // Sessions are cookie-bound and same-site; nothing in this app is

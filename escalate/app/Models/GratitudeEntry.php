@@ -60,8 +60,11 @@ class GratitudeEntry extends Model
 
             $entry->tags = $tags->all();
 
+            // One definition of a tag token, shared with the filter query and
+            // the links on each entry card — they used to disagree, so a chip
+            // reading "Co-op day" linked to a filter that matched nothing.
             $normalised = $tags
-                ->map(fn ($t) => Str::of($t)->lower()->replaceMatches('/[^a-z0-9 ]/', '')->squish()->value())
+                ->map(fn ($t) => \App\Http\Controllers\GratitudeController::normaliseTag($t))
                 ->filter()
                 ->unique()
                 ->values();

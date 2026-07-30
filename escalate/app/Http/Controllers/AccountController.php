@@ -7,6 +7,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\View\View;
 
@@ -67,14 +69,37 @@ class AccountController extends Controller
             ->header('Clear-Site-Data', '"cache", "storage"');
     }
 
+    /**
+     * Re-confirm the password, with a lockout that does not depend on the IP.
+     *
+     * Without this the export route is a password oracle that pays out the
+     * entire decrypted journal on a correct guess, metered only by a route
+     * throttle keyed on the client address — which is exactly the thing an
+     * attacker can vary. Five attempts per user per fifteen minutes, keyed on
+     * the user id, cannot be reset by changing network.
+     */
     private function confirmPassword(Request $request): void
     {
         $request->validate(['password' => ['required', 'string']]);
 
+        $key = 'account-confirm|'.$request->user()->id;
+
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            throw ValidationException::withMessages([
+                'password' => __('Too many attempts. Try again in :minutes minutes.', [
+                    'minutes' => max(1, ceil(RateLimiter::availableIn($key) / 60)),
+                ]),
+            ]);
+        }
+
         if (! Hash::check($request->string('password'), $request->user()->password)) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
+            RateLimiter::hit($key, 900);
+
+            throw ValidationException::withMessages([
                 'password' => 'That password is not right.',
             ]);
         }
+
+        RateLimiter::clear($key);
     }
 }

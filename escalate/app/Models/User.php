@@ -115,10 +115,24 @@ class User extends Authenticatable
 
     /* ── convenience ─────────────────────────────────────────────────────── */
 
-    /** The profile, created on demand so no screen has to null-check it. */
+    /**
+     * The profile, created on demand so no screen has to null-check it.
+     *
+     * firstOrCreate plus setRelation, because create() does not populate the
+     * cached relation — so a second world() call on the same instance tried a
+     * second INSERT and hit the unique index on profiles.user_id. StoryWriter
+     * calls this twice in one job run.
+     */
     public function world(): Profile
     {
-        return $this->profile ?: $this->profile()->create();
+        if ($this->profile) {
+            return $this->profile;
+        }
+
+        $profile = $this->profile()->firstOrCreate([]);
+        $this->setRelation('profile', $profile);
+
+        return $profile;
     }
 
     /** What the app should call this person in generated text. */

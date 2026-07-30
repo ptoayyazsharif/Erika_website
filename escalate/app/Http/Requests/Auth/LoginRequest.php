@@ -58,7 +58,7 @@ class LoginRequest extends FormRequest
              */
             Hash::check($this->string('password'), '$2y$12$'.str_repeat('x', 53));
 
-            RateLimiter::hit($this->throttleKey());
+            $this->hit();
 
             throw ValidationException::withMessages([
                 'email' => __('Those details did not match our records.'),
@@ -67,7 +67,7 @@ class LoginRequest extends FormRequest
 
         if (Auth::user()->isSuspended()) {
             Auth::logout();
-            RateLimiter::hit($this->throttleKey());
+            $this->hit();
 
             throw ValidationException::withMessages([
                 'email' => __('Those details did not match our records.'),
@@ -75,27 +75,50 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+        RateLimiter::clear($this->emailKey());
+    }
+
+    private function hit(): void
+    {
+        RateLimiter::hit($this->throttleKey());
+        RateLimiter::hit($this->emailKey(), 900);
     }
 
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-            return;
+        foreach ([[$this->throttleKey(), 5], [$this->emailKey(), 25]] as [$key, $max]) {
+            if (! RateLimiter::tooManyAttempts($key, $max)) {
+                continue;
+            }
+
+            Event::dispatch(new Lockout($this));
+
+            throw ValidationException::withMessages([
+                'email' => __('Too many attempts. Try again in :minutes minutes.', [
+                    'minutes' => max(1, ceil(RateLimiter::availableIn($key) / 60)),
+                ]),
+            ]);
         }
-
-        Event::dispatch(new Lockout($this));
-
-        $seconds = RateLimiter::availableIn($this->throttleKey());
-
-        throw ValidationException::withMessages([
-            'email' => __('Too many attempts. Try again in :minutes minutes.', [
-                'minutes' => max(1, ceil($seconds / 60)),
-            ]),
-        ]);
     }
 
     public function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+    }
+
+    /**
+     * A second bucket keyed on the email alone, with a looser limit.
+     *
+     * The primary key is email+IP, which is right: it stops one attacker
+     * locking a victim out of their own account, and stops one address
+     * spraying many accounts. But it also means a rotating source IP gets a
+     * fresh five attempts every time — and the client can influence the IP if
+     * proxy trust is ever misconfigured. This bucket cannot be reset by
+     * changing address, so an account is never open to unlimited guessing
+     * however the network in front of the app is set up.
+     */
+    public function emailKey(): string
+    {
+        return 'login-email|'.Str::transliterate(Str::lower($this->string('email')));
     }
 }

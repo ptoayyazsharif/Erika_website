@@ -89,6 +89,22 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 dumps `$_ENV` — which contains your API keys. With `--no-dev` installed *and*
 `APP_DEBUG=false`, neither the keys nor a stack trace can reach a visitor.
 
+### If you put Cloudflare (or any CDN) in front
+
+Set `TRUSTED_PROXIES` to its IP ranges — and **never to `*`**. Trusting every
+proxy means `$request->ip()` becomes whatever the caller puts in
+`X-Forwarded-For`, which silently disables the login lockout, the registration
+throttle, the generation limits, and the lockout on the password confirmation
+that guards data export and account deletion.
+
+"It's only reachable through the CDN" does not save you: Symfony takes the
+leftmost `X-Forwarded-For` entry, and Cloudflare *appends* rather than replaces,
+so a forged left-hand value still wins. On shared hosting the origin is usually
+still reachable by IP anyway.
+
+Left empty, the app uses the real `REMOTE_ADDR`, which is correct for a
+directly-served cPanel origin.
+
 ### Database
 
 SQLite works, but on cPanel `/home` is often NFS-backed where SQLite's locking is

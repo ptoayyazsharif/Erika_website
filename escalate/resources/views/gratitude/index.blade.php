@@ -121,6 +121,13 @@
     </p>
 @endif
 
+@if ($truncated)
+    <p class="small muted" style="margin-top:var(--s-4)">
+        Showing your most recent {{ $window }} entries. Narrow it with a tag or a
+        search word to reach older ones.
+    </p>
+@endif
+
 @forelse ($grouped as $date => $entries)
     <div style="margin-top:var(--s-6)" data-enter>
         <p class="eyebrow" style="margin-bottom:var(--s-3)">
@@ -138,7 +145,7 @@
                 @if (filled($entry->tags) || $entry->desire)
                     <div class="chips" style="margin-top:var(--s-4)">
                         @foreach ($entry->tags ?? [] as $t)
-                            <a class="chip" href="{{ route('gratitude.index', ['tag' => Str::lower($t)]) }}">{{ ucfirst($t) }}</a>
+                            <a class="chip" href="{{ route('gratitude.index', ['tag' => \App\Http\Controllers\GratitudeController::normaliseTag($t)]) }}">{{ ucfirst($t) }}</a>
                         @endforeach
                         @if ($entry->desire)
                             <a class="chip" href="{{ route('desires.show', $entry->desire) }}">

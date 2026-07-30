@@ -73,11 +73,19 @@ class SecurityHeaders
         | signing out restores somebody's journal on a shared device — session
         | invalidation cannot help, because nothing is re-fetched.
         |
-        | Only HTML. Narration and images set their own headers in
-        | MediaController, and stamping no-store on them would break the range
-        | requests the player scrubs with.
+        | JSON counts too, and did not used to. /stories/{story}/state returns
+        | the complete text of a reading and the reveal screen polls it every
+        | couple of seconds — every one of those responses was landing in the
+        | browser's on-disk cache in plaintext under Symfony's "no-cache,
+        | private" default.
+        |
+        | Media is excluded because it sets its own header in MediaController
+        | and because stamping this on a partial response would interfere with
+        | the range requests the player scrubs with.
         */
-        if (str_contains((string) $response->headers->get('Content-Type'), 'text/html')) {
+        $type = (string) $response->headers->get('Content-Type');
+
+        if (str_contains($type, 'text/html') || str_contains($type, 'application/json')) {
             $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
             $response->headers->set('Pragma', 'no-cache');
         }

@@ -26,8 +26,13 @@ class RejectSuspended
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
+            // This middleware intercepts POST /logout too, so the ordinary
+            // sign-out response never runs for a suspended account. Without
+            // this header the one browser you most want cleared is the one
+            // that keeps its cache, storage and worker registration.
             return redirect()->route('login')
-                ->with('status', 'This account is not available. Get in touch if you think that is a mistake.');
+                ->with('status', 'This account is not available. Get in touch if you think that is a mistake.')
+                ->header('Clear-Site-Data', '"cache", "storage"');
         }
 
         return $next($request);

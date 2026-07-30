@@ -112,7 +112,21 @@ class Narration extends Model
     protected static function booted(): void
     {
         static::deleting(function (Narration $narration) {
-            if (filled($narration->path)) {
+            if (blank($narration->path)) {
+                return;
+            }
+
+            // NarrateStory deliberately points a second row at an existing
+            // file when the content hash matches — that is the dedupe that
+            // stops one user paying twice for identical text. Unlinking
+            // unconditionally therefore destroyed audio a live narration was
+            // still using: the survivor kept state 'ready' with a dangling
+            // path, and re-narrating cost full price on the expensive provider.
+            $shared = static::where('path', $narration->path)
+                ->whereKeyNot($narration->getKey())
+                ->exists();
+
+            if (! $shared) {
                 Storage::disk('private')->delete($narration->path);
             }
         });

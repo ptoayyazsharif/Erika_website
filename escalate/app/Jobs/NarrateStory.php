@@ -58,7 +58,7 @@ class NarrateStory implements ShouldBeUnique, ShouldQueue
         }
 
         // Re-check at the point of spending — see the note in WriteStory.
-        if (Quota::used($this->narration->user, 'narration') > Quota::limit('narration')) {
+        if (Quota::used($this->narration->user, 'narration') >= Quota::limit('narration')) {
             $this->narration->markFailed(Quota::message('narration'));
 
             return;

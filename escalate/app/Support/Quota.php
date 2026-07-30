@@ -43,13 +43,17 @@ class Quota
     private static function inFlight(User $user, string $kind): int
     {
         return match ($kind) {
+            // No date filter. It used to bound these to the last 24 hours by
+            // created_at, which is when the ROW was made, not when the work was
+            // queued — so regenerating a story older than a day was invisible
+            // to the very counter that exists to stop a burst. queued/writing
+            // is already a small bounded set; a stale row there is a stuck job
+            // worth counting anyway.
             'story' => $user->stories()
                 ->whereIn('state', ['queued', 'writing'])
-                ->where('created_at', '>=', now()->subDay())
                 ->count(),
             'narration' => $user->narrations()
                 ->whereIn('state', ['queued', 'rendering'])
-                ->where('created_at', '>=', now()->subDay())
                 ->count(),
             default => 0,
         };
