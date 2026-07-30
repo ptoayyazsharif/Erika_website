@@ -54,19 +54,41 @@ self.addEventListener('activate', event => {
   );
 });
 
-/* A logout should leave nothing behind. The app posts this on sign-out. */
+/*
+ * A logout should leave nothing behind.
+ *
+ * Sign-out now sends Clear-Site-Data, which is deterministic and does not
+ * depend on a message from a page that is already unloading. This handler stays
+ * for any client still calling it — but it re-precaches the shell afterwards.
+ * The previous version deleted every cache including /offline, and nothing ever
+ * put it back: install() only re-runs when this file's bytes change, and the
+ * fetch handler never caches navigations. So offline mode died permanently
+ * after the first sign-out on any installation.
+ */
 self.addEventListener('message', event => {
-  if (event.data === 'escalate:purge') {
-    event.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))));
-  }
+  if (event.data !== 'escalate:purge') return;
+
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.map(k => caches.delete(k))))
+      .then(() => caches.open(SHELL))
+      .then(cache => cache.addAll(SHELL_ASSETS))
+      .catch(() => {})
+  );
 });
 
-const isShellAsset = url =>
-  SHELL_ASSETS.includes(url.pathname) ||
-  url.pathname.startsWith('/fonts/') ||
-  url.pathname.startsWith('/icons/') ||
-  url.pathname.startsWith('/css/') ||
-  url.pathname.startsWith('/js/');
+/*
+ * The allowlist, and nothing else.
+ *
+ * This used to also match anything under /css/, /js/, /fonts/ and /icons/,
+ * which turned the rule into "any same-origin GET below these four prefixes is
+ * cached with credentials and survives logout". No route lives there today, so
+ * nothing leaked — but /media/image/{id} already exists, and the day someone
+ * adds /icons/{id} or a /js/config endpoint it would silently become a
+ * plaintext, credentialed, logout-surviving cache entry with no change here.
+ * An explicit list cannot drift that way.
+ */
+const isShellAsset = url => SHELL_ASSETS.includes(url.pathname);
 
 self.addEventListener('fetch', event => {
   const { request } = event;
@@ -82,15 +104,26 @@ self.addEventListener('fetch', event => {
   if (url.pathname.startsWith('/media/')) return;
 
   if (isShellAsset(url)) {
-    // Cache-first: these are versioned by the cache name and change on deploy.
+    /*
+     * ignoreSearch matters. asset_v() appends ?v=<content-hash> to CSS and JS,
+     * and caches.match() compares the full URL including the query by default —
+     * so the entries precached on install as '/css/app.css' were never once a
+     * hit, and every deploy added a new query-keyed copy that nothing evicted.
+     * Freshness was never the problem (the hash guarantees it); the precache
+     * was simply dead weight.
+     *
+     * Scoped to the one cache rather than caches.match(), which searches every
+     * cache in the origin.
+     */
     event.respondWith(
-      caches.match(request).then(hit => hit || fetch(request).then(res => {
-        if (res.ok) {
-          const copy = res.clone();
-          caches.open(SHELL).then(c => c.put(request, copy));
-        }
-        return res;
-      }))
+      caches.open(SHELL).then(cache =>
+        cache.match(request, { ignoreSearch: true }).then(hit =>
+          hit || fetch(request).then(res => {
+            if (res.ok) cache.put(request, res.clone());
+            return res;
+          })
+        )
+      )
     );
     return;
   }
@@ -98,7 +131,11 @@ self.addEventListener('fetch', event => {
   // Navigations: network only, offline page as the fallback. No content cached.
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match('/offline'))
+      fetch(request).catch(() =>
+        // respondWith(undefined) rejects and shows the browser's own error
+        // page, which is what happened whenever /offline was missing.
+        caches.match('/offline').then(hit => hit || Response.error())
+      )
     );
   }
 });

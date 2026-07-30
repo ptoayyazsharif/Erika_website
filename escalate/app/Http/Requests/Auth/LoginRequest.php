@@ -6,6 +6,7 @@ use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -46,6 +47,17 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            /*
+             * Burn a hash on the way out.
+             *
+             * Laravel's guard short-circuits when no user matches, so bcrypt
+             * never runs for an unknown address. At BCRYPT_ROUNDS=12 that is a
+             * reproducible ~65ms gap between "no such account" and "wrong
+             * password" — an enumeration oracle that survives the deliberately
+             * uniform error message below. Hashing unconditionally closes it.
+             */
+            Hash::check($this->string('password'), '$2y$12$'.str_repeat('x', 53));
+
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

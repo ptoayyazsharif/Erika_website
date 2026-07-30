@@ -150,14 +150,30 @@
 
   function initForms() {
     $$('form[data-once]').forEach(form => {
-      form.addEventListener('submit', () => {
-        const btn = form.querySelector('[type="submit"]');
+      form.addEventListener('submit', e => {
+        // A data-confirm handler runs in the capture phase and may have
+        // cancelled this submit. Without this check, choosing "Cancel" on a
+        // confirmation still disabled and relabelled the button, leaving the
+        // action permanently unavailable until a reload.
+        if (e.defaultPrevented) return;
+
+        // The button that was actually pressed, not the first one in the form.
+        // "Save and name a desire" used to grey out "Save my world" instead.
+        const btn = e.submitter ?? form.querySelector('[type="submit"]');
         if (!btn) return;
+
         // Disable on the next tick so the button's value still posts.
         setTimeout(() => {
           btn.setAttribute('aria-disabled', 'true');
           btn.disabled = true;
-          if (btn.dataset.busy) btn.textContent = btn.dataset.busy;
+
+          if (btn.dataset.busy) {
+            // Replace only the text, so a button containing an SVG icon does
+            // not lose it. textContent on the button would wipe the icon out.
+            const label = [...btn.childNodes].find(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim());
+            if (label) label.textContent = ' ' + btn.dataset.busy + ' ';
+            else btn.textContent = btn.dataset.busy;
+          }
         }, 0);
       });
     });
@@ -166,11 +182,13 @@
   /* ── confirm destructive actions ───────────────────────────────────────── */
 
   function initConfirm() {
+    // Capture phase, so this runs before the form's own submit listener and
+    // initForms can see defaultPrevented.
     document.addEventListener('submit', e => {
       const form = e.target;
       const msg = form.dataset.confirm;
       if (msg && !window.confirm(msg)) e.preventDefault();
-    });
+    }, true);
   }
 
   /* ── service worker + install ──────────────────────────────────────────── */
@@ -181,11 +199,10 @@
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     });
 
-    // Signing out wipes the shell cache too, so a shared device keeps nothing.
-    document.addEventListener('submit', e => {
-      if (!e.target.matches('[data-logout]')) return;
-      navigator.serviceWorker.controller?.postMessage('escalate:purge');
-    });
+    /* The sign-out response sends Clear-Site-Data instead of messaging the
+       worker. A postMessage from a page that is about to unload is best-effort,
+       and the purge it triggered also deleted the precached /offline page with
+       nothing to repopulate it — so offline mode died after the first logout. */
   }
 
   function initInstall() {
@@ -226,8 +243,8 @@
     initCounters();
     initAutogrow();
     initOptions();
+    initConfirm();   // capture phase — must be able to cancel before initForms
     initForms();
-    initConfirm();
     initInstall();
     initServiceWorker();
   });

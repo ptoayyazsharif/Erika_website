@@ -19,9 +19,11 @@ use Illuminate\Support\Facades\Route;
 |
 |   - Exactly three routes are public: login, register, and the offline page.
 |     Everything else lives inside the 'auth' group.
-|   - Route model binding is scoped wherever a model belongs to a user, so
-|     /desires/{desire} cannot load someone else's row even before the policy
-|     runs.
+|   - Route model binding is deliberately NOT scoped. /desires/{desire} will
+|     resolve any user's row, and every action re-checks user_id itself — see
+|     the mine() helpers. That is the more robust of the two patterns: it keeps
+|     working when a route is renamed or a binding is changed, whereas scoped
+|     bindings silently stop protecting you.
 |   - Admin routes sit behind 'auth' AND 'admin'. The admin middleware 404s
 |     rather than 403s, so the area is invisible to anyone without the role.
 |
@@ -47,7 +49,7 @@ Route::get('/', fn () => redirect()->route(auth()->check() ? 'today' : 'login'))
 
 /* ── signed in ───────────────────────────────────────────────────────────── */
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     /* My World */

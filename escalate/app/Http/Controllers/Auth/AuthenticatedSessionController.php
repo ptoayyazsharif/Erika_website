@@ -45,6 +45,19 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('status', 'You are signed out.');
+        /*
+        | Clear-Site-Data tells the browser to drop its HTTP cache and its
+        | storage for this origin as part of the sign-out response. That covers
+        | the service worker's Cache Storage deterministically, which a
+        | postMessage on an unloading page cannot promise, and it clears any
+        | HTML the browser held before the no-store header was in place.
+        |
+        | "executionContexts" is deliberately omitted: it forces a reload of the
+        | page we are redirecting to, which fights the redirect. Cookies are
+        | already gone via invalidate().
+        */
+        return redirect()->route('login')
+            ->with('status', 'You are signed out.')
+            ->header('Clear-Site-Data', '"cache", "storage"');
     }
 }

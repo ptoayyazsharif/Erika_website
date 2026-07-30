@@ -5,6 +5,8 @@ namespace App\Jobs;
 use App\Models\Narration;
 use App\Services\Ai\ElevenLabs;
 use App\Services\Ai\NarrationFailed;
+use App\Support\Quota;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Storage;
@@ -19,9 +21,20 @@ use Throwable;
  * nothing is billed. Editing a story changes the hash and therefore costs
  * again, which is correct: it is different audio.
  */
-class NarrateStory implements ShouldQueue
+class NarrateStory implements ShouldBeUnique, ShouldQueue
 {
     use Queueable;
+
+    /*
+    | Narration is the expensive half of this app, so it gets the same
+    | uniqueness lock as WriteStory — see the note there.
+    */
+    public function uniqueId(): string
+    {
+        return 'narrate-'.$this->narration->id;
+    }
+
+    public int $uniqueFor = 900;
 
     public int $tries = 2;
 
@@ -40,6 +53,13 @@ class NarrateStory implements ShouldQueue
         // Same reasoning as WriteStory: an absent key is not a transient fault.
         if (! $tts->configured()) {
             $this->fail(new \RuntimeException('No narration provider is configured.'));
+
+            return;
+        }
+
+        // Re-check at the point of spending — see the note in WriteStory.
+        if (Quota::used($this->narration->user, 'narration') > Quota::limit('narration')) {
+            $this->narration->markFailed(Quota::message('narration'));
 
             return;
         }

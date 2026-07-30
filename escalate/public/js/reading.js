@@ -112,10 +112,24 @@
 
     if (data.state === 'ready') {
       stopWaiting();
-      paintStory(data);
-      if (data.audio?.url) attachAudio(data.audio);
-      else if (data.audio?.state === 'queued' || data.audio?.state === 'rendering') {
+
+      // Paint once. This used to run on every pass while the voice rendered,
+      // so a finished reading visibly cleared itself and re-animated every
+      // 2.5 seconds until the audio arrived.
+      if (!painted) {
+        paintStory(data);
+        painted = true;
+      }
+
+      if (data.audio?.url) {
+        attachAudio(data.audio);
+      } else if (data.audio?.state === 'queued' || data.audio?.state === 'rendering') {
         setTimeout(poll, 2500);
+      } else if (data.audio?.state === 'failed') {
+        // Previously fell through every branch, so polling stopped silently and
+        // the screen sat on "The voice is being recorded…" forever with no way
+        // back. Show why, and offer the retry the server already allows.
+        showNarrationFailure(data.audio.reason);
       }
       return;
     }
@@ -136,6 +150,32 @@
      Paragraphs arrive at once but are lit one at a time. Nothing about this is
      load-bearing for comprehension — it is pacing, so a reading feels read
      rather than dumped. */
+
+  let painted = false;
+
+  /** Surfaces a narration failure and re-offers the narrate button. */
+  function showNarrationFailure(reason) {
+    const block = $('[data-narrate-block]');
+    if (!block) return;
+
+    block.hidden = false;
+
+    const pending = block.querySelector('[data-narrate-pending]');
+    if (pending) pending.hidden = true;
+
+    let note = block.querySelector('[data-narrate-error]');
+    if (!note) {
+      note = document.createElement('div');
+      note.className = 'notice notice-warn';
+      note.setAttribute('role', 'alert');
+      note.dataset.narrateError = '';
+      block.prepend(note);
+    }
+    note.textContent = reason || 'The narration could not be recorded.';
+
+    const form = block.querySelector('form');
+    if (form) form.hidden = false;
+  }
 
   function paintStory(data) {
     const box = $('[data-lines]');

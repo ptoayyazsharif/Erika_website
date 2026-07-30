@@ -30,10 +30,19 @@ return [
 
     'disks' => [
 
+        /*
+        | 'serve' is false here for the same reason it is false on the 'private'
+        | disk below. A truthy 'serve' makes Laravel register GET /storage/{path}
+        | AND PUT /storage/{path} for this disk. Both are signed with APP_KEY so
+        | they are not exploitable on their own, but nothing in this app reads or
+        | writes the local disk — every Storage:: call names disk('private')
+        | explicitly — so an unused write endpoint into the filesystem is pure
+        | downside.
+        */
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

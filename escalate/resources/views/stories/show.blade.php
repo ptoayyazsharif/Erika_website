@@ -98,7 +98,7 @@
         {{-- narration not rendered yet --}}
         <div style="margin-top:var(--s-6)" data-narrate-block @if ($narration?->isReady()) hidden @endif>
             @if ($narration?->isPending())
-                <p class="small muted row" style="gap:var(--s-2)">
+                <p class="small muted row" data-narrate-pending style="gap:var(--s-2)">
                     @include('partials.icon', ['name' => 'timer', 'size' => 16])
                     <span>The voice is being recorded…</span>
                 </p>
@@ -109,19 +109,22 @@
                 </div>
             @endif
 
-            @if (! $narration?->isPending())
-                <form method="POST" action="{{ route('stories.narrate', $story) }}" data-once>
-                    @csrf
-                    <button class="btn btn-ghost btn-full" type="submit" data-busy="Recording…"
-                            @if ($remaining['narration'] < 1) aria-disabled="true" disabled @endif>
-                        @include('partials.icon', ['name' => 'play', 'size' => 16])
-                        Hear it in your voice
-                    </button>
-                </form>
-                <p class="small faint center" style="margin-top:var(--s-3)">
-                    {{ $remaining['narration'] }} {{ Str::plural('narration', $remaining['narration']) }} left today
-                </p>
-            @endif
+            {{-- Always rendered, hidden while a narration is in flight. If the
+                 render then fails, reading.js un-hides this rather than leaving
+                 the screen stuck on "being recorded" with no way forward. --}}
+            <form method="POST" action="{{ route('stories.narrate', $story) }}" data-once
+                  @if ($narration?->isPending()) hidden @endif>
+                @csrf
+                <button class="btn btn-ghost btn-full" type="submit" data-busy="Recording…"
+                        @if ($remaining['narration'] < 1) aria-disabled="true" disabled @endif>
+                    @include('partials.icon', ['name' => 'play', 'size' => 16])
+                    Hear it in your voice
+                </button>
+            </form>
+            <p class="small faint center" style="margin-top:var(--s-3)"
+               @if ($narration?->isPending()) hidden @endif>
+                {{ $remaining['narration'] }} {{ Str::plural('narration', $remaining['narration']) }} left today
+            </p>
         </div>
 
         {{-- ── actions ─────────────────────────────────────────────────── --}}

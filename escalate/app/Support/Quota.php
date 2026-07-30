@@ -19,11 +19,40 @@ class Quota
 {
     public static function used(User $user, string $kind): int
     {
-        return AiEvent::where('user_id', $user->id)
+        $completed = AiEvent::where('user_id', $user->id)
             ->where('kind', $kind)
             ->where('ok', true)
             ->where('created_at', '>=', now()->subDay())
             ->count();
+
+        return $completed + self::inFlight($user, $kind);
+    }
+
+    /**
+     * Work that has been paid for but has not landed in the ledger yet.
+     *
+     * Without this the quota is check-then-spend across a queue boundary. On
+     * shared hosting the worker runs from cron, so it can be minutes behind —
+     * and every request in that window sees used = 0. The route throttle allows
+     * twelve story POSTs an hour against a limit of five, so a burst of clicks
+     * queues twelve jobs that all passed the check, and each job may call the
+     * provider more than once. The bill is the user's clicking, not the limit.
+     *
+     * Counting queued and in-progress rows closes the window.
+     */
+    private static function inFlight(User $user, string $kind): int
+    {
+        return match ($kind) {
+            'story' => $user->stories()
+                ->whereIn('state', ['queued', 'writing'])
+                ->where('created_at', '>=', now()->subDay())
+                ->count(),
+            'narration' => $user->narrations()
+                ->whereIn('state', ['queued', 'rendering'])
+                ->where('created_at', '>=', now()->subDay())
+                ->count(),
+            default => 0,
+        };
     }
 
     public static function limit(string $kind): int

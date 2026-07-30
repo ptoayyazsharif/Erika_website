@@ -17,7 +17,9 @@ use Illuminate\Support\Str;
  */
 class GratitudeEntry extends Model
 {
-    protected $fillable = ['body', 'tags', 'desire_id', 'for_date'];
+    // `desire_id` excluded for the same reason as on Affirmation: the FK has no
+    // ownership constraint, so it must be set only after checking the desire.
+    protected $fillable = ['body', 'tags', 'for_date'];
 
     protected function casts(): array
     {

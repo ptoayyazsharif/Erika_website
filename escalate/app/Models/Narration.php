@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
@@ -47,7 +48,20 @@ class Narration extends Model
             'voice'          => $voice,
             'state'          => 'queued',
             'failure_reason' => null,
-        ])->save();
+        ]);
+
+        try {
+            $narration->save();
+        } catch (UniqueConstraintViolationException) {
+            // Two concurrent narrate requests both miss the select above and
+            // both insert; the table's unique(story_id, voice) rejects the
+            // second. That is the index doing its job — re-read the winner
+            // rather than 500 on a double-clicked button.
+            return static::query()
+                ->where('story_id', $story->id)
+                ->where('voice', $voice)
+                ->firstOrFail();
+        }
 
         return $narration;
     }

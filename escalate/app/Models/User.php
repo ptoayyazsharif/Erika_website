@@ -21,7 +21,13 @@ class User extends Authenticatable
      */
     protected $fillable = ['name', 'email', 'password'];
 
-    protected $hidden = ['password', 'remember_token'];
+    /*
+    | `role`, `suspended_at` and `last_login_ip` are hidden as well as the
+    | credentials. Nothing serialises a User to a browser today, but `role` is
+    | the field the entire admin model rests on and a client has no business
+    | seeing it or its own last login IP.
+    */
+    protected $hidden = ['password', 'remember_token', 'role', 'suspended_at', 'last_login_ip'];
 
     protected function casts(): array
     {
@@ -70,6 +76,11 @@ class User extends Authenticatable
     public function narrations(): HasMany
     {
         return $this->hasMany(Narration::class);
+    }
+
+    public function desireImages(): HasMany
+    {
+        return $this->hasMany(DesireImage::class);
     }
 
     public function affirmationSets(): HasMany

@@ -224,6 +224,15 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
   border-radius: var(--r-sm);
 }
 
+/* The .option and .chip patterns hide their real input with opacity:0 and
+   style the label instead. The ring above was therefore being painted on an
+   invisible element — a keyboard user tabbing through My World had no idea
+   where they were. Lift the ring onto the visible container. */
+.option:has(input:focus-visible),
+.chip:has(input:focus-visible) {
+  box-shadow: var(--ring);
+}
+
 ::selection { background: var(--accent-quiet); color: var(--text); }
 
 /* ── utilities ───────────────────────────────────────────────────────────── */

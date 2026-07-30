@@ -40,7 +40,16 @@ return [
             'connection' => env('DB_QUEUE_CONNECTION'),
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
-            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
+            /*
+            | Must exceed the longest job timeout in the app, which is
+            | NarrateStory at 240s. Laravel's default is 90, and at 90 a
+            | narration that takes longer than that is considered abandoned and
+            | handed to a second worker while the first is still mid-request —
+            | two calls to ElevenLabs, two charges, for one reading. The
+            | content-hash dedupe does not save you, because it only matches
+            | rows that already reached 'ready'.
+            */
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 300),
             'after_commit' => false,
         ],
 

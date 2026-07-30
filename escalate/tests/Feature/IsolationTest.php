@@ -98,6 +98,60 @@ class IsolationTest extends TestCase
         // assertion here would silently still be the stranger.
     }
 
+    /**
+     * The routes the earlier tests missed.
+     *
+     * All eight were verified correct by reading, but nothing in the suite kept
+     * them that way — and these are exactly the actions where a missing
+     * ownership check is invisible, because they redirect rather than render.
+     */
+    public function test_no_write_route_can_be_reached_across_accounts(): void
+    {
+        Storage::fake('private');
+
+        $owner = $this->user('owner@escalate.test');
+        $stranger = $this->user('stranger@escalate.test');
+
+        $desire = $owner->desires()->create(['title' => 'A quiet house', 'status' => 'desired']);
+        $story = $this->makeReadyStory($owner);
+        // forceFill because `path` is deliberately not mass-assignable.
+        $image = $owner->desireImages()->make(['role' => 'vision']);
+        $image->forceFill(['desire_id' => $desire->id, 'path' => 'images/x.png'])->save();
+
+        $as = fn () => $this->actingAs($stranger);
+
+        $as()->get(route('desires.edit', $desire))->assertNotFound();
+        $as()->put(route('desires.update', $desire), ['title' => 'hijacked'])->assertNotFound();
+        $as()->get(route('stories.edit', $story))->assertNotFound();
+        $as()->put(route('stories.update', $story), ['edited_body' => str_repeat('word ', 40)])->assertNotFound();
+        $as()->post(route('stories.favourite', $story))->assertNotFound();
+        $as()->post(route('stories.played', $story))->assertNotFound();
+        $as()->delete(route('stories.destroy', $story))->assertNotFound();
+        $as()->get(route('media.image', $image))->assertNotFound();
+
+        // Nothing changed hands.
+        $this->assertSame('A quiet house', $desire->fresh()->title);
+        $this->assertFalse($story->fresh()->favourite);
+        $this->assertSame(0, $story->fresh()->play_count);
+        $this->assertNull($story->fresh()->edited_body);
+        $this->assertNotNull($story->fresh());
+    }
+
+    public function test_a_suspended_account_loses_access_mid_session(): void
+    {
+        $user = $this->user('suspended@escalate.test');
+
+        // Signed in and working.
+        $this->actingAs($user)->get(route('desires.index'))->assertOk();
+
+        // Suspended by an admin while the session is still live. Checking only
+        // at login would leave this account fully operational until it lapsed.
+        $user->forceFill(['suspended_at' => now()])->save();
+
+        $this->actingAs($user)->get(route('desires.index'))->assertRedirect(route('login'));
+        $this->assertGuest();
+    }
+
     public function test_every_protected_route_rejects_a_guest(): void
     {
         Storage::fake('private');

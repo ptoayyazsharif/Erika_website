@@ -7,7 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Affirmation extends Model
 {
-    protected $fillable = ['body', 'back', 'position', 'favourite', 'desire_id'];
+    /*
+    | `desire_id` is not fillable. The foreign key carries no ownership
+    | constraint, so a fillable desire_id would let a user attach their own
+    | affirmation to somebody else's desire. Assign it after checking the
+    | desire belongs to them.
+    */
+    protected $fillable = ['body', 'back', 'position', 'favourite'];
 
     protected function casts(): array
     {

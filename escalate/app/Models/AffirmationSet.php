@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** A day's worth of affirmation cards. One set per user per date. */
 class AffirmationSet extends Model
 {
-    protected $fillable = ['for_date', 'state'];
+    // `state` is server-controlled: a client must not be able to POST state=ready.
+    protected $fillable = ['for_date'];
 
     protected function casts(): array
     {

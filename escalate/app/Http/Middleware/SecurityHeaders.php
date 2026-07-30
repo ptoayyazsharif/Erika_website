@@ -56,6 +56,32 @@ class SecurityHeaders
             $response->headers->set($key, $value);
         }
 
+        /*
+        | HTML must not be stored, and this is not the same as not being reused.
+        |
+        | Symfony's default for a response nobody configured is "no-cache,
+        | private". `private` does keep it out of shared caches, and `no-cache`
+        | does force revalidation — so the back button goes through the auth
+        | middleware and correctly lands on /login. But `no-cache` explicitly
+        | *permits storage*: every desire, reading and My World page gets written
+        | to the browser's disk cache in plaintext and stays there after logout.
+        |
+        | Worse, the back/forward cache is not governed by these values at all.
+        | `no-store` is the specific directive that makes Chrome and Firefox
+        | refuse to put a page in bfcache. Without it, the fully rendered DOM of
+        | the last page viewed is retained in memory, and pressing Back after
+        | signing out restores somebody's journal on a shared device — session
+        | invalidation cannot help, because nothing is re-fetched.
+        |
+        | Only HTML. Narration and images set their own headers in
+        | MediaController, and stamping no-store on them would break the range
+        | requests the player scrubs with.
+        */
+        if (str_contains((string) $response->headers->get('Content-Type'), 'text/html')) {
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+            $response->headers->set('Pragma', 'no-cache');
+        }
+
         if ($request->secure()) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }

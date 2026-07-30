@@ -11,7 +11,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class DesireImage extends Model
 {
-    protected $fillable = ['path', 'role', 'bytes'];
+    /*
+    | `path` is deliberately absent. Storage::disk('private')->path() does no
+    | traversal normalisation, so a fillable `path` means the day an upload
+    | controller is written as $desire->images()->create($validated) — the
+    | natural shape — a user can POST path=../../../<anything>, own the row
+    | legitimately, and have MediaController serve whatever the PHP user can
+    | read. Set it with forceFill from a server-generated name instead.
+    */
+    protected $fillable = ['role'];
 
     public function user(): BelongsTo
     {
