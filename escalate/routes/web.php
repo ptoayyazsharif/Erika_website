@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\AdminSessionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -18,7 +19,8 @@ use Illuminate\Support\Facades\Route;
 | Rules this file follows, so that "is this route protected?" is answerable by
 | reading it rather than by tracing controllers:
 |
-|   - Exactly three routes are public: login, register, and the offline page.
+|   - Exactly four routes are public: login, register, the offline page, and
+|     the privacy disclosure — which must be readable before signing up.
 |     Everything else lives inside the 'auth' group.
 |   - Route model binding is deliberately NOT scoped. /desires/{desire} will
 |     resolve any user's row, and every action re-checks user_id itself — see
@@ -31,6 +33,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::view('/offline', 'offline')->name('offline');
+
+/* Public because someone must be able to read it BEFORE creating an account —
+   that is the whole point of a disclosure. */
+Route::view('/privacy', 'privacy')->name('privacy');
 
 /* ── guests ──────────────────────────────────────────────────────────────── */
 
@@ -52,6 +58,13 @@ Route::get('/', fn () => redirect()->route(auth()->check() ? 'today' : 'login'))
 
 Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    /* Account — taking a copy, and leaving. Both re-confirm the password. */
+    Route::get('/account', [AccountController::class, 'show'])->name('account.index');
+    Route::post('/account/export', [AccountController::class, 'export'])
+        ->middleware('throttle:6,60')->name('account.export');
+    Route::delete('/account', [AccountController::class, 'destroy'])
+        ->middleware('throttle:6,60')->name('account.destroy');
 
     /* My World */
     Route::get('/world', [WorldController::class, 'edit'])->name('world.edit');

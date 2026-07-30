@@ -147,9 +147,19 @@ class DesireController extends Controller
     {
         $this->mine($request, $desire);
 
+        // stories.desire_id is nullOnDelete, so readings written from this
+        // desire survive it — and they contain the same names and details. The
+        // old message promised they were gone, which was simply untrue. Delete
+        // them properly, through Eloquent so the narration files go too.
+        foreach ($desire->stories()->get() as $story) {
+            $story->narrations()->get()->each->delete();
+            $story->delete();
+        }
+
         $desire->delete();
 
-        return redirect()->route('desires.index')->with('status', 'Deleted, along with everything written for it.');
+        return redirect()->route('desires.index')
+            ->with('status', 'Deleted, along with every reading written for it.');
     }
 
     /* ── helpers ─────────────────────────────────────────────────────────── */

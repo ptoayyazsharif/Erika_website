@@ -35,6 +35,27 @@
                type="password" autocomplete="new-password" required>
     </div>
 
+    <label class="option {{ old('agree') ? 'is-on' : '' }}" style="margin-bottom:var(--s-3)">
+        <input type="checkbox" name="agree" value="1" @checked(old('agree'))>
+        <span class="tick" aria-hidden="true"></span>
+        <span class="option-body">
+            <span class="option-label">I’ve read what happens to what I write</span>
+            <small>
+                Your words are sent to two AI companies to be written and read aloud.
+                <a href="{{ route('privacy') }}" target="_blank" rel="noopener">Read it first</a> —
+                it’s short, and it matters.
+            </small>
+        </span>
+    </label>
+
+    <label class="option {{ old('age') ? 'is-on' : '' }}" style="margin-bottom:var(--s-5)">
+        <input type="checkbox" name="age" value="1" @checked(old('age'))>
+        <span class="tick" aria-hidden="true"></span>
+        <span class="option-body">
+            <span class="option-label">I’m 16 or over</span>
+        </span>
+    </label>
+
     <button class="btn btn-full" type="submit" data-busy="Creating…">Create my account</button>
 </form>
 

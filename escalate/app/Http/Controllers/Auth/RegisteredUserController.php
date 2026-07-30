@@ -27,13 +27,28 @@ class RegisteredUserController extends Controller
             // the whole security model rests on the password — so it is longer
             // than Laravel's default eight.
             'password' => ['required', 'confirmed', Password::min(12)->letters()->numbers()],
+
+            // Both are 'accepted', so an absent or false value fails. Recorded
+            // rather than assumed: this app sends what people write to two AI
+            // companies, and that is not something to infer from silence.
+            'agree'  => ['accepted'],
+            'age'    => ['accepted'],
+        ], [
+            'agree.accepted' => 'Please confirm you have read what happens to what you write.',
+            'age.accepted'   => 'Escalate is for people aged 16 and over.',
         ]);
+
+        // Not part of the model's fillable data — strip before create().
+        unset($data['agree'], $data['age']);
 
         // Mass assignment can't set `role`: it is absent from User::$fillable,
         // so a posted role field is silently dropped rather than honoured.
         $user = User::create($data);
 
-        $user->profile()->create();
+        // Timestamped, so the consent can be evidenced later rather than
+        // asserted. Stored on the profile because it belongs with the person,
+        // not with the session that happened to create them.
+        $user->profile()->create(['consented_at' => now()]);
 
         event(new Registered($user));
 

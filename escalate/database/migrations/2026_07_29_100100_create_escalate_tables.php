@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
  * A note on column types, because it drives a lot of decisions downstream:
  * every column holding something the user wrote or was told is `text`, not
  * `string`, and is cast to `encrypted` on the model. Laravel's encryption is
- * AES-256-GCM and produces base64 of a JSON envelope, so ciphertext runs about
+ * AES-256-CBC with an HMAC (config/app.php), and produces base64 of a JSON envelope, so ciphertext runs about
  * 2.5× the plaintext and cannot be indexed, sorted, or matched with LIKE.
  *
  * That is the deliberate cost of a private journal. Consequences honoured

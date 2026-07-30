@@ -16,7 +16,7 @@ class Profile extends Model
     protected $fillable = [
         'preferred_name', 'city', 'life_context', 'values', 'anchor',
         'voice', 'theme', 'story_style', 'faith_language', 'perspective', 'tone',
-        'default_length', 'onboarded',
+        'default_length', 'onboarded', 'consented_at',
     ];
 
     protected function casts(): array
@@ -28,6 +28,7 @@ class Profile extends Model
             'anchor'         => 'encrypted',
             'values'         => 'encrypted:array',
             'onboarded'      => 'boolean',
+            'consented_at'   => 'datetime',
             'affirmations_generated_at' => 'datetime',
         ];
     }

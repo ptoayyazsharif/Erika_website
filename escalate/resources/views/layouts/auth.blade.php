@@ -45,9 +45,16 @@
 
     @yield('form')
 
-    <p class="small muted row" style="margin-top:var(--s-6);justify-content:center;gap:var(--s-2)">
-        @include('partials.icon', ['name' => 'lock', 'size' => 14])
-        <span>Everything you write here is encrypted before it is stored.</span>
+    {{-- This line used to read "Everything you write here is encrypted before it
+         is stored." True, and materially misleading: a reader takes it to mean
+         nobody can read it, while the app sends their words to two AI companies
+         and holds the key itself. --}}
+    <p class="small muted center" style="margin-top:var(--s-6);line-height:1.6">
+        <span class="row" style="justify-content:center;gap:var(--s-2)">
+            @include('partials.icon', ['name' => 'lock', 'size' => 14])
+            <span>Encrypted before it is stored.</span>
+        </span>
+        <a href="{{ route('privacy') }}">What happens to what you write &rarr;</a>
     </p>
 </main>
 

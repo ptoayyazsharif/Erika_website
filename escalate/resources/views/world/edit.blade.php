@@ -199,8 +199,12 @@
     </div>
 </form>
 
-<form method="POST" action="{{ route('logout') }}" data-logout style="margin-top:var(--s-7)">
-    @csrf
-    <button type="submit" class="btn btn-quiet">Sign out</button>
-</form>
+<div class="row wrap" style="margin-top:var(--s-7);gap:var(--s-4)">
+    <form method="POST" action="{{ route('logout') }}" data-logout>
+        @csrf
+        <button type="submit" class="btn btn-quiet">Sign out</button>
+    </form>
+    <a class="btn btn-quiet" href="{{ route('account.index') }}">Your data</a>
+    <a class="btn btn-quiet" href="{{ route('privacy') }}">Privacy</a>
+</div>
 @endsection

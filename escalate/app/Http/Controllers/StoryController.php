@@ -20,9 +20,11 @@ use Illuminate\View\View;
  * narration another 5–10, which is far too long to hold a request open on
  * shared hosting. So both are queued and the reveal screen polls `state`.
  *
- * Everything the client is told about a story comes out of this controller.
- * The browser never learns which model wrote it, which voice id narrated it, or
- * that Anthropic and ElevenLabs are involved at all.
+ * Everything the client is told about a story comes out of this controller, and
+ * it is deliberately narrow: no model name, no voice id, no provider hostname.
+ * That is an attack-surface decision, not a secrecy one — those values are
+ * credentials-adjacent and have no business in a page. Who processes user
+ * content is disclosed plainly to users at /privacy, where it belongs.
  */
 class StoryController extends Controller
 {
@@ -193,6 +195,14 @@ class StoryController extends Controller
     public function destroy(Request $request, Story $story): RedirectResponse
     {
         $this->mine($request, $story);
+
+        // Delete the narrations through Eloquent first. The database cascade
+        // would remove the rows but never fire Narration::booted(), so the mp3
+        // — a recording of this story read aloud — would stay on disk with
+        // nothing left pointing at it. regenerate() and update() already did
+        // this; destroy() was the one path that leaked, and it is the one
+        // people use when they actually want something gone.
+        $story->narrations()->get()->each->delete();
 
         $story->delete();
 

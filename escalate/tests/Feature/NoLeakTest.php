@@ -145,11 +145,49 @@ class NoLeakTest extends TestCase
             'email' => 'sneaky@escalate.test',
             'password' => 'a-long-enough-password-1',
             'password_confirmation' => 'a-long-enough-password-1',
+            'agree' => '1',
+            'age' => '1',
             'role' => 'admin',
             'suspended_at' => null,
         ])->assertRedirect(route('world.edit'));
 
-        $this->assertSame('user', User::where('email', 'sneaky@escalate.test')->first()->role);
+        $user = User::where('email', 'sneaky@escalate.test')->first();
+
+        $this->assertSame('user', $user->role);
+        // Consent is recorded with a timestamp, so it can be evidenced rather
+        // than asserted.
+        $this->assertNotNull($user->profile->consented_at);
+    }
+
+    public function test_registration_requires_consent_and_an_age_confirmation(): void
+    {
+        $base = [
+            'name' => 'Nope',
+            'email' => 'nope@escalate.test',
+            'password' => 'a-long-enough-password-1',
+            'password_confirmation' => 'a-long-enough-password-1',
+        ];
+
+        // Neither may be inferred from silence — this app sends what people
+        // write to two AI companies.
+        $this->post(route('register.store'), $base)->assertSessionHasErrors(['agree', 'age']);
+        $this->post(route('register.store'), $base + ['agree' => '1'])->assertSessionHasErrors('age');
+        $this->post(route('register.store'), $base + ['age' => '1'])->assertSessionHasErrors('agree');
+
+        $this->assertNull(User::where('email', 'nope@escalate.test')->first());
+    }
+
+    public function test_the_privacy_disclosure_is_readable_without_an_account(): void
+    {
+        // It must be readable BEFORE signing up, or consenting to it is theatre.
+        $this->get(route('privacy'))
+            ->assertOk()
+            ->assertSee('Anthropic')
+            ->assertSee('ElevenLabs')
+            ->assertSee('end-to-end encryption')
+            // The sentence that matters most: the difference between "we do
+            // not" and "we cannot" has to be said out loud.
+            ->assertSee('we could read your journal if we chose to');
     }
 
     public function test_the_admin_area_is_invisible_to_an_ordinary_user(): void
