@@ -114,7 +114,7 @@
   color-scheme: dark;
 }
 
-[data-theme='light'] {
+[data-theme='parchment'], [data-theme='light'] {
   --bg:            var(--parch-200);
   --bg-deep:       var(--parch-300);
   --surface:       var(--parch-100);
@@ -140,6 +140,187 @@
 
   color-scheme: light;
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Themes
+   --------------------------------------------------------------------------
+   Each block overrides only the semantic layer — never the primitives and
+   never a component rule. That is the whole reason a new theme is ~25 lines:
+   every component reads --surface, --accent, --line and so on, so nothing
+   below has to know that buttons or chips exist.
+
+   Contrast was checked for body text on --bg in each: all clear 4.5:1.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Midnight — ink navy and sage, the default ───────────────────────────
+   These values are already in :root, which is what a browser gets before any
+   theme is chosen. Restating them under the key means every theme in config
+   has a matching block — so "is this theme wired up?" is answerable by
+   searching for its name, and midnight is not a special case a future reader
+   has to know about. There is a test that enforces exactly this. */
+[data-theme='midnight'] {
+  --bg:            var(--ink-800);
+  --bg-deep:       var(--ink-900);
+  --surface:       var(--ink-700);
+  --surface-raised: var(--ink-600);
+  --surface-sunk:  #0E121C;
+
+  --text:          #E9E5DC;
+  --text-muted:    rgba(233, 229, 220, 0.62);
+  --text-faint:    rgba(233, 229, 220, 0.38);
+
+  --line:          rgba(233, 229, 220, 0.10);
+  --line-strong:   rgba(233, 229, 220, 0.18);
+
+  --accent:        var(--sage-400);
+  --accent-quiet:  var(--sage-600);
+  --on-accent:     #08120E;
+  --brass:         var(--brass-400);
+  --danger:        var(--clay-400);
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--sage-400);
+  color-scheme: dark;
+}
+
+/* ── Ember — near-black and brass, candlelit ─────────────────────────────── */
+[data-theme='ember'] {
+  --bg:            #16110D;
+  --bg-deep:       #0F0B08;
+  --surface:       #201913;
+  --surface-raised: #2A211A;
+  --surface-sunk:  #120E0A;
+
+  --text:          #EFE6DA;
+  --text-muted:    rgba(239, 230, 218, 0.62);
+  --text-faint:    rgba(239, 230, 218, 0.38);
+
+  --line:          rgba(239, 230, 218, 0.10);
+  --line-strong:   rgba(239, 230, 218, 0.20);
+
+  --accent:        #C79A5C;
+  --accent-quiet:  #8A6737;
+  --on-accent:     #17110A;
+  --brass:         #D8B27A;
+  --danger:        #B9705A;
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px #C79A5C;
+  color-scheme: dark;
+}
+
+[data-theme='ember'] body::before {
+  background:
+    radial-gradient(60% 60% at 22% 8%, rgba(199, 154, 92, 0.16), transparent 70%),
+    radial-gradient(52% 52% at 82% 0%, rgba(185, 112, 90, 0.10), transparent 72%);
+}
+
+/* ── Tide — deep water and pale aqua, cool and awake ─────────────────────── */
+[data-theme='tide'] {
+  --bg:            #0B1A1F;
+  --bg-deep:       #071216;
+  --surface:       #10252B;
+  --surface-raised: #163038;
+  --surface-sunk:  #081418;
+
+  --text:          #E4EDEE;
+  --text-muted:    rgba(228, 237, 238, 0.62);
+  --text-faint:    rgba(228, 237, 238, 0.38);
+
+  --line:          rgba(228, 237, 238, 0.10);
+  --line-strong:   rgba(228, 237, 238, 0.20);
+
+  --accent:        #7FB8BE;
+  --accent-quiet:  #48838A;
+  --on-accent:     #05171A;
+  --brass:         #C4A98A;
+  --danger:        #C87F6B;
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px #7FB8BE;
+  color-scheme: dark;
+}
+
+[data-theme='tide'] body::before {
+  background:
+    radial-gradient(60% 60% at 22% 8%, rgba(127, 184, 190, 0.16), transparent 70%),
+    radial-gradient(52% 52% at 82% 0%, rgba(196, 169, 138, 0.09), transparent 72%);
+}
+
+/* ── Graphite — neutral charcoal, nothing decorative ─────────────────────── */
+[data-theme='graphite'] {
+  --bg:            #141517;
+  --bg-deep:       #0E0F11;
+  --surface:       #1D1F22;
+  --surface-raised: #26282C;
+  --surface-sunk:  #101113;
+
+  --text:          #E6E8EA;
+  --text-muted:    rgba(230, 232, 234, 0.60);
+  --text-faint:    rgba(230, 232, 234, 0.36);
+
+  --line:          rgba(230, 232, 234, 0.10);
+  --line-strong:   rgba(230, 232, 234, 0.20);
+
+  --accent:        #9AA3AD;
+  --accent-quiet:  #626A73;
+  --on-accent:     #101112;
+  --brass:         #C2B49A;
+  --danger:        #C08475;
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px #9AA3AD;
+  color-scheme: dark;
+}
+
+/* The one theme with no wash. "Nothing decorative at all" is the brief. */
+[data-theme='graphite'] body::before { background: none; }
+
+/* ── Linen — warm oat and clay, the softest light one ────────────────────── */
+[data-theme='linen'] {
+  --bg:            #F5EFE6;
+  --bg-deep:       #EBE3D6;
+  --surface:       #FBF7F0;
+  --surface-raised: #FFFDF9;
+  --surface-sunk:  #EFE8DC;
+
+  --text:          #2C2520;
+  --text-muted:    rgba(44, 37, 32, 0.66);
+  --text-faint:    rgba(44, 37, 32, 0.42);
+
+  --line:          rgba(44, 37, 32, 0.10);
+  --line-strong:   rgba(44, 37, 32, 0.20);
+
+  --accent:        #9A6A55;
+  --accent-quiet:  #B08975;
+  --on-accent:     #FFFAF5;
+  --brass:         #7C7A63;
+  --danger:        #A65946;
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px #9A6A55;
+
+  --shadow-sm: 0 1px 2px rgba(44,37,32,.06);
+  --shadow-md: 0 6px 20px -8px rgba(44,37,32,.14);
+  --shadow-lg: 0 24px 56px -22px rgba(44,37,32,.20);
+
+  color-scheme: light;
+}
+
+/* ── theme picker swatches ───────────────────────────────────────────────── */
+
+.swatch {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 0;
+  border-radius: var(--r-full);
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+}
+
+.swatch i {
+  display: block;
+  width: 16px;
+  height: 28px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════ */
 
 /* ── reset ───────────────────────────────────────────────────────────────── */
 
@@ -182,7 +363,7 @@ body::before {
   animation: drift 22s var(--ease-in-out) infinite alternate;
 }
 
-[data-theme='light'] body::before {
+[data-theme='parchment'] body::before, [data-theme='linen'] body::before, [data-theme='light'] body::before {
   background:
     radial-gradient(60% 60% at 22% 8%, rgba(110, 154, 139, 0.20), transparent 70%),
     radial-gradient(52% 52% at 82% 0%, rgba(191, 161, 115, 0.16), transparent 72%);
@@ -741,9 +922,9 @@ a.card:active, button.card:active { transform: translateY(0); }
 .notice-warn  { border-color: color-mix(in srgb, var(--brass) 44%, transparent); color: var(--brass-300); }
 .notice-error { border-color: color-mix(in srgb, var(--danger) 44%, transparent); color: var(--clay-400); }
 
-[data-theme='light'] .notice-ok    { color: var(--sage-600); }
-[data-theme='light'] .notice-warn  { color: var(--brass-500); }
-[data-theme='light'] .notice-error { color: var(--clay-500); }
+[data-theme='parchment'] .notice-ok, [data-theme='linen'] .notice-ok { color: var(--sage-600); }
+[data-theme='parchment'] .notice-warn, [data-theme='linen'] .notice-warn { color: var(--brass-500); }
+[data-theme='parchment'] .notice-error, [data-theme='linen'] .notice-error { color: var(--clay-500); }
 
 /* ── toast ───────────────────────────────────────────────────────────────── */
 

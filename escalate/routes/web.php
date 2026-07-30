@@ -56,6 +56,7 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
     /* My World */
     Route::get('/world', [WorldController::class, 'edit'])->name('world.edit');
     Route::put('/world', [WorldController::class, 'update'])->name('world.update');
+    Route::post('/world/theme', [WorldController::class, 'theme'])->name('world.theme');
 
     /* Desires + the Manifestation Archive */
     Route::get('/desires', [DesireController::class, 'index'])->name('desires.index');

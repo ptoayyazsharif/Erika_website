@@ -41,6 +41,7 @@ class WorldController extends Controller
             // hand-written list, so adding a voice or a tone in one place
             // cannot leave a stale whitelist behind here.
             'voice'          => ['required', 'string', 'in:'.implode(',', array_keys(config('escalate.voices')))],
+            'theme'          => ['required', 'string', 'in:'.implode(',', array_keys(config('escalate.themes')))],
             'faith_language' => ['required', 'string', 'in:'.implode(',', array_keys(config('escalate.faith_languages')))],
             'default_length' => ['required', 'string', 'in:'.implode(',', array_keys(config('escalate.lengths')))],
             'story_style'    => ['required', 'string', 'in:cinematic,letter,meditative,documentary'],
@@ -66,6 +67,33 @@ class WorldController extends Controller
         return redirect()
             ->route($request->boolean('then_desire') ? 'desires.create' : 'world.edit')
             ->with('status', 'Your world is saved.');
+    }
+
+    /**
+     * Set the theme on its own.
+     *
+     * Separate from the main form so the topbar's quick switch does not have to
+     * post the whole of My World. Returns JSON so the switch can apply
+     * instantly without a reload, and is a POST rather than a GET because it
+     * changes stored state.
+     */
+    public function theme(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $data = $request->validate([
+            'theme' => ['required', 'string', 'in:'.implode(',', array_keys(config('escalate.themes')))],
+        ]);
+
+        $request->user()->world()->update(['theme' => $data['theme']]);
+
+        $meta = config("escalate.themes.{$data['theme']}");
+
+        return response()->json([
+            'theme'       => $data['theme'],
+            'scheme'      => $meta['scheme'],
+            'chrome'      => $meta['chrome'],
+            'counterpart' => $meta['counterpart'],
+            'label'       => $meta['label'],
+        ]);
     }
 
     /**

@@ -15,7 +15,7 @@ class Profile extends Model
 {
     protected $fillable = [
         'preferred_name', 'city', 'life_context', 'values', 'anchor',
-        'voice', 'story_style', 'faith_language', 'perspective', 'tone',
+        'voice', 'theme', 'story_style', 'faith_language', 'perspective', 'tone',
         'default_length', 'onboarded',
     ];
 

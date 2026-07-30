@@ -92,6 +92,37 @@
     </div>
 
     <div class="card" data-enter>
+        <h3 style="margin-bottom:var(--s-2)">How it should look</h3>
+        <p class="small muted" style="margin-bottom:var(--s-5)">
+            Applies the moment you pick one. Saved to your account, so it follows
+            you to any device you sign in on.
+        </p>
+
+        <div class="options" data-theme-picker>
+            @foreach (config('escalate.themes') as $key => $theme)
+                <label class="option {{ old('theme', $profile->theme) === $key ? 'is-on' : '' }}">
+                    <input type="radio" name="theme" value="{{ $key }}"
+                           data-theme-choice="{{ $key }}"
+                           data-theme-scheme="{{ $theme['scheme'] }}"
+                           data-theme-chrome="{{ $theme['chrome'] }}"
+                           data-theme-counterpart="{{ $theme['counterpart'] }}"
+                           @checked(old('theme', $profile->theme) === $key)>
+                    <span class="tick" aria-hidden="true"></span>
+                    <span class="option-body">
+                        <span class="option-label">{{ $theme['label'] }}</span>
+                        <small>{{ $theme['note'] }}</small>
+                    </span>
+                    <span class="swatch" aria-hidden="true">
+                        @foreach ($theme['swatch'] as $colour)
+                            <i style="background:{{ $colour }}"></i>
+                        @endforeach
+                    </span>
+                </label>
+            @endforeach
+        </div>
+    </div>
+
+    <div class="card" data-enter>
         <h3 style="margin-bottom:var(--s-5)">How it should sound</h3>
 
         <div class="field">

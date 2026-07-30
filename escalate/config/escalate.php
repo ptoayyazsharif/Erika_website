@@ -103,6 +103,70 @@ return [
     ],
 
     /*
+    | Themes.
+    |
+    | Each is a full palette, not a hue shift, and each declares whether it is
+    | light or dark so `color-scheme` and the browser chrome colour follow. The
+    | swatches are what the picker draws — three colours is enough to recognise
+    | a theme without rendering the whole app.
+    |
+    | All six stay inside the brief: premium, calm, gender-neutral. No pinks, no
+    | wellness pastels, nothing that reads as aimed at one gender. Adding a
+    | theme means adding a key here and a matching [data-theme='key'] block in
+    | public/css/app.css — nothing else.
+    */
+    'themes' => [
+        'midnight' => [
+            'counterpart' => 'parchment',
+            'label'  => 'Midnight',
+            'note'   => 'Ink navy and sage. The default, and the quietest.',
+            'scheme' => 'dark',
+            'chrome' => '#101521',
+            'swatch' => ['#101521', '#7FA898', '#BFA173'],
+        ],
+        'ember' => [
+            'counterpart' => 'linen',
+            'label'  => 'Ember',
+            'note'   => 'Near-black and brass. Candlelit rather than lit.',
+            'scheme' => 'dark',
+            'chrome' => '#16110D',
+            'swatch' => ['#16110D', '#C79A5C', '#B9705A'],
+        ],
+        'tide' => [
+            'counterpart' => 'parchment',
+            'label'  => 'Tide',
+            'note'   => 'Deep water and pale aqua. Cool and awake.',
+            'scheme' => 'dark',
+            'chrome' => '#0B1A1F',
+            'swatch' => ['#0B1A1F', '#7FB8BE', '#C4A98A'],
+        ],
+        'graphite' => [
+            'counterpart' => 'parchment',
+            'label'  => 'Graphite',
+            'note'   => 'Neutral charcoal. Nothing decorative at all.',
+            'scheme' => 'dark',
+            'chrome' => '#141517',
+            'swatch' => ['#141517', '#9AA3AD', '#C2B49A'],
+        ],
+        'parchment' => [
+            'counterpart' => 'midnight',
+            'label'  => 'Parchment',
+            'note'   => 'Cream and sage. Daylight, and easy on tired eyes.',
+            'scheme' => 'light',
+            'chrome' => '#F4F1EA',
+            'swatch' => ['#F4F1EA', '#567C6F', '#A28757'],
+        ],
+        'linen' => [
+            'counterpart' => 'ember',
+            'label'  => 'Linen',
+            'note'   => 'Warm oat and clay. The softest of the light ones.',
+            'scheme' => 'light',
+            'chrome' => '#F5EFE6',
+            'swatch' => ['#F5EFE6', '#9A6A55', '#7C7A63'],
+        ],
+    ],
+
+    /*
     | Faith language. Shapes vocabulary in every generated text. 'none' is the
     | default on purpose — the app is gender-neutral and belief-neutral until
     | the user says otherwise.

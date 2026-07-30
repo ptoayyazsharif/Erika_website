@@ -16,31 +16,85 @@
   const g = window.gsap;
 
   /* ── theme ─────────────────────────────────────────────────────────────
-     Stored per-device, never server-side — a theme preference is still a
-     preference, and this app keeps what it can on the device. */
+     The server renders the chosen theme into <html data-theme> and the
+     theme-color meta tag, so there is no flash of the wrong palette on first
+     paint — which matters here because the CSP forbids the inline <head>
+     script that usually solves it.
 
-  const THEME_KEY = 'escalate.theme';
+     Everything below is therefore only about applying a change *without a
+     reload*. The saved value lives on the account, not in localStorage, so it
+     follows the user to a new device. */
 
-  function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    const meta = $('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', theme === 'light' ? '#F4F1EA' : '#101521');
-    $$('[data-theme-toggle]').forEach(b => {
-      b.setAttribute('aria-label', theme === 'light' ? 'Switch to dark' : 'Switch to light');
-      b.setAttribute('aria-pressed', String(theme === 'light'));
+  const CSRF = () => document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+  function applyTheme(key, meta = {}) {
+    document.documentElement.setAttribute('data-theme', key);
+
+    const colour = document.querySelector('meta[name="theme-color"]');
+    if (colour && meta.chrome) colour.setAttribute('content', meta.chrome);
+
+    const scheme = document.querySelector('meta[name="color-scheme"]');
+    if (scheme && meta.scheme) scheme.setAttribute('content', meta.scheme);
+
+    // Keep the quick switch pointing at the right counterpart.
+    $$('[data-theme-toggle]').forEach(btn => {
+      btn.dataset.themeCurrent = key;
+      if (meta.counterpart) btn.dataset.themeCounterpart = meta.counterpart;
     });
   }
 
-  function initTheme() {
-    let stored = null;
-    try { stored = localStorage.getItem(THEME_KEY); } catch {}
-    applyTheme(stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'));
+  async function saveTheme(key, url) {
+    if (!url) return null;
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': CSRF(),
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({ theme: key }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      return await res.json();
+    } catch {
+      // The theme is already applied on screen; only the saving failed. Say so
+      // rather than reverting, which would be more confusing than a stale
+      // preference.
+      toast('Looks right, but the preference could not be saved.');
+      return null;
+    }
+  }
 
-    document.addEventListener('click', e => {
-      if (!e.target.closest('[data-theme-toggle]')) return;
-      const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  function initTheme() {
+    // Quick light/dark switch in the top bar.
+    document.addEventListener('click', async e => {
+      const btn = e.target.closest('[data-theme-toggle]');
+      if (!btn) return;
+
+      const next = btn.dataset.themeCounterpart;
+      if (!next) return;
+
       applyTheme(next);
-      try { localStorage.setItem(THEME_KEY, next); } catch {}
+      const meta = await saveTheme(next, btn.dataset.themeUrl);
+      if (meta) applyTheme(meta.theme, meta);
+    });
+
+    // Full picker in My World — apply on selection, before the form is saved,
+    // because choosing a theme you cannot see is not a choice.
+    document.addEventListener('change', async e => {
+      const input = e.target.closest('[data-theme-choice]');
+      if (!input || !input.checked) return;
+
+      const key = input.dataset.themeChoice;
+      applyTheme(key, {
+        chrome: input.dataset.themeChrome,
+        scheme: input.dataset.themeScheme,
+        counterpart: input.dataset.themeCounterpart,
+      });
+
+      const url = $('[data-theme-toggle]')?.dataset.themeUrl;
+      await saveTheme(key, url);
     });
   }
 

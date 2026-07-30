@@ -33,3 +33,33 @@ if (! function_exists('status_label')) {
         return config("escalate.statuses.{$key}.label", 'Desired');
     }
 }
+
+if (! function_exists('active_theme')) {
+    /**
+     * The theme key for the current request.
+     *
+     * Resolved server-side so it can be rendered straight into
+     * <html data-theme>. That is not a nicety: the CSP forbids inline scripts,
+     * so the usual trick of a tiny <head> script reading localStorage is not
+     * available, and without this every light-theme user would get a flash of
+     * dark on first paint.
+     */
+    function active_theme(): string
+    {
+        $key = auth()->user()?->profile?->theme;
+
+        return array_key_exists((string) $key, config('escalate.themes'))
+            ? $key
+            : 'midnight';
+    }
+}
+
+if (! function_exists('theme_meta')) {
+    /** Config for a theme key, falling back to the default. */
+    function theme_meta(?string $key = null): array
+    {
+        $key ??= active_theme();
+
+        return config("escalate.themes.{$key}") ?? config('escalate.themes.midnight');
+    }
+}

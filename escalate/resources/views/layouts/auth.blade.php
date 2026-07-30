@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="{{ active_theme() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#101521">
-    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="{{ theme_meta()['chrome'] }}">
+    <meta name="color-scheme" content="{{ theme_meta()['scheme'] }}">
     <meta name="robots" content="noindex, nofollow">
     <title>{{ isset($title) ? $title.' · Escalate' : 'Escalate' }}</title>
 

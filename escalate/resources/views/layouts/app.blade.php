@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="{{ active_theme() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#101521">
-    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="{{ theme_meta()['chrome'] }}">
+    <meta name="color-scheme" content="{{ theme_meta()['scheme'] }}">
     <meta name="robots" content="noindex, nofollow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title.' · Escalate' : 'Escalate' }}</title>
@@ -36,8 +36,17 @@
         <span class="sr-only">Install Escalate</span>
     </button>
 
-    <button type="button" class="btn btn-icon" data-theme-toggle aria-pressed="false">
-        @include('partials.icon', ['name' => 'moon', 'size' => 19])
+    {{-- Quick light/dark switch. With six themes a plain toggle would be
+         ambiguous, so each theme names its counterpart in config and this flips
+         between the pair. Full selection lives in My World. --}}
+    <button type="button" class="btn btn-icon"
+            data-theme-toggle
+            data-theme-current="{{ active_theme() }}"
+            data-theme-counterpart="{{ theme_meta()['counterpart'] }}"
+            data-theme-url="{{ route('world.theme') }}"
+            aria-label="Switch to {{ theme_meta(theme_meta()['counterpart'])['label'] }}">
+        @include('partials.icon', ['name' => theme_meta()['scheme'] === 'dark' ? 'sun' : 'moon', 'size' => 19])
+        <span class="sr-only">Switch theme</span>
     </button>
 </header>
 
