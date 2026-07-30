@@ -61,7 +61,7 @@ together, not on what the contract says you are.
 | Generated content | AI-written readings, edits, narration audio | Encrypted (text) / files on private disk (audio) |
 | Gratitude | entry bodies | **Encrypted** |
 | Tags | gratitude tag labels | **Plaintext** (`gratitude_entries.tag_index`) |
-| Beliefs | faith language (`none`/`universe`/`god`/`spirit`/`higher`) | **Plaintext** (`profiles.faith_language`) |
+| Beliefs | faith language (`none`/`universe`/`god`/`spirit`/`higher`) | **Encrypted** |
 | Category metadata | desire category — includes `health`, `love`, `family`, `money` | **Plaintext** |
 | Technical | session cookie, CSRF cookie, last login IP + timestamp | Plaintext |
 | Consent | timestamp of disclosure acceptance and 16+ confirmation | Plaintext (`profiles.consented_at`) |
@@ -72,15 +72,17 @@ Two items need explicit attention:
 
 1. **Religious or philosophical belief** — `profiles.faith_language`. Under GDPR
    Art. 9 this is special category, and processing needs *explicit* consent
-   (a higher bar than ordinary consent). It is currently **stored in plaintext**
-   and **transmitted to Anthropic on every story generation** as a derived
-   instruction. Note that choosing "secular" is equally revealing.
+   (a higher bar than ordinary consent). It is **encrypted at rest** as of the
+   latest build, but is still **transmitted to Anthropic on every story
+   generation** as a derived instruction. Note that choosing "secular" is
+   equally revealing. Encryption does not remove the need for a lawful basis —
+   consent for this specific field is still the open item.
 2. **Health-adjacent inference** — `desires.category` is plaintext and includes
    `health`. A row reading *"user 7, category health, status unfolding"* is
    inference without decrypting anything.
 
-**Recommended before launch regardless of jurisdiction:** encrypt
-`faith_language`, and capture its consent separately from the general one.
+**Done:** `faith_language` is encrypted at rest.
+**Still open:** capture its consent separately from the general one.
 
 ### 4. Data about people who never signed up
 
@@ -168,10 +170,9 @@ contradict it — that contradiction is the FTC §5 exposure.
 
 ### 9. Known gaps, stated honestly
 
-- **No password reset and no email verification.** Consequences: a user who
-  forgets their password cannot reach or delete their own data, and identity
-  cannot be verified for a rights request. Recovery currently requires the
-  agency to act at a shell — meaning the agency touching the data.
+- **No email verification.** Anyone can register with an address they do not
+  own. Password reset exists, so a user can recover their own account and
+  exercise their own rights without the agency touching the data.
 - **Registration reveals whether an email already has an account.** On this kind
   of app that is itself a privacy harm: it lets anyone test whether a specific
   person uses a manifestation journal.
@@ -268,8 +269,9 @@ one billed session and three.
    for a support period, or not at all?
 4. **Who is on call for a breach**, and who notifies whom, within 72 hours?
 5. **Is there a retention limit**, or is data kept until the user deletes it?
-6. **Will you offer password reset?** Without it there is no account recovery
-   and no way to verify identity for a rights request.
+6. **Do you want email verification?** Password reset now exists; verification
+   at signup is the remaining question, and it also closes the "anyone can
+   register with someone else's address" gap.
 7. **Do you want minors under 16 blocked, or supported with parental consent?**
    Supporting them is substantially more work.
 8. **Who pays the AI bills**, and does that change who the controller is?

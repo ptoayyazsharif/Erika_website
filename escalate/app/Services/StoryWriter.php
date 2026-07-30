@@ -153,9 +153,12 @@ class StoryWriter
 
     /* ── rules ───────────────────────────────────────────────────────────── */
 
-    private function faithRule(string $key): string
+    private function faithRule(?string $key): string
     {
-        return match ($key) {
+        // Null is possible on a profile written before faith_language had a
+        // model-level default; treat it as the secular default, which is also
+        // the least presumptuous thing to send to a model.
+        return match ($key ?? 'none') {
             'universe' => 'Spiritual register: the universe, energy, timing, alignment of circumstance. Never a personal deity.',
             'god'      => 'Spiritual register: God, prayer, blessing, thanksgiving. Reverent and plain, never preachy.',
             'spirit'   => 'Spiritual register: spirit, ancestors, guidance, being watched over. Warm rather than mystical.',

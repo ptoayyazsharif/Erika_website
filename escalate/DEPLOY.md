@@ -89,6 +89,28 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 dumps `$_ENV` — which contains your API keys. With `--no-dev` installed *and*
 `APP_DEBUG=false`, neither the keys nor a stack trace can reach a visitor.
 
+### Mail — now required, not optional
+
+Password reset sends email, so `MAIL_MAILER=log` (the development default)
+means reset links are written to `storage/logs/laravel.log` **in plaintext**
+instead of being delivered. Anyone who can read that file can take over any
+account.
+
+Set real SMTP before launch:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_HOST=…
+MAIL_PORT=587
+MAIL_USERNAME=…
+MAIL_PASSWORD=…
+MAIL_FROM_ADDRESS=no-reply@your-domain
+MAIL_FROM_NAME=Escalate
+```
+
+cPanel's own mail server usually works but lands in spam; a transactional
+provider (Postmark, Resend, SES) is worth the ten minutes.
+
 ### If you put Cloudflare (or any CDN) in front
 
 Set `TRUSTED_PROXIES` to its IP ranges — and **never to `*`**. Trusting every
@@ -214,8 +236,8 @@ is not running — check `/home/USER/logs/queue.log`.
   form is careful never to reveal membership; the signup form's uniqueness error
   undoes that. Fixing it properly needs an email-verification flow, which V1 does
   not have. Accepted, not overlooked.
-- **No email verification and no password reset.** There is no account recovery.
-  A forgotten password currently needs a manual reset at the shell.
+- **No email verification.** Anyone can register with an address they do not
+  own. Password reset exists and works, so account recovery is fine.
 - **Gratitude tags are stored in plaintext** (the `tag_index` column) so the
   archive can filter by them. Tag *labels* only — the entry bodies are encrypted.
 - **Admin re-auth is a sliding two-hour window**, so an actively working admin is

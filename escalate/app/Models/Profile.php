@@ -26,11 +26,31 @@ class Profile extends Model
             'city'           => 'encrypted',
             'life_context'   => 'encrypted',
             'anchor'         => 'encrypted',
+            // Religious or philosophical belief — special category under GDPR
+            // Art. 9. "none" is equally revealing, so there is no value of this
+            // field that is safe to leave in the clear.
+            'faith_language' => 'encrypted',
             'values'         => 'encrypted:array',
             'onboarded'      => 'boolean',
             'consented_at'   => 'datetime',
             'affirmations_generated_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Defaults for a fresh profile.
+     *
+     * faith_language used to be varchar(32) DEFAULT 'none'. Encrypting it meant
+     * dropping and recreating the column as text, and an encrypted column
+     * cannot carry a meaningful database default — the default would have to be
+     * ciphertext, tied to one APP_KEY. So the default moves into the model,
+     * where it belongs anyway.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Profile $profile) {
+            $profile->faith_language ??= 'none';
+        });
     }
 
     public function user(): BelongsTo

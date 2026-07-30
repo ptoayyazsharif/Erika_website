@@ -35,6 +35,10 @@
 </form>
 
 <p class="small muted center" style="margin-top:var(--s-5)">
+    <a href="{{ route('password.request') }}">Forgotten your password?</a>
+</p>
+
+<p class="small muted center" style="margin-top:var(--s-3)">
     No account yet? <a href="{{ route('register') }}">Create one</a>
 </p>
 @endsection

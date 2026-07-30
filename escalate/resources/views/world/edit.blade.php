@@ -146,8 +146,8 @@
             <span class="hint">This decides the vocabulary a reading is allowed to use. Secular is the default.</span>
             <div class="options">
                 @foreach (config('escalate.faith_languages') as $key => $label)
-                    <label class="option {{ old('faith_language', $profile->faith_language) === $key ? 'is-on' : '' }}">
-                        <input type="radio" name="faith_language" value="{{ $key }}" @checked(old('faith_language', $profile->faith_language) === $key)>
+                    <label class="option {{ old('faith_language', $profile->faith_language ?? 'none') === $key ? 'is-on' : '' }}">
+                        <input type="radio" name="faith_language" value="{{ $key }}" @checked(old('faith_language', $profile->faith_language ?? 'none') === $key)>
                         <span class="tick" aria-hidden="true"></span>
                         <span class="option-body"><span class="option-label">{{ $label }}</span></span>
                     </label>
