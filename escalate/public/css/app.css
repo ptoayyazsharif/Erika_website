@@ -465,7 +465,13 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
   border-bottom: 1px solid var(--line);
 }
 
+/* The wordmark is also the link home, so it needs a real target rather than
+   the 28px height of its own text. Padding only — it does not move. */
 .topbar .brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-right: var(--s-2);
   font-family: var(--serif);
   font-size: var(--t-md);
   letter-spacing: 0.04em;
