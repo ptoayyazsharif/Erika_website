@@ -165,7 +165,7 @@
 
         @if ($story->desire)
             <p class="small muted" style="margin-top:var(--s-6)">
-                <a href="{{ route('desires.show', $story->desire) }}">Back to {{ Str::limit($story->desire->title, 40) }}</a>
+                <a class="link-back" href="{{ route('desires.show', $story->desire) }}">Back to {{ Str::limit($story->desire->title, 40) }}</a>
             </p>
         @endif
     </section>

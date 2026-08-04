@@ -22,6 +22,6 @@
 </form>
 
 <p class="small muted center" style="margin-top:var(--s-5)">
-    <a href="{{ route('today') }}">Back to the app</a>
+    <a class="link-back" href="{{ route('today') }}">Back to the app</a>
 </p>
 @endsection

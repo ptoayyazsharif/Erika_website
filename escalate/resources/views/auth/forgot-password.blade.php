@@ -18,6 +18,6 @@
 </form>
 
 <p class="small muted center" style="margin-top:var(--s-5)">
-    <a href="{{ route('login') }}">Back to sign in</a>
+    <a class="link-back" href="{{ route('login') }}">Back to sign in</a>
 </p>
 @endsection

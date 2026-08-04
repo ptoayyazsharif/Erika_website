@@ -534,6 +534,38 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
   border-radius: 0 0 2px 2px;
 }
 
+/*
+ * Narrow phones: let the seven tabs share the width instead of overflowing.
+ *
+ * `min-width: 60px` on seven tabs demands 420px. An iPhone 12/13/14 is 390.
+ * The grid overflowed, `overflow-x: auto` turned the bar into a scrollable
+ * strip, and My World sat off the right edge — permanently unreachable,
+ * because nobody thinks to swipe a fixed bottom bar sideways. It looked like
+ * a six-tab app with a clipped seventh icon.
+ *
+ * 390 / 7 = 55px per tab, still comfortably over the 44px minimum touch
+ * target. The type has to come down slightly for "Gratitude" to fit on one
+ * line at that width; the icons carry the recognition anyway.
+ */
+@media (max-width: 440px) {
+  .tabbar a {
+    min-width: 0;
+    padding-inline: 2px;
+    font-size: 9px;
+    letter-spacing: 0.01em;
+  }
+
+  .tabbar a svg { width: 20px; height: 20px; }
+
+  /* Belt and braces: if a translation ever makes a label longer than its
+     column, clip it rather than reintroducing the overflow. */
+  .tabbar a span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 @media (min-width: 900px) {
   body { display: grid; grid-template-columns: 236px 1fr; }
   .topbar { grid-column: 1 / -1; }
@@ -730,6 +762,54 @@ a.card:active, button.card:active { transform: translateY(0); }
 }
 
 .input[aria-invalid='true'], .textarea[aria-invalid='true'] { border-color: var(--danger); }
+
+/*
+ * 16px on touch, and not for legibility.
+ *
+ * iOS Safari zooms the entire page in when a text field smaller than 16px
+ * receives focus, and it does not zoom back out when the field is blurred.
+ * --t-base is 15px, so every field in the app did it: tap "What do you want?"
+ * and the layout lurches, the tab bar slides off-screen, and you are left
+ * pinching your way back. On a journal the user is meant to sink into, that
+ * is the single most disruptive thing the interface can do.
+ *
+ * Scoped to coarse pointers so the desktop typography is untouched, and the
+ * one-pixel difference is invisible on a phone anyway.
+ */
+@media (pointer: coarse) {
+  .input, .textarea, .select { font-size: 16px; }
+
+  /*
+   * 44px is the smallest reliably hittable target on a phone. Chips were 36
+   * and buttons in some rows measured 38, which is the size where a thumb
+   * lands next to the thing it meant to press. Padding rather than height, so
+   * nothing changes shape on the desktop layout.
+   */
+  .chip { min-height: 44px; }
+  .btn  { min-height: 48px; }
+}
+
+/*
+ * Standalone "back" links.
+ *
+ * These sit alone on a line and are the only way out of a screen, but they
+ * were bare anchors — 15px tall, the height of their own text, and a real
+ * miss on a phone. An inline link inside a sentence is fine at text height;
+ * a navigation control on its own line is not.
+ */
+.link-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 44px;
+  padding-right: var(--s-2);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: var(--t-sm);
+}
+
+.link-back::before { content: '←'; opacity: 0.6; }
+.link-back:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
 
 .counter { font-size: var(--t-xs); color: var(--text-faint); text-align: right; margin-top: var(--s-1); }
 

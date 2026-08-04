@@ -64,6 +64,6 @@
 </div>
 
 <p class="small muted center" style="margin-top:var(--s-6)">
-    <a href="{{ route('world.edit') }}">Back to My World</a>
+    <a class="link-back" href="{{ route('world.edit') }}">Back to My World</a>
 </p>
 @endsection
