@@ -1,0 +1,48 @@
+# What must never reach the build context.
+#
+# The first two lines are the important ones. A Docker build context is copied
+# wholesale into the daemon, and anything that lands in an image layer is
+# readable by anyone who can pull or exec into that image — including via
+# `docker history`. `.env` holds both API keys *and* APP_KEY, which is the key
+# every encrypted journal field in this app is sealed with.
+.env
+.env.*
+!.env.example
+
+# Rebuilt inside the image with --no-dev, so a local dev-flavoured vendor/ tree
+# (whoops, phpunit, faker) must not be copied over the top of it.
+vendor/
+node_modules/
+
+# User data and generated state. The container recreates the skeleton on boot
+# and everything real lives on the persistent volume.
+storage/app/escalate/
+storage/app/private/
+storage/app/public/
+storage/database/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+storage/logs/
+bootstrap/cache/*.php
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Nothing here runs in production.
+tests/
+phpunit.xml
+.phpunit.result.cache
+.phpunit.cache/
+
+# Noise.
+.git/
+.github/
+.gitignore
+.gitattributes
+.editorconfig
+.styleci.yml
+.npmrc
+*.md
+!docs/LEGAL-PACK.md
+.DS_Store

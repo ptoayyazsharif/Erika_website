@@ -1,232 +1,295 @@
-# Deploying Escalate to cPanel
+# Deploying Escalate with Coolify
 
-Read the first section before anything else. Getting it wrong exposes every
-user's journal in plaintext, and it is the easiest mistake to make.
+The whole app ships as one Docker image: nginx, php-fpm and the queue worker in
+a single container. Coolify builds it from `escalate/Dockerfile`, runs it, and
+puts its own proxy and TLS in front.
+
+Everything below has been run. The image builds, boots, migrates, serves and
+drains its queue — the checks in section 7 are the ones actually performed
+against it, not a wishlist.
 
 ---
 
-## 1. The document root — the one that matters
+## 0. Why not Nixpacks
 
-**Point the domain's document root at `escalate/public`.** Not the repository
-root, not `escalate/`.
+The first deploy used Coolify's default build pack and died here:
 
-cPanel → Domains → your domain → Document Root → `.../escalate/public`
-
-Why this is the critical step: the repository root already contains an
-`index.html`, so the natural instinct is to point `public_html` at the repo and
-reach the app at `/escalate/`. Apache would then serve, as plain downloadable
-files:
-
-| URL | What it hands over |
-|---|---|
-| `/escalate/.env` | Both API keys **and `APP_KEY`** |
-| `/escalate/database/database.sqlite` | The whole database |
-| `/escalate/storage/logs/laravel.log` | Every stack trace |
-| `/escalate/storage/app/escalate/audio/…` | Every user's narration, ownership check bypassed |
-
-Apache does not block `.env` by default — only `.ht*` files.
-
-And this is the one bug that defeats the encryption. Every private field in this
-app is encrypted at rest, but `APP_KEY` is the key and it lives in `.env`. Anyone
-who downloads `.env` *and* the database from the same exposed tree has plaintext
-for every journal in the system. The encryption is worth exactly nothing against
-this single misconfiguration.
-
-`escalate/.htaccess` denies everything as a second layer, but **do not rely on
-it** — it only helps if `mod_authz_core` behaves as expected. After deploying,
-verify:
-
-```bash
-curl -i https://your-domain/escalate/.env          # expect 403 or 404
-curl -i https://your-domain/.env                   # expect 403 or 404
-curl -i https://your-domain/storage/app/escalate/  # expect 403 or 404
+```
+#9 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends curl wget
+Get:12 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1110 kB]
+   … two minutes of nothing …
+DeploymentException, exit code 255
 ```
 
-If any of those returns file contents, stop and fix the document root before
-letting anyone sign up.
+That was a network stall fetching Ubuntu package lists — nothing to do with the
+app. Re-running it would have been a coin flip, and Nixpacks was getting four
+other things wrong that would have surfaced later as "the app is broken":
 
-Also move the database out of the served tree entirely, or use MySQL (below).
+| Nixpacks did | Consequence |
+|---|---|
+| Ignored `NIXPACKS_PHP_VERSION=8.4`, installed php83 | Works, but not what was asked for or tested |
+| `composer install --ignore-platform-reqs` | Missing extensions become runtime fatals instead of build errors |
+| Never ran `php artisan migrate` | Every page 500s on a missing table |
+| Never set `APP_KEY` | Nothing encrypts; the app cannot store a journal entry |
+| Started no queue worker | Every reading sits on "Reading your intentions" forever |
+
+The Dockerfile does all five correctly and has no apt layer at all — Alpine's
+repositories are the only OS packages it touches.
 
 ---
 
-## 2. Production environment
+## 1. Coolify settings
 
-Copy `.env.example` to `.env` and set at minimum:
+Application → Configuration → **General**:
+
+| Field | Value |
+|---|---|
+| Build Pack | **Dockerfile** |
+| Base Directory | `/escalate` |
+| Dockerfile Location | `/escalate/Dockerfile` |
+| Ports Exposes | **8080** |
+| Publish Directory | *(leave empty — Dockerfile builds ignore it)* |
+
+Base Directory is what makes the build context `escalate/`, so `COPY . .` picks
+up the app rather than the repository root.
+
+**Ports Exposes must be 8080.** Coolify defaults to 3000 and the container
+listens on 8080; a mismatch shows up as a container that is healthy but that the
+proxy reports as unreachable. Nothing binds a privileged port, so the container
+never needs extra capabilities.
+
+Configuration → **Health Checks**: path `/up`, port `8080`. That is Laravel's
+own health route, and the image carries a `HEALTHCHECK` for it too, so a broken
+deploy is visible in `docker ps` even without Coolify.
+
+### Persistent storage — do this before the first deploy
+
+Storage → Add → **Volume Mount**
+
+| Field | Value |
+|---|---|
+| Name | `escalate-storage` |
+| Destination Path | `/var/www/html/storage` |
+
+Everything a user ever creates lives under that one path: the SQLite database,
+narration audio, vision images, sessions, the queue. Without the volume every
+redeploy silently starts a brand new empty app — the deploy looks perfectly
+successful and every account is gone.
+
+The container recreates the directory skeleton inside the volume on each boot,
+so an empty volume on the first run is expected and fine.
+
+---
+
+## 2. Environment variables
+
+Coolify → Environment Variables. **Leave "Build Variable?" unchecked on every
+one of these.** A build variable is baked into the image, which for
+`ANTHROPIC_API_KEY` means the key is readable by anyone who can pull the image
+or run `docker history`. These are all runtime values.
 
 ```dotenv
+APP_NAME=Escalate
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://your-domain
-APP_KEY=                      # php artisan key:generate
+APP_KEY=base64:…                 # see the warning below
+APP_URL=https://your-domain      # https, no trailing slash
 
+LOG_CHANNEL=stderr               # so Coolify's log view shows them
 LOG_LEVEL=error
-LOG_STACK=daily               # 'single' never rotates and will fill your quota
 
-SESSION_SECURE_COOKIE=true    # without this the session cookie has no Secure flag
+DB_CONNECTION=sqlite             # the file is created inside the volume
+
+SESSION_SECURE_COOKIE=true
 SESSION_ENCRYPT=true
 SESSION_SAME_SITE=strict
 
-DB_QUEUE_RETRY_AFTER=300      # must exceed the longest job timeout (240s)
+# Coolify's proxy reaches the container over the Docker network. Naming the
+# private ranges rather than '*' is the point: with '*' anyone can forge an
+# X-Forwarded-For header, and every rate limit in this app — including the
+# login throttle — is keyed on the client IP.
+TRUSTED_PROXIES=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+
+# Must stay above NarrateStory's 240s timeout, or the database queue hands a
+# still-running job to a second worker and the narration is paid for twice.
+DB_QUEUE_RETRY_AFTER=300
 
 ANTHROPIC_API_KEY=sk-ant-…
 ELEVENLABS_API_KEY=sk_…
 ```
 
-Then:
+`.env.example` lists the rest — model names, quotas, timeouts. The defaults in
+`config/escalate.php` are sensible; set them only to change them.
+
+### APP_KEY
+
+Generate it once, on your own machine:
 
 ```bash
-chmod 600 .env
-composer install --no-dev --optimize-autoloader
-php artisan key:generate        # only if APP_KEY is empty — see the warning below
-php artisan migrate --force
-php artisan config:cache && php artisan route:cache && php artisan view:cache
+cd escalate && php artisan key:generate --show
 ```
 
-> **Never regenerate `APP_KEY` on a database that already holds data.** Every
-> encrypted field becomes permanently unreadable. There is no recovery.
+Paste the whole `base64:…` string into Coolify and **never change it again.**
 
-`--no-dev` matters: `filp/whoops` is a dev dependency, and Whoops' error page
-dumps `$_ENV` — which contains your API keys. With `--no-dev` installed *and*
-`APP_DEBUG=false`, neither the keys nor a stack trace can reach a visitor.
+Every private field in this app is encrypted at rest with that key: journal
+entries, gratitude, faith language, failure reasons. Replace the key and all of
+it becomes permanently unreadable — no recovery, no support ticket, no export.
 
-### Mail — now required, not optional
-
-Password reset sends email, so `MAIL_MAILER=log` (the development default)
-means reset links are written to `storage/logs/laravel.log` **in plaintext**
-instead of being delivered. Anyone who can read that file can take over any
-account.
-
-Set real SMTP before launch:
-
-```dotenv
-MAIL_MAILER=smtp
-MAIL_HOST=…
-MAIL_PORT=587
-MAIL_USERNAME=…
-MAIL_PASSWORD=…
-MAIL_FROM_ADDRESS=no-reply@your-domain
-MAIL_FROM_NAME=Escalate
-```
-
-cPanel's own mail server usually works but lands in spam; a transactional
-provider (Postmark, Resend, SES) is worth the ten minutes.
-
-### If you put Cloudflare (or any CDN) in front
-
-Set `TRUSTED_PROXIES` to its IP ranges — and **never to `*`**. Trusting every
-proxy means `$request->ip()` becomes whatever the caller puts in
-`X-Forwarded-For`, which silently disables the login lockout, the registration
-throttle, the generation limits, and the lockout on the password confirmation
-that guards data export and account deletion.
-
-"It's only reachable through the CDN" does not save you: Symfony takes the
-leftmost `X-Forwarded-For` entry, and Cloudflare *appends* rather than replaces,
-so a forged left-hand value still wins. On shared hosting the origin is usually
-still reachable by IP anyway.
-
-Left empty, the app uses the real `REMOTE_ADDR`, which is correct for a
-directly-served cPanel origin.
-
-### Database
-
-SQLite works, but on cPanel `/home` is often NFS-backed where SQLite's locking is
-unreliable — and sessions, cache, rate-limit counters and the queue all write to
-that one file. Under trivial load you get intermittent `database is locked`
-500s. `busy_timeout` and WAL are configured to soften it, but **MySQL is the
-better choice here** and cPanel gives you one for free:
-
-```dotenv
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_DATABASE=cpaneluser_escalate
-DB_USERNAME=cpaneluser_escalate
-DB_PASSWORD=…
-```
-
-If you stay on SQLite, put the file outside the web tree:
-`DB_DATABASE=/home/USER/private/escalate.sqlite`
+The container will not start without one, and it deliberately does *not*
+generate its own. A container that generated a key on boot would work
+beautifully until its first restart, and then quietly orphan everything every
+user had written.
 
 ---
 
-## 3. The queue worker — without it, nothing generates
+## 3. First deploy
 
-Story and narration generation are queued jobs. With no worker running, every
-reading sits at "queued" forever and the reveal screen polls indefinitely. It
-looks exactly like the AI being broken.
-
-Add this cron entry (cPanel → Cron Jobs, every minute):
+1. Set everything in sections 1 and 2, **volume included**.
+2. Deploy.
+3. Watch the logs. A healthy first boot reads:
 
 ```
-* * * * * /usr/local/bin/flock -n /home/USER/escalate-queue.lock /opt/cpanel/ea-php83/root/usr/bin/php /home/USER/path/to/escalate/artisan queue:work --stop-when-empty --max-time=55 --tries=2 --memory=128 >> /home/USER/logs/queue.log 2>&1
+[escalate] creating a new SQLite database at /var/www/html/storage/database/escalate.sqlite
+[escalate] running migrations
+   INFO  Running migrations.
+[escalate] warming caches
+[escalate] ready — nginx on :8080, php-fpm, and one queue worker
+INFO success: php-fpm entered RUNNING state
+INFO success: nginx entered RUNNING state
+INFO success: queue entered RUNNING state
 ```
 
-Details that matter:
+All three must reach RUNNING. If the queue one is missing, generation never
+finishes and it looks exactly like the AI being broken.
 
-- **Use the explicit PHP 8.3+ binary path.** cPanel's `php` on `PATH` is often
-  older than the version serving the site. If it is below 8.3 the worker dies on
-  a syntax error while the website works fine — a genuinely confusing failure.
-  Find yours with `ls /opt/cpanel/ea-php*/root/usr/bin/php`.
-- **`--stop-when-empty --max-time=55`** keeps each run inside its minute. Do not
-  run a long-lived `queue:work` from cron on shared hosting; GoDaddy kills long
-  CLI processes.
-- **`flock -n`** stops overlapping runs. `NarrateStory` has a 240s timeout and
-  can outlive its window.
-- **`--memory=128`** — narration holds the whole mp3 in memory. Fine at 128 MB;
-  some shared hosts default to 64.
-
-Add a weekly cleanup so failures don't accumulate:
-
-```
-0 4 * * 0 /opt/cpanel/ea-php83/root/usr/bin/php /home/USER/path/to/escalate/artisan queue:prune-failed --hours=168
-```
+If the container exits immediately, the last line before it says why in plain
+English — a missing `APP_KEY`, a truncated one, and `APP_DEBUG=true` in
+production all stop the boot on purpose.
 
 ---
 
-## 4. Permissions
+## 4. Making an admin
 
-```bash
-find storage bootstrap/cache -type d -exec chmod 755 {} \;
-find storage bootstrap/cache -type f -exec chmod 644 {} \;
-chmod 600 .env
-```
-
-Never `777`. On a shared host that is readable and writable by other tenants.
-
-No `php artisan storage:link` is needed. This app deliberately has no public
-storage symlink — private files are streamed by an authorising controller
-instead, and creating the symlink would only add an attack surface.
-
----
-
-## 5. Making an admin
-
-There is no web path to admin privilege, by design. Register normally, then at a
-shell:
+There is no web path to admin privilege, by design. Register normally through
+the site, then from Coolify → Terminal (or `docker exec` on the host):
 
 ```bash
 php artisan escalate:make-admin you@example.com
 ```
 
 Admin is a *second* door: sign in as usual, then confirm your password again at
-`/admin/login`. To a non-admin, both `/admin` and `/admin/login` return 404 —
+`/admin/login`. To everyone else both `/admin` and `/admin/login` return 404 —
 the area is invisible, not merely forbidden.
 
 ---
 
-## 6. After deploying — verify, don't assume
+## 5. Backups
+
+Back up **the volume**. `escalate-storage` holds the database and every audio
+file and photo; nothing of value lives anywhere else.
+
+Store `APP_KEY` somewhere else entirely — a password manager, not the same
+archive. A backup that contains both the database and the key is the plaintext
+journal of every user, in one file. Kept apart, a stolen backup is noise.
+
+Coolify can schedule volume backups under Storages. Restore is the reverse:
+mount the volume, set the same `APP_KEY`, deploy.
+
+---
+
+## 6. Updating
+
+Push to `claude/erika-manifestation-demo-jgjpch` and redeploy. The container
+runs `php artisan migrate --force` before it accepts traffic, so schema changes
+apply themselves; if a migration fails the container refuses to start rather
+than serving half a schema.
+
+The old container is replaced rather than reused, so anything OPcache held goes
+with it. Nothing needs clearing by hand.
+
+---
+
+## 7. Verify after deploying
+
+These are the checks run against the built image. Repeat them against your own
+domain.
 
 ```bash
-curl -i https://your-domain/escalate/.env      # 403/404
-curl -sI https://your-domain/login | grep -i strict-transport   # HSTS present
 curl -sI https://your-domain/login | grep -i content-security   # CSP present
+curl -sI https://your-domain/login | grep -i strict-transport   # HSTS present
 curl -sI https://your-domain/login | grep -i cache-control      # no-store
 curl -sI https://your-domain/manifest.webmanifest | grep -i content-type
 #   → application/manifest+json, or the PWA will not install
+
+curl -so /dev/null -w '%{http_code}\n' https://your-domain/.env         # 403/404
+curl -so /dev/null -w '%{http_code}\n' https://your-domain/foo.php      # 404
+curl -so /dev/null -w '%{http_code}\n' https://your-domain/storage/app/ # 404
 ```
 
-Then, in a browser: register, fill in My World, name a desire, request a reading.
-If it sits on "Reading your intentions" for more than a minute, the queue worker
-is not running — check `/home/USER/logs/queue.log`.
+HSTS only appears when the request arrives over HTTPS *and* `TRUSTED_PROXIES`
+is set. If it is missing here that variable is wrong — and so is every IP-keyed
+rate limit in the app.
+
+Then in a browser: register, fill in My World, name a desire, ask for a
+reading. It should move off "Reading your intentions" within about half a
+minute. If it never does, the queue worker is not running — check the logs for
+`success: queue entered RUNNING state`.
+
+---
+
+## 8. What is in the container
+
+| Process | Runs as | Why |
+|---|---|---|
+| supervisord | root | PID 1; restarts anything that dies |
+| nginx master | root | Only so it can open `/dev/stderr`; workers are www-data |
+| php-fpm master | root | The pool drops to www-data, as the official image intends |
+| queue worker | www-data | `queue:work --tries=2 --timeout=240 --max-time=3600` |
+
+The worker retires hourly by `--max-time` and supervisor restarts it, so
+nothing accumulates. `pcntl` is compiled in specifically so `SIGTERM` lets a
+worker finish the job in hand — a redeploy mid-narration should not leave a
+story stuck in `rendering`.
+
+`--no-dev` at build time is a security control, not a size optimisation:
+`filp/whoops` is a dev dependency and its error page dumps `$_ENV`, which is
+both API keys and `APP_KEY`. With it absent, even an accidental
+`APP_DEBUG=true` could not render them — and the entrypoint refuses to boot
+with that combination anyway.
+
+One line in `docker/fpm-pool.conf` deserves naming, because its absence is
+silent and catastrophic: `clear_env = no`. php-fpm wipes the worker's
+environment by default, so without it `APP_KEY` and both API keys read as null.
+The app would boot, serve the login page, and fail only when something tried to
+decrypt.
+
+---
+
+## Appendix: deploying without Docker
+
+If this ever runs on plain shared hosting instead, one thing matters more than
+everything else combined:
+
+**Point the document root at `escalate/public`.** Not the repository root, not
+`escalate/`. Apache does not block `.env` by default — only `.ht*` files — so a
+document root one level too high serves, as plain downloadable files:
+
+| URL | What it hands over |
+|---|---|
+| `/escalate/.env` | Both API keys **and `APP_KEY`** |
+| `/escalate/database/*.sqlite` | The whole database |
+| `/escalate/storage/logs/laravel.log` | Every stack trace |
+| `/escalate/storage/app/escalate/…` | Every user's narration, ownership check bypassed |
+
+That single misconfiguration defeats the encryption entirely: `APP_KEY` and the
+database downloaded from the same tree is plaintext for every journal in the
+system. `escalate/.htaccess` denies everything as a second layer — but it only
+helps if `mod_authz_core` behaves, so verify with the curls in section 7 rather
+than assuming.
+
+You would also need, by hand, everything the container does for you: a queue
+worker on cron, `php artisan migrate --force`, `config:cache`, `chmod 600 .env`,
+and `composer install --no-dev`.
 
 ---
 
@@ -238,8 +301,14 @@ is not running — check `/home/USER/logs/queue.log`.
   not have. Accepted, not overlooked.
 - **No email verification.** Anyone can register with an address they do not
   own. Password reset exists and works, so account recovery is fine.
+- **Password reset needs a real mailer.** With `MAIL_MAILER=log` the reset link
+  goes to the log rather than to the person. Set real SMTP credentials before
+  telling anyone the feature exists.
 - **Gratitude tags are stored in plaintext** (the `tag_index` column) so the
   archive can filter by them. Tag *labels* only — the entry bodies are encrypted.
 - **Admin re-auth is a sliding two-hour window**, so an actively working admin is
   never forced to re-enter their password.
 - **Quota counts a rolling 24 hours in UTC**, not the user's local day.
+- **One queue worker.** Two people asking for a reading at the same moment are
+  served one after the other. At this scale that is the right trade; if it stops
+  being one, raise `numprocs` in `docker/supervisord.conf`.
