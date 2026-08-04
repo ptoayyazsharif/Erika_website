@@ -112,13 +112,25 @@
             {{-- Always rendered, hidden while a narration is in flight. If the
                  render then fails, reading.js un-hides this rather than leaving
                  the screen stuck on "being recorded" with no way forward. --}}
+            {{-- The voice is chosen here, at the moment you are about to hear
+                 it — not only in My World, which is a screen most people never
+                 open. The choice is remembered as the new default. --}}
             <form method="POST" action="{{ route('stories.narrate', $story) }}" data-once
                   @if ($narration?->isPending()) hidden @endif>
                 @csrf
+                <label class="label" for="voice">Voice</label>
+                <select class="select" id="voice" name="voice" style="margin-bottom:var(--s-3)">
+                    @foreach (config('escalate.voices') as $key => $option)
+                        <option value="{{ $key }}" @selected($voice === $key)>
+                            {{ $option['label'] }} — {{ $option['note'] }}
+                        </option>
+                    @endforeach
+                </select>
+
                 <button class="btn btn-ghost btn-full" type="submit" data-busy="Recording…"
                         @if ($remaining['narration'] < 1) aria-disabled="true" disabled @endif>
                     @include('partials.icon', ['name' => 'play', 'size' => 16])
-                    Hear it in your voice
+                    Hear it read aloud
                 </button>
             </form>
             <p class="small faint center" style="margin-top:var(--s-3)"

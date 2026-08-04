@@ -91,6 +91,47 @@ class GenerationTest extends TestCase
         $this->assertStringNotContainsString('Call them:', $sent);
     }
 
+    /**
+     * The voice is choosable at the moment you ask to hear it.
+     *
+     * It used to come only from My World — a settings screen most people never
+     * open — so in practice everyone got the default whether it suited them or
+     * not. The choice is validated against the configured keys, because this
+     * value picks which voice id the server bills against.
+     */
+    public function test_a_voice_chosen_at_narration_is_used_and_remembered(): void
+    {
+        $user = $this->user();
+        $story = $this->makeReadyStory($user);
+
+        $this->assertSame('still', $user->world()->voice);
+
+        $this->actingAs($user)
+            ->post(route('stories.narrate', $story), ['voice' => 'storyteller'])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('narrations', [
+            'story_id' => $story->id,
+            'voice'    => 'storyteller',
+        ]);
+
+        // Remembered, so the next reading does not make them pick again.
+        $this->assertSame('storyteller', $user->fresh()->world()->voice);
+    }
+
+    public function test_an_unknown_voice_is_rejected_rather_than_billed(): void
+    {
+        $user = $this->user();
+        $story = $this->makeReadyStory($user);
+
+        $this->actingAs($user)
+            ->post(route('stories.narrate', $story), ['voice' => 'not-a-voice'])
+            ->assertSessionHasErrors('voice');
+
+        $this->assertSame(0, \App\Models\Narration::count());
+        $this->assertSame('still', $user->fresh()->world()->voice);
+    }
+
     public function test_a_new_desire_records_when_its_status_was_set(): void
     {
         $user = $this->user();

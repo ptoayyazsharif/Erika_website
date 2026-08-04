@@ -24,7 +24,9 @@
     <script src="{{ asset_v('js/app.js') }}" defer></script>
     @stack('head')
 </head>
-<body @if (session('status')) data-flash="{{ session('status') }}" @endif>
+{{-- app-shell marks the signed-in layout. The desktop sidebar grid keys off
+     it, so the auth pages — which have no sidebar — cannot inherit it. --}}
+<body class="app-shell" @if (session('status')) data-flash="{{ session('status') }}" @endif>
 
 <header class="topbar">
     <a class="brand" href="{{ route('today') }}">Escalat<span>e</span></a>

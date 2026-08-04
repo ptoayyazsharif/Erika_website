@@ -33,17 +33,33 @@ return [
     ],
 
     /*
-    | Narration. Flash v2.5 is half the credit cost of multilingual v2 and the
-    | right cadence for slow reading — see docs/COSTS.md before changing it.
+    | Narration.
+    |
+    | This used to run on Flash v2.5, chosen for being half the credit cost.
+    | That was the wrong trade and it is the single biggest reason the audio
+    | sounded cheap: Flash is built for real-time conversational agents, where
+    | latency beats everything. Narration here is a queued job — nobody is
+    | waiting on the open socket, and twenty seconds is perfectly acceptable —
+    | so buying speed with quality bought something worth nothing.
+    |
+    | Multilingual v2 is ElevenLabs' best model for long-form reading. It costs
+    | roughly twice as much per character; a whole reading is about 1,500
+    | characters, which against a 363,000-character allowance is not the
+    | constraint anyone thought it was.
     */
     'voice' => [
         'provider'      => env('ESCALATE_VOICE_PROVIDER', 'elevenlabs'),
-        'model'         => env('ELEVENLABS_MODEL', 'eleven_flash_v2_5'),
+        'model'         => env('ELEVENLABS_MODEL', 'eleven_multilingual_v2'),
         'output_format' => env('ELEVENLABS_FORMAT', 'mp3_44100_128'),
         'speed'         => (float) env('ELEVENLABS_SPEED', 0.92),
-        'stability'     => 0.5,
-        'similarity'    => 0.75,
-        'style'         => 0.1,
+
+        // Higher stability than the default, and style at zero. Style is an
+        // expressiveness dial — it adds performance, and performance is the
+        // one thing this reading must not have. The text is someone describing
+        // their own ordinary Tuesday; it should sound like it.
+        'stability'     => 0.55,
+        'similarity'    => 0.8,
+        'style'         => 0.0,
         'timeout'       => (int) env('ELEVENLABS_TIMEOUT', 180),
     ],
 
@@ -56,11 +72,33 @@ return [
     | The voices a user may choose between. Keys are stored on the profile;
     | the ids never leave the server. Audition replacements at
     | https://elevenlabs.io/app/voice-library before shipping.
+    |
+    | The previous three were all wrong for this, and not by a little: Sarah is
+    | tagged entertainment_tv, Matilda and Lily informative_educational. Those
+    | are explainer-video voices — bright, forward, selling you something. This
+    | app is a person describing a quiet morning they already live in.
+    |
+    | 'still' must remain a valid key: Profile::voiceId() and NarrateStory both
+    | fall back to it when a stored key no longer resolves.
     */
     'voices' => [
-        'still'    => ['id' => env('VOICE_STILL', 'EXAVITQu4vr4xnSDxMaL'), 'label' => 'Still',    'note' => 'Low, unhurried. Reads like someone sitting beside you.'],
-        'warm'     => ['id' => env('VOICE_WARM', 'XrExE9yKIg1WjnnlVkGX'),  'label' => 'Warm',     'note' => 'Rounder and closer. Good for gratitude and rewinds.'],
-        'grounded' => ['id' => env('VOICE_GROUNDED', 'pFZP5JQG7iQjIQuC4Bku'), 'label' => 'Grounded', 'note' => 'Even and steady. No performance in it.'],
+        'still'       => ['id' => env('VOICE_STILL', 'SAz9YHcvj6GT2YYXdXww'),    'label' => 'Still',       'note' => 'Relaxed and unplaceable. Reads like someone sitting beside you.'],
+        'warm'        => ['id' => env('VOICE_WARM', 'pFZP5JQG7iQjIQuC4Bku'),     'label' => 'Warm',        'note' => 'Velvety, British. Closer and rounder — good for gratitude.'],
+        'grounded'    => ['id' => env('VOICE_GROUNDED', 'nPczCjzI2devNBz1zQrb'), 'label' => 'Grounded',    'note' => 'Deep and resonant. No performance in it.'],
+        'storyteller' => ['id' => env('VOICE_STORYTELLER', 'JBFqnCBsd6RMkjVDRZzb'), 'label' => 'Storyteller', 'note' => 'Warm and captivating. Built for reading aloud.'],
+        'reassuring'  => ['id' => env('VOICE_REASSURING', 'EXAVITQu4vr4xnSDxMaL'), 'label' => 'Reassuring',  'note' => 'Mature and steady. Certain without pushing.'],
+
+        /*
+         * Erika's own voice.
+         *
+         * Worth naming plainly: this is a cloned voice on the account, so
+         * every user who picks it hears their own private journal read back in
+         * a real, identifiable person's voice. For a coaching app that is the
+         * point — it is her reading it to you. It is also exactly the kind of
+         * thing that needs her explicit say-so, and the consent for it belongs
+         * in the terms, not in a config file.
+         */
+        'erika'       => ['id' => env('VOICE_ERIKA', 'A0cqQbKSKNvw6IyjpQ5n'),    'label' => 'Erika',       'note' => 'Erika reading it to you, in her own voice.'],
     ],
 
     /*

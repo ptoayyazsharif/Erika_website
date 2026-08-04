@@ -573,7 +573,18 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
 }
 
 @media (min-width: 900px) {
-  body { display: grid; grid-template-columns: 236px 1fr; }
+  /*
+   * Scoped to .app-shell, and that scope is the whole point.
+   *
+   * This was a bare `body` selector, so it also caught the auth pages — which
+   * set `display:grid; place-items:center` inline but say nothing about
+   * columns, so `grid-template-columns: 236px 1fr` from here applied to them
+   * too. The sign-in form, max-width 26rem, was laid into the 236px sidebar
+   * column and centred inside it: a 236px sliver pinned to the left edge of a
+   * 1440px screen with the other 1200px empty. It is the first screen anyone
+   * sees, and on desktop it looked broken because it was.
+   */
+  body.app-shell { display: grid; grid-template-columns: 236px 1fr; }
   .topbar { grid-column: 1 / -1; }
   .tabbar {
     position: sticky;
@@ -1090,6 +1101,54 @@ a.card:active, button.card:active { transform: translateY(0); }
 @media (pointer: coarse) {
   .chip { min-height: 44px; }
   .btn  { min-height: 48px; }
+}
+
+
+/* ── the signed-out pages ────────────────────────────────────────────────
+   One column on a phone: what the screen is, then the form, in that order.
+   Two columns from 1000px, because a 26rem strip centred in 1440px of empty
+   dark is not a design — it is a mobile layout that nobody looked at on a
+   laptop. The left column carries the words, the right the work. */
+
+.auth-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--s-6) var(--s-4);
+}
+
+.auth-main { width: 100%; max-width: 26rem; }
+.auth-say h1 { margin-bottom: var(--s-3); }
+.auth-say .lede { margin-bottom: var(--s-6); }
+
+/* Reserved for the second column; there is nowhere to put it on a phone. */
+.auth-aside { display: none; }
+
+@media (min-width: 1000px) {
+  .auth-page { padding: var(--s-8) var(--s-7); }
+
+  .auth-main {
+    max-width: 62rem;
+    display: grid;
+    grid-template-columns: 1fr 26rem;
+    gap: var(--s-9);
+    align-items: center;
+  }
+
+  .auth-say { max-width: 30rem; }
+  .auth-say h1 { font-size: var(--t-3xl); line-height: 1.1; }
+
+  .auth-aside {
+    display: block;
+    max-width: 26rem;
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--line);
+    line-height: 1.7;
+  }
+
+  /* The form column keeps its own width so the fields stay a comfortable
+     measure — a 40rem-wide email input looks like a mistake. */
+  .auth-do { width: 100%; }
 }
 
 @media print {

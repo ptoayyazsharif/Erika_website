@@ -106,7 +106,31 @@ class StoryController extends Controller
         $this->mine($request, $story);
         abort_unless($story->isReady(), 404);
 
-        $voice = $request->user()->world()->voice;
+        /*
+         * The voice can be chosen here, not only in My World.
+         *
+         * It used to come solely from the profile, which meant changing it was
+         * a trip to a settings screen most people never opened — and the one
+         * moment you actually have an opinion about the voice is the moment
+         * you are about to hear it.
+         *
+         * Validated against the configured keys rather than trusted, because
+         * this value ends up selecting which voice id the server bills against.
+         */
+        $world = $request->user()->world();
+
+        $validated = $request->validate([
+            'voice' => ['nullable', 'string', 'in:'.implode(',', array_keys(config('escalate.voices')))],
+        ]);
+
+        $voice = $validated['voice'] ?? $world->voice;
+
+        // Remember it, so the next reading defaults to what they last chose
+        // and nobody has to re-pick every time.
+        if ($voice !== $world->voice) {
+            $world->forceFill(['voice' => $voice])->save();
+        }
+
         $existing = $story->narrationFor($voice);
 
         // Already rendered, or already on its way. Asking twice must not bill

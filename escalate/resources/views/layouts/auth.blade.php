@@ -19,15 +19,25 @@
     <script src="{{ asset_v('js/gsap.min.js') }}" defer></script>
     <script src="{{ asset_v('js/app.js') }}" defer></script>
 </head>
-<body @if (session('status')) data-flash="{{ session('status') }}" @endif
-      style="display:grid;place-items:center;padding:var(--s-5) var(--s-4)">
+{{-- auth-page, not a bare body: the desktop sidebar grid used to catch these
+     pages too and lay the form into a 236px column. --}}
+<body class="auth-page" @if (session('status')) data-flash="{{ session('status') }}" @endif>
 
-<main style="width:100%;max-width:26rem">
-    <div data-enter-hero>
+<main class="auth-main">
+    <div class="auth-say" data-enter-hero>
         <p class="eyebrow">Escalate</p>
-        <h1 style="margin-bottom:var(--s-3)">@yield('heading')</h1>
-        <p class="lede" style="margin-bottom:var(--s-6)">@yield('sub')</p>
+        <h1>@yield('heading')</h1>
+        <p class="lede">@yield('sub')</p>
+
+        {{-- Desktop only. On a phone the form should be the first thing under
+             the thumb, so this sits in the column the form does not use. --}}
+        <p class="auth-aside small muted">
+            A private journal. You name what you want, and it comes back to you
+            written as an ordinary moment inside the life where you already have it.
+        </p>
     </div>
+
+    <div class="auth-do">
 
     @if ($errors->any())
         <div class="notice notice-error" role="alert">
@@ -56,6 +66,7 @@
         </span>
         <a href="{{ route('privacy') }}">What happens to what you write &rarr;</a>
     </p>
+    </div>
 </main>
 
 </body>
