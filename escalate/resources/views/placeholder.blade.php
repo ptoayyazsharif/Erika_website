@@ -10,8 +10,16 @@
 <div class="empty" data-enter>
     @include('partials.icon', ['name' => 'feather', 'size' => 34])
     <h3>Not written yet</h3>
-    <p>Coming in the slice that builds {{ $heading }}.</p>
-    <a class="btn btn-ghost" href="{{ route('today') }}">Back to Today</a>
+    {{-- Points at Desires, not Today.
+
+         This view is shared by every unbuilt screen, and Today used to be one
+         of them — so it rendered "Back to Today" while you were standing on
+         Today, offering a button to the page you were already on. Today is a
+         real screen now, but a dead end is still a dead end: whoever lands
+         here wanted to do something, and naming a desire is the thing this
+         app is for. --}}
+    <p>{{ $heading }} is still being built. Everything else works.</p>
+    <a class="btn btn-ghost" href="{{ route('desires.index') }}">Go to your desires</a>
 </div>
 
 <form method="POST" action="{{ route('logout') }}" data-logout style="margin-top:var(--s-6)">

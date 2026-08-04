@@ -9,6 +9,7 @@ use App\Http\Controllers\DesireController;
 use App\Http\Controllers\GratitudeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\StoryController;
+use App\Http\Controllers\TodayController;
 use App\Http\Controllers\WorldController;
 use Illuminate\Support\Facades\Route;
 
@@ -119,8 +120,11 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::put('/gratitude/{entry}', [GratitudeController::class, 'update'])->name('gratitude.update');
     Route::delete('/gratitude/{entry}', [GratitudeController::class, 'destroy'])->name('gratitude.destroy');
 
+    /* The screen every session lands on, so it is the one screen that cannot
+       be a placeholder — see TodayController. */
+    Route::get('/today', TodayController::class)->name('today');
+
     /* Still to build — the navigation resolves so the shell stays whole. */
-    Route::view('/today', 'placeholder', ['heading' => 'Today'])->name('today');
     Route::view('/rewinds', 'placeholder', ['heading' => 'My Rewinds'])->name('rewinds.index');
     Route::view('/journey', 'placeholder', ['heading' => 'My Journey'])->name('journey');
 
