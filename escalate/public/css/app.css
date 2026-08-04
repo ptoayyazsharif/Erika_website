@@ -778,15 +778,6 @@ a.card:active, button.card:active { transform: translateY(0); }
  */
 @media (pointer: coarse) {
   .input, .textarea, .select { font-size: 16px; }
-
-  /*
-   * 44px is the smallest reliably hittable target on a phone. Chips were 36
-   * and buttons in some rows measured 38, which is the size where a thumb
-   * lands next to the thing it meant to press. Padding rather than height, so
-   * nothing changes shape on the desktop layout.
-   */
-  .chip { min-height: 44px; }
-  .btn  { min-height: 48px; }
 }
 
 /*
@@ -1076,6 +1067,24 @@ a.card:active, button.card:active { transform: translateY(0); }
 }
 
 /* ── print: a reading should be printable, it belongs to the user ────────── */
+
+/*
+ * Touch targets, last in the file on purpose.
+ *
+ * 44px is the smallest reliably hittable target on a phone. Chips were 36 and
+ * some buttons measured 38 — the size where a thumb lands beside the thing it
+ * aimed at.
+ *
+ * These live at the end because an earlier attempt put them beside the form
+ * rules, above `.chip`'s own `min-height: 36px`. A media query adds no
+ * specificity, so the later plain rule simply won and the chips stayed 36px
+ * while everything else in the same block worked. Anything overriding a
+ * component belongs after that component.
+ */
+@media (pointer: coarse) {
+  .chip { min-height: 44px; }
+  .btn  { min-height: 48px; }
+}
 
 @media print {
   .topbar, .tabbar, .toast, .btn, body::before { display: none !important; }
