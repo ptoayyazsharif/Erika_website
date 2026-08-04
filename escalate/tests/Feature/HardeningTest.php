@@ -17,6 +17,33 @@ class HardeningTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * The header that renders a plain-HTTP deployment unusable.
+     *
+     * `upgrade-insecure-requests` was sent unconditionally. asset() builds
+     * absolute URLs from APP_URL, so on an http:// origin the browser was
+     * handed http://host/css/app.css and told to fetch it over https, where
+     * nothing was listening — every stylesheet, script and font failed and the
+     * live site rendered as raw unstyled HTML.
+     *
+     * What made it expensive was how well it hid: the assets were served
+     * correctly, 200 with the right content type, and curl fetched them
+     * happily. Only a browser applies a CSP.
+     */
+    public function test_insecure_requests_are_only_upgraded_when_the_request_was_secure(): void
+    {
+        $plain = $this->get('/login')->headers->get('Content-Security-Policy');
+        $this->assertStringNotContainsString('upgrade-insecure-requests', $plain);
+
+        // Same condition HSTS uses, so assert they agree rather than drift.
+        $secure = $this->get('https://localhost/login');
+        $this->assertStringContainsString(
+            'upgrade-insecure-requests',
+            $secure->headers->get('Content-Security-Policy'),
+        );
+        $this->assertNotNull($secure->headers->get('Strict-Transport-Security'));
+    }
+
     public function test_a_forged_forwarded_header_cannot_change_the_client_ip(): void
     {
         // trustProxies used to be at:'*', which made $request->ip() whatever

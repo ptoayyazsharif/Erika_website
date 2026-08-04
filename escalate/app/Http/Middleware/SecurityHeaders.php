@@ -26,7 +26,7 @@ class SecurityHeaders
 
         // Media blobs are streamed by a controller; don't touch their headers
         // beyond the essentials, and never cache them in a shared cache.
-        $csp = implode('; ', [
+        $directives = [
             "default-src 'self'",
             "script-src 'self'",
             "style-src 'self' 'unsafe-inline'",   // Blade sets a few inline custom properties
@@ -38,8 +38,30 @@ class SecurityHeaders
             "frame-ancestors 'none'",
             "base-uri 'self'",
             "object-src 'none'",
-            'upgrade-insecure-requests',
-        ]);
+        ];
+
+        /*
+         * Only when the request already arrived over TLS — the same condition
+         * HSTS uses below, and for the same reason.
+         *
+         * Sent unconditionally, this directive bricks a plain-HTTP deployment
+         * completely. asset() builds absolute URLs from APP_URL, so on an
+         * http:// origin the browser is handed http://host/css/app.css and
+         * told to rewrite it to https://host/css/app.css — where nothing is
+         * listening. Every stylesheet, script and font fails, and the page
+         * renders as raw unstyled HTML.
+         *
+         * The failure is worth describing because it is so misleading: the
+         * files are served correctly, 200 with the right content type, and
+         * curl fetches them happily. Only a real browser applies the CSP, so
+         * it looks like broken assets rather than a header. It cost a live
+         * deploy to find on http:// before TLS was in place.
+         */
+        if ($request->secure()) {
+            $directives[] = 'upgrade-insecure-requests';
+        }
+
+        $csp = implode('; ', $directives);
 
         $headers = [
             'Content-Security-Policy'   => $csp,
