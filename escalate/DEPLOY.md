@@ -58,6 +58,16 @@ listens on 8080; a mismatch shows up as a container that is healthy but that the
 proxy reports as unreachable. Nothing binds a privileged port, so the container
 never needs extra capabilities.
 
+> **If you change the port through the API rather than the UI, change the
+> labels too.** Coolify caches the generated Traefik/Caddy labels on the
+> application and does *not* regenerate them when `ports_exposes` changes via
+> `PATCH /applications/{uuid}`. The result is a container reporting `healthy`,
+> a Coolify status of `running:healthy`, and every request returning **502**,
+> because the proxy is still dialling the old port. It cost a deploy to find.
+> The labels live base64-encoded in `custom_labels`; decode, replace
+> `loadbalancer.server.port=3000` and `{{upstreams 3000}}` with 8080, PATCH it
+> back, and redeploy. Setting the port in the UI regenerates them for you.
+
 Configuration → **Health Checks**: path `/up`, port `8080`. That is Laravel's
 own health route, and the image carries a `HEALTHCHECK` for it too, so a broken
 deploy is visible in `docker ps` even without Coolify.
