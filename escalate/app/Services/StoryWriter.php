@@ -58,9 +58,45 @@ class StoryWriter
         $profile = $user->world();
         [$low, $high] = config("escalate.lengths.{$this->length($profile, $desire)}.words");
 
+        /*
+         * Stated at length, and with the failure spelled out, because the
+         * short version lost.
+         *
+         * "Second person — you are. Address the reader directly." was one line
+         * against rule 4's "every name must appear at least once, spelled
+         * exactly as they wrote it" — and the reader's own name is in the
+         * context block right under "Call them:". The model resolved the
+         * conflict the way anyone would: it used the name, which forced the
+         * whole piece into third person. Live output read "the water spots on
+         * the glass Erika didn't dry last night. She leaves it there."
+         *
+         * That is not a reading. It is someone being narrated at. The entire
+         * point is a person standing inside their own life, so the perspective
+         * rule now names the wrong answer explicitly rather than trusting the
+         * right one to win on its own.
+         */
         $perspective = match ($desire?->perspective ?: $profile->perspective) {
-            'second' => 'Second person — "you are". Address the reader directly.',
-            default  => 'First person — "I am". The reader is speaking about their own life.',
+            'second' => <<<'P'
+            Second person, throughout. The reader is "you" — every single time.
+
+               Right: "You leave it there. You stand a second longer than the coffee requires."
+               Wrong: "Erika leaves it there. She stands a second longer."
+
+               Never write the reader's name. Never write "she", "he" or "they"
+               meaning the reader. If a sentence describes the reader from the
+               outside, it is wrong — rewrite it from inside.
+            P,
+            default => <<<'P'
+            First person, throughout. The reader is "I" — every single time.
+
+               Right: "I leave it there. I don't check the balance twice anymore."
+               Wrong: "Erika leaves it there. She doesn't check the balance twice anymore."
+
+               Never write the reader's name. Never write "she", "he" or "they"
+               meaning the reader. This is the reader speaking about their own
+               life, in their own mouth. If a sentence describes them from the
+               outside, it is wrong — rewrite it from inside.
+            P,
         };
 
         $faith = $this->faithRule($profile->faith_language);
@@ -78,9 +114,15 @@ class StoryWriter
         3. Between {$low} and {$high} words. Prose paragraphs separated by blank
            lines. No headings, no lists, no titles, no markdown, no preamble —
            begin with the first sentence of the piece itself.
-        4. Use the reader's own specifics. Every name, place, number and object
-           they gave you must appear at least once, spelled exactly as they
-           wrote it. Do not invent names for people they did not name.
+        4. Use the reader's own specifics. Every place, number and object they
+           gave you must appear at least once, spelled exactly as they wrote it,
+           and so must the names of other people in their life. Do not invent
+           names for people they did not name.
+
+           The reader's own name is the one exception, and it is absolute: it
+           never appears in the prose. It is only there so you know how to
+           address them. Writing it drags the whole piece into third person,
+           which breaks rule 2.
         5. Include one contrast beat, and place it near the middle: name a
            small, specific thing they used to do out of scarcity or fear, and
            then show them not doing it. Not as triumph — as something that
@@ -111,7 +153,9 @@ class StoryWriter
         $lines = [];
 
         $lines[] = 'THE READER';
-        $lines[] = 'Call them: '.$user->callMe();
+        // Deliberately not "Call them" — that read as an instruction to use the
+        // name, and the model duly wrote it into the prose in the third person.
+        $lines[] = 'Their name (for your understanding only — never write it in the piece): '.$user->callMe();
         $this->add($lines, 'Lives in', $p->city);
         $this->add($lines, 'Where they are right now', $p->life_context);
         $this->add($lines, 'What matters most to them', $this->list($p->values));

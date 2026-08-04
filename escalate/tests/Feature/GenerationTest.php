@@ -49,6 +49,48 @@ class GenerationTest extends TestCase
         return str_repeat("\xFF\xFB\x90\x64".str_repeat("\x00", 413), 200);
     }
 
+    /**
+     * The reader is never a character in their own reading.
+     *
+     * The live app shipped readings that said "Erika leaves it there. She
+     * stands a second longer" — third person, about the person reading it,
+     * when first person had been asked for. The cause was two instructions
+     * pulling against each other: the context block announced "Call them:
+     * Erika" and rule 4 required every name to appear in the prose, so the
+     * model used it, and using it forces third person.
+     *
+     * Both halves are asserted here because fixing either one alone leaves the
+     * conflict intact.
+     */
+    public function test_the_prompt_forbids_writing_the_readers_own_name(): void
+    {
+        $user = $this->user();          // named Mark
+        $this->fakeStory(str_repeat('word ', 300));
+
+        $desire = $user->desires()->create(['title' => 'A quiet house', 'status' => 'desired']);
+        $story = $user->stories()->make();
+        $story->forceFill(['desire_id' => $desire->id, 'state' => 'queued'])->save();
+
+        app(\App\Services\StoryWriter::class)->write($story);
+
+        $sent = '';
+        Http::assertSent(function ($request) use (&$sent) {
+            $sent = json_encode($request->data());
+
+            return true;
+        });
+
+        $this->assertStringContainsString('never write it in the piece', $sent);
+        // Substring stops short of the curly apostrophe, which json_encode
+        // escapes — asserting past it tests PHP's escaping, not the prompt.
+        $this->assertStringContainsString('Never write the reader', $sent);
+        $this->assertStringContainsString('meaning the reader', $sent);
+        // First person is the default, and it must say so unmistakably.
+        $this->assertStringContainsString('First person, throughout', $sent);
+        // The old phrasing is what caused it; make sure it cannot come back.
+        $this->assertStringNotContainsString('Call them:', $sent);
+    }
+
     public function test_a_new_desire_records_when_its_status_was_set(): void
     {
         $user = $this->user();
