@@ -159,6 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
             foreach ($sec['fields'] as $f) {
                 $k = $f['k'];
                 if ($f['t'] === 'image') {
+                    // the picture changed this save, so any saved crop belongs to the old one
+                    $swapped = false;
                     // uploaded replacement?
                     if (isset($_FILES['up']['name'][$k]) && $_FILES['up']['error'][$k] !== UPLOAD_ERR_NO_FILE) {
                         $file = [
@@ -169,15 +171,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
                         ];
                         [$path, $uerr] = handle_upload($file);
                         if ($uerr) { $err = $f['label'] . ': ' . $uerr; }
-                        elseif ($path) { content_set($k, $path); $saved++; }
+                        elseif ($path) { content_set($k, $path); $saved++; $swapped = true; }
                     } elseif (!empty($_POST['clear'][$k])) {
                         content_set($k, ''); // back to placeholder
-                        content_set($k . '__adj', '');
                         $saved++;
+                        $swapped = true;
+                    } elseif (isset($_POST['lib'][$k]) && is_string($_POST['lib'][$k])) {
+                        // picked one of the curated photos for this slot
+                        $pick = $_POST['lib'][$k];
+                        if ($pick !== cms($k) && photo_is_library_path($pick)) {
+                            content_set($k, $pick);
+                            $saved++;
+                            $swapped = true;
+                        }
+                    }
+                    if ($swapped) {
+                        content_set($k . '__adj', '');
+                        continue;
                     }
                     // reposition / zoom adjustment (posX posY zoom)
-                    if (isset($_POST['adj'][$k])) {
-                        $adj = trim((string) $_POST['adj'][$k]);
+                    if (isset($_POST['adj'][$k]) && is_string($_POST['adj'][$k])) {
+                        $adj = trim($_POST['adj'][$k]);
                         $currentAdj = setting($k . '__adj', '');
                         if (preg_match('/^\d{1,3}(\.\d+)?\s+\d{1,3}(\.\d+)?\s+\d{1,3}(\.\d+)?$/', $adj)) {
                             $normalized = ($adj === '50 50 100') ? '' : $adj;
@@ -246,6 +260,20 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
 .imgrow .thumb{width:84px;height:64px;object-fit:cover;border:1px solid rgba(69,50,48,.2);background:linear-gradient(145deg,#EBD2CA,#D49388);display:flex;align-items:center;justify-content:center;font-size:9px;color:#7a5c55;text-align:center}
 .imgrow input[type=file]{font-size:13px}
 .imgrow .rm{font-size:12.5px;display:flex;gap:6px;align-items:center;color:#8C3B32}
+.lib{margin-top:12px;border:1px solid rgba(69,50,48,.14);background:#FBF7F3;padding:10px 12px 12px}
+.lib-head{font-size:11.5px;color:#6b5550;font-weight:700;letter-spacing:.04em;margin-bottom:2px}
+.lib-head small{font-weight:400;color:#8a746f;letter-spacing:0;margin-left:8px}
+.lib-strip{display:flex;gap:10px;overflow-x:auto;padding:10px 2px 4px}
+.lib-opt{flex:0 0 96px;cursor:pointer;display:block;position:relative;margin:0;text-transform:none;letter-spacing:0;font-weight:400}
+.lib-opt input{position:absolute;opacity:0;width:0;height:0}
+.lib-opt img{width:96px;height:112px;object-fit:cover;display:block;border:2px solid transparent;outline:1px solid rgba(69,50,48,.18);background:#EBD2CA}
+.lib-opt:hover img{outline-color:#B05E51}
+.lib-opt input:focus-visible+img{outline:2px solid #C9A15E;outline-offset:2px}
+.lib-opt.on img{border-color:#B05E51;outline-color:#B05E51}
+.lib-cap{display:block;font-size:10.5px;line-height:1.35;color:#8a746f;margin-top:5px;text-transform:none;letter-spacing:0;font-weight:400}
+.lib-cap b{color:#6b5550;font-weight:700}
+.lib-opt.on .lib-cap b{color:#9C4A3E}
+.lib-note{font-size:11.5px;color:#8a746f;margin:2px 0 0}
 .adjust{margin-top:12px;max-width:340px}
 .adjust-head{font-size:11.5px;color:#8a746f;margin-bottom:8px}
 .adjust-stage{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;border:1px solid rgba(69,50,48,.2);background:#EBD2CA;cursor:grab;touch-action:none}
@@ -410,6 +438,23 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
                     <input type="file" name="up[<?= esc($k) ?>]" accept=".jpg,.jpeg,.png,.webp,.gif,.mp4,.webm">
                     <?php if ($v !== ''): ?><label class="rm"><input type="checkbox" name="clear[<?= esc($k) ?>]" value="1"> remove (back to placeholder)</label><?php endif; ?>
                   </div>
+                  <?php $set = photo_set($k); if ($set): ?>
+                  <div class="lib">
+                    <div class="lib-head">Photo library — <?= esc($set['title']) ?><small>click a picture to use it here, or upload your own above</small></div>
+                    <div class="lib-strip">
+                      <?php foreach ($set['photos'] as $p): $on = ($v === $p['f']); ?>
+                        <label class="lib-opt<?= $on ? ' on' : '' ?>">
+                          <input type="radio" name="lib[<?= esc($k) ?>]" value="<?= esc($p['f']) ?>"<?= $on ? ' checked' : '' ?>>
+                          <img src="<?= esc($p['f']) ?>" alt="<?= esc($p['label']) ?>" loading="lazy">
+                          <span class="lib-cap"><b><?= esc($p['r']) ?></b> <?= esc($p['label']) ?><?= $p['note'] !== '' ? ' · ' . esc($p['note']) : '' ?></span>
+                        </label>
+                      <?php endforeach; ?>
+                    </div>
+                    <?php if ($v !== '' && !photo_is_library_path($v)): ?>
+                      <p class="lib-note">This slot is showing a picture you uploaded. Click one above to switch back to a library photo.</p>
+                    <?php endif; ?>
+                  </div>
+                  <?php endif; ?>
                   <?php if ($v !== ''): $ext = strtolower(pathinfo($v, PATHINFO_EXTENSION)); ?>
                   <div class="adjust" data-key="<?= esc($k) ?>">
                     <div class="adjust-head">Adjust — drag the picture to choose what shows, then zoom.</div>
@@ -470,6 +515,18 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
       if(!input)return;
       if(editors[el.id])input.value=editors[el.id].root.innerHTML;
       else input.value=el.innerHTML; // untouched section — submit original content unchanged
+    });
+  });
+
+  /* ---------- photo library: highlight the picked shot straight away ---------- */
+  document.querySelectorAll('.lib-strip').forEach(function(strip){
+    strip.addEventListener('change',function(e){
+      if(e.target.type!=='radio')return;
+      strip.querySelectorAll('.lib-opt').forEach(function(o){ o.classList.remove('on'); });
+      var opt=e.target.closest('.lib-opt');
+      if(opt)opt.classList.add('on');
+      var clear=strip.closest('.fld').querySelector('input[type=checkbox][name^="clear["]');
+      if(clear)clear.checked=false; // picking a photo means you are not removing it
     });
   });
 

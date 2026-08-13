@@ -1,5 +1,14 @@
 # Photo placement guide — Erika Page website
 
+> **These picks are live on the site.** 65 slots ship with their photo already in place
+> (`assets/photos/`, declared in `photos.php`, wired as each field's default in `fields.php`).
+> In the admin, every one of those slots shows a **photo library** strip — click A2, A3, A4…
+> and Save to swap, or upload your own as before. Two deliberate exceptions to "always A1":
+> the no-background slot on the home page uses **02/A6**, the only true transparent cut-out
+> (A1 has a white background that would show as a white box on the rose panel), and the
+> Atlanta skyline slots use **11/A2**, because 11/A1 is only 682 px wide.
+
+
 Source collection: **Erika_Pics_Collection** (231 images) —
 <https://drive.google.com/drive/folders/1JetVvp5u4YuvDib3d2oPQIrZkoA-6uDq>
 

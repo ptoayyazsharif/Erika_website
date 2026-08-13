@@ -16,6 +16,8 @@ or video, save. Plain PHP + MySQL — no framework, no plugins, no build step.
 | `config.php` | MySQL credentials (edit on your host) |
 | `assets/quill/` | Self-hosted WYSIWYG editor (no CDN, no external calls) |
 | `lib/phpmailer/` | Self-hosted PHPMailer (SMTP sending for forms) |
+| `photos.php` | Curated photo library: which shots a slot can use, and which one it ships with |
+| `assets/photos/` | The photo files themselves, grouped by kind of slot (`01` hero, `03` stage, …) |
 | `routes.php` | Clean-URL ↔ page map (real per-page URLs) |
 | `submit.php` | Public form handler (emails submissions to admin) |
 | `.htaccess` / `.user.ini` | Clean-URL rewriting + raised upload limits |
@@ -27,6 +29,27 @@ Every page has its own shareable URL (`/`, `/sell`, `/home-value`, `/property-ma
 `/escaluxe-living`, …) served by the `.htaccess` front controller, and the browser
 back/forward buttons work correctly. Home is always the root `/`. The `.htaccess`
 rewrite is required — on a host without mod_rewrite, ask support to enable it.
+
+## Pictures: the photo library
+
+65 picture slots ship filled with photos from Erika's collection — the hero headshot, the
+no-background cut-out, stage and keynote shots, coaching, sold signs, client moments, media
+stills, Atlanta, transportation and lifestyle. The files live in `assets/photos/` and the
+picks are declared in `photos.php`; the chosen shot for each slot is that field's default in
+`fields.php`, so a fresh install renders the complete site with no database rows at all.
+
+Each of those slots shows a **photo library** strip in the admin: the alternates for that
+kind of slot (A1, A2, A3…), where A1 is the recommended shot. Click a different one and hit
+Save to swap it — no upload needed. Uploading your own picture still wins over the library,
+and "remove" still returns the slot to its designed placeholder. Swapping a picture clears
+the saved crop, since the old crop was framed for the old photo.
+
+Slots with no suitable photo in the collection (property interiors and exteriors, guide
+covers, product mock-ups, location shots) stay as placeholders with the plain upload box —
+`photos.php` simply doesn't list them.
+
+Every page of the site lives in one document, so pictures load lazily: the browser only
+fetches the pages a visitor actually opens. The landing-page hero is the one eager image.
 
 ## Pictures: replace, reposition & zoom (photo or video)
 

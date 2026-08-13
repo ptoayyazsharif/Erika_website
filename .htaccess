@@ -18,6 +18,20 @@ Options -MultiViews
   RewriteRule ^ index.php [L]
 </IfModule>
 
+# Photo library uses WEBP for the cut-outs (transparency at a fraction of PNG weight).
+# Older Apache builds have no mapping for it and would send the wrong content type.
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+</IfModule>
+
+# Long-lived caching for the shipped photos — their filenames never change in place.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png  "access plus 1 year"
+</IfModule>
+
 # Upload-size fallback if .user.ini isn't picked up (works under mod_php).
 <IfModule mod_php.c>
   php_value upload_max_filesize 300M

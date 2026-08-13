@@ -51,6 +51,34 @@ function fields_flat(): array {
     return $flat;
 }
 
+/* ---------- curated photo library (photos.php) ---------- */
+
+function photo_library(): array {
+    static $p;
+    return $p ??= require __DIR__ . '/photos.php';
+}
+
+/**
+ * The photo set offered for an image field, or [] when the slot has no curated set.
+ * Returns ['id' => '03', 'title' => 'Keynote & stage', 'photos' => [...]].
+ */
+function photo_set(string $k): array {
+    $lib = photo_library();
+    $slot = $lib['slots'][$k] ?? null;
+    if (!$slot) return [];
+    $set = $lib['libraries'][$slot['lib']] ?? null;
+    if (!$set) return [];
+    return ['id' => $slot['lib'], 'title' => $set['title'], 'photos' => $set['photos']];
+}
+
+/** True when the path is one of the curated photos — the whitelist for saving a pick. */
+function photo_is_library_path(string $path): bool {
+    foreach (photo_library()['libraries'] as $set) {
+        foreach ($set['photos'] as $p) if ($p['f'] === $path) return true;
+    }
+    return false;
+}
+
 /* ---------- content ---------- */
 
 /** All DB overrides, loaded once per request. */
@@ -138,17 +166,24 @@ function adjust_style(string $k): string {
     return sprintf('object-position:%s%% %s%%;transform:scale(%s);transform-origin:%s%% %s%%;', $x, $y, $scale, $x, $y);
 }
 
-/** Image/video slot: outputs media tag when an upload exists, empty string otherwise. */
-function cms_img(string $k): string {
+/**
+ * Image/video slot: outputs media tag when a picture exists, empty string otherwise.
+ *
+ * Every page lives in one document (hidden with display:none), so media is lazy by
+ * default — the browser only fetches what the visitor actually navigates to. Pass
+ * $eager for the one above-the-fold picture on the landing page.
+ */
+function cms_img(string $k, bool $eager = false): string {
     $v = cms($k);
     if ($v === '') return '';
     $style = adjust_style($k);
     $styleAttr = $style !== '' ? ' style="' . esc($style) . '"' : '';
     $ext = strtolower(pathinfo($v, PATHINFO_EXTENSION));
     if (in_array($ext, ['mp4', 'webm'], true)) {
-        return '<video src="' . esc($v) . '" autoplay muted loop playsinline' . $styleAttr . '></video>';
+        return '<video src="' . esc($v) . '" autoplay muted loop playsinline preload="metadata"' . $styleAttr . '></video>';
     }
-    return '<img src="' . esc($v) . '" alt="' . esc(fields_flat()[$k]['label'] ?? '') . '"' . $styleAttr . '>';
+    $loading = $eager ? ' fetchpriority="high" decoding="async"' : ' loading="lazy" decoding="async"';
+    return '<img src="' . esc($v) . '" alt="' . esc(fields_flat()[$k]['label'] ?? '') . '"' . $loading . $styleAttr . '>';
 }
 
 /* ---------- app settings (SMTP etc.) — stored in the content table ---------- */

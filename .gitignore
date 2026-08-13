@@ -2,3 +2,4 @@ config.local.php
 cms.sqlite
 uploads/*
 !uploads/.htaccess
+.gstack/

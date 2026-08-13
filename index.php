@@ -408,7 +408,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <!-- Any .ph box (this headshot, the page heroes, listing photos...) accepts real media:
            photo: <div class="ph hero-photo"><img src="erika-headshot.jpg" alt="Erika Page"></div>
            video: <div class="ph hero-photo"><video src="intro.mp4" autoplay muted loop playsinline></video></div> -->
-<div class="ph hero-photo" data-label="Erika — Headshot · Photo or Video"><?= cms_img('home.atlanta-metro-established-au.img-erika-headshot-photo-o') ?></div>
+<div class="ph hero-photo" data-label="Erika — Headshot · Photo or Video"><?= cms_img('home.atlanta-metro-established-au.img-erika-headshot-photo-o', true) ?></div>
 </div>
 </header>
 <div aria-label="Erika Page career highlights" class="ticker">
