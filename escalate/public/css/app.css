@@ -446,12 +446,36 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
 
 /* ── app shell ───────────────────────────────────────────────────────────── */
 
+/*
+ * The bottom padding reserves room for the fixed tab bar. It has to include
+ * the home-indicator inset, because .tabbar adds that same inset to its own
+ * padding and is therefore TALLER than --nav-h on every iPhone since the X.
+ * Without it the last card on any screen sits behind the tab bar and cannot
+ * be scrolled clear of it.
+ */
 .shell {
   max-width: var(--shell-max);
   margin: 0 auto;
-  padding: var(--s-5) var(--s-4) calc(var(--nav-h) + var(--s-8));
+  padding: var(--s-5) var(--s-4)
+           calc(var(--nav-h) + var(--s-8) + env(safe-area-inset-bottom));
+  padding-left: max(var(--s-4), env(safe-area-inset-left));
+  padding-right: max(var(--s-4), env(safe-area-inset-right));
 }
 
+/*
+ * Both layouts set `viewport-fit=cover`, which is what lets the background
+ * run edge to edge behind the notch — and also what puts the top of the page
+ * underneath the status bar and Dynamic Island. Every inset here is paying
+ * that back: without the top one the wordmark and the theme button sit under
+ * the clock on any iPhone since the X, and in landscape the whole bar runs
+ * under the notch.
+ *
+ * -webkit- prefix because Safari needed it until version 18. Modern Safari
+ * honours the unprefixed property (verified in WebKit 26.5), but iOS 17 and
+ * earlier do not, and there the bar is transparent rather than frosted —
+ * text scrolling visibly through it, because the background is deliberately
+ * only 88% opaque.
+ */
 .topbar {
   position: sticky;
   top: 0;
@@ -459,8 +483,11 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
   display: flex;
   align-items: center;
   gap: var(--s-3);
-  padding: var(--s-3) var(--s-4);
+  padding: calc(var(--s-3) + env(safe-area-inset-top)) var(--s-4) var(--s-3);
+  padding-left: max(var(--s-4), env(safe-area-inset-left));
+  padding-right: max(var(--s-4), env(safe-area-inset-right));
   background: color-mix(in srgb, var(--bg) 88%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
   border-bottom: 1px solid var(--line);
 }
@@ -497,6 +524,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
   min-height: var(--nav-h);
   padding-bottom: env(safe-area-inset-bottom);
   background: color-mix(in srgb, var(--bg-deep) 92%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
   backdrop-filter: blur(18px) saturate(150%);
   border-top: 1px solid var(--line);
   overflow-x: auto;
@@ -1019,7 +1047,7 @@ a.card:active, button.card:active { transform: translateY(0); }
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--nav-h) + var(--s-4));
+  bottom: calc(var(--nav-h) + var(--s-4) + env(safe-area-inset-bottom));
   z-index: 60;
   transform: translate(-50%, 14px);
   max-width: min(92vw, 30rem);
