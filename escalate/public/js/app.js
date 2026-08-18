@@ -279,6 +279,24 @@
 
   function initServiceWorker() {
     if (!('serviceWorker' in navigator)) return;
+
+    /*
+     * When a new worker takes over, this page is still running the CSS and JS
+     * the old one handed out — so reload once to pick up the new build.
+     *
+     * Guarded on there having been a controller already. On a first visit the
+     * worker installs and claims an uncontrolled page, which fires this too,
+     * and reloading someone the moment they arrive is its own bug.
+     */
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloading = false;
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || reloading) return;
+      reloading = true;
+      window.location.reload();
+    });
+
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     });

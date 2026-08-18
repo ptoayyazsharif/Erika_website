@@ -854,6 +854,16 @@ a.card:active, button.card:active { transform: translateY(0); }
 .options { display: grid; gap: var(--s-2); }
 .options-2 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 
+/* A grid of free-text fields — the same shape as .options-2, deliberately a
+   different class. .options carries a meaning: "these are the choices". Using
+   it for text inputs made My World's values look like six buttons that ignored
+   every tap. */
+.field-grid {
+  display: grid;
+  gap: var(--s-2);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
 .option {
   display: flex;
   align-items: flex-start;

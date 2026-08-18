@@ -51,15 +51,22 @@
 
     <div class="card" data-enter>
         <h3 style="margin-bottom:var(--s-2)">What matters most</h3>
-        <p class="small muted" style="margin-bottom:var(--s-5)">Up to six. These shape what a reading notices.</p>
+        <p class="small muted" style="margin-bottom:var(--s-5)">
+            Write up to six, in your own words. These shape what a reading notices.
+        </p>
 
         @php $values = old('values', $profile->values ?? []); @endphp
-        <div class="options options-2">
+        {{-- Not .options. That class means "pick one of these", and six bordered
+             boxes each showing a single word read as exactly that — you tap one,
+             nothing selects, and you report that the buttons do not work. These
+             are typed, so they are laid out as fields and the placeholders say
+             "e.g." to settle which they are. --}}
+        <div class="field-grid">
             @for ($i = 0; $i < 6; $i++)
                 <input class="input" name="values[]" type="text" maxlength="40"
                        value="{{ $values[$i] ?? '' }}"
                        aria-label="Value {{ $i + 1 }}"
-                       placeholder="{{ ['Freedom','Family','Steadiness','Craft','Generosity','Health'][$i] }}">
+                       placeholder="e.g. {{ ['Freedom','Family','Steadiness','Craft','Generosity','Health'][$i] }}">
             @endfor
         </div>
     </div>

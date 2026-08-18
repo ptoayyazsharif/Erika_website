@@ -20,21 +20,52 @@
    That is the intended trade. Reading your own journal requires a connection.
    ========================================================================= */
 
-const VERSION = 'escalate-v1';
+/* Bumped to v2 to evict every escalate-v1-shell cache still in the wild. Those
+   caches are poisoned: see the note on VERSIONED below. */
+const VERSION = 'escalate-v2';
 const SHELL = `${VERSION}-shell`;
 
-/* Only these. Adding a page here would be a privacy bug. */
+/*
+ * Assets whose URL never changes, so precaching them by path is sound.
+ * Only these. Adding a page here would be a privacy bug.
+ */
 const SHELL_ASSETS = [
   '/offline',
-  '/css/app.css',
-  '/js/app.js',
-  '/js/gsap.min.js',
   '/fonts/lora-var.woff2',
   '/fonts/raleway-var.woff2',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/manifest.webmanifest',
 ];
+
+/*
+ * Assets asset_v() stamps with ?v=<content-hash>.
+ *
+ * These are cached too, but on first fetch and under their *full* URL — never
+ * precached by bare path, and never matched with the query discarded. That
+ * distinction is the whole reason this file was rewritten.
+ *
+ * What went wrong: '/js/app.js' and '/css/app.css' were precached by bare path
+ * on install, and the fetch handler matched them with the query ignored. The
+ * page always asks for '/js/app.js?v=<hash>', so that made every request a hit
+ * against the bare-path entry — every time, for ever. The content hash, whose
+ * entire job is to turn new bytes into a new URL, was being thrown away at the
+ * one point where it mattered.
+ *
+ * The result was not a stale asset for an hour; it was permanent. install()
+ * re-runs only when this file's bytes change, activate() kept any cache named
+ * SHELL, and nothing else ever wrote these entries. So every browser that had
+ * ever opened the app was pinned to the CSS and JS from its first visit and
+ * stayed pinned through every deploy after it. The dead "Add someone" and "Add
+ * a detail" buttons, and feelings chips that toggled without ever looking
+ * toggled, were all this: fixes shipped weeks earlier that the phone was never
+ * allowed to see. Nothing was wrong with the fixes. They simply never arrived.
+ *
+ * Keying on the full URL makes it self-correcting by construction: new bytes
+ * mean a new hash, a new hash means a new key, a new key means a miss, and a
+ * miss goes to the network.
+ */
+const VERSIONED = ['/css/app.css', '/js/app.js', '/js/gsap.min.js'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -89,6 +120,22 @@ self.addEventListener('message', event => {
  * An explicit list cannot drift that way.
  */
 const isShellAsset = url => SHELL_ASSETS.includes(url.pathname);
+const isVersioned  = url => VERSIONED.includes(url.pathname);
+
+/*
+ * Drop older builds of the same file once a new one is stored, so the cache
+ * does not gain another copy of app.css on every deploy for the rest of time.
+ */
+async function keepOnly(cache, request) {
+  const keep = new URL(request.url).pathname;
+
+  for (const key of await cache.keys()) {
+    const url = new URL(key.url);
+    if (url.pathname === keep && key.url !== request.url) {
+      await cache.delete(key);
+    }
+  }
+}
 
 self.addEventListener('fetch', event => {
   const { request } = event;
@@ -103,21 +150,38 @@ self.addEventListener('fetch', event => {
   // Narration is authenticated, private, and large. Never intercepted.
   if (url.pathname.startsWith('/media/')) return;
 
-  if (isShellAsset(url)) {
-    /*
-     * ignoreSearch matters. asset_v() appends ?v=<content-hash> to CSS and JS,
-     * and caches.match() compares the full URL including the query by default —
-     * so the entries precached on install as '/css/app.css' were never once a
-     * hit, and every deploy added a new query-keyed copy that nothing evicted.
-     * Freshness was never the problem (the hash guarantees it); the precache
-     * was simply dead weight.
-     *
-     * Scoped to the one cache rather than caches.match(), which searches every
-     * cache in the origin.
-     */
+  /*
+   * Hashed assets: cache-first on the exact URL, query and all.
+   *
+   * Matching the full URL is the fix, and it is not a tuning choice — dropping
+   * the query here is what pinned every installed client to its first-ever
+   * build. A hit can only ever be the same bytes that were asked for, because
+   * the hash in the key is derived from those bytes.
+   *
+   * Scoped to the one cache rather than caches.match(), which searches every
+   * cache in the origin.
+   */
+  if (isVersioned(url)) {
     event.respondWith(
       caches.open(SHELL).then(cache =>
-        cache.match(request, { ignoreSearch: true }).then(hit =>
+        cache.match(request).then(hit =>
+          hit || fetch(request).then(res => {
+            if (res.ok) {
+              cache.put(request, res.clone()).then(() => keepOnly(cache, request));
+            }
+            return res;
+          })
+        )
+      )
+    );
+    return;
+  }
+
+  /* Fixed-URL shell assets: fonts, icons, the manifest, the offline page. */
+  if (isShellAsset(url)) {
+    event.respondWith(
+      caches.open(SHELL).then(cache =>
+        cache.match(request).then(hit =>
           hit || fetch(request).then(res => {
             if (res.ok) cache.put(request, res.clone());
             return res;
