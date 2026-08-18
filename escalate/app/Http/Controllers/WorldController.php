@@ -35,7 +35,18 @@ class WorldController extends Controller
             'life_context'   => ['nullable', 'string', 'max:1200'],
             'anchor'         => ['nullable', 'string', 'max:200'],
             'values'         => ['nullable', 'array', 'max:6'],
-            'values.*'       => ['string', 'max:40'],
+            /*
+             * `nullable` matters here and is not decoration.
+             *
+             * The form renders six boxes and most people fill two. Laravel's
+             * ConvertEmptyStringsToNull turns each empty box into null, and
+             * null fails `string` — so leaving any box blank blocked the whole
+             * My World save behind "The values.0 field must be a string",
+             * which names a field the person cannot see and never typed in.
+             * The line below already filters empties out, so blanks were
+             * always meant to be fine.
+             */
+            'values.*'       => ['nullable', 'string', 'max:40'],
 
             // Preference keys are validated against config rather than a
             // hand-written list, so adding a voice or a tone in one place

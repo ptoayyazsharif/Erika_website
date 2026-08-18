@@ -177,9 +177,10 @@ class DesireController extends Controller
             'why_it_matters'   => ['nullable', 'string', 'max:1200'],
             'non_negotiables'  => ['nullable', 'string', 'max:600'],
             'desired_feelings' => ['nullable', 'array', 'max:5'],
-            'desired_feelings.*' => ['string', 'max:30'],
+            // nullable: empty boxes arrive as null, and blank ones are fine.
+            'desired_feelings.*' => ['nullable', 'string', 'max:30'],
             'people_involved'  => ['nullable', 'array', 'max:12'],
-            'people_involved.*' => ['string', 'max:60'],
+            'people_involved.*' => ['nullable', 'string', 'max:60'],
 
             'category'      => ['required', 'string', 'in:'.implode(',', array_keys(self::CATEGORIES))],
             'timeframe'     => ['required', 'string', 'in:'.implode(',', array_keys(self::TIMEFRAMES))],

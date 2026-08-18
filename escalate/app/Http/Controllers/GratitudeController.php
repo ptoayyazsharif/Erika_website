@@ -109,7 +109,7 @@ class GratitudeController extends Controller
         $data = $request->validate([
             'body'      => ['required', 'string', 'min:2', 'max:2000'],
             'tags'      => ['nullable', 'array', 'max:6'],
-            'tags.*'    => ['string', 'max:30'],
+            'tags.*'    => ['nullable', 'string', 'max:30'],
             'desire_id' => ['nullable', 'integer'],
         ]);
 
@@ -138,7 +138,7 @@ class GratitudeController extends Controller
         $data = $request->validate([
             'body'   => ['required', 'string', 'min:2', 'max:2000'],
             'tags'   => ['nullable', 'array', 'max:6'],
-            'tags.*' => ['string', 'max:30'],
+            'tags.*' => ['nullable', 'string', 'max:30'],
         ]);
 
         $entry->update([
