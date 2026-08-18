@@ -288,6 +288,67 @@
     });
   }
 
+
+  /* ── My Circle ───────────────────────────────────────────────────────────
+     A circle is not a form you fill in once. Someone met this month becomes a
+     friend, a partner, or someone you no longer speak to — so people and the
+     details about them are added whenever there is something to add, rather
+     than into five fixed slots.
+
+     Rows are cloned from a <template> in the markup rather than built from an
+     HTML string, because the CSP forbids inline script and innerHTML of markup
+     assembled here would be one more place for someone else's text to end up
+     parsed as HTML. The field names are stamped on after cloning, so the
+     server still receives a plain circle[i][notes][] array and needs no
+     knowledge that any of this happened. */
+  function initCircle() {
+    const list = document.querySelector('[data-circle]');
+    const template = document.querySelector('[data-person-template]');
+    if (!list || !template) return;
+
+    // Renumber from scratch after every change. Cheaper to reason about than
+    // tracking a next-index counter, which drifts the moment a row is removed.
+    const renumber = () => {
+      list.querySelectorAll('[data-person]').forEach((person, i) => {
+        const name = person.querySelector('[data-field="name"], input[name$="[name]"]');
+        const rel  = person.querySelector('[data-field="relationship"], input[name$="[relationship]"]');
+        if (name) { name.name = `circle[${i}][name]`; name.setAttribute('aria-label', `Person ${i + 1} name`); }
+        if (rel)  { rel.name  = `circle[${i}][relationship]`; rel.setAttribute('aria-label', `Person ${i + 1} relationship`); }
+        person.querySelectorAll('[data-notes] input').forEach((note, n) => {
+          note.name = `circle[${i}][notes][]`;
+          note.setAttribute('aria-label', `Detail ${n + 1} about person ${i + 1}`);
+        });
+      });
+    };
+
+    document.querySelector('[data-add-person]')?.addEventListener('click', () => {
+      const row = template.content.firstElementChild.cloneNode(true);
+      list.appendChild(row);
+      renumber();
+      row.querySelector('input')?.focus();
+    });
+
+    // Delegated, so it works for rows that did not exist when this ran.
+    list.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-add-note]');
+      if (!button) return;
+
+      const notes = button.closest('[data-person]')?.querySelector('[data-notes]');
+      if (!notes) return;
+
+      const last = notes.querySelector('input:last-of-type');
+      const input = last ? last.cloneNode(true) : null;
+      if (!input) return;
+
+      input.value = '';
+      notes.appendChild(input);
+      renumber();
+      input.focus();
+    });
+
+    renumber();
+  }
+
   /* ── boot ──────────────────────────────────────────────────────────────── */
 
   initTheme();
@@ -297,6 +358,7 @@
     initCounters();
     initAutogrow();
     initOptions();
+    initCircle();
     initConfirm();   // capture phase — must be able to cancel before initForms
     initForms();
     initInstall();

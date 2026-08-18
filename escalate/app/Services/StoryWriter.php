@@ -168,7 +168,10 @@ class StoryWriter
             $lines[] = 'THEIR CIRCLE — use these names exactly, only where they fit naturally';
 
             foreach ($circle as $person) {
-                $bits = array_filter([$person->relationship, $person->note]);
+                // details() rather than ->note: a person can carry as many
+                // facts as the user has bothered to record, and the specific
+                // ones are exactly what stops a reading sounding generic.
+                $bits = array_filter([$person->relationship, ...$person->details()]);
                 $lines[] = '- '.$person->name.($bits ? ' ('.implode('; ', $bits).')' : '');
             }
         }

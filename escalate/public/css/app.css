@@ -1179,6 +1179,23 @@ a.card:active, button.card:active { transform: translateY(0); }
   .auth-do { width: 100%; }
 }
 
+/* ── My Circle rows ──────────────────────────────────────────────────────
+   Each person is a bordered group so it is obvious which details belong to
+   whom once there are more than a couple of them — with five fixed rows that
+   was never in doubt, and with twenty it would be. */
+.circle-person {
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  margin-bottom: var(--s-3);
+  background: var(--surface-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.circle-person [data-notes] { display: grid; gap: var(--s-2); }
+.circle-person [data-add-note] { justify-self: start; }
+
 @media print {
   .topbar, .tabbar, .toast, .btn, body::before { display: none !important; }
   body { background: #fff; color: #000; }

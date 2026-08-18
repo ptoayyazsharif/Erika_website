@@ -70,25 +70,72 @@
             The people who belong in your stories. Names are used exactly as written, and only where they fit.
         </p>
 
-        @php $circleRows = old('circle', $circle->map(fn ($p) => ['name' => $p->name, 'relationship' => $p->relationship, 'note' => $p->note])->all()); @endphp
+        @php
+            // Rows come from a failed submission first, then from the database.
+            // Both are normalised to the same shape so the markup below does not
+            // have to care which one it got.
+            $circleRows = old('circle', $circle->map(fn ($p) => [
+                'name'         => $p->name,
+                'relationship' => $p->relationship,
+                'notes'        => $p->details(),
+            ])->all());
 
-        @for ($i = 0; $i < 5; $i++)
-            @php $row = $circleRows[$i] ?? ['name' => '', 'relationship' => '', 'note' => '']; @endphp
-            <div class="stack" style="margin-bottom:var(--s-5)">
-                <input class="input" name="circle[{{ $i }}][name]" type="text" maxlength="60"
-                       value="{{ $row['name'] ?? '' }}" aria-label="Person {{ $i + 1 }} name"
-                       placeholder="{{ $i === 0 ? 'Name' : 'Name (optional)' }}">
-                <div class="row" style="gap:var(--s-3);align-items:stretch">
+            // Always leave one empty row to type into, so adding the first
+            // person needs no button press.
+            if (! $circleRows) {
+                $circleRows = [['name' => '', 'relationship' => '', 'notes' => []]];
+            }
+        @endphp
+
+        {{-- data-circle marks the list app.js appends to. The template below is
+             inert markup inside <template>, cloned on demand — the CSP forbids
+             inline script, so the browser cannot build these rows from a string. --}}
+        <div data-circle>
+            @foreach ($circleRows as $i => $row)
+                @php $notes = array_values(array_filter((array) ($row['notes'] ?? []), 'filled')) ?: ['']; @endphp
+                <div class="circle-person" data-person>
+                    <input class="input" name="circle[{{ $i }}][name]" type="text" maxlength="60"
+                           value="{{ $row['name'] ?? '' }}" aria-label="Person {{ $i + 1 }} name"
+                           placeholder="Name">
                     <input class="input" name="circle[{{ $i }}][relationship]" type="text" maxlength="60"
                            value="{{ $row['relationship'] ?? '' }}" aria-label="Person {{ $i + 1 }} relationship"
-                           placeholder="Who they are to you">
-                    <input class="input" name="circle[{{ $i }}][note]" type="text" maxlength="160"
-                           value="{{ $row['note'] ?? '' }}" aria-label="Person {{ $i + 1 }} note"
-                           placeholder="One detail">
+                           placeholder="Who they are to you now">
+
+                    <div data-notes>
+                        @foreach ($notes as $n => $note)
+                            <input class="input" name="circle[{{ $i }}][notes][]" type="text" maxlength="200"
+                                   value="{{ $note }}" aria-label="Detail {{ $n + 1 }} about person {{ $i + 1 }}"
+                                   placeholder="Something true about them">
+                        @endforeach
+                    </div>
+
+                    <button type="button" class="btn btn-quiet btn-sm" data-add-note>
+                        @include('partials.icon', ['name' => 'plus', 'size' => 14]) Add a detail
+                    </button>
                 </div>
+            @endforeach
+        </div>
+
+        <button type="button" class="btn btn-ghost btn-sm" data-add-person style="margin-bottom:var(--s-3)">
+            @include('partials.icon', ['name' => 'plus', 'size' => 16]) Add someone
+        </button>
+
+        <template data-person-template>
+            <div class="circle-person" data-person>
+                <input class="input" type="text" maxlength="60" data-field="name" placeholder="Name" aria-label="Name">
+                <input class="input" type="text" maxlength="60" data-field="relationship"
+                       placeholder="Who they are to you now" aria-label="Who they are to you">
+                <div data-notes>
+                    <input class="input" type="text" maxlength="200" data-field="note"
+                           placeholder="Something true about them" aria-label="Detail">
+                </div>
+                <button type="button" class="btn btn-quiet btn-sm" data-add-note>
+                    @include('partials.icon', ['name' => 'plus', 'size' => 14]) Add a detail
+                </button>
             </div>
-        @endfor
-        <p class="small faint" style="margin:0">Leave a name blank to remove that person.</p>
+        </template>
+
+        <p class="small faint" style="margin:0">Clear a name to remove that person. Relationships change — update "who they are to you now" whenever it does.</p>
     </div>
 
     <div class="card" data-enter>

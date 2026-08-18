@@ -48,11 +48,23 @@ class WorldController extends Controller
             'perspective'    => ['required', 'string', 'in:first,second'],
             'tone'           => ['required', 'string', 'in:grounded,tender,assured,reverent,playful'],
 
-            // My Circle arrives as parallel arrays from the repeating field.
-            'circle'             => ['nullable', 'array', 'max:12'],
-            'circle.*.name'      => ['nullable', 'string', 'max:60'],
+            /*
+             * My Circle. Rows are added by the browser, so the count is
+             * whatever the person needed rather than a fixed five.
+             *
+             * The caps are real limits and worth stating honestly: the circle
+             * is rendered into the story prompt, so an unbounded list would
+             * eventually cost more per reading than the reading is worth and
+             * then start crowding out the desire itself. 60 people with 12
+             * details each is far past what anyone will use for a journal
+             * about their own life, and it is a bound rather than a guess at
+             * how many people matter to someone.
+             */
+            'circle'                => ['nullable', 'array', 'max:60'],
+            'circle.*.name'         => ['nullable', 'string', 'max:60'],
             'circle.*.relationship' => ['nullable', 'string', 'max:60'],
-            'circle.*.note'      => ['nullable', 'string', 'max:160'],
+            'circle.*.notes'        => ['nullable', 'array', 'max:12'],
+            'circle.*.notes.*'      => ['nullable', 'string', 'max:200'],
         ]);
 
         $profile = $user->world();
@@ -99,24 +111,32 @@ class WorldController extends Controller
     /**
      * Replace the circle wholesale.
      *
-     * Delete-then-insert rather than diffing: the form is a fixed set of rows,
-     * a person's identity here is just their name, and there is nothing else in
-     * the app referencing a circle row by id. Diffing would add a foreign-key
-     * problem in exchange for nothing.
+     * Delete-then-insert rather than diffing: a person's identity here is just
+     * their name, and nothing else in the app references a circle row by id.
+     * Diffing would add a foreign-key problem in exchange for nothing.
      */
     private function syncCircle($user, array $rows): void
     {
         $people = collect($rows)
-            ->filter(fn ($row) => filled($row['name'] ?? null))
+            ->filter(fn ($row) => filled(trim($row['name'] ?? '')))
             ->values();
 
         $user->circle()->delete();
 
         foreach ($people as $index => $row) {
+            // Blank details are dropped rather than stored, so removing a
+            // detail is just clearing its box — there is no delete button to
+            // find, and an empty row never becomes a stray empty bullet.
+            $notes = collect($row['notes'] ?? [])
+                ->map(fn ($note) => trim((string) $note))
+                ->filter()
+                ->values()
+                ->all();
+
             $user->circle()->create([
                 'name'         => trim($row['name']),
                 'relationship' => trim($row['relationship'] ?? '') ?: null,
-                'note'         => trim($row['note'] ?? '') ?: null,
+                'notes'        => $notes ?: null,
                 'position'     => $index,
             ]);
         }
