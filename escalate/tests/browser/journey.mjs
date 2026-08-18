@@ -23,7 +23,15 @@ const executablePath = fs.existsSync('/opt/pw-browsers/chromium')
   ? '/opt/pw-browsers/chromium'
   : undefined;
 
-const browser = await chromium.launch({ executablePath });
+/* Outbound HTTPS in this session goes through an egress proxy. curl reads
+   HTTPS_PROXY from the environment; Chromium does not, so a remote BASE_URL
+   fails with ERR_CONNECTION_RESET unless it is passed in explicitly. Localhost
+   is in the proxy's no-proxy list, so this is only needed for remote runs. */
+const proxyServer = process.env.HTTPS_PROXY ?? process.env.https_proxy;
+const remote = !/^https?:\/\/(127\.0\.0\.1|localhost)/.test(BASE);
+const proxy = remote && proxyServer ? { server: proxyServer } : undefined;
+
+const browser = await chromium.launch({ executablePath, proxy });
 // A phone, because that is where it was reported.
 const page = await (await browser.newContext({
   viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true,

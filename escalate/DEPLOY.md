@@ -8,6 +8,11 @@ Everything below has been run. The image builds, boots, migrates, serves and
 drains its queue — the checks in section 7 are the ones actually performed
 against it, not a wishlist.
 
+
+> **Panel URL, application UUID and the one-line deploy command** live in
+> [COOLIFY.md](COOLIFY.md), along with what a curl check cannot prove.
+> This file is how the application is configured.
+
 ---
 
 ## 0. Why not Nixpacks
