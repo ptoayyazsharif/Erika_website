@@ -29,16 +29,30 @@ const SW = 'public/sw.js';
 const fixedSw = fs.readFileSync(SW, 'utf8');
 const appJs = fs.readFileSync(APP_JS, 'utf8');
 
-/** The worker as it was before the fix, straight out of git history. */
+/**
+ * The worker as it was before the fix, found in git history.
+ *
+ * Walks back through commits that touched sw.js and takes the newest one whose
+ * copy still has the version-blind match, rather than naming a commit hash that
+ * would rot. If history is ever rewritten past that point the scenario cannot
+ * be staged, and saying so is better than silently testing nothing.
+ */
 function brokenWorker() {
-  const source = execSync('git show HEAD:escalate/public/sw.js').toString();
-  if (!source.includes('ignoreSearch')) {
-    throw new Error(
-      'HEAD:escalate/public/sw.js no longer contains the bug, so the poisoned-client\n' +
-      'scenario cannot be staged from it. Point this at the commit before the fix.'
-    );
+  // :(top) anchors the pathspec at the repository root. Without it the path is
+  // read relative to the working directory, matches nothing from inside
+  // escalate/, and the walk below silently finds no revisions at all.
+  const revisions = execSync('git rev-list HEAD -- ":(top)escalate/public/sw.js"')
+    .toString().trim().split('\n').filter(Boolean);
+
+  for (const rev of revisions) {
+    const source = execSync(`git show ${rev}:escalate/public/sw.js`).toString();
+    if (source.includes('ignoreSearch')) return source;
   }
-  return source;
+
+  throw new Error(
+    'No commit in history has a sw.js with the version-blind match, so the\n' +
+    'poisoned-client scenario cannot be staged. Skipping it would be a false pass.'
+  );
 }
 
 /** window.__SHIPPED, tolerating the self-heal reload firing mid-read. */
@@ -78,20 +92,25 @@ async function fresh(browser) {
 async function poisoned(browser) {
   const page = await (await browser.newContext()).newPage();
 
-  // Be a phone that installed the broken worker.
+  // Be a phone that installed the broken worker, against a pristine app.js —
+  // the previous scenario leaves its own marker in the file.
+  fs.writeFileSync(APP_JS, appJs);
   fs.writeFileSync(SW, brokenWorker());
   await page.goto(BASE + '/login');
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, { timeout: 15000 });
 
-  // Confirm it really is stuck, so a pass below means something.
+  // Confirm it really is pinned, so a pass below means something. "Pinned" is
+  // "the build just shipped did not arrive" — not "nothing arrived", since a
+  // pinned client happily serves whatever stale build it already holds.
   fs.writeFileSync(APP_JS, appJs + "\nwindow.__SHIPPED = 'fix-one';\n");
   await page.goto(BASE + '/login');
   await page.reload();
   await page.waitForTimeout(1200);
+  const duringOutage = await shipped(page);
   results.push([
     'the old worker really does pin the client (staging check)',
-    (await shipped(page)) === null,
-    'the client was not stuck, so this scenario proves nothing',
+    duringOutage !== 'fix-one',
+    `the client received the new build (${duringOutage}), so this scenario proves nothing`,
   ]);
 
   // Now deploy the repaired worker. The user does nothing but keep tapping.
@@ -120,7 +139,13 @@ async function poisoned(browser) {
   ]);
 }
 
-const browser = await chromium.launch();
+/* Use the browser the environment already ships when it has one, so this does
+   not depend on the installed playwright package pinning the same build. */
+const executablePath = fs.existsSync('/opt/pw-browsers/chromium')
+  ? '/opt/pw-browsers/chromium'
+  : undefined;
+
+const browser = await chromium.launch({ executablePath });
 
 try {
   await fresh(browser);
