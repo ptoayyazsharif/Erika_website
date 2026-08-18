@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DesireController;
 use App\Http\Controllers\GratitudeController;
+use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\TodayController;
@@ -124,9 +125,11 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
        be a placeholder — see TodayController. */
     Route::get('/today', TodayController::class)->name('today');
 
+    /* Everything that has happened, in the order it happened. */
+    Route::get('/journey', JourneyController::class)->name('journey');
+
     /* Still to build — the navigation resolves so the shell stays whole. */
     Route::view('/rewinds', 'placeholder', ['heading' => 'My Rewinds'])->name('rewinds.index');
-    Route::view('/journey', 'placeholder', ['heading' => 'My Journey'])->name('journey');
 
     /* admin door — reachable only by an admin, invisible to everyone else */
     Route::get('/admin/login', [AdminSessionController::class, 'create'])->name('admin.login');

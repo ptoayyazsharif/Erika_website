@@ -1196,6 +1196,84 @@ a.card:active, button.card:active { transform: translateY(0); }
 .circle-person [data-notes] { display: grid; gap: var(--s-2); }
 .circle-person [data-add-note] { justify-self: start; }
 
+
+/* ── My Journey ──────────────────────────────────────────────────────────
+   A timeline, so the vertical rule matters more than the rows: it is the
+   thing that turns a list of events into a length of time. */
+
+.journey-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--s-3);
+  margin-bottom: var(--s-7);
+}
+
+@media (min-width: 560px) {
+  .journey-stats { grid-template-columns: repeat(4, 1fr); }
+}
+
+.stat {
+  display: grid;
+  gap: var(--s-1);
+  padding: var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.stat-n { font-family: var(--serif); font-size: var(--t-2xl); line-height: 1; }
+.stat-l { font-size: var(--t-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.journey-month {
+  font-size: var(--t-md);
+  color: var(--text-muted);
+  margin: var(--s-7) 0 var(--s-4);
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.timeline { list-style: none; margin: 0; padding: 0 0 0 var(--s-6); position: relative; }
+
+/* The rule sits behind the marks, inset by half a mark so it runs through
+   their centres. */
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--line);
+}
+
+.timeline-item { position: relative; display: flex; gap: var(--s-4); padding: var(--s-3) 0; }
+
+.timeline-mark {
+  position: absolute;
+  left: calc(var(--s-6) * -1);
+  top: var(--s-3);
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  border-radius: var(--r-full);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  color: var(--text-faint);
+}
+
+/* Arrival is the only event that gets colour. If every kind were tinted the
+   timeline would read as decoration; one tinted mark reads as an event. */
+.timeline-manifested, .timeline-achieved, .timeline-answered,
+.timeline-redirected, .timeline-evolved, .timeline-released {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.timeline-body { display: grid; gap: 2px; text-decoration: none; color: inherit; min-height: 44px; }
+.timeline-body:hover .timeline-title { color: var(--accent); }
+.timeline-title { font-family: var(--serif); font-size: var(--t-md); line-height: 1.35; }
+
 @media print {
   .topbar, .tabbar, .toast, .btn, body::before { display: none !important; }
   body { background: #fff; color: #000; }
