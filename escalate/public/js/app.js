@@ -186,17 +186,47 @@
 
   /* ── option groups (radio/checkbox cards) ──────────────────────────────── */
 
+  /*
+   * Keeps the visible state of the custom radio/checkbox patterns in step with
+   * the real input hidden inside them.
+   *
+   * This used to match `.option input` only, and the feelings picker and the
+   * gratitude tags use the `.chip` variant — so their checkboxes toggled
+   * underneath while the chip never changed. Reported as "none of these
+   * buttons worked, I could never take it off of calm", which is precisely
+   * what it looks like: you press, nothing happens, you press again.
+   *
+   * It was worse than inert. The input really was toggling on every press, so
+   * the state that got submitted could be the opposite of the state on screen
+   * — and with an odd number of presses you would save a feeling you had just
+   * spent four taps trying to turn off.
+   */
+  const PICKER = '.option, .chip';
+
   function initOptions() {
     document.addEventListener('change', e => {
       const input = e.target;
-      if (!input.matches('.option input')) return;
+      if (!(input instanceof HTMLInputElement)) return;
+
+      const wrapper = input.closest(PICKER);
+      if (!wrapper) return;
+
+      // A radio turning on turns its whole group off, and the browser fires
+      // `change` only on the one that gained the checked state — so the group
+      // has to be repainted rather than just this element.
       if (input.type === 'radio' && input.name) {
-        $$(`.option input[name="${CSS.escape(input.name)}"]`).forEach(other => {
-          other.closest('.option')?.classList.toggle('is-on', other.checked);
+        const selector = `${PICKER}`.split(', ')
+          .map(base => `${base} input[name="${CSS.escape(input.name)}"]`)
+          .join(', ');
+
+        $$(selector).forEach(other => {
+          other.closest(PICKER)?.classList.toggle('is-on', other.checked);
         });
-      } else {
-        input.closest('.option')?.classList.toggle('is-on', input.checked);
+
+        return;
       }
+
+      wrapper.classList.toggle('is-on', input.checked);
     });
   }
 
