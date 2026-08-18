@@ -116,7 +116,12 @@
         <p class="eyebrow">Rewind</p>
         <h3 style="margin-bottom:var(--s-2)">{{ $desire->rewind ? 'You have written a Rewind for this.' : 'Look back at it.' }}</h3>
         <p class="small muted">A Rewind walks you through what actually happened — the turning points, the redirections, who was part of it — and keeps it.</p>
-        <a class="btn btn-ghost btn-sm" href="{{ route('rewinds.index') }}">
+        {{-- Straight to this desire's own Rewind. It used to point at the
+             index, which was the shared placeholder — so finishing the thing
+             the whole app is about and pressing the one button offered landed
+             you on "not written yet". --}}
+        <a class="btn btn-ghost btn-sm"
+           href="{{ $desire->rewind ? route('rewinds.show', $desire->rewind) : route('rewinds.create', $desire) }}">
             {{ $desire->rewind ? 'Open the Rewind' : 'Begin a Rewind' }}
         </a>
     </div>

@@ -9,6 +9,7 @@ use App\Http\Controllers\DesireController;
 use App\Http\Controllers\GratitudeController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\RewindController;
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\TodayController;
 use App\Http\Controllers\WorldController;
@@ -128,8 +129,15 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
     /* Everything that has happened, in the order it happened. */
     Route::get('/journey', JourneyController::class)->name('journey');
 
-    /* Still to build — the navigation resolves so the shell stays whole. */
-    Route::view('/rewinds', 'placeholder', ['heading' => 'My Rewinds'])->name('rewinds.index');
+    /* Rewinds — looking back at a desire once it has finished moving. The
+       reflection belongs to a desire; the Rewind it produces stands alone. */
+    Route::get('/rewinds', [RewindController::class, 'index'])->name('rewinds.index');
+    Route::get('/desires/{desire}/rewind', [RewindController::class, 'create'])->name('rewinds.create');
+    Route::post('/desires/{desire}/rewind', [RewindController::class, 'store'])->name('rewinds.store');
+    Route::get('/rewinds/{rewind}', [RewindController::class, 'show'])->name('rewinds.show');
+    Route::post('/rewinds/{rewind}/write', [RewindController::class, 'generate'])
+        ->middleware('throttle:12,60')->name('rewinds.generate');
+    Route::delete('/rewinds/{rewind}', [RewindController::class, 'destroy'])->name('rewinds.destroy');
 
     /* admin door — reachable only by an admin, invisible to everyone else */
     Route::get('/admin/login', [AdminSessionController::class, 'create'])->name('admin.login');
