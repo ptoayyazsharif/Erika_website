@@ -120,7 +120,7 @@ nav.scrolled{box-shadow:0 10px 30px rgba(69,50,48,.09)}
 .hero::before{content:"";position:absolute;right:-140px;top:-140px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(212,147,136,.45),transparent 68%);animation:drift 14s ease-in-out infinite alternate}
 .hero::after{content:"";position:absolute;left:-120px;bottom:-180px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(201,161,94,.22),transparent 70%)}
 @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-40px,30px) scale(1.06)}}
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;padding:88px 0 72px;position:relative;z-index:2}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;padding-block:88px 72px;position:relative;z-index:2}
 .hero h1{color:var(--ink);font-size:clamp(42px,6vw,72px);font-weight:400}
 .hero h1 em{font-style:italic;color:var(--merlot-deep)}
 .hero .pos{font-size:14px;letter-spacing:.3em;text-transform:uppercase;color:var(--merlot-ink);margin:18px 0 20px;font-weight:600}
@@ -318,7 +318,10 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 
 /* two-column page heroes with media */
 .hero2{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
-.hero-media{aspect-ratio:4/3;box-shadow:var(--shadow-l);width:100%}
+/* Erika's photography is almost all portrait. A 4:3 frame cropped 44% off every
+   page hero — the head-and-shoulders sliver the client flagged. A square keeps
+   the shot readable and still balances the text column beside it. */
+.hero-media{aspect-ratio:1/1;box-shadow:var(--shadow-l);width:100%}
 /* gallery */
 .gal{columns:3;column-gap:18px;margin-top:44px}
 .gal .g{break-inside:avoid;margin-bottom:18px;position:relative;cursor:pointer;overflow:hidden}
@@ -337,7 +340,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 }
 @media(max-width:920px){
   .hero-grid,.split,.foot-grid,.two-col,.lead-mag{grid-template-columns:1fr}
-  .hero-grid{padding:56px 0 48px;gap:36px}
+  .hero-grid{padding-block:56px 48px;gap:36px}
   .tst-grid,.eco-grid,.res-grid,.steps,.prod-grid,.contact-grid{grid-template-columns:1fr}
   .topics,.fld-row{grid-template-columns:1fr}
   .hero2{grid-template-columns:1fr}
@@ -367,6 +370,15 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 .formflash.ok{background:#EEF6EC;border:1px solid #9CC493;color:#3E6B36}
 .formflash.err{background:#FBEAEA;border:1px solid #D9908B;color:#8C3B32}
 @media(max-width:1180px){.formflash{margin:18px 24px 0}}
+
+/* ---- gutter guard -------------------------------------------------------
+   .wrap is the page gutter. When another class is stacked on the same element
+   (.wrap.hero-grid, for instance) its `padding` shorthand silently resets the
+   side padding and the section renders edge to edge — which is exactly what
+   broke the home hero on phones. Declared last, so the gutter always survives. */
+.wrap{padding-inline:24px}
+/* Nothing may push the document wider than the screen. */
+html,body{max-width:100%;overflow-x:clip}
 </style>
 </head>
 <body>
@@ -417,7 +429,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <!-- Any .ph box (this headshot, the page heroes, listing photos...) accepts real media:
            photo: <div class="ph hero-photo"><img src="erika-headshot.jpg" alt="Erika Page"></div>
            video: <div class="ph hero-photo"><video src="intro.mp4" autoplay muted loop playsinline></video></div> -->
-<div class="ph hero-photo" data-label="Erika — Headshot · Photo or Video"><?= cms_img('home.atlanta-metro-established-au.img-erika-headshot-photo-o', true) ?></div>
+<div class="ph hero-photo" data-label="Erika — Headshot · Photo or Video"><?= cms_img('home.atlanta-metro-established-au.img-erika-headshot-photo-o', true, 'hero') ?></div>
 </div>
 </header>
 <div aria-label="Erika Page career highlights" class="ticker">
@@ -446,7 +458,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 
 <section>
 <div class="wrap split">
-<div class="ph tall" data-label="Atlanta Luxury Listing Photo"><?= cms_img('home.sellers-first.img-atlanta-luxury-listing') ?></div>
+<div class="ph tall" data-label="Atlanta Luxury Listing Photo"><?= cms_img('home.sellers-first.img-atlanta-luxury-listing', false, 'half') ?></div>
 <div>
 <p class="eyebrow"><?= cms_e('home.sellers-first.eyebrow1') ?></p>
 <h2><?= cms_e('home.sellers-first.heading1') ?></h2>
@@ -465,7 +477,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p><?= cms_rich('home.speaking-influence.p1') ?></p>
 <a class="btn btn-outline-dark" href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')"><?= cms_e('home.speaking-influence.btn1') ?></a>
 </div>
-<div class="cutout" data-label="Erika — Full-Body Photo · No Background"><?= cms_img('home.speaking-influence.img-erika-full-body-photo') ?>
+<div class="cutout" data-label="Erika — Full-Body Photo · No Background"><?= cms_img('home.speaking-influence.img-erika-full-body-photo', false, 'half') ?>
 <svg aria-hidden="true" viewbox="0 0 200 320"><ellipse cx="100" cy="306" fill="rgba(69,50,48,.14)" rx="66" ry="10"></ellipse><circle cx="100" cy="40" fill="#C98D80" r="23"></circle><path d="M100 66c-27 0-39 19-41 45l-6 72c-1 10 4 16 12 16h9l7 108h38l7-108h9c8 0 13-6 12-16l-6-72c-2-26-14-45-41-45z" fill="#C98D80"></path></svg>
 </div>
 </div>
@@ -474,7 +486,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="wrap center-h" style="max-width:760px">
 <p class="eyebrow"><?= cms_e('home.meet-erika.eyebrow1') ?></p>
 <h2><?= cms_e('home.meet-erika.heading1') ?></h2>
-<div class="ph video-frame" data-label="60–90 second video intro (with on-page transcript for AI search)"><?= cms_img('home.meet-erika.img-60-90-second-video-int') ?><div class="play"></div></div>
+<div class="ph video-frame" data-label="60–90 second video intro (with on-page transcript for AI search)"><?= cms_img('home.meet-erika.img-60-90-second-video-int', false, 'video') ?><div class="play"></div></div>
 </div>
 </section>
 <section class="alt">
@@ -482,9 +494,9 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow"><?= cms_e('home.erika-explains-latest-resour.eyebrow1') ?></p>
 <h2 style="font-size:clamp(28px,3.4vw,40px);margin-top:10px"><?= cms_e('home.erika-explains-latest-resour.heading1') ?></h2>
 <div class="res-grid">
-<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Video Thumbnail"><?= cms_img('home.erika-explains-latest-resour.img-video-thumbnail') ?></div><div class="body"><div class="cat"><?= cms_e('home.erika-explains-latest-resour.res1-cat') ?></div><h3><?= cms_e('home.erika-explains-latest-resour.res1-title') ?></h3><p><?= cms_e('home.erika-explains-latest-resour.res1-text') ?></p></div></div>
-<div class="res-card" onclick="go('resources')"><div class="ph" data-label="Article Image"><?= cms_img('home.erika-explains-latest-resour.img-article-image') ?></div><div class="body"><div class="cat"><?= cms_e('home.erika-explains-latest-resour.res2-cat') ?></div><h3><?= cms_e('home.erika-explains-latest-resour.res2-title') ?></h3><p><?= cms_e('home.erika-explains-latest-resour.res2-text') ?></p></div></div>
-<div class="res-card" onclick="go('loc-gwinnett')"><div class="ph" data-label="Guide Cover"><?= cms_img('home.erika-explains-latest-resour.img-guide-cover') ?></div><div class="body"><div class="cat"><?= cms_e('home.erika-explains-latest-resour.res3-cat') ?></div><h3><?= cms_e('home.erika-explains-latest-resour.res3-title') ?></h3><p><?= cms_e('home.erika-explains-latest-resour.res3-text') ?></p></div></div>
+<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Video Thumbnail"><?= cms_img('home.erika-explains-latest-resour.img-video-thumbnail', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('home.erika-explains-latest-resour.res1-cat') ?></div><h3><?= cms_e('home.erika-explains-latest-resour.res1-title') ?></h3><p><?= cms_e('home.erika-explains-latest-resour.res1-text') ?></p></div></div>
+<div class="res-card" onclick="go('resources')"><div class="ph" data-label="Article Image"><?= cms_img('home.erika-explains-latest-resour.img-article-image', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('home.erika-explains-latest-resour.res2-cat') ?></div><h3><?= cms_e('home.erika-explains-latest-resour.res2-title') ?></h3><p><?= cms_e('home.erika-explains-latest-resour.res2-text') ?></p></div></div>
+<div class="res-card" onclick="go('loc-gwinnett')"><div class="ph" data-label="Guide Cover"><?= cms_img('home.erika-explains-latest-resour.img-guide-cover', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('home.erika-explains-latest-resour.res3-cat') ?></div><h3><?= cms_e('home.erika-explains-latest-resour.res3-title') ?></h3><p><?= cms_e('home.erika-explains-latest-resour.res3-text') ?></p></div></div>
 </div>
 </div>
 </section>
@@ -492,12 +504,12 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="wrap">
 <div class="center-h"><p class="eyebrow"><?= cms_e('home.moments-stages.eyebrow1') ?></p><h2><?= cms_e('home.moments-stages.heading1') ?></h2></div>
 <div class="thumb-strip">
-<div class="g" onclick="go('gallery')"><div class="ph" data-label="Keynote — Atlanta Summit"><?= cms_img('home.moments-stages.img-keynote-atlanta-summit') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap1') ?></div></div>
-<div class="g" onclick="go('gallery')"><div class="ph" data-label="Industry Panel"><?= cms_img('home.moments-stages.img-industry-panel') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap2') ?></div></div>
-<div class="g" onclick="go('gallery')"><div class="ph" data-label="ADTV — On Set"><?= cms_img('home.moments-stages.img-adtv-on-set') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap3') ?></div></div>
-<div class="g" onclick="go('gallery')"><div class="ph" data-label="Women's Summit"><?= cms_img('home.moments-stages.img-women-s-summit') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap4') ?></div></div>
-<div class="g" onclick="go('gallery')"><div class="ph" data-label="Agent Mastermind"><?= cms_img('home.moments-stages.img-agent-mastermind') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap5') ?></div></div>
-<div class="g" onclick="go('gallery')"><div class="ph" data-label="Community Event"><?= cms_img('home.moments-stages.img-community-event') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap6') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Keynote — Atlanta Summit"><?= cms_img('home.moments-stages.img-keynote-atlanta-summit', false, 'tile') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap1') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Industry Panel"><?= cms_img('home.moments-stages.img-industry-panel', false, 'tile') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap2') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="ADTV — On Set"><?= cms_img('home.moments-stages.img-adtv-on-set', false, 'tile') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap3') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Women's Summit"><?= cms_img('home.moments-stages.img-women-s-summit', false, 'tile') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap4') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Agent Mastermind"><?= cms_img('home.moments-stages.img-agent-mastermind', false, 'tile') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap5') ?></div></div>
+<div class="g" onclick="go('gallery')"><div class="ph" data-label="Community Event"><?= cms_img('home.moments-stages.img-community-event', false, 'tile') ?></div><div class="cap"><?= cms_e('home.moments-stages.cap6') ?></div></div>
 </div>
 <div style="text-align:center;margin-top:36px"><a class="btn btn-outline-dark" href="/gallery" data-nav="gallery" onclick="return _nav(event,'gallery')"><?= cms_e('home.moments-stages.btn1') ?></a></div>
 </div>
@@ -539,11 +551,11 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow on-dark"><?= cms_e('about.about-erika-page.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('about.about-erika-page.heading1') ?></h1>
 <p><?= cms_rich('about.about-erika-page.p1') ?></p>
-</div><div class="ph hero-media" data-label="Erika's Story — Featured Video"><?= cms_img('about.about-erika-page.img-erika-s-story-featured') ?><div class="play"></div></div></div>
+</div><div class="ph hero-media" data-label="Erika's Story — Featured Video"><?= cms_img('about.about-erika-page.img-erika-s-story-featured', false, 'media') ?><div class="play"></div></div></div>
 </header>
 <section>
 <div class="wrap split" style="align-items:flex-start">
-<div class="ph tall" data-label="Erika — Editorial Portrait"><?= cms_img('about.professional-bio.img-erika-editorial-portra') ?></div>
+<div class="ph tall" data-label="Erika — Editorial Portrait"><?= cms_img('about.professional-bio.img-erika-editorial-portra', false, 'half') ?></div>
 <div>
 <p class="eyebrow"><?= cms_e('about.professional-bio.eyebrow1') ?></p>
 <h2><?= cms_e('about.professional-bio.heading1') ?></h2>
@@ -574,12 +586,12 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p><?= cms_rich('about.entrepreneurship-ecosystem.p1') ?></p>
 <p><?= cms_rich('about.entrepreneurship-ecosystem.p2') ?></p>
 </div>
-<div class="ph tall" data-label="Escaluxe Ecosystem / Team Photo"><?= cms_img('about.entrepreneurship-ecosystem.img-escaluxe-ecosystem-tea') ?></div>
+<div class="ph tall" data-label="Escaluxe Ecosystem / Team Photo"><?= cms_img('about.entrepreneurship-ecosystem.img-escaluxe-ecosystem-tea', false, 'half') ?></div>
 </div>
 </section>
 <section class="dark">
 <div class="wrap split">
-<div class="ph wide" data-label="Featured Video — Erika's Story"><?= cms_img('about.speaking-media-authority.img-featured-video-erika-s') ?></div>
+<div class="ph wide" data-label="Featured Video — Erika's Story"><?= cms_img('about.speaking-media-authority.img-featured-video-erika-s', false, 'half') ?></div>
 <div>
 <p class="eyebrow on-dark"><?= cms_e('about.speaking-media-authority.eyebrow1') ?></p>
 <h2><?= cms_e('about.speaking-media-authority.heading1') ?></h2>
@@ -671,9 +683,9 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 </div>
 <div class="center-h" style="margin-top:56px"><p class="eyebrow on-dark"><?= cms_e('sell.seller-stories.eyebrow2') ?></p></div>
 <div class="res-grid">
-<div class="res-card" style="background:#fff"><div class="ph" data-label="Seller Video Story 1"><?= cms_img('sell.seller-stories.img-seller-video-story-1') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('sell.seller-stories.res1-cat') ?></div><h3><?= cms_e('sell.seller-stories.res1-title') ?></h3></div></div>
-<div class="res-card" style="background:#fff"><div class="ph" data-label="Seller Video Story 2"><?= cms_img('sell.seller-stories.img-seller-video-story-2') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('sell.seller-stories.res2-cat') ?></div><h3><?= cms_e('sell.seller-stories.res2-title') ?></h3></div></div>
-<div class="res-card" style="background:#fff"><div class="ph" data-label="Seller Video Story 3"><?= cms_img('sell.seller-stories.img-seller-video-story-3') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('sell.seller-stories.res3-cat') ?></div><h3><?= cms_e('sell.seller-stories.res3-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Seller Video Story 1"><?= cms_img('sell.seller-stories.img-seller-video-story-1', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('sell.seller-stories.res1-cat') ?></div><h3><?= cms_e('sell.seller-stories.res1-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Seller Video Story 2"><?= cms_img('sell.seller-stories.img-seller-video-story-2', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('sell.seller-stories.res2-cat') ?></div><h3><?= cms_e('sell.seller-stories.res2-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Seller Video Story 3"><?= cms_img('sell.seller-stories.img-seller-video-story-3', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('sell.seller-stories.res3-cat') ?></div><h3><?= cms_e('sell.seller-stories.res3-title') ?></h3></div></div>
 </div>
 </div>
 </section>
@@ -690,7 +702,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <details><summary><?= cms_e('sell.seller-questions.faq5-q') ?></summary><p><?= cms_rich('sell.seller-questions.faq5-a') ?></p></details>
 </div>
 </div>
-<div class="ph tall" data-label="Sold Atlanta Listing — Photo or Video"><?= cms_img('sell.seller-questions.img-sold-atlanta-listing-p') ?></div>
+<div class="ph tall" data-label="Sold Atlanta Listing — Photo or Video"><?= cms_img('sell.seller-questions.img-sold-atlanta-listing-p', false, 'half') ?></div>
 </div>
 </section>
 </div>
@@ -701,7 +713,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow on-dark"><?= cms_e('homevalue.atlanta-home-value-strategy.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('homevalue.atlanta-home-value-strategy.heading1') ?></h1>
 <p><?= cms_rich('homevalue.atlanta-home-value-strategy.p1') ?></p>
-</div><div class="ph hero-media" data-label="Erika Preparing a Home Valuation"><?= cms_img('homevalue.atlanta-home-value-strategy.img-erika-preparing-a-home') ?></div></div>
+</div><div class="ph hero-media" data-label="Erika Preparing a Home Valuation"><?= cms_img('homevalue.atlanta-home-value-strategy.img-erika-preparing-a-home', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap two-col">
@@ -774,7 +786,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('buy.buy-with-erika.heading1') ?></h1>
 <p><?= cms_rich('buy.buy-with-erika.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('buy.buy-with-erika.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Links to Axen Realty / Lofty IDX home search (mockup)')"><?= cms_e('buy.buy-with-erika.btn2') ?></a></div>
-</div><div class="ph hero-media" data-label="Buyers Touring an Atlanta Home"><?= cms_img('buy.buy-with-erika.img-buyers-touring-an-atla') ?></div></div>
+</div><div class="ph hero-media" data-label="Buyers Touring an Atlanta Home"><?= cms_img('buy.buy-with-erika.img-buyers-touring-an-atla', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap split">
@@ -789,7 +801,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <li><?= cms_e('buy.buying-strategy.check3') ?></li>
 </ul>
 </div>
-<div class="ph tall" data-label="Buyers at New Home — Keys Photo"><?= cms_img('buy.buying-strategy.img-buyers-at-new-home-key') ?></div>
+<div class="ph tall" data-label="Buyers at New Home — Keys Photo"><?= cms_img('buy.buying-strategy.img-buyers-at-new-home-key', false, 'half') ?></div>
 </div>
 </section>
 <section class="alt">
@@ -832,11 +844,11 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('speaking.speaking.heading1') ?></h1>
 <p><?= cms_rich('speaking.speaking.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('spk-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('speaking.speaking.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Downloads speaker one-sheet PDF (mockup)')"><?= cms_e('speaking.speaking.btn2') ?></a></div>
-</div><div class="ph hero-media" data-label="Speaker Reel — Preview"><?= cms_img('speaking.speaking.img-speaker-reel-preview') ?><div class="play"></div></div></div>
+</div><div class="ph hero-media" data-label="Speaker Reel — Preview"><?= cms_img('speaking.speaking.img-speaker-reel-preview', false, 'media') ?><div class="play"></div></div></div>
 </header>
 <section>
 <div class="wrap split">
-<div class="ph tall" data-label="Erika Keynote — Stage Photo"><?= cms_img('speaking.speaker-bio.img-erika-keynote-stage-ph') ?></div>
+<div class="ph tall" data-label="Erika Keynote — Stage Photo"><?= cms_img('speaking.speaker-bio.img-erika-keynote-stage-ph', false, 'half') ?></div>
 <div>
 <p class="eyebrow"><?= cms_e('speaking.speaker-bio.eyebrow1') ?></p>
 <h2><?= cms_e('speaking.speaker-bio.heading1') ?></h2>
@@ -862,7 +874,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 </section>
 <section class="alt">
 <div class="wrap split">
-<div class="ph wide" data-label="Speaker Reel / Stage Clips"><?= cms_img('speaking.audience-types.img-speaker-reel-stage-cli') ?><div class="play"></div></div>
+<div class="ph wide" data-label="Speaker Reel / Stage Clips"><?= cms_img('speaking.audience-types.img-speaker-reel-stage-cli', false, 'half') ?><div class="play"></div></div>
 <div>
 <p class="eyebrow"><?= cms_e('speaking.audience-types.eyebrow1') ?></p>
 <h2><?= cms_e('speaking.audience-types.heading1') ?></h2>
@@ -922,7 +934,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('collaborations.collaborations.heading1') ?></h1>
 <p><?= cms_rich('collaborations.collaborations.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('collab-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('collaborations.collaborations.btn1') ?></a></div>
-</div><div class="ph hero-media" data-label="Brand Collaboration Shoot"><?= cms_img('collaborations.collaborations.img-brand-collaboration-sh') ?></div></div>
+</div><div class="ph hero-media" data-label="Brand Collaboration Shoot"><?= cms_img('collaborations.collaborations.img-brand-collaboration-sh', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
@@ -975,18 +987,18 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="rev-filter">
 <span class="chip on">All</span><span class="chip">Atlanta Living</span><span class="chip">Real Estate</span><span class="chip">Wealth &amp; Investing</span><span class="chip">Luxury Lifestyle</span><span class="chip">Travel &amp; Hospitality</span><span class="chip">Agent Growth</span><span class="chip">Leadership &amp; Speaking</span>
 </div>
-</div><div class="ph hero-media" data-label="Atlanta Lifestyle Editorial"><?= cms_img('lifestyle.lifestyle-magazine.img-atlanta-lifestyle-edit') ?></div></div>
+</div><div class="ph hero-media" data-label="Atlanta Lifestyle Editorial"><?= cms_img('lifestyle.lifestyle-magazine.img-atlanta-lifestyle-edit', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
 <p class="eyebrow"><?= cms_e('lifestyle.featured-stories.eyebrow1') ?></p>
 <div class="res-grid">
-<div class="res-card"><div class="ph" data-label="Atlanta Skyline Feature"><?= cms_img('lifestyle.featured-stories.img-atlanta-skyline-featur') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res1-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res1-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res1-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Luxury Interior Feature"><?= cms_img('lifestyle.featured-stories.img-luxury-interior-featur') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res2-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res2-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res2-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Travel Feature"><?= cms_img('lifestyle.featured-stories.img-travel-feature') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res3-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res3-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res3-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Wealth Feature"><?= cms_img('lifestyle.featured-stories.img-wealth-feature') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res4-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res4-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res4-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Food Feature"><?= cms_img('lifestyle.featured-stories.img-food-feature') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res5-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res5-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res5-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Leadership Feature"><?= cms_img('lifestyle.featured-stories.img-leadership-feature') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res6-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res6-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res6-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Atlanta Skyline Feature"><?= cms_img('lifestyle.featured-stories.img-atlanta-skyline-featur', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res1-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res1-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res1-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Luxury Interior Feature"><?= cms_img('lifestyle.featured-stories.img-luxury-interior-featur', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res2-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res2-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res2-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Travel Feature"><?= cms_img('lifestyle.featured-stories.img-travel-feature', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res3-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res3-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res3-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Wealth Feature"><?= cms_img('lifestyle.featured-stories.img-wealth-feature', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res4-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res4-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res4-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Food Feature"><?= cms_img('lifestyle.featured-stories.img-food-feature', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res5-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res5-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res5-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Leadership Feature"><?= cms_img('lifestyle.featured-stories.img-leadership-feature', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('lifestyle.featured-stories.res6-cat') ?></div><h3><?= cms_e('lifestyle.featured-stories.res6-title') ?></h3><p><?= cms_e('lifestyle.featured-stories.res6-text') ?></p></div></div>
 </div>
 </div>
 </section>
@@ -1006,7 +1018,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('media.media-press.heading1') ?></h1>
 <p><?= cms_rich('media.media-press.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')"><?= cms_e('media.media-press.btn1') ?></a>  <a class="btn btn-outline" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')"><?= cms_e('media.media-press.btn2') ?></a></div>
-</div><div class="ph hero-media" data-label="ADTV Feature Clip"><?= cms_img('media.media-press.img-adtv-feature-clip') ?><div class="play"></div></div></div>
+</div><div class="ph hero-media" data-label="ADTV Feature Clip"><?= cms_img('media.media-press.img-adtv-feature-clip', false, 'media') ?><div class="play"></div></div></div>
 </header>
 <section>
 <div class="wrap two-col">
@@ -1030,9 +1042,9 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="wrap">
 <div class="center-h"><p class="eyebrow on-dark"><?= cms_e('media.on-screen-on-air.eyebrow1') ?></p><h2><?= cms_e('media.on-screen-on-air.heading1') ?></h2></div>
 <div class="res-grid">
-<div class="res-card" style="background:#fff"><div class="ph" data-label="ADTV Clip"><?= cms_img('media.on-screen-on-air.img-adtv-clip') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('media.on-screen-on-air.res1-cat') ?></div><h3><?= cms_e('media.on-screen-on-air.res1-title') ?></h3></div></div>
-<div class="res-card" style="background:#fff"><div class="ph" data-label="Podcast Episode"><?= cms_img('media.on-screen-on-air.img-podcast-episode') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('media.on-screen-on-air.res2-cat') ?></div><h3><?= cms_e('media.on-screen-on-air.res2-title') ?></h3></div></div>
-<div class="res-card" style="background:#fff"><div class="ph" data-label="Press Feature"><?= cms_img('media.on-screen-on-air.img-press-feature') ?></div><div class="body"><div class="cat"><?= cms_e('media.on-screen-on-air.res3-cat') ?></div><h3><?= cms_e('media.on-screen-on-air.res3-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="ADTV Clip"><?= cms_img('media.on-screen-on-air.img-adtv-clip', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('media.on-screen-on-air.res1-cat') ?></div><h3><?= cms_e('media.on-screen-on-air.res1-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Podcast Episode"><?= cms_img('media.on-screen-on-air.img-podcast-episode', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('media.on-screen-on-air.res2-cat') ?></div><h3><?= cms_e('media.on-screen-on-air.res2-title') ?></h3></div></div>
+<div class="res-card" style="background:#fff"><div class="ph" data-label="Press Feature"><?= cms_img('media.on-screen-on-air.img-press-feature', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('media.on-screen-on-air.res3-cat') ?></div><h3><?= cms_e('media.on-screen-on-air.res3-title') ?></h3></div></div>
 </div>
 <p style="text-align:center;margin-top:36px;font-size:14px"><?= cms_rich('media.on-screen-on-air.p1') ?></p>
 </div>
@@ -1063,15 +1075,15 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="rev-filter">
 <span class="chip on">All</span><span class="chip">Sellers</span><span class="chip">Buyers</span><span class="chip">Investors</span><span class="chip">Mentorship</span><span class="chip">Luxury</span>
 </div>
-</div><div class="ph hero-media" data-label="Client Story Highlight — Video"><?= cms_img('testimonials.google-zillow-video-testimon.img-client-story-highlight') ?><div class="play"></div></div></div>
+</div><div class="ph hero-media" data-label="Client Story Highlight — Video"><?= cms_img('testimonials.google-zillow-video-testimon.img-client-story-highlight', false, 'media') ?><div class="play"></div></div></div>
 </header>
 <section>
 <div class="wrap">
 <p class="eyebrow"><?= cms_e('testimonials.video-testimonials.eyebrow1') ?></p>
 <div class="res-grid">
-<div class="res-card"><div class="ph" data-label="Video Testimonial 1"><?= cms_img('testimonials.video-testimonials.img-video-testimonial-1') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('testimonials.video-testimonials.res1-cat') ?></div><h3><?= cms_e('testimonials.video-testimonials.res1-title') ?></h3><p><?= cms_e('testimonials.video-testimonials.res1-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Video Testimonial 2"><?= cms_img('testimonials.video-testimonials.img-video-testimonial-2') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('testimonials.video-testimonials.res2-cat') ?></div><h3><?= cms_e('testimonials.video-testimonials.res2-title') ?></h3><p><?= cms_e('testimonials.video-testimonials.res2-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Video Testimonial 3"><?= cms_img('testimonials.video-testimonials.img-video-testimonial-3') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('testimonials.video-testimonials.res3-cat') ?></div><h3><?= cms_e('testimonials.video-testimonials.res3-title') ?></h3><p><?= cms_e('testimonials.video-testimonials.res3-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Video Testimonial 1"><?= cms_img('testimonials.video-testimonials.img-video-testimonial-1', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('testimonials.video-testimonials.res1-cat') ?></div><h3><?= cms_e('testimonials.video-testimonials.res1-title') ?></h3><p><?= cms_e('testimonials.video-testimonials.res1-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Video Testimonial 2"><?= cms_img('testimonials.video-testimonials.img-video-testimonial-2', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('testimonials.video-testimonials.res2-cat') ?></div><h3><?= cms_e('testimonials.video-testimonials.res2-title') ?></h3><p><?= cms_e('testimonials.video-testimonials.res2-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Video Testimonial 3"><?= cms_img('testimonials.video-testimonials.img-video-testimonial-3', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('testimonials.video-testimonials.res3-cat') ?></div><h3><?= cms_e('testimonials.video-testimonials.res3-title') ?></h3><p><?= cms_e('testimonials.video-testimonials.res3-text') ?></p></div></div>
 </div>
 </div>
 </section>
@@ -1111,21 +1123,21 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="rev-filter">
 <span class="chip on">All</span><span class="chip">Seller</span><span class="chip">Buyer</span><span class="chip">Agent Tools</span><span class="chip">Wealth / Investing</span><span class="chip">Lifestyle</span><span class="chip">Speaking / Leadership</span>
 </div>
-</div><div class="ph hero-media" data-label="Guides &amp; Resources Flat-Lay"><?= cms_img('resources.resources.img-guides-resources-flat') ?></div></div>
+</div><div class="ph hero-media" data-label="Guides &amp; Resources Flat-Lay"><?= cms_img('resources.resources.img-guides-resources-flat', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
 <p class="eyebrow"><?= cms_e('resources.featured-guides.eyebrow1') ?></p>
 <div class="res-grid">
-<div class="res-card"><div class="ph" data-label="Seller Guide Cover"><?= cms_img('resources.featured-guides.img-seller-guide-cover') ?></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res1-cat') ?></div><h3><?= cms_e('resources.featured-guides.res1-title') ?></h3><p><?= cms_e('resources.featured-guides.res1-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Buyer Guide Cover"><?= cms_img('resources.featured-guides.img-buyer-guide-cover') ?></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res2-cat') ?></div><h3><?= cms_e('resources.featured-guides.res2-title') ?></h3><p><?= cms_e('resources.featured-guides.res2-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Investing Guide Cover"><?= cms_img('resources.featured-guides.img-investing-guide-cover') ?></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res3-cat') ?></div><h3><?= cms_e('resources.featured-guides.res3-title') ?></h3><p><?= cms_e('resources.featured-guides.res3-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Seller Guide Cover"><?= cms_img('resources.featured-guides.img-seller-guide-cover', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res1-cat') ?></div><h3><?= cms_e('resources.featured-guides.res1-title') ?></h3><p><?= cms_e('resources.featured-guides.res1-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Buyer Guide Cover"><?= cms_img('resources.featured-guides.img-buyer-guide-cover', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res2-cat') ?></div><h3><?= cms_e('resources.featured-guides.res2-title') ?></h3><p><?= cms_e('resources.featured-guides.res2-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Investing Guide Cover"><?= cms_img('resources.featured-guides.img-investing-guide-cover', false, 'card') ?></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res3-cat') ?></div><h3><?= cms_e('resources.featured-guides.res3-title') ?></h3><p><?= cms_e('resources.featured-guides.res3-text') ?></p></div></div>
 </div>
 <p class="eyebrow" style="margin-top:56px"><?= cms_e('resources.featured-guides.eyebrow2') ?></p>
 <div class="res-grid">
-<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Erika Explains Ep. 12"><?= cms_img('resources.featured-guides.img-erika-explains-ep-12') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res4-cat') ?></div><h3><?= cms_e('resources.featured-guides.res4-title') ?></h3></div></div>
-<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Erika Explains Ep. 11"><?= cms_img('resources.featured-guides.img-erika-explains-ep-11') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res5-cat') ?></div><h3><?= cms_e('resources.featured-guides.res5-title') ?></h3></div></div>
-<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Erika Explains Ep. 10"><?= cms_img('resources.featured-guides.img-erika-explains-ep-10') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res6-cat') ?></div><h3><?= cms_e('resources.featured-guides.res6-title') ?></h3></div></div>
+<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Erika Explains Ep. 12"><?= cms_img('resources.featured-guides.img-erika-explains-ep-12', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res4-cat') ?></div><h3><?= cms_e('resources.featured-guides.res4-title') ?></h3></div></div>
+<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Erika Explains Ep. 11"><?= cms_img('resources.featured-guides.img-erika-explains-ep-11', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res5-cat') ?></div><h3><?= cms_e('resources.featured-guides.res5-title') ?></h3></div></div>
+<div class="res-card" onclick="go('explains')"><div class="ph" data-label="Erika Explains Ep. 10"><?= cms_img('resources.featured-guides.img-erika-explains-ep-10', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('resources.featured-guides.res6-cat') ?></div><h3><?= cms_e('resources.featured-guides.res6-title') ?></h3></div></div>
 </div>
 </div>
 </section>
@@ -1138,7 +1150,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p style="margin-top:14px;max-width:460px"><?= cms_rich('resources.digital-products.p1') ?></p>
 <a class="btn btn-primary" href="/digital-products" data-nav="products" onclick="return _nav(event,'products')" style="margin-top:10px"><?= cms_e('resources.digital-products.btn1') ?></a>
 </div>
-<div class="ph wide" data-label="Digital Products Preview"><?= cms_img('resources.digital-products.img-digital-products-previ') ?></div>
+<div class="ph wide" data-label="Digital Products Preview"><?= cms_img('resources.digital-products.img-digital-products-previ', false, 'half') ?></div>
 </div>
 <form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Get the Atlanta Seller's Pricing Checklist"><input type="hidden" name="_page" value="resources"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div><div class="lead-mag">
 <div>
@@ -1174,17 +1186,17 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="rev-filter">
 <span class="chip on">All</span><span class="chip">Home Seller</span><span class="chip">Buyer &amp; Relocation</span><span class="chip">Agent Tools</span><span class="chip">Wealth / Investing</span><span class="chip">Mindset / Reinvention</span><span class="chip">Workshops</span>
 </div>
-</div><div class="ph hero-media" data-label="Digital Product Mockups"><?= cms_img('products.resources-digital-products.img-digital-product-mockup') ?></div></div>
+</div><div class="ph hero-media" data-label="Digital Product Mockups"><?= cms_img('products.resources-digital-products.img-digital-product-mockup', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
 <div class="prod-grid">
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod1-aud') ?></div><h3><?= cms_e('products.section-2.prod1-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod1-prob') ?></div><p><?= cms_e('products.section-2.prod1-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product · fires stan_store_click + UTM (mockup)')"><?= cms_e('products.section-2.prod1-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-2') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod2-aud') ?></div><h3><?= cms_e('products.section-2.prod2-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod2-prob') ?></div><p><?= cms_e('products.section-2.prod2-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod2-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-3') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod3-aud') ?></div><h3><?= cms_e('products.section-2.prod3-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod3-prob') ?></div><p><?= cms_e('products.section-2.prod3-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod3-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-4') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod4-aud') ?></div><h3><?= cms_e('products.section-2.prod4-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod4-prob') ?></div><p><?= cms_e('products.section-2.prod4-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod4-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-5') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod5-aud') ?></div><h3><?= cms_e('products.section-2.prod5-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod5-prob') ?></div><p><?= cms_e('products.section-2.prod5-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod5-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-6') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod6-aud') ?></div><h3><?= cms_e('products.section-2.prod6-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod6-prob') ?></div><p><?= cms_e('products.section-2.prod6-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan Store (mockup)')"><?= cms_e('products.section-2.prod6-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod1-aud') ?></div><h3><?= cms_e('products.section-2.prod1-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod1-prob') ?></div><p><?= cms_e('products.section-2.prod1-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product · fires stan_store_click + UTM (mockup)')"><?= cms_e('products.section-2.prod1-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-2', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod2-aud') ?></div><h3><?= cms_e('products.section-2.prod2-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod2-prob') ?></div><p><?= cms_e('products.section-2.prod2-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod2-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-3', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod3-aud') ?></div><h3><?= cms_e('products.section-2.prod3-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod3-prob') ?></div><p><?= cms_e('products.section-2.prod3-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod3-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-4', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod4-aud') ?></div><h3><?= cms_e('products.section-2.prod4-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod4-prob') ?></div><p><?= cms_e('products.section-2.prod4-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod4-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-5', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod5-aud') ?></div><h3><?= cms_e('products.section-2.prod5-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod5-prob') ?></div><p><?= cms_e('products.section-2.prod5-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod5-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-6', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod6-aud') ?></div><h3><?= cms_e('products.section-2.prod6-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod6-prob') ?></div><p><?= cms_e('products.section-2.prod6-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan Store (mockup)')"><?= cms_e('products.section-2.prod6-btn') ?></a></div></div>
 </div>
 <p style="text-align:center;margin-top:40px;font-size:14px"><?= cms_rich('products.section-2.p1') ?></p>
 </div>
@@ -1208,23 +1220,23 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <p class="eyebrow on-dark"><?= cms_e('explains.resources-erika-explains.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('explains.resources-erika-explains.heading1') ?></h1>
 <p><?= cms_rich('explains.resources-erika-explains.p1') ?></p>
-</div><div class="ph hero-media" data-label="Erika Explains — Series Trailer"><?= cms_img('explains.resources-erika-explains.img-erika-explains-series') ?><div class="play"></div></div></div>
+</div><div class="ph hero-media" data-label="Erika Explains — Series Trailer"><?= cms_img('explains.resources-erika-explains.img-erika-explains-series', false, 'media') ?><div class="play"></div></div></div>
 </header>
 <section>
 <div class="wrap">
 <div class="center-h" style="max-width:820px;margin:0 auto">
 <p class="eyebrow"><?= cms_e('explains.latest-episode.eyebrow1') ?></p>
-<div class="ph video-frame" data-label="Ep. 12 — Why Online Estimates Miss the Mark (full transcript below)"><?= cms_img('explains.latest-episode.img-ep-12-why-online-estim') ?><div class="play"></div></div>
+<div class="ph video-frame" data-label="Ep. 12 — Why Online Estimates Miss the Mark (full transcript below)"><?= cms_img('explains.latest-episode.img-ep-12-why-online-estim', false, 'video') ?><div class="play"></div></div>
 <p style="margin-top:20px;max-width:640px;margin-left:auto;margin-right:auto"><?= cms_rich('explains.latest-episode.p1') ?></p>
 </div>
 <p class="eyebrow" style="margin-top:64px"><?= cms_e('explains.latest-episode.eyebrow2') ?></p>
 <div class="res-grid">
-<div class="res-card"><div class="ph" data-label="Ep. 11"><?= cms_img('explains.latest-episode.img-ep-11') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res1-cat') ?></div><h3><?= cms_e('explains.latest-episode.res1-title') ?></h3><p><?= cms_e('explains.latest-episode.res1-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Ep. 10"><?= cms_img('explains.latest-episode.img-ep-10') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res2-cat') ?></div><h3><?= cms_e('explains.latest-episode.res2-title') ?></h3><p><?= cms_e('explains.latest-episode.res2-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Ep. 9"><?= cms_img('explains.latest-episode.img-ep-9') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res3-cat') ?></div><h3><?= cms_e('explains.latest-episode.res3-title') ?></h3><p><?= cms_e('explains.latest-episode.res3-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Ep. 8"><?= cms_img('explains.latest-episode.img-ep-8') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res4-cat') ?></div><h3><?= cms_e('explains.latest-episode.res4-title') ?></h3><p><?= cms_e('explains.latest-episode.res4-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Ep. 7"><?= cms_img('explains.latest-episode.img-ep-7') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res5-cat') ?></div><h3><?= cms_e('explains.latest-episode.res5-title') ?></h3><p><?= cms_e('explains.latest-episode.res5-text') ?></p></div></div>
-<div class="res-card"><div class="ph" data-label="Ep. 6"><?= cms_img('explains.latest-episode.img-ep-6') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res6-cat') ?></div><h3><?= cms_e('explains.latest-episode.res6-title') ?></h3><p><?= cms_e('explains.latest-episode.res6-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 11"><?= cms_img('explains.latest-episode.img-ep-11', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res1-cat') ?></div><h3><?= cms_e('explains.latest-episode.res1-title') ?></h3><p><?= cms_e('explains.latest-episode.res1-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 10"><?= cms_img('explains.latest-episode.img-ep-10', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res2-cat') ?></div><h3><?= cms_e('explains.latest-episode.res2-title') ?></h3><p><?= cms_e('explains.latest-episode.res2-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 9"><?= cms_img('explains.latest-episode.img-ep-9', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res3-cat') ?></div><h3><?= cms_e('explains.latest-episode.res3-title') ?></h3><p><?= cms_e('explains.latest-episode.res3-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 8"><?= cms_img('explains.latest-episode.img-ep-8', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res4-cat') ?></div><h3><?= cms_e('explains.latest-episode.res4-title') ?></h3><p><?= cms_e('explains.latest-episode.res4-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 7"><?= cms_img('explains.latest-episode.img-ep-7', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res5-cat') ?></div><h3><?= cms_e('explains.latest-episode.res5-title') ?></h3><p><?= cms_e('explains.latest-episode.res5-text') ?></p></div></div>
+<div class="res-card"><div class="ph" data-label="Ep. 6"><?= cms_img('explains.latest-episode.img-ep-6', false, 'card') ?><div class="play" style="width:52px;height:52px"></div></div><div class="body"><div class="cat"><?= cms_e('explains.latest-episode.res6-cat') ?></div><h3><?= cms_e('explains.latest-episode.res6-title') ?></h3><p><?= cms_e('explains.latest-episode.res6-text') ?></p></div></div>
 </div>
 </div>
 </section>
@@ -1244,11 +1256,11 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('mentorship.mentorship.heading1') ?></h1>
 <p><?= cms_rich('mentorship.mentorship.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('ment-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('mentorship.mentorship.btn1') ?></a></div>
-</div><div class="ph hero-media" data-label="Erika Coaching Agents — Photo"><?= cms_img('mentorship.mentorship.img-erika-coaching-agents') ?></div></div>
+</div><div class="ph hero-media" data-label="Erika Coaching Agents — Photo"><?= cms_img('mentorship.mentorship.img-erika-coaching-agents', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap split">
-<div class="ph tall" data-label="Erika Coaching / Mastermind Photo"><?= cms_img('mentorship.who-it-s-for.img-erika-coaching-masterm') ?></div>
+<div class="ph tall" data-label="Erika Coaching / Mastermind Photo"><?= cms_img('mentorship.who-it-s-for.img-erika-coaching-masterm', false, 'half') ?></div>
 <div>
 <p class="eyebrow"><?= cms_e('mentorship.who-it-s-for.eyebrow1') ?></p>
 <h2><?= cms_e('mentorship.who-it-s-for.heading1') ?></h2>
@@ -1282,7 +1294,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="tst" style="margin-bottom:20px"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('mentorship.agent-results.tst1-quote') ?></blockquote><div class="who"><?= cms_e('mentorship.agent-results.tst1-who') ?></div></div>
 <div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('mentorship.agent-results.tst2-quote') ?></blockquote><div class="who"><?= cms_e('mentorship.agent-results.tst2-who') ?></div></div>
 </div>
-<div class="ph tall" data-label="Mentorship Video — Program Overview"><?= cms_img('mentorship.agent-results.img-mentorship-video-progr') ?><div class="play"></div></div>
+<div class="ph tall" data-label="Mentorship Video — Program Overview"><?= cms_img('mentorship.agent-results.img-mentorship-video-progr', false, 'half') ?><div class="play"></div></div>
 </div>
 </section>
 <section class="alt" id="ment-form">
@@ -1316,7 +1328,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('investing.investing-capital-acquisitio.heading1') ?></h1>
 <p><?= cms_rich('investing.investing-capital-acquisitio.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('inv-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('investing.investing-capital-acquisitio.btn1') ?></a></div>
-</div><div class="ph hero-media" data-label="Atlanta Investment Property"><?= cms_img('investing.investing-capital-acquisitio.img-atlanta-investment-pro') ?></div></div>
+</div><div class="ph hero-media" data-label="Atlanta Investment Property"><?= cms_img('investing.investing-capital-acquisitio.img-atlanta-investment-pro', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap two-col">
@@ -1367,7 +1379,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('pm.property-management.heading1') ?></h1>
 <p><?= cms_rich('pm.property-management.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" onclick="alert('Links to dedicated PM website (mockup)')"><?= cms_e('pm.property-management.btn1') ?></a></div>
-</div><div class="ph hero-media" data-label="Managed Property — Exterior"><?= cms_img('pm.property-management.img-managed-property-exter') ?></div></div>
+</div><div class="ph hero-media" data-label="Managed Property — Exterior"><?= cms_img('pm.property-management.img-managed-property-exter', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap two-col">
@@ -1384,7 +1396,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 </div>
 <div>
 <p class="eyebrow"><?= cms_e('pm.who-it-s-for.eyebrow2') ?></p>
-<div class="eco-grid" style="grid-template-columns:1fr 1fr;margin-top:20px">
+<div class="eco-grid" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-top:20px">
 <div class="eco"><h3><?= cms_e('pm.who-it-s-for.eco1-title') ?></h3><p><?= cms_e('pm.who-it-s-for.eco1-text') ?></p></div>
 <div class="eco"><h3><?= cms_e('pm.who-it-s-for.eco2-title') ?></h3><p><?= cms_e('pm.who-it-s-for.eco2-text') ?></p></div>
 <div class="eco"><h3><?= cms_e('pm.who-it-s-for.eco3-title') ?></h3><p><?= cms_e('pm.who-it-s-for.eco3-text') ?></p></div>
@@ -1419,7 +1431,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('transportation.escaluxe-transportation-logi.heading1') ?></h1>
 <p><?= cms_rich('transportation.escaluxe-transportation-logi.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('tl-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('transportation.escaluxe-transportation-logi.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('tel:678-404-1562 · fires phone_click (mockup)')"><?= cms_e('transportation.escaluxe-transportation-logi.btn2') ?></a></div>
-</div><div class="ph hero-media" data-label="Executive Fleet — Photo or Video"><?= cms_img('transportation.escaluxe-transportation-logi.img-executive-fleet-photo') ?></div></div>
+</div><div class="ph hero-media" data-label="Executive Fleet — Photo or Video"><?= cms_img('transportation.escaluxe-transportation-logi.img-executive-fleet-photo', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
@@ -1486,21 +1498,21 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('living.escaluxe-living.heading1') ?></h1>
 <p><?= cms_rich('living.escaluxe-living.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop · fires shop_click + UTM (mockup)')"><?= cms_e('living.escaluxe-living.btn1') ?></a></div>
-</div><div class="ph hero-media" data-label="Escaluxe Living — Product Editorial · Photo or Video"><?= cms_img('living.escaluxe-living.img-escaluxe-living-produc') ?></div></div>
+</div><div class="ph hero-media" data-label="Escaluxe Living — Product Editorial · Photo or Video"><?= cms_img('living.escaluxe-living.img-escaluxe-living-produc', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
 <div class="center-h"><p class="eyebrow"><?= cms_e('living.the-collection.eyebrow1') ?></p><h2><?= cms_e('living.the-collection.heading1') ?></h2></div>
 <div class="prod-grid">
-<div class="prod"><div class="ph" data-label="Body Care Collection"><?= cms_img('living.the-collection.img-body-care-collection') ?></div><div class="body"><div class="aud"><?= cms_e('living.the-collection.prod1-aud') ?></div><h3><?= cms_e('living.the-collection.prod1-title') ?></h3><div class="prob"><?= cms_e('living.the-collection.prod1-prob') ?></div><p><?= cms_e('living.the-collection.prod1-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-collection.prod1-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Home Fragrance Collection"><?= cms_img('living.the-collection.img-home-fragrance-collect') ?></div><div class="body"><div class="aud"><?= cms_e('living.the-collection.prod2-aud') ?></div><h3><?= cms_e('living.the-collection.prod2-title') ?></h3><div class="prob"><?= cms_e('living.the-collection.prod2-prob') ?></div><p><?= cms_e('living.the-collection.prod2-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-collection.prod2-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Living Essentials Collection"><?= cms_img('living.the-collection.img-living-essentials-coll') ?></div><div class="body"><div class="aud"><?= cms_e('living.the-collection.prod3-aud') ?></div><h3><?= cms_e('living.the-collection.prod3-title') ?></h3><div class="prob"><?= cms_e('living.the-collection.prod3-prob') ?></div><p><?= cms_e('living.the-collection.prod3-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-collection.prod3-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Body Care Collection"><?= cms_img('living.the-collection.img-body-care-collection', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('living.the-collection.prod1-aud') ?></div><h3><?= cms_e('living.the-collection.prod1-title') ?></h3><div class="prob"><?= cms_e('living.the-collection.prod1-prob') ?></div><p><?= cms_e('living.the-collection.prod1-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-collection.prod1-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Home Fragrance Collection"><?= cms_img('living.the-collection.img-home-fragrance-collect', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('living.the-collection.prod2-aud') ?></div><h3><?= cms_e('living.the-collection.prod2-title') ?></h3><div class="prob"><?= cms_e('living.the-collection.prod2-prob') ?></div><p><?= cms_e('living.the-collection.prod2-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-collection.prod2-btn') ?></a></div></div>
+<div class="prod"><div class="ph" data-label="Living Essentials Collection"><?= cms_img('living.the-collection.img-living-essentials-coll', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('living.the-collection.prod3-aud') ?></div><h3><?= cms_e('living.the-collection.prod3-title') ?></h3><div class="prob"><?= cms_e('living.the-collection.prod3-prob') ?></div><p><?= cms_e('living.the-collection.prod3-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Escaluxe Living shop (mockup)')"><?= cms_e('living.the-collection.prod3-btn') ?></a></div></div>
 </div>
 </div>
 </section>
 <section class="alt">
 <div class="wrap split">
-<div class="ph tall" data-label="Escaluxe Living — Lifestyle Photo"><?= cms_img('living.the-story.img-escaluxe-living-lifest') ?></div>
+<div class="ph tall" data-label="Escaluxe Living — Lifestyle Photo"><?= cms_img('living.the-story.img-escaluxe-living-lifest', false, 'half') ?></div>
 <div>
 <p class="eyebrow"><?= cms_e('living.the-story.eyebrow1') ?></p>
 <h2><?= cms_e('living.the-story.heading1') ?></h2>
@@ -1527,7 +1539,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('loc-atlanta.locations-atlanta-metro.heading1') ?></h1>
 <p><?= cms_rich('loc-atlanta.locations-atlanta-metro.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-atlanta.locations-atlanta-metro.btn1') ?></a></div>
-</div><div class="ph hero-media" data-label="Atlanta Skyline — Photo"><?= cms_img('loc-atlanta.locations-atlanta-metro.img-atlanta-skyline-photo') ?></div></div>
+</div><div class="ph hero-media" data-label="Atlanta Skyline — Photo"><?= cms_img('loc-atlanta.locations-atlanta-metro.img-atlanta-skyline-photo', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap two-col">
@@ -1559,7 +1571,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('loc-gwinnett.locations-lawrenceville-gwin.heading1') ?></h1>
 <p><?= cms_rich('loc-gwinnett.locations-lawrenceville-gwin.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-gwinnett.locations-lawrenceville-gwin.btn1') ?></a></div>
-</div><div class="ph hero-media" data-label="Downtown Lawrenceville Square"><?= cms_img('loc-gwinnett.locations-lawrenceville-gwin.img-downtown-lawrenceville') ?></div></div>
+</div><div class="ph hero-media" data-label="Downtown Lawrenceville Square"><?= cms_img('loc-gwinnett.locations-lawrenceville-gwin.img-downtown-lawrenceville', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap two-col">
@@ -1590,7 +1602,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('loc-fayette.locations-fayette-county-pea.heading1') ?></h1>
 <p><?= cms_rich('loc-fayette.locations-fayette-county-pea.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-fayette.locations-fayette-county-pea.btn1') ?></a></div>
-</div><div class="ph hero-media" data-label="Peachtree City — Golf Cart Path"><?= cms_img('loc-fayette.locations-fayette-county-pea.img-peachtree-city-golf-ca') ?></div></div>
+</div><div class="ph hero-media" data-label="Peachtree City — Golf Cart Path"><?= cms_img('loc-fayette.locations-fayette-county-pea.img-peachtree-city-golf-ca', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap two-col">
@@ -1621,7 +1633,7 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <h1 style="margin-top:12px"><?= cms_rich('contact.contact.heading1') ?></h1>
 <p><?= cms_rich('contact.contact.p1') ?></p>
 <div style="margin-top:30px"><a class="btn btn-gold" onclick="alert('Opens Google Workspace booking link (Calendly backup) — mockup')"><?= cms_e('contact.contact.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('tel:678-404-1562 · fires phone_click (mockup)')"><?= cms_e('contact.contact.btn2') ?></a></div>
-</div><div class="ph hero-media" data-label="Erika — Welcome Photo"><?= cms_img('contact.contact.img-erika-welcome-photo') ?></div></div>
+</div><div class="ph hero-media" data-label="Erika — Welcome Photo"><?= cms_img('contact.contact.img-erika-welcome-photo', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
@@ -1674,26 +1686,26 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
 <div class="rev-filter">
 <span class="chip on">All</span><span class="chip">Listings</span><span class="chip">Sold</span><span class="chip">Speaking</span><span class="chip">Lifestyle</span><span class="chip">Atlanta</span><span class="chip">Videos</span><span class="chip">Behind the Scenes</span>
 </div>
-</div><div class="ph hero-media" data-label="Featured — Gallery Highlight"><?= cms_img('gallery.gallery.img-featured-gallery-highl') ?></div></div>
+</div><div class="ph hero-media" data-label="Featured — Gallery Highlight"><?= cms_img('gallery.gallery.img-featured-gallery-highl', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
 <div class="gal">
-<div class="g"><div class="ph" data-label="Luxury Listing — Exterior" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-luxury-listing-exterio') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap1') ?></div></div>
-<div class="g"><div class="ph" data-label="Erika On Stage" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-erika-on-stage') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap2') ?></div></div>
-<div class="g"><div class="ph" data-label="Sold — Family Home" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-sold-family-home') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap3') ?></div></div>
-<div class="g"><div class="ph" data-label="Video · Speaker Reel" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-speaker-reel') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap4') ?></div></div>
-<div class="g"><div class="ph" data-label="Atlanta Skyline at Dusk" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-atlanta-skyline-at-dus') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap5') ?></div></div>
-<div class="g"><div class="ph" data-label="Staged Interior — Living Room" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-staged-interior-living') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap6') ?></div></div>
-<div class="g"><div class="ph" data-label="Erika — Editorial Portrait" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-erika-editorial-portra') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap7') ?></div></div>
-<div class="g"><div class="ph" data-label="Video · Client Story" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-client-story') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap8') ?></div></div>
-<div class="g"><div class="ph" data-label="Peachtree City — Golf Cart Path" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-peachtree-city-golf-ca') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap9') ?></div></div>
-<div class="g"><div class="ph" data-label="Closing Day — Keys Handoff" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-closing-day-keys-hando') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap10') ?></div></div>
-<div class="g"><div class="ph" data-label="Luxury Kitchen Detail" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-luxury-kitchen-detail') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap11') ?></div></div>
-<div class="g"><div class="ph" data-label="Panel Discussion" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-panel-discussion') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap12') ?></div></div>
-<div class="g"><div class="ph" data-label="Lifestyle Shoot — Atlanta Dining" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-lifestyle-shoot-atlant') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap13') ?></div></div>
-<div class="g"><div class="ph" data-label="Video · Erika Explains BTS" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-erika-explains-b') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap14') ?></div></div>
-<div class="g"><div class="ph" data-label="Sold — Gwinnett Colonial" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-sold-gwinnett-colonial') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap15') ?></div></div>
+<div class="g"><div class="ph" data-label="Luxury Listing — Exterior" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-luxury-listing-exterio', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap1') ?></div></div>
+<div class="g"><div class="ph" data-label="Erika On Stage" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-erika-on-stage', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap2') ?></div></div>
+<div class="g"><div class="ph" data-label="Sold — Family Home" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-sold-family-home', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap3') ?></div></div>
+<div class="g"><div class="ph" data-label="Video · Speaker Reel" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-speaker-reel', false, 'gal') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap4') ?></div></div>
+<div class="g"><div class="ph" data-label="Atlanta Skyline at Dusk" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-atlanta-skyline-at-dus', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap5') ?></div></div>
+<div class="g"><div class="ph" data-label="Staged Interior — Living Room" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-staged-interior-living', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap6') ?></div></div>
+<div class="g"><div class="ph" data-label="Erika — Editorial Portrait" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-erika-editorial-portra', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap7') ?></div></div>
+<div class="g"><div class="ph" data-label="Video · Client Story" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-client-story', false, 'gal') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap8') ?></div></div>
+<div class="g"><div class="ph" data-label="Peachtree City — Golf Cart Path" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-peachtree-city-golf-ca', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap9') ?></div></div>
+<div class="g"><div class="ph" data-label="Closing Day — Keys Handoff" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-closing-day-keys-hando', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap10') ?></div></div>
+<div class="g"><div class="ph" data-label="Luxury Kitchen Detail" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-luxury-kitchen-detail', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap11') ?></div></div>
+<div class="g"><div class="ph" data-label="Panel Discussion" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-panel-discussion', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap12') ?></div></div>
+<div class="g"><div class="ph" data-label="Lifestyle Shoot — Atlanta Dining" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-lifestyle-shoot-atlant', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap13') ?></div></div>
+<div class="g"><div class="ph" data-label="Video · Erika Explains BTS" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-erika-explains-b', false, 'gal') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap14') ?></div></div>
+<div class="g"><div class="ph" data-label="Sold — Gwinnett Colonial" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-sold-gwinnett-colonial', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap15') ?></div></div>
 </div>
 <p style="text-align:center;margin-top:36px;font-size:14px"><?= cms_rich('gallery.section-2.p1') ?></p>
 <div style="text-align:center;margin-top:24px"><a class="btn btn-primary" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('gallery.section-2.btn1') ?></a></div>

@@ -88,6 +88,22 @@ function photo_focal(string $path): string {
     return $map[$path] ?? '';
 }
 
+/**
+ * The curated pick for a slot: the picture shown when nothing has been chosen.
+ *
+ * This is what lets photos.php be the one place a slot's default picture is
+ * decided — fields.php no longer has to repeat the path.
+ */
+function photo_pick(string $k): string {
+    $lib = photo_library();
+    $slot = $lib['slots'][$k] ?? null;
+    if (!$slot) return '';
+    foreach ($lib['libraries'][$slot['lib']]['photos'] ?? [] as $p) {
+        if (($p['r'] ?? '') === ($slot['pick'] ?? '')) return $p['f'];
+    }
+    return '';
+}
+
 /** True when the path is one of the curated photos — the whitelist for saving a pick. */
 function photo_is_library_path(string $path): bool {
     foreach (photo_library()['libraries'] as $set) {
@@ -112,11 +128,21 @@ function content_all(): array {
     return $all;
 }
 
-/** Value for a key: DB override if present, else the manifest default. */
+/**
+ * Value for a key: DB override if present, else the manifest default.
+ *
+ * A picture slot with no default in the manifest falls back to its curated pick
+ * from photos.php, so a slot only renders empty when nothing anywhere has a
+ * picture for it — not merely because fields.php was never filled in.
+ */
 function cms(string $k): string {
     $all = content_all();
     if (array_key_exists($k, $all)) return $all[$k];
-    return fields_flat()[$k]['d'] ?? '';
+
+    $field = fields_flat()[$k] ?? null;
+    $d = $field['d'] ?? '';
+    if ($d === '' && ($field['t'] ?? '') === 'image') return photo_pick($k);
+    return $d;
 }
 
 function content_set(string $k, string $v): void {
@@ -195,13 +221,86 @@ function adjust_style(string $k): string {
 }
 
 /**
+ * What each kind of picture box is actually worth downloading.
+ *
+ * A picture box is never the full width of the window — it is one column of a
+ * three-up card grid, or one tile of a six-up strip. 'sizes' tells the browser
+ * the real width so it can pick a small file instead of the biggest one.
+ *
+ * 'cap' is the widest file worth offering for that box: roughly twice the
+ * largest size the box is ever laid out at. Without it a 3x phone screen pulls
+ * a 1200px photo into a 350px card — sharper than the eye can resolve, and
+ * three times the wait on a mobile connection.
+ *
+ * Keys match the slot's container class in index.php.
+ */
+const SLOT_SIZES = [
+    'hero'   => ['(max-width:920px) 92vw, 40vw', 1200],  // landing headshot
+    'media'  => ['(max-width:920px) 92vw, 44vw', 1200],  // two-column page hero
+    'half'   => ['(max-width:920px) 92vw, 46vw', 1200],  // split / tall / wide / cutout
+    'video'  => ['(max-width:920px) 92vw, 70vw', 1600],  // full-width video frame
+    'card'   => ['(max-width:920px) 92vw, 30vw', 800],   // three-up resource & product cards
+    'tile'   => ['(max-width:560px) 46vw, (max-width:920px) 31vw, 15vw', 800], // thumbnail strip
+    'gal'    => ['(max-width:560px) 46vw, (max-width:920px) 46vw, 30vw', 800], // gallery masonry
+];
+
+/**
+ * Pre-built WebP copies of a picture, as a srcset, plus its intrinsic size.
+ *
+ * tools/build-images.php writes assets/rimg/<width>/<path>.webp. When those
+ * exist the browser is offered the whole ladder and downloads only the step it
+ * needs; when they do not (a fresh upload, say) this returns nothing and the
+ * original is served on its own, exactly as before.
+ *
+ * @return array{srcset:string, w:int, h:int}
+ */
+function img_variants(string $path, int $cap = 0): array {
+    static $cache = [];
+    $ck = $path . '|' . $cap;
+    if (isset($cache[$ck])) return $cache[$ck];
+
+    $out = ['srcset' => '', 'w' => 0, 'h' => 0];
+    $abs = __DIR__ . '/' . ltrim($path, '/');
+    if (is_file($abs) && ($size = @getimagesize($abs))) {
+        $out['w'] = (int) $size[0];
+        $out['h'] = (int) $size[1];
+    }
+
+    $rel = ltrim($path, '/');
+    $set = [];
+    foreach (glob(__DIR__ . '/assets/rimg/*/' . $rel . '.webp') as $file) {
+        if (preg_match('#/assets/rimg/(\d+)/#', $file, $m)) {
+            $set[(int) $m[1]] = 'assets/rimg/' . $m[1] . '/' . $rel . '.webp';
+        }
+    }
+    if ($set) {
+        ksort($set);
+        if ($cap > 0) {
+            // Keep every step up to the cap, plus the first one past it so the
+            // ladder still has a rung when a picture is smaller than the cap.
+            $kept = [];
+            foreach ($set as $w => $f) {
+                $kept[$w] = $f;
+                if ($w >= $cap) break;
+            }
+            $set = $kept;
+        }
+        $out['srcset'] = implode(', ', array_map(fn($w, $f) => esc($f) . ' ' . $w . 'w', array_keys($set), $set));
+    }
+    return $cache[$ck] = $out;
+}
+
+/**
  * Image/video slot: outputs media tag when a picture exists, empty string otherwise.
  *
  * Every page lives in one document (hidden with display:none), so media is lazy by
  * default — the browser only fetches what the visitor actually navigates to. Pass
  * $eager for the one above-the-fold picture on the landing page.
+ *
+ * $slot names the kind of box the picture sits in (see SLOT_SIZES) so the browser
+ * can pick a file scaled for that box rather than downloading the full-size photo.
  */
-function cms_img(string $k, bool $eager = false): string {
+function cms_img(string $k, bool $eager = false, string $slot = 'half'): string {
     $v = cms($k);
     if ($v === '') return '';
     $style = adjust_style($k);
@@ -210,8 +309,20 @@ function cms_img(string $k, bool $eager = false): string {
     if (in_array($ext, ['mp4', 'webm'], true)) {
         return '<video src="' . esc($v) . '" autoplay muted loop playsinline preload="metadata"' . $styleAttr . '></video>';
     }
+
+    [$sizes, $cap] = SLOT_SIZES[$slot] ?? SLOT_SIZES['half'];
+    $var = img_variants($v, $cap);
+    $srcAttr = '';
+    if ($var['srcset'] !== '') {
+        $srcAttr = ' srcset="' . $var['srcset'] . '" sizes="' . esc($sizes) . '"';
+    }
+    // Intrinsic size keeps the picture's own proportions known to the browser, so a
+    // slow-loading photo never shifts the text underneath it.
+    $dimAttr = $var['w'] > 0 ? ' width="' . $var['w'] . '" height="' . $var['h'] . '"' : '';
     $loading = $eager ? ' fetchpriority="high" decoding="async"' : ' loading="lazy" decoding="async"';
-    return '<img src="' . esc($v) . '" alt="' . esc(fields_flat()[$k]['label'] ?? '') . '"' . $loading . $styleAttr . '>';
+
+    return '<img src="' . esc($v) . '"' . $srcAttr . $dimAttr
+        . ' alt="' . esc(fields_flat()[$k]['label'] ?? '') . '"' . $loading . $styleAttr . '>';
 }
 
 /* ---------- app settings (SMTP etc.) — stored in the content table ---------- */
@@ -515,5 +626,14 @@ function handle_upload(array $file): array {
     $dir = __DIR__ . '/uploads';
     if (!is_dir($dir)) mkdir($dir, 0755, true);
     if (!move_uploaded_file($file['tmp_name'], "$dir/$name")) return ['', 'Could not save the file.'];
+
+    // Build the scaled-down copies straight away, so a picture uploaded here is
+    // as light on a phone as the ones that ship with the site. A failure here is
+    // not fatal: cms_img() serves the original when no copies exist.
+    if (!in_array($ext, ['mp4', 'webm'], true)) {
+        require_once __DIR__ . '/lib/imgvariants.php';
+        img_build_variants(__DIR__, 'uploads/' . $name);
+    }
+
     return ['uploads/' . $name, ''];
 }

@@ -1,0 +1,18 @@
+[
+  {"f":"c1-gwinnett-selling-guide","w":1200,"h":750,"kind":"cover","kicker":"Atlanta Living","title":"The 2026 Guide to Selling in Gwinnett County","sub":"Timing · Preparation · Pricing","accent":"gold"},
+  {"f":"c2-seller-strategy-guide","w":1200,"h":750,"kind":"cover","kicker":"Seller","title":"The Atlanta Metro Seller's Strategy Guide","sub":"Pricing · Preparation · Timing","accent":"merlot"},
+  {"f":"c3-atlanta-relocation-playbook","w":1200,"h":750,"kind":"cover","kicker":"Buyer","title":"Relocating to Atlanta: The Complete Playbook","sub":"Neighborhoods · Schools · Commutes","accent":"blush"},
+  {"f":"c4-first-investment-property","w":1200,"h":750,"kind":"cover","kicker":"Wealth / Investing","title":"Your First Investment Property in Georgia","sub":"The realistic numbers behind rental #1","accent":"gold"},
+  {"f":"c5-seller-strategy-toolkit","w":1200,"h":900,"kind":"cover","kicker":"For Home Sellers","title":"The Seller Strategy Toolkit","sub":"Checklists · Timelines · Framework","accent":"merlot"},
+  {"f":"c6-atlanta-relocation-guide","w":1200,"h":900,"kind":"cover","kicker":"For Buyers & Relocators","title":"The Atlanta Relocation Guide","sub":"Neighborhood profiles & commute maps","accent":"blush"},
+  {"f":"c7-agent-scripts-systems","w":1200,"h":900,"kind":"cover","kicker":"For Agents","title":"Agent Scripts & Systems Pack","sub":"Presentations · Objections · Follow-up","accent":"ink"},
+  {"f":"c8-first-rental-blueprint","w":1200,"h":900,"kind":"cover","kicker":"For Wealth-Builders","title":"First Rental Property Blueprint","sub":"Deal math · Georgia market context","accent":"gold"},
+  {"f":"c9-reinvention-workbook","w":1200,"h":900,"kind":"cover","kicker":"Mindset / Reinvention","title":"The Reinvention Workbook","sub":"Reflection & planning framework","accent":"merlot"},
+  {"f":"c10-workshop-materials","w":1200,"h":900,"kind":"cover","kicker":"Workshops & Speaking","title":"Workshop Materials Library","sub":"Slides · Worksheets · Replays","accent":"ink"},
+  {"f":"c11-body-care-collection","w":1200,"h":900,"kind":"product","kicker":"The Collection","title":"Body Care","sub":"Escaluxe Living","accent":"blush"},
+  {"f":"c12-home-fragrance-collection","w":1200,"h":900,"kind":"product","kicker":"The Collection","title":"Home Fragrance","sub":"Escaluxe Living","accent":"gold"},
+  {"f":"c13-living-essentials-collection","w":1200,"h":900,"kind":"product","kicker":"The Collection","title":"Living Essentials","sub":"Escaluxe Living","accent":"merlot"},
+  {"f":"c14-guides-resources-shelf","w":1200,"h":900,"kind":"shelf","kicker":"Resources","title":"Guides & Resources","sub":"","accent":"gold"},
+  {"f":"c15-digital-products-shelf","w":1200,"h":900,"kind":"shelf","kicker":"Digital Products","title":"Tools you can put to work today","sub":"","accent":"merlot"},
+  {"f":"c16-digital-products-banner","w":1200,"h":750,"kind":"shelf","kicker":"Digital Products","title":"Guides, scripts & toolkits","sub":"","accent":"blush"}
+]

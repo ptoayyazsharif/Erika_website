@@ -183,7 +183,7 @@ return [
       ['k' => 'about.speaking-media-authority.eyebrow1', 't' => 'text', 'label' => 'Small label (eyebrow)', 'd' => 'Speaking & Media Authority'],
       ['k' => 'about.speaking-media-authority.p1', 't' => 'rich', 'label' => 'Text: “Erika speaks on real estate, wealth, l…”', 'd' => 'Erika speaks on real estate, wealth, leadership, personal branding, reinvention, and entrepreneurship — for conferences, corporate teams, women\'s events, and agent masterminds. Her media features and Erika Explains videos extend that authority online.'],
       ['k' => 'about.speaking-media-authority.btn1', 't' => 'text', 'label' => 'Button: “Book Erika to Speak”', 'd' => 'Book Erika to Speak'],
-      ['k' => 'about.speaking-media-authority.img-featured-video-erika-s', 't' => 'image', 'label' => 'Featured Video — Erika\'s Story', 'd' => 'assets/photos/03/a3-speaking-to-room.jpg'],
+      ['k' => 'about.speaking-media-authority.img-featured-video-erika-s', 't' => 'image', 'label' => 'Featured Video — Erika\'s Story', 'd' => 'assets/photos/03/a7-keynote-audience-ai.jpg'],
     ]],
     ['title' => 'Lifestyle & Values', 'fields' => [
       ['k' => 'about.lifestyle-values.heading1', 't' => 'text', 'label' => 'Heading: “Atlanta, elevated.”', 'd' => 'Atlanta, elevated.'],
@@ -415,7 +415,7 @@ return [
       ['k' => 'speaking.audience-types.check5', 't' => 'text', 'label' => 'Checklist item 5', 'd' => 'Community, church & civic organizations'],
       ['k' => 'speaking.audience-types.heading1', 't' => 'text', 'label' => 'Heading: “Who books Erika”', 'd' => 'Who books Erika'],
       ['k' => 'speaking.audience-types.eyebrow1', 't' => 'text', 'label' => 'Small label (eyebrow)', 'd' => 'Audience Types'],
-      ['k' => 'speaking.audience-types.img-speaker-reel-stage-cli', 't' => 'image', 'label' => 'Speaker Reel / Stage Clips', 'd' => 'assets/photos/03/a5-stage-led-backdrop.jpg'],
+      ['k' => 'speaking.audience-types.img-speaker-reel-stage-cli', 't' => 'image', 'label' => 'Speaker Reel / Stage Clips', 'd' => 'assets/photos/03/a9-keynote-wide-stage-ai.jpg'],
     ]],
     ['title' => 'Event Planner Proof', 'fields' => [
       ['k' => 'speaking.event-planner-proof.tst1-quote', 't' => 'text', 'label' => 'Testimonial 1 — quote', 'd' => '"The most talked-about session of our entire conference. We\'re booking her again next year."'],
@@ -755,7 +755,7 @@ return [
       ['k' => 'explains.latest-episode.eyebrow1', 't' => 'text', 'label' => 'Small label (eyebrow)', 'd' => 'Latest Episode'],
       ['k' => 'explains.latest-episode.eyebrow2', 't' => 'text', 'label' => 'Small label (eyebrow)', 'd' => 'Episode Library'],
       ['k' => 'explains.latest-episode.p1', 't' => 'rich', 'label' => 'Text: “Summary: Erika breaks down the five th…”', 'd' => '<b>Summary:</b> Erika breaks down the five things automated valuations can\'t see — and what a strategy-based valuation examines instead. Recorded June 2026.'],
-      ['k' => 'explains.latest-episode.img-ep-12-why-online-estim', 't' => 'image', 'label' => 'Ep. 12 — Why Online Estimates Miss the Mark (full transcript below)', 'd' => 'assets/photos/10/a2-filmed-interview.jpg'],
+      ['k' => 'explains.latest-episode.img-ep-12-why-online-estim', 't' => 'image', 'label' => 'Ep. 12 — Why Online Estimates Miss the Mark (full transcript below)', 'd' => 'assets/photos/10/a5-podcast-studio-ai.jpg'],
       ['k' => 'explains.latest-episode.img-ep-11', 't' => 'image', 'label' => 'Ep. 11', 'd' => 'assets/photos/10/a3-behind-the-scenes.jpg'],
       ['k' => 'explains.latest-episode.img-ep-10', 't' => 'image', 'label' => 'Ep. 10', 'd' => 'assets/photos/10/a4-interview-two-shot.jpg'],
       ['k' => 'explains.latest-episode.img-ep-9', 't' => 'image', 'label' => 'Ep. 9', 'd' => ''],
@@ -776,7 +776,7 @@ return [
       ['k' => 'mentorship.mentorship.eyebrow1', 't' => 'text', 'label' => 'Small label (eyebrow)', 'd' => 'Mentorship'],
       ['k' => 'mentorship.mentorship.p1', 't' => 'rich', 'label' => 'Text: “Coaching for agents who are done chasi…”', 'd' => 'Coaching for agents who are done chasing leads and ready to build a business that attracts them — backed by 24+ years and $400M+ in career sales.'],
       ['k' => 'mentorship.mentorship.btn1', 't' => 'text', 'label' => 'Button: “Explore Mentorship”', 'd' => 'Explore Mentorship'],
-      ['k' => 'mentorship.mentorship.img-erika-coaching-agents', 't' => 'image', 'label' => 'Erika Coaching Agents — Photo', 'd' => 'assets/photos/05/a1-teaching-with-mic.jpg'],
+      ['k' => 'mentorship.mentorship.img-erika-coaching-agents', 't' => 'image', 'label' => 'Erika Coaching Agents — Photo', 'd' => 'assets/photos/04/a3-levelup-at-the-table.jpg'],
     ]],
     ['title' => 'Who It\'s For', 'fields' => [
       ['k' => 'mentorship.who-it-s-for.check1', 't' => 'text', 'label' => 'Checklist item 1', 'd' => 'New agents building right habits from day one'],
