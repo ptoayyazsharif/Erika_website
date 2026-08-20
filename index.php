@@ -346,9 +346,17 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
   .form-card{padding:32px 24px}
 }
 @media(max-width:560px){
-  .gal{columns:1}
+  .gal{columns:2;column-gap:10px}
+  .gal .g{margin-bottom:10px}
+  .gal .cap{opacity:1;font-size:9px;letter-spacing:.1em;padding:22px 8px 8px}
   .thumb-strip{grid-template-columns:repeat(2,1fr)}
   .hero-ctas .btn{width:100%}
+  /* the trust badges ran off the right edge on a phone */
+  .hero-badges{gap:10px 16px;font-size:11px;letter-spacing:.04em}
+  .hero-badges span{max-width:100%}
+  /* empty slots are a to-do marker, not content — keep them out of the way on a phone */
+  .ph:not(:has(>img)):not(:has(>video)){aspect-ratio:16/10!important}
+  .ph:not(:has(>img)):not(:has(>video))::after{font-size:9px;letter-spacing:.12em;padding:10px}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}

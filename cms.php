@@ -71,6 +71,23 @@ function photo_set(string $k): array {
     return ['id' => $slot['lib'], 'title' => $set['title'], 'photos' => $set['photos']];
 }
 
+/**
+ * Focal point of a curated photo as "X Y" percentages, or '' when it has none.
+ * This is where the subject's face is, so cropped slots keep the head in frame.
+ */
+function photo_focal(string $path): string {
+    static $map;
+    if ($map === null) {
+        $map = [];
+        foreach (photo_library()['libraries'] as $set) {
+            foreach ($set['photos'] as $p) {
+                if (($p['pos'] ?? '') !== '') $map[$p['f']] = $p['pos'];
+            }
+        }
+    }
+    return $map[$path] ?? '';
+}
+
 /** True when the path is one of the curated photos — the whitelist for saving a pick. */
 function photo_is_library_path(string $path): bool {
     foreach (photo_library()['libraries'] as $set) {
@@ -150,10 +167,20 @@ function strip_bad(string $html): string {
     return $html;
 }
 
-/** Parse a stored "posX posY zoom" adjustment into an inline style, or '' for defaults. */
+/**
+ * Parse a stored "posX posY zoom" adjustment into an inline style, or '' for defaults.
+ *
+ * With nothing saved for the slot, fall back to the photo's own focal point: slots
+ * crop with object-fit:cover, so a portrait photo in a landscape slot would otherwise
+ * be cropped through the middle and lose the head. A hand adjustment always wins.
+ */
 function adjust_style(string $k): string {
     $raw = content_all()[$k . '__adj'] ?? '';
-    if ($raw === '') return '';
+    if ($raw === '') {
+        $focal = photo_focal(cms($k));
+        if ($focal === '') return '';
+        $raw = $focal . ' 100';
+    }
     $p = preg_split('/\s+/', trim($raw));
     $x = isset($p[0]) ? (float) $p[0] : 50;
     $y = isset($p[1]) ? (float) $p[1] : 50;
@@ -162,6 +189,7 @@ function adjust_style(string $k): string {
     $y = max(0, min(100, $y));
     $z = max(100, min(400, $z));
     if ($x == 50 && $y == 50 && $z == 100) return '';
+    if ($z <= 100) return sprintf('object-position:%s%% %s%%;', $x, $y);
     $scale = number_format($z / 100, 3);
     return sprintf('object-position:%s%% %s%%;transform:scale(%s);transform-origin:%s%% %s%%;', $x, $y, $scale, $x, $y);
 }
