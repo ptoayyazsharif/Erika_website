@@ -86,6 +86,10 @@ img{max-width:100%;display:block}
 /* drop an <img> or <video> inside any .ph box to replace the placeholder */
 .ph>img,.ph>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ph:has(>img)::after,.ph:has(>video)::after{display:none}
+/* An empty picture slot is a to-do note for the admin, not content. Visitors should
+   never see a pink box captioned "GUIDE COVER" — the slot simply collapses until a
+   picture is set. Every slot is still listed in the admin whether it is filled or not. */
+.ph:not(:has(>img)):not(:has(>video)),.res-card .ph:not(:has(>img)){display:none}
 .topbar{background:var(--ink-deep);color:var(--cream);font-size:12.5px;letter-spacing:.06em;padding:10px 16px;text-align:center;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
 .topbar::-webkit-scrollbar{display:none}
 .topbar b{color:var(--gold-soft);font-weight:600}
@@ -354,9 +358,6 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
   /* the trust badges ran off the right edge on a phone */
   .hero-badges{gap:10px 16px;font-size:11px;letter-spacing:.04em}
   .hero-badges span{max-width:100%}
-  /* empty slots are a to-do marker, not content — keep them out of the way on a phone */
-  .ph:not(:has(>img)):not(:has(>video)){aspect-ratio:16/10!important}
-  .ph:not(:has(>img)):not(:has(>video))::after{font-size:9px;letter-spacing:.12em;padding:10px}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
