@@ -95,9 +95,12 @@ class Desire extends Model
 
     public function scopeComplete(Builder $query): Builder
     {
+        // `?? false` for the same reason isComplete() has a default: a status
+        // added to config without a 'terminal' key should fall out of this
+        // scope, not fatal every screen that filters by it.
         $terminal = array_keys(array_filter(
             config('escalate.statuses'),
-            fn ($s) => $s['terminal'],
+            fn ($s) => $s['terminal'] ?? false,
         ));
 
         return $query->whereIn('status', $terminal);

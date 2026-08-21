@@ -55,6 +55,16 @@ class Quota
             'narration' => $user->narrations()
                 ->whereIn('state', ['queued', 'rendering'])
                 ->count(),
+            // Rewinds were missing here, so the check-then-spend window the two
+            // above close was wide open on the one route that shares their
+            // shape: rewinds.generate is throttled at twelve an hour against a
+            // limit of three a day, and WriteRewind re-checks this same counter
+            // — which could not see its own queued row. Twelve presses on a
+            // backed-up queue therefore queued twelve paid writes, all of which
+            // passed both checks.
+            'rewind' => $user->rewinds()
+                ->whereIn('state', ['queued', 'writing'])
+                ->count(),
             default => 0,
         };
     }

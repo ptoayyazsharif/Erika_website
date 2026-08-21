@@ -270,7 +270,15 @@
     // initForms can see defaultPrevented.
     document.addEventListener('submit', e => {
       const form = e.target;
-      const msg = form.dataset.confirm;
+
+      // The button that was pressed is checked as well as the form. Every
+      // confirmation in the app is meant to sit on the <form>, but one had
+      // drifted onto the <button> inside it — where nothing read it, so an
+      // irreversible delete went through on a single click and looked exactly
+      // like a working confirmation to anyone reading the markup. Honouring
+      // both means that misplacement degrades to a working prompt instead of
+      // silently removing the guard.
+      const msg = form.dataset.confirm ?? e.submitter?.dataset.confirm;
       if (msg && !window.confirm(msg)) e.preventDefault();
     }, true);
   }

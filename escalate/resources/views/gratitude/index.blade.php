@@ -90,6 +90,14 @@
 <div class="rule">Your journey</div>
 
 <form method="GET" action="{{ route('gratitude.index') }}" class="stack" data-enter>
+    {{-- The active tag rides along with the search. Without it, searching while
+         a tag was selected posted `q` alone and dropped the tag — so narrowing
+         a filtered view silently widened it back to everything, which is the
+         opposite of what pressing a search button means. --}}
+    @if ($tag !== '')
+        <input type="hidden" name="tag" value="{{ $tag }}">
+    @endif
+
     <div class="row" style="gap:var(--s-3);align-items:stretch">
         <input class="input grow" type="search" name="q" value="{{ $search }}"
                placeholder="Search everything you have kept" aria-label="Search your gratitude entries">

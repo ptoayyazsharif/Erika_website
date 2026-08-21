@@ -108,12 +108,21 @@ class AccountEraser
                 'faith_language' => $profile->faith_language,
                 'perspective'    => $profile->perspective,
                 'tone'           => $profile->tone,
+                'default_length' => $profile->default_length,
+                'consented_at'   => $profile->consented_at?->toIso8601String(),
             ] : null,
 
+            // details() rather than ->note. `note` is the retired single-detail
+            // column: since a person gained a list of details nothing writes to
+            // it any more, so this exported an empty field for every person and
+            // silently left out everything the user had actually typed about
+            // them. An export that quietly omits a category of data is worse
+            // than no export — it is what a subject-access request is answered
+            // with.
             'circle' => $user->circle->map(fn ($p) => [
                 'name'         => $p->name,
                 'relationship' => $p->relationship,
-                'note'         => $p->note,
+                'details'      => $p->details(),
             ])->all(),
 
             'desires' => $user->desires()->get()->map(fn ($d) => [

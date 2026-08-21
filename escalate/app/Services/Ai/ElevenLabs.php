@@ -16,9 +16,24 @@ use RuntimeException;
  */
 class ElevenLabs
 {
-    /** Flash v2.5 bills half a credit per character; ~$0.00003 per char at the
-     *  Creator tier. Expressed in microcents per character. */
-    private const PRICE_PER_CHAR = 3;
+    /**
+     * Microcents per character, per model.
+     *
+     * Flash bills half a credit per character, Multilingual v2 a full one — so
+     * a single constant is only ever right for one of them. It was pinned at
+     * the Flash rate while config/escalate.php had already switched narration
+     * to Multilingual v2, which meant the ledger the quotas and the cost
+     * reporting are built on reported half of what was actually being spent.
+     * An unknown model falls back to the dearer rate: under-reporting a bill is
+     * the more expensive way to be wrong.
+     */
+    private const PRICE_PER_CHAR = [
+        'eleven_flash_v2_5'      => 3,
+        'eleven_turbo_v2_5'      => 3,
+        'eleven_multilingual_v2' => 6,
+    ];
+
+    private const PRICE_PER_CHAR_DEFAULT = 6;
 
     public function configured(): bool
     {
@@ -128,7 +143,9 @@ class ElevenLabs
             'error_code'      => $error,
             'characters'      => $chars,
             'duration_ms'     => (int) round((microtime(true) - $began) * 1000),
-            'cost_microcents' => $ok ? $chars * self::PRICE_PER_CHAR : 0,
+            'cost_microcents' => $ok
+                ? $chars * (self::PRICE_PER_CHAR[$model] ?? self::PRICE_PER_CHAR_DEFAULT)
+                : 0,
         ]);
     }
 

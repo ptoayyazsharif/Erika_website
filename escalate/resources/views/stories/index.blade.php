@@ -45,7 +45,5 @@
     </div>
 @endforelse
 
-@if ($stories->hasPages())
-    <div style="margin-top:var(--s-6)">{{ $stories->links() }}</div>
-@endif
+@include('partials.pager', ['paginator' => $stories])
 @endsection

@@ -62,11 +62,16 @@
     </p>
 </div>
 
-<form method="POST" action="{{ route('rewinds.destroy', $rewind) }}" style="margin-top:var(--s-6)">
+{{-- data-confirm belongs on the form element: initConfirm() listens for submit
+     and reads the attribute off the form. It sat on the button here, where
+     nothing read it, so the one irreversible action on this screen — deleting a
+     Rewind and every answer typed into it — fired on a single click with no
+     question asked. --}}
+<form method="POST" action="{{ route('rewinds.destroy', $rewind) }}" style="margin-top:var(--s-6)"
+      data-confirm="Delete this Rewind and everything you wrote in it? This cannot be undone.">
     @csrf
     @method('DELETE')
-    <button class="btn btn-quiet btn-sm" type="submit"
-            data-confirm="Delete this Rewind and everything you wrote in it? This cannot be undone.">
+    <button class="btn btn-quiet btn-sm" type="submit">
         Delete this Rewind
     </button>
 </form>
