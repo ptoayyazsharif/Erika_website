@@ -193,6 +193,65 @@ class InviteTest extends TestCase
         $this->assertSame(1, User::count());
     }
 
+    /**
+     * Registration must not report on an address to someone without a code.
+     *
+     * Validating every rule in one call returns every failure together, so
+     * `unique:users,email` — "The email has already been taken." — was
+     * answering "does this person have an account here" for any stranger who
+     * asked. Login and password reset both go to real lengths to avoid exactly
+     * that; this was the door left open beside them.
+     */
+    public function test_registration_does_not_reveal_whether_an_address_has_an_account(): void
+    {
+        $this->makeUser('known@escalate.test');
+
+        foreach (['known@escalate.test', 'unknown@escalate.test'] as $email) {
+            $this->signOut();
+
+            $this->post(route('register.store'), $this->signup([
+                'email'  => $email,
+                'invite' => '',
+            ]))
+                ->assertSessionHasErrors('invite')
+                // The tell. An `email` error appears only for an address that
+                // already has an account, so its presence is the answer.
+                ->assertSessionDoesntHaveErrors('email');
+        }
+    }
+
+    /** The same, with a code that is simply wrong rather than absent. */
+    public function test_a_bad_code_reveals_nothing_about_the_address_either(): void
+    {
+        $this->makeUser('known2@escalate.test');
+
+        foreach (['known2@escalate.test', 'unknown2@escalate.test'] as $email) {
+            $this->signOut();
+
+            $this->post(route('register.store'), $this->signup([
+                'email'  => $email,
+                'invite' => 'ZZZZ-ZZZZ-ZZZZ',
+            ]))
+                ->assertSessionHasErrors('invite')
+                ->assertSessionDoesntHaveErrors('email');
+        }
+    }
+
+    /** A duplicate address is still refused — to someone holding a real code. */
+    public function test_a_duplicate_address_is_still_refused_with_a_valid_invite(): void
+    {
+        $this->makeUser('taken@escalate.test');
+        $invite = Invite::mint();
+
+        $this->post(route('register.store'), $this->signup([
+            'email'  => 'taken@escalate.test',
+            'invite' => $invite->code,
+        ]))->assertSessionHasErrors('email');
+
+        // And the code is not spent on the attempt.
+        $this->assertFalse($invite->refresh()->isClaimed());
+    }
+
     public function test_the_form_prefills_a_code_from_the_invite_link(): void
     {
         $invite = Invite::mint();

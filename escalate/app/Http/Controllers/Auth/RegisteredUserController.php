@@ -27,6 +27,28 @@ class RegisteredUserController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        /*
+         * The invite is checked BEFORE anything else, and the ordering is a
+         * security property rather than tidiness.
+         *
+         * Validating everything in one call means Laravel evaluates every rule
+         * and returns every failure together — including `unique:users,email`,
+         * whose message is "The email has already been taken." So a stranger
+         * with no invite code at all could post an address and read, from the
+         * presence or absence of that sentence, whether it has an account here.
+         *
+         * That is precisely the thing LoginRequest and PasswordResetController
+         * go out of their way to prevent, and for the same reason: on a private
+         * journal, membership is itself sensitive. Someone checking whether
+         * their ex uses a manifestation app should learn nothing.
+         *
+         * Gating first means an invalid code ends the request before the email
+         * is ever looked at, so there is nothing to read. Anyone still able to
+         * probe is holding a valid, unclaimed invite — a person we deliberately
+         * let in, and whose code is on record.
+         */
+        $invite = $this->gate($request);
+
         $data = $request->validate([
             'name'     => ['required', 'string', 'max:80'],
             'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
@@ -52,9 +74,13 @@ class RegisteredUserController extends Controller
         ]);
 
         // Not part of the model's fillable data — strip before create().
-        unset($data['agree'], $data['age']);
-        $invite = $this->resolveInvite($data['email'], $data['invite'] ?? null);
-        unset($data['invite']);
+        unset($data['agree'], $data['age'], $data['invite']);
+
+        // Only now, with a real address in hand, is the binding checked. A
+        // bound invite must not open for anyone but its own recipient.
+        if ($invite && ! $invite->matchesEmail($data['email'])) {
+            throw ValidationException::withMessages(['invite' => self::REFUSED]);
+        }
 
         /*
          * One transaction, and the claim goes first.
@@ -104,25 +130,41 @@ class RegisteredUserController extends Controller
     }
 
     /**
+     * Every invite failure gets this one sentence.
+     *
+     * Distinguishing "no such code" from "already used" from "not for this
+     * address" would turn the register form into an oracle for who else has
+     * been invited — and on an app whose entire premise is privacy, the guest
+     * list is not public either.
+     */
+    private const REFUSED = 'That invite code is not valid. Check it against the one you were sent.';
+
+    /**
      * The invite this signup will spend, or null when the beta is open.
      *
-     * Every failure gets the same sentence. Distinguishing "no such code" from
-     * "already used" from "that code is not for this address" would turn the
-     * register form into an oracle for who else has been invited — and on an
-     * app whose entire premise is privacy, the guest list is not public.
+     * Validates the code ON ITS OWN, before any other field is examined. The
+     * email binding cannot be checked here — there is no validated email yet —
+     * so store() re-checks it once there is one. That split is the price of not
+     * leaking, and it is worth paying.
      */
-    private function resolveInvite(string $email, ?string $code): ?Invite
+    private function gate(Request $request): ?Invite
     {
         if (! $this->inviteRequired()) {
             return null;
         }
 
-        $invite = Invite::where('code', Invite::normalise((string) $code))->first();
+        $request->validate(
+            ['invite' => ['required', 'string', 'max:32']],
+            ['invite.required' => 'Escalate is invite-only right now. Enter the code you were sent.'],
+        );
 
-        if (! $invite || ! $invite->isUsable($email)) {
-            throw ValidationException::withMessages([
-                'invite' => 'That invite code is not valid. Check it against the one you were sent.',
-            ]);
+        $invite = Invite::where('code', Invite::normalise((string) $request->input('invite')))->first();
+
+        // Deliberately not isUsable($email): the address is unvalidated at this
+        // point, and feeding it to a lookup here is how the leak would creep
+        // back in.
+        if (! $invite || $invite->isClaimed() || $invite->isExpired()) {
+            throw ValidationException::withMessages(['invite' => self::REFUSED]);
         }
 
         return $invite;
