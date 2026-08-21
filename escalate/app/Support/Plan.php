@@ -77,6 +77,20 @@ class Plan
             return self::FREE;
         }
 
+        /*
+         * An administrator's override wins over Stripe.
+         *
+         * This is how someone is comped — a friend, a beta tester, a refund
+         * case — and it deliberately does not fabricate a subscription row to
+         * do it. A row that looks like a payment nobody made is the kind of
+         * thing that later gets reconciled against Stripe and cannot be
+         * explained. Checked first so it also works for someone who has never
+         * had a subscription at all.
+         */
+        if (filled($user->plan_override) && array_key_exists($user->plan_override, self::all())) {
+            return $user->plan_override;
+        }
+
         if (! $user->subscribed()) {
             return self::FREE;
         }

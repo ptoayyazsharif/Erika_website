@@ -292,10 +292,26 @@ To switch it on:
 generation must not depend on a third party being reachable. That table is
 written by the webhook. Without it, people pay and nothing changes in the app.
 
-`STRIPE_WEBHOOK_SECRET` being unset fails *closed*: Cashier rejects every event
-rather than trusting the body. That is the right direction, but the symptom is
-the same as having no endpoint at all, so check Stripe's delivery log first when
-a subscription does not appear.
+**`STRIPE_WEBHOOK_SECRET` does not behave the way the name suggests, and this
+is worth knowing before you trust it.** Cashier applies its signature check
+*conditionally*:
+
+```php
+if (config('cashier.webhook.secret')) {
+    $this->middleware(VerifyWebhookSignature::class);
+}
+```
+
+An unset secret therefore does not disable the endpoint — it disables the
+*authentication on* the endpoint and leaves it processing whatever anyone
+posts. Since those handlers write the `subscriptions` table this app reads
+entitlement from, an unauthenticated caller could grant themselves a plan.
+
+`App\Http\Middleware\RequireStripeWebhookSecret` closes that: with no secret
+configured, the endpoint returns 403 instead of accepting the event. So the
+setting now means what an operator would assume it means. If subscriptions are
+not appearing, check Stripe's delivery log — a 403 there means the secret is
+missing or wrong, not that the endpoint is absent.
 
 ### What is deliberately not built
 
@@ -324,6 +340,66 @@ PHP, so an extension missing there fails the build honestly instead of
 producing a vendor tree the runtime cannot load. If you ever find yourself
 reaching for `--ignore-platform-reqs`, the extension list is what actually needs
 fixing.
+
+## 4c. The admin panel
+
+`/admin`, behind the role **and** the second password door (`/admin/login`,
+two-hour idle expiry). A failed check 404s, so the area is invisible to anyone
+without the role.
+
+| Screen | What it does |
+|---|---|
+| Overview | Accounts, invites, today's spend against the ceiling, recent provider failures |
+| People | Search accounts, see counts and usage, comp someone onto a plan, suspend or restore |
+| Invites | Mint, list and withdraw invite codes without a terminal |
+| Settings | API keys, Stripe keys and price ids, the beta gates, every quota and ceiling |
+
+### Settings override the environment, and can be handed back
+
+Values live in a `settings` table and are laid over the config files once per
+request at boot, so everything downstream keeps reading `config()` and needs to
+know nothing about it. A key with no row falls through to `config/escalate.php`
+and therefore to the environment.
+
+That ordering is what makes "Reset" meaningful: clearing a field deletes the row
+and returns the app to what it was deployed with. When something is wrong and
+you are not sure what, reset is the safe move.
+
+**Three properties are load-bearing, and each has a test:**
+
+- **Only allowlisted keys can be written.** The list is in
+  `App\Support\Settings::editable()`. Without it, "save these settings" is an
+  arbitrary config write and `app.key` is one crafted field name away.
+- **Secrets go in and never come back.** A saved API key renders as `••••1234`.
+  An admin can rotate a key without ever being shown one — and a blank secret
+  box means "leave it alone", not "delete it", or saving the page to change a
+  quota would wipe the key.
+- **A database problem cannot stop the app booting.** `Settings::apply()` runs
+  in `AppServiceProvider::boot()` and reads through the cache, which is the
+  `database` store in production. Unguarded, that turns any database fault into
+  a total boot failure — including `artisan migrate`, which the entrypoint runs
+  before those tables exist on a fresh volume. It is wrapped so a failure falls
+  back to no overrides and the app comes up with what it was deployed with.
+
+### Comping someone
+
+People → a person → Plan. It sets `users.plan_override`, which `Plan::for()`
+checks before Stripe. It deliberately does **not** create a subscription row: a
+row that looks like a payment nobody made is the kind of thing that cannot be
+explained when it is reconciled against Stripe later. Removing the override
+returns them to whatever they are actually subscribed to.
+
+### What the admin area cannot do
+
+It cannot read anyone's journal. Every desire, reading, gratitude entry and
+rewind stays encrypted, and the people screens show counts only. That is not
+squeamishness — `/privacy` tells users their entries are not readable by staff,
+and a screen that rendered them would make that false. There is a test asserting
+no journal content appears on either people screen; keep it.
+
+Making an admin is still `php artisan escalate:make-admin <email>`. There is no
+web route that grants the role, on purpose: privilege escalation should need a
+shell, not a form someone might find.
 
 ## 5. Backups
 

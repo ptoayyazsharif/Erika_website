@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\InviteController as AdminInvites;
+use App\Http\Controllers\Admin\SettingsController as AdminSettings;
+use App\Http\Controllers\Admin\UserController as AdminUsers;
 use App\Http\Controllers\Auth\AdminSessionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -187,7 +191,32 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         ->name('admin.login.store');
     Route::post('/admin/leave', [AdminSessionController::class, 'destroy'])->name('admin.leave');
 
+    /*
+     | The admin area.
+     |
+     | Behind 'auth', 'not-suspended' AND 'admin' — and 'admin' means the role
+     | plus a second password confirmation with a two-hour idle expiry, so an
+     | admin who leaves a laptop open on Today has not left this open. A failed
+     | check 404s rather than 403s; there is no reason to confirm to a prober
+     | that any of this exists.
+     |
+     | Nothing here reads user content. See Admin\UserController on why that is
+     | a rule rather than an oversight.
+     */
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::view('/', 'placeholder', ['heading' => 'Admin'])->name('dashboard');
+        Route::get('/', AdminDashboard::class)->name('dashboard');
+
+        Route::get('/settings', [AdminSettings::class, 'edit'])->name('settings');
+        Route::put('/settings', [AdminSettings::class, 'update'])->name('settings.update');
+        Route::post('/settings/reset', [AdminSettings::class, 'reset'])->name('settings.reset');
+
+        Route::get('/users', [AdminUsers::class, 'index'])->name('users');
+        Route::get('/users/{user}', [AdminUsers::class, 'show'])->name('users.show');
+        Route::patch('/users/{user}/plan', [AdminUsers::class, 'plan'])->name('users.plan');
+        Route::post('/users/{user}/suspend', [AdminUsers::class, 'suspend'])->name('users.suspend');
+
+        Route::get('/invites', [AdminInvites::class, 'index'])->name('invites');
+        Route::post('/invites', [AdminInvites::class, 'store'])->name('invites.store');
+        Route::delete('/invites/{invite}', [AdminInvites::class, 'destroy'])->name('invites.destroy');
     });
 });

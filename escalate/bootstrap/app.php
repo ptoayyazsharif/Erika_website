@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\RejectSuspended;
+use App\Http\Middleware\RequireStripeWebhookSecret;
 use App\Http\Middleware\RequireVerifiedEmail;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
@@ -65,17 +66,23 @@ return Application::configure(basePath: dirname(__DIR__))
         | symptom is subscriptions that look fine in Stripe and never appear in
         | this app, because the row Cashier writes comes from the webhook.
         |
-        | This is not a hole. The endpoint authenticates by verifying Stripe's
-        | signature header against STRIPE_WEBHOOK_SECRET, which is strictly
-        | stronger than a CSRF token here: a token proves the request came from
-        | our own form, and this request legitimately does not.
+        | Dropping CSRF is only safe because something else authenticates the
+        | caller: Stripe's signature header, checked against
+        | STRIPE_WEBHOOK_SECRET. That is strictly stronger than a CSRF token
+        | here — a token proves the request came from our own form, and this
+        | request legitimately does not.
         |
-        | If STRIPE_WEBHOOK_SECRET is unset, Cashier's middleware rejects
-        | everything rather than trusting the body — the safe direction.
+        | RequireStripeWebhookSecret below is what makes that true in the case
+        | nobody plans for. Cashier applies its signature check ONLY when the
+        | secret is configured, so an unset secret leaves the endpoint open
+        | rather than shut. Read the class; it is the opposite of what the
+        | setting looks like it does.
         */
         $middleware->validateCsrfTokens(except: [
             'stripe/webhook',
         ]);
+
+        $middleware->append(RequireStripeWebhookSecret::class);
 
         // Sessions are cookie-bound and same-site; nothing in this app is
         // meant to be embedded or called cross-origin.

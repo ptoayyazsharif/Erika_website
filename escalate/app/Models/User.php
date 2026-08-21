@@ -31,7 +31,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * `role` is absent on purpose. Privilege must never be assignable from
      * request input — an admin is made by `php artisan escalate:make-admin`,
-     * never by a form. Same for the suspension and login-tracking columns.
+     * never by a form. Same for the suspension and login-tracking columns, and
+     * for `plan_override`, which is an administrator granting paid access and
+     * so is exactly as sensitive as `role`.
      */
     protected $fillable = ['name', 'email', 'password'];
 
@@ -42,7 +44,7 @@ class User extends Authenticatable implements MustVerifyEmail
     | seeing it or its own last login IP.
     */
     protected $hidden = [
-        'password', 'remember_token', 'role', 'suspended_at', 'last_login_ip',
+        'password', 'remember_token', 'role', 'plan_override', 'suspended_at', 'last_login_ip',
         // Cashier's columns. `stripe_id` is a customer handle rather than a
         // secret, but it is the key to a Stripe dashboard record and nothing in
         // this app has any reason to render it.

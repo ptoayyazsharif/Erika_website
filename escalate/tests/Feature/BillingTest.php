@@ -261,6 +261,8 @@ class BillingTest extends TestCase
      */
     public function test_the_stripe_webhook_is_exempt_from_csrf(): void
     {
+        Config::set('cashier.webhook.secret', 'whsec_test');
+
         $response = $this->postJson('/stripe/webhook', ['type' => 'ping', 'id' => 'evt_test']);
 
         $this->assertNotSame(
@@ -270,5 +272,34 @@ class BillingTest extends TestCase
                 .'subscription row this app reads, so every event 419ing means '
                 .'subscriptions look perfect in Stripe and never appear here.',
         );
+    }
+
+    /**
+     * No signing secret must mean the door is shut, not unguarded.
+     *
+     * Cashier applies its signature check only when the secret is configured,
+     * so an unset STRIPE_WEBHOOK_SECRET leaves the endpoint processing whatever
+     * anyone posts — and those handlers write the subscriptions table this app
+     * reads entitlement from. RequireStripeWebhookSecret closes it.
+     */
+    public function test_the_webhook_is_refused_outright_when_no_secret_is_set(): void
+    {
+        Config::set('cashier.webhook.secret', null);
+
+        $this->postJson('/stripe/webhook', [
+            'type' => 'customer.subscription.updated',
+            'id'   => 'evt_forged',
+        ])->assertForbidden();
+    }
+
+    /** And a forged signature is refused when there IS a secret. */
+    public function test_a_webhook_without_a_valid_signature_is_refused(): void
+    {
+        Config::set('cashier.webhook.secret', 'whsec_test');
+
+        $this->postJson('/stripe/webhook', [
+            'type' => 'customer.subscription.updated',
+            'id'   => 'evt_forged',
+        ], ['Stripe-Signature' => 't=1,v1=deadbeef'])->assertForbidden();
     }
 }
