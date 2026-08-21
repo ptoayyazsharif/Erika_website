@@ -93,7 +93,7 @@ class AgreementTest extends TestCase
     public function test_a_queued_rewind_is_counted_before_it_lands(): void
     {
         $user = $this->makeUser('quota-rewind@escalate.test');
-        $limit = Quota::limit('rewind');
+        $limit = Quota::limit($user, 'rewind');
 
         $this->assertSame(0, Quota::used($user, 'rewind'));
 

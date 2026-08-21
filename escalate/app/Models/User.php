@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Plan;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 
 /**
  * MustVerifyEmail is what makes `event(new Registered($user))` in the register
@@ -24,7 +26,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use Billable, HasFactory, Notifiable;
 
     /**
      * `role` is absent on purpose. Privilege must never be assignable from
@@ -39,7 +41,13 @@ class User extends Authenticatable implements MustVerifyEmail
     | the field the entire admin model rests on and a client has no business
     | seeing it or its own last login IP.
     */
-    protected $hidden = ['password', 'remember_token', 'role', 'suspended_at', 'last_login_ip'];
+    protected $hidden = [
+        'password', 'remember_token', 'role', 'suspended_at', 'last_login_ip',
+        // Cashier's columns. `stripe_id` is a customer handle rather than a
+        // secret, but it is the key to a Stripe dashboard record and nothing in
+        // this app has any reason to render it.
+        'stripe_id', 'pm_type', 'pm_last_four',
+    ];
 
     protected function casts(): array
     {
@@ -145,6 +153,41 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->setRelation('profile', $profile);
 
         return $profile;
+    }
+
+    /* ── billing ─────────────────────────────────────────────────────────── */
+
+    /** The plan key this user is entitled to right now. See App\Support\Plan. */
+    public function planKey(): string
+    {
+        return Plan::for($this);
+    }
+
+    public function plan(): array
+    {
+        return Plan::config($this->planKey());
+    }
+
+    public function onFreePlan(): bool
+    {
+        return $this->planKey() === Plan::FREE;
+    }
+
+    /**
+     * The email Stripe should have on file.
+     *
+     * Cashier defaults to `$this->email`, which is right, but stating it means
+     * a future change to how this app stores email cannot silently desynchronise
+     * the customer record from the account.
+     */
+    public function stripeEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function stripeName(): ?string
+    {
+        return $this->name;
     }
 
     /** What the app should call this person in generated text. */

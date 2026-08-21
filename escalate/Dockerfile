@@ -19,7 +19,15 @@ FROM php:8.4-cli-alpine AS vendor
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # composer needs one of ext-zip or the unzip binary to unpack a dist archive.
-RUN apk add --no-cache unzip git
+#
+# bcmath is here because laravel/cashier requires ext-bcmath, and the comment
+# above is not decoration: this stage resolves ext-* against its own PHP, so
+# without the extension the build fails at `composer install` rather than
+# shipping something the runtime cannot load. It is installed in the runtime
+# stage too — that is the pair that keeps the platform check honest.
+RUN set -eux; \
+    apk add --no-cache unzip git; \
+    docker-php-ext-install -j"$(nproc)" bcmath
 
 WORKDIR /app
 
@@ -66,12 +74,16 @@ RUN set -eux; \
     docker-php-ext-install -j"$(nproc)" \
         pcntl \
         opcache \
+        bcmath \
         pdo_mysql; \
     apk del .build-deps; \
     rm -rf /var/cache/apk/* /tmp/*
 
 # pcntl is what lets `queue:work` handle SIGTERM: without it a redeploy kills a
 # worker mid-narration instead of letting it finish the job in hand.
+# bcmath is required by laravel/cashier — Stripe amounts are integer minor units
+# and Cashier does arbitrary-precision arithmetic on them rather than trusting
+# a float to hold somebody's invoice total.
 # pdo_mysql is here so moving off SQLite later is an environment change rather
 # than an image rebuild. pdo_sqlite and curl are already in the base image.
 

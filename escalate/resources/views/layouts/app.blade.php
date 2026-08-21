@@ -98,6 +98,23 @@
         </div>
     @endif
 
+    {{-- The paywall, such as it is. Quota::message() decides whether an
+         upgrade is honestly on offer — never shown to someone already on the
+         largest plan, who really does just have to wait — and this turns that
+         sentence into somewhere to go. --}}
+    @if (config('escalate.billing.enabled')
+        && session('status')
+        && str_contains(session('status'), 'free plan’s')
+        && ! request()->routeIs('billing.*'))
+        <div class="notice" role="status">
+            @include('partials.icon', ['name' => 'info', 'size' => 18])
+            <div>
+                {{ session('status') }}
+                <a href="{{ route('billing.index') }}">See the plans &rarr;</a>
+            </div>
+        </div>
+    @endif
+
     @if ($errors->any() && ! isset($suppressErrorSummary))
         <div class="notice notice-error" role="alert">
             @include('partials.icon', ['name' => 'alert', 'size' => 18])

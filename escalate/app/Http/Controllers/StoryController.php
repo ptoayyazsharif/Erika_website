@@ -42,7 +42,7 @@ class StoryController extends Controller
         abort_unless($desire->user_id === $request->user()->id, 404);
 
         if (! Quota::allows($request->user(), 'story')) {
-            return back()->with('status', Quota::message('story'));
+            return back()->with('status', Quota::message($request->user(), 'story'));
         }
 
         if (! Ceiling::allows('story')) {
@@ -145,7 +145,7 @@ class StoryController extends Controller
         }
 
         if (! Quota::allows($request->user(), 'narration')) {
-            return back()->with('status', Quota::message('narration'));
+            return back()->with('status', Quota::message($request->user(), 'narration'));
         }
 
         if (! Ceiling::allows('narration')) {
@@ -167,7 +167,7 @@ class StoryController extends Controller
         }
 
         if (! Quota::allows($request->user(), 'story')) {
-            return back()->with('status', Quota::message('story'));
+            return back()->with('status', Quota::message($request->user(), 'story'));
         }
 
         if (! Ceiling::allows('story')) {

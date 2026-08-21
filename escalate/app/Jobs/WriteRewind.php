@@ -50,8 +50,8 @@ class WriteRewind implements ShouldBeUnique, ShouldQueue
         // Re-checked at the point of spending, not just when it was asked for:
         // on a backed-up queue many requests pass the controller's check before
         // any of them reaches here.
-        if (Quota::used($this->rewind->user, 'rewind') >= Quota::limit('rewind')) {
-            $this->markFailed(Quota::message('rewind'));
+        if (Quota::used($this->rewind->user, 'rewind') >= Quota::limit($this->rewind->user, 'rewind')) {
+            $this->markFailed(Quota::message($this->rewind->user, 'rewind'));
 
             return;
         }

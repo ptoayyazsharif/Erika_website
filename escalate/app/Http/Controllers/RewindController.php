@@ -114,7 +114,7 @@ class RewindController extends Controller
         }
 
         if (! Quota::allows($request->user(), 'rewind')) {
-            return back()->with('status', Quota::message('rewind'));
+            return back()->with('status', Quota::message($request->user(), 'rewind'));
         }
 
         if (! Ceiling::allows('rewind')) {

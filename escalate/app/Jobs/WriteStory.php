@@ -72,8 +72,8 @@ class WriteStory implements ShouldBeUnique, ShouldQueue
         | inFlight() counts this job's own row, so the comparison is >= : at the
         | limit there is no room for this one.
         */
-        if (Quota::used($this->story->user, 'story') >= Quota::limit('story')) {
-            $this->story->markFailed(Quota::message('story'));
+        if (Quota::used($this->story->user, 'story') >= Quota::limit($this->story->user, 'story')) {
+            $this->story->markFailed(Quota::message($this->story->user, 'story'));
 
             return;
         }

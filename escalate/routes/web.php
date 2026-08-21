@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Auth\AdminSessionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -24,8 +25,12 @@ use Illuminate\Support\Facades\Route;
 | Rules this file follows, so that "is this route protected?" is answerable by
 | reading it rather than by tracing controllers:
 |
-|   - Exactly four routes are public: login, register, the offline page, and
-|     the privacy disclosure — which must be readable before signing up.
+|   - Exactly four routes are public here: login, register, the offline page,
+|     and the privacy disclosure — which must be readable before signing up.
+|     Cashier registers one more outside this file, POST /stripe/webhook, which
+|     is public by necessity: Stripe is not a signed-in user. It authenticates
+|     by signature instead — see STRIPE_WEBHOOK_SECRET — and is exempted from
+|     CSRF in bootstrap/app.php.
 |     Everything else lives inside the 'auth' group.
 |   - Route model binding is deliberately NOT scoped. /desires/{desire} will
 |     resolve any user's row, and every action re-checks user_id itself — see
@@ -91,6 +96,23 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         ->middleware(['signed', 'throttle:6,60'])->name('verification.verify');
     Route::post('/email/verify', [EmailVerificationController::class, 'resend'])
         ->middleware('throttle:5,60')->name('verification.send');
+
+    /*
+     | Billing.
+     |
+     | Three routes, and none of them touches a card: Checkout and the Billing
+     | Portal are Stripe's own pages. The Stripe webhook is NOT here — it is
+     | registered by Cashier outside the 'auth' group, because Stripe is not
+     | signed in. See bootstrap/app.php for its CSRF exemption.
+     |
+     | Throttled because each one is an outbound API call to Stripe, and a
+     | hammered checkout route creates real customer records.
+     */
+    Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
+    Route::post('/billing/checkout', [BillingController::class, 'checkout'])
+        ->middleware('throttle:12,60')->name('billing.checkout');
+    Route::get('/billing/portal', [BillingController::class, 'portal'])
+        ->middleware('throttle:12,60')->name('billing.portal');
 
     /* Account — taking a copy, and leaving. Both re-confirm the password. */
     Route::get('/account', [AccountController::class, 'show'])->name('account.index');

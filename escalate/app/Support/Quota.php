@@ -69,20 +69,23 @@ class Quota
         };
     }
 
-    public static function limit(string $kind): int
+    /**
+     * The daily allowance, which now depends on who is asking.
+     *
+     * It used to take only $kind, and the User argument is the whole point of
+     * the change: an allowance is a property of a subscription, not of the
+     * application. Plan::quota() still returns the flat configured numbers
+     * while billing is switched off, so this is not a behaviour change until
+     * somebody enables it.
+     */
+    public static function limit(User $user, string $kind): int
     {
-        return match ($kind) {
-            'story'        => (int) config('escalate.quotas.stories_per_day'),
-            'narration'    => (int) config('escalate.quotas.narrations_per_day'),
-            'affirmations' => (int) config('escalate.quotas.affirmations_per_day'),
-            'rewind'       => (int) config('escalate.quotas.rewinds_per_day'),
-            default        => 0,
-        };
+        return Plan::quota($user, $kind);
     }
 
     public static function remaining(User $user, string $kind): int
     {
-        return max(0, self::limit($kind) - self::used($user, $kind));
+        return max(0, self::limit($user, $kind) - self::used($user, $kind));
     }
 
     public static function allows(User $user, string $kind): bool
@@ -90,9 +93,27 @@ class Quota
         return self::remaining($user, $kind) > 0;
     }
 
-    /** A sentence to show the user when they have run out. */
-    public static function message(string $kind): string
+    /**
+     * A sentence to show the user when they have run out.
+     *
+     * Two different sentences, because they are two different situations and
+     * telling someone to "come back tomorrow" when the real answer is "this is
+     * the free tier" wastes their time and hides the offer. The upgrade wording
+     * only ever appears when upgrading would genuinely get them more of this
+     * particular thing — never as a reflex, and never to someone already paying
+     * for the largest plan, who really does just have to wait.
+     */
+    public static function message(User $user, string $kind): string
     {
+        if (Plan::upgradeWouldHelp($user, $kind)) {
+            return match ($kind) {
+                'story'     => 'That is the free plan’s reading for today. There is more on a full plan — or come back tomorrow, which costs nothing.',
+                'narration' => 'That is the free plan’s narration for today. The words are still here to read, and there is more on a full plan.',
+                'rewind'    => 'That is the free plan’s rewind for today. Your answers are saved either way.',
+                default     => 'That is the free plan’s limit for today.',
+            };
+        }
+
         return match ($kind) {
             'story'     => 'You have used today’s readings. More tomorrow — a reading is worth returning to more than it is worth replacing.',
             'narration' => 'You have used today’s narrations. The words are still here to read.',

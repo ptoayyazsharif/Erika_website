@@ -265,6 +265,66 @@ REQUIRE_VERIFICATION=false   # <- do not set this one without a reason
 `INVITE_ONLY=false` with verification still on is the normal post-beta state.
 Both false is an open door to your provider bill, guarded only by the ceiling.
 
+## 4b. Turning on billing
+
+`BILLING_ENABLED=false` is the default and it is doing real work: with it off,
+`Quota::limit()` returns the flat `escalate.quotas` numbers and every user gets
+what they got before Stripe existed. **Shipping the billing code changes nothing
+for anyone until somebody enables it on purpose.** Leave it off through the
+beta.
+
+To switch it on:
+
+1. **Stripe keys.** `STRIPE_KEY`, `STRIPE_SECRET` from the dashboard.
+2. **Prices.** Create the products in Stripe, then set `STRIPE_PRICE_MONTHLY`
+   and `STRIPE_PRICE_YEARLY` to the `price_…` ids. A plan with an empty price id
+   is hidden from the picker rather than offered as a button that 500s — so if
+   a plan does not appear, that is why.
+3. **The webhook.** Add an endpoint in Stripe pointing at
+   `https://<host>/stripe/webhook`, and set `STRIPE_WEBHOOK_SECRET` to its
+   signing secret. Subscribe it to at least `customer.subscription.created`,
+   `customer.subscription.updated`, `customer.subscription.deleted` and
+   `invoice.payment_succeeded`.
+4. `BILLING_ENABLED=true`, redeploy.
+
+**The webhook is not optional.** This app reads entitlement from its own
+`subscriptions` table, never by calling Stripe on the request path — a
+generation must not depend on a third party being reachable. That table is
+written by the webhook. Without it, people pay and nothing changes in the app.
+
+`STRIPE_WEBHOOK_SECRET` being unset fails *closed*: Cashier rejects every event
+rather than trusting the body. That is the right direction, but the symptom is
+the same as having no endpoint at all, so check Stripe's delivery log first when
+a subscription does not appear.
+
+### What is deliberately not built
+
+Cards, invoices, tax, dunning and cancellation are Stripe's screens, reached
+via Checkout and the Billing Portal. This app never renders a card field, which
+keeps it in PCI DSS SAQ A rather than SAQ A-EP. Do not add one.
+
+Cancelling lives in the portal for the same reason: a cancel button here would
+have to reproduce Stripe's proration and grace-period rules to tell the truth
+about what happens next, and one that misstates a refund is worse than an extra
+click.
+
+### Before you charge anybody
+
+`docs/LEGAL-PACK.md` flags this and it is not boilerplate: **US auto-renewal
+disclosure rules are strict and several states enforce them aggressively.** The
+plan page carries a plain renewal sentence, which is a floor, not compliance.
+Terms covering payment, refunds and auto-renewal are a lawyer's job before the
+first live charge.
+
+### The image needs bcmath
+
+`laravel/cashier` requires `ext-bcmath`, and it is installed in **both** Docker
+stages. That pairing is deliberate — stage 1 resolves `ext-*` against its own
+PHP, so an extension missing there fails the build honestly instead of
+producing a vendor tree the runtime cannot load. If you ever find yourself
+reaching for `--ignore-platform-reqs`, the extension list is what actually needs
+fixing.
+
 ## 5. Backups
 
 Back up **the volume**. `escalate-storage` holds the database and every audio

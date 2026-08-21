@@ -57,6 +57,26 @@ return Application::configure(basePath: dirname(__DIR__))
                 | Request::HEADER_X_FORWARDED_PROTO,
         );
 
+        /*
+        | The one route that must not require a CSRF token.
+        |
+        | Stripe posts to /stripe/webhook from its own servers with no session
+        | and no token, so the CSRF check would reject every event — and the
+        | symptom is subscriptions that look fine in Stripe and never appear in
+        | this app, because the row Cashier writes comes from the webhook.
+        |
+        | This is not a hole. The endpoint authenticates by verifying Stripe's
+        | signature header against STRIPE_WEBHOOK_SECRET, which is strictly
+        | stronger than a CSRF token here: a token proves the request came from
+        | our own form, and this request legitimately does not.
+        |
+        | If STRIPE_WEBHOOK_SECRET is unset, Cashier's middleware rejects
+        | everything rather than trusting the body — the safe direction.
+        */
+        $middleware->validateCsrfTokens(except: [
+            'stripe/webhook',
+        ]);
+
         // Sessions are cookie-bound and same-site; nothing in this app is
         // meant to be embedded or called cross-origin.
         $middleware->redirectGuestsTo('/login');

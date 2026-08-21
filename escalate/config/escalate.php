@@ -244,6 +244,77 @@ return [
     ],
 
     /*
+    | Billing.
+    |
+    | OFF by default, and that default is load-bearing rather than cautious:
+    | with it off, Quota::limit() returns the flat 'quotas' numbers below and
+    | every user gets exactly what they get today. Turning it on is what makes
+    | quotas depend on a subscription — so shipping this code changes nothing
+    | for anyone until someone decides, on purpose, that it should.
+    |
+    | Do not switch it on before the Stripe keys are set and the plan price ids
+    | below resolve; a plan whose price id is empty cannot be checked out, and
+    | the picker hides it rather than offering a button that 500s.
+    */
+    'billing' => [
+        'enabled' => (bool) env('BILLING_ENABLED', false),
+
+        // Shown on the plan picker. Not legal advice and not a substitute for
+        // terms — see docs/LEGAL-PACK.md on auto-renewal disclosure, which in
+        // the US is strict and enforced per-state.
+        'currency' => env('CASHIER_CURRENCY', 'usd'),
+
+        // Days of full access on signing up for a paid plan, before the first
+        // charge. 0 for none.
+        'trial_days' => (int) env('BILLING_TRIAL_DAYS', 0),
+    ],
+
+    /*
+    | Plans.
+    |
+    | 'free' must exist and must have no price id — it is what everyone is on
+    | before they pay and what they fall back to when a subscription lapses.
+    |
+    | Everything else needs a Stripe price id from the environment. Prices live
+    | in Stripe, never here: a number in this file and a number in the dashboard
+    | are two sources of truth for the same fact, and the one the customer is
+    | actually charged is Stripe's. 'display' is a label for the page, and if it
+    | disagrees with Stripe then Stripe wins and the label is a bug.
+    |
+    | Quotas are per day, and they are the whole product difference between the
+    | tiers. Adding a tier means adding a key here and a price id in the
+    | environment — no code change.
+    */
+    'plans' => [
+        'free' => [
+            'label'  => 'Free',
+            'blurb'  => 'Enough to see whether this is for you.',
+            'price'  => null,
+            'display' => 'Free',
+            'interval' => null,
+            'quotas' => ['story' => 1, 'narration' => 1, 'rewind' => 1],
+        ],
+
+        'monthly' => [
+            'label'  => 'Escalate',
+            'blurb'  => 'The whole thing, billed monthly.',
+            'price'  => env('STRIPE_PRICE_MONTHLY'),
+            'display' => env('STRIPE_PRICE_MONTHLY_LABEL', '$12 / month'),
+            'interval' => 'month',
+            'quotas' => ['story' => 5, 'narration' => 8, 'rewind' => 3],
+        ],
+
+        'yearly' => [
+            'label'  => 'Escalate, yearly',
+            'blurb'  => 'The same, with two months back.',
+            'price'  => env('STRIPE_PRICE_YEARLY'),
+            'display' => env('STRIPE_PRICE_YEARLY_LABEL', '$120 / year'),
+            'interval' => 'year',
+            'quotas' => ['story' => 5, 'narration' => 8, 'rewind' => 3],
+        ],
+    ],
+
+    /*
     | The ceiling — a whole-application daily limit, on top of the per-user one.
     |
     | 'quotas' above bounds what ONE person can spend. Nothing bounded what

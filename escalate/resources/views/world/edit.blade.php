@@ -258,6 +258,9 @@
         @csrf
         <button type="submit" class="btn btn-quiet">Sign out</button>
     </form>
+    @if (config('escalate.billing.enabled'))
+        <a class="btn btn-quiet" href="{{ route('billing.index') }}">Your plan</a>
+    @endif
     <a class="btn btn-quiet" href="{{ route('account.index') }}">Your data</a>
     <a class="btn btn-quiet" href="{{ route('privacy') }}">Privacy</a>
 </div>

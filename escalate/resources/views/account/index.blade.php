@@ -63,6 +63,16 @@
     </form>
 </div>
 
+@if (config('escalate.billing.enabled'))
+    <div class="card card-quiet" data-enter>
+        <h3 style="margin-bottom:var(--s-2)">Your plan</h3>
+        <p class="small muted" style="margin-bottom:var(--s-4)">
+            What you are on, what it allows, and how to change or cancel it.
+        </p>
+        <a class="btn btn-quiet" href="{{ route('billing.index') }}">Go to your plan</a>
+    </div>
+@endif
+
 <p class="small muted center" style="margin-top:var(--s-6)">
     <a class="link-back" href="{{ route('world.edit') }}">Back to My World</a>
 </p>
