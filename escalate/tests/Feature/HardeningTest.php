@@ -211,4 +211,40 @@ class HardeningTest extends TestCase
         $this->assertSame(':memory:', $_SERVER['DB_DATABASE'] ?? null);
         $this->assertSame(':memory:', env('DB_DATABASE'));
     }
+
+    /**
+     * `?thing[]=x` must never reach a string cast.
+     *
+     * An array parameter through a (string) cast — or through Laravel's own
+     * $request->string(), which builds a Stringable from it — raises a PHP
+     * warning the framework promotes to an ErrorException, and the result is a
+     * 500. On the two routes below that need no account, that is a 500 anyone
+     * can produce in a loop, filling the log until the disk is gone — and this
+     * app keeps its SQLite database on that same disk.
+     *
+     * The gratitude screen was hardened against this and grew a private helper;
+     * five other places had the same hole. This covers all of them.
+     */
+    public function test_array_query_parameters_never_produce_a_server_error(): void
+    {
+        // Public — no account needed to reach these.
+        $this->get('/register?invite[]=x')->assertOk();
+        $this->get('/reset-password/sometoken?email[]=x')->assertOk();
+
+        $user = $this->makeUser('arrays@escalate.test');
+
+        $this->actingAs($user)->get('/desires?status[]=z')->assertOk();
+        $this->actingAs($user)->get('/gratitude?q[]=x&tag[]=y')->assertOk();
+
+        $admin = $this->makeUser('arrayadmin@escalate.test');
+        $admin->forceFill(['role' => 'admin'])->save();
+
+        $this->actingAs($admin->fresh())
+            ->withSession(['admin.verified' => true, 'admin.verified_at' => now()->timestamp])
+            ->get('/admin/users?q[]=x')->assertOk();
+
+        $this->actingAs($admin->fresh())
+            ->withSession(['admin.verified' => true, 'admin.verified_at' => now()->timestamp])
+            ->post('/admin/settings/reset', ['key' => ['x']])->assertNotFound();
+    }
 }

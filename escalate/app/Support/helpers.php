@@ -63,3 +63,28 @@ if (! function_exists('theme_meta')) {
         return config("escalate.themes.{$key}") ?? config('escalate.themes.midnight');
     }
 }
+
+if (! function_exists('scalar_input')) {
+    /**
+     * A trimmed string from request input, or '' for anything that is not one.
+     *
+     * Guards the whole family of `?thing[]=x` crashes. `?status[]=z` hands the
+     * controller an ARRAY, and every ordinary way of turning that into a string
+     * — a (string) cast, or Laravel's own $request->string(), which builds a
+     * Stringable out of it — raises a PHP warning that the framework promotes
+     * to an ErrorException. The result is a 500, and on the routes that need no
+     * login it is a 500 anyone can produce at will, in a loop, filling the log
+     * until the disk is gone. This app keeps its SQLite database on that same
+     * disk.
+     *
+     * GratitudeController learned this first and grew a private copy of it.
+     * Five other places had not: /desires, /admin/users, the settings reset,
+     * the register form's invite prefill, and the password-reset screen. Two of
+     * those are reachable without an account. One definition now, so the next
+     * place that reads a query parameter cannot quietly miss it.
+     */
+    function scalar_input(mixed $value): string
+    {
+        return is_string($value) ? trim($value) : '';
+    }
+}

@@ -45,7 +45,8 @@ class DesireController extends Controller
 
     public function index(Request $request): View
     {
-        $filter = (string) $request->query('status', '');
+        // scalar_input, not a cast: ?status[]=z is an array and casting it 500s.
+        $filter = scalar_input($request->query('status'));
         $query = $request->user()->desires();
 
         if (array_key_exists($filter, config('escalate.statuses'))) {

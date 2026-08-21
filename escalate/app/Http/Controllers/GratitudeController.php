@@ -177,10 +177,17 @@ class GratitudeController extends Controller
             ->value();
     }
 
-    /** A trimmed string, or '' for anything that is not one. */
+    /**
+     * A trimmed string, or '' for anything that is not one.
+     *
+     * This screen found the problem first; five other places had the same hole
+     * and did not know it. The logic moved to scalar_input() in
+     * app/Support/helpers.php so there is one definition rather than six, and
+     * this stays as the name the code above already reads well with.
+     */
     private function scalar(mixed $value): string
     {
-        return is_string($value) ? trim($value) : '';
+        return scalar_input($value);
     }
 
     /** Escapes LIKE metacharacters so user input cannot act as a wildcard. */

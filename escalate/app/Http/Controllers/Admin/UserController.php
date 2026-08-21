@@ -27,7 +27,7 @@ class UserController extends Controller
 {
     public function index(Request $request): View
     {
-        $search = trim((string) $request->query('q', ''));
+        $search = scalar_input($request->query('q'));
 
         $users = User::query()
             ->when($search !== '', fn ($q) => $q

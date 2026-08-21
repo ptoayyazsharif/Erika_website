@@ -85,7 +85,7 @@ class SettingsController extends Controller
     /** Drop one override and fall back to whatever the server was deployed with. */
     public function reset(Request $request): RedirectResponse
     {
-        $key = (string) $request->input('key');
+        $key = scalar_input($request->input('key'));
 
         abort_unless(Settings::isEditable($key), 404);
 

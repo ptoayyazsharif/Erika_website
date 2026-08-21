@@ -56,7 +56,9 @@ class PasswordResetController extends Controller
     {
         return view('auth.reset-password', [
             'token' => $token,
-            'email' => $request->string('email')->value(),
+            // Straight off the query string with no validation in front of it,
+            // so an ?email[]=x turns Stringable into a 500 on a public route.
+            'email' => scalar_input($request->query('email')),
         ]);
     }
 

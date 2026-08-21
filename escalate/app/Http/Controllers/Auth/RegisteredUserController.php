@@ -21,7 +21,7 @@ class RegisteredUserController extends Controller
         return view('auth.register', [
             // Prefilled from ?invite=… so the link in the email is one click
             // and nobody has to retype twelve characters on a phone.
-            'invite' => Invite::normalise((string) $request->query('invite', '')),
+            'invite' => Invite::normalise(scalar_input($request->query('invite'))),
         ]);
     }
 
@@ -158,7 +158,7 @@ class RegisteredUserController extends Controller
             ['invite.required' => 'Escalate is invite-only right now. Enter the code you were sent.'],
         );
 
-        $invite = Invite::where('code', Invite::normalise((string) $request->input('invite')))->first();
+        $invite = Invite::where('code', Invite::normalise(scalar_input($request->input('invite'))))->first();
 
         // Deliberately not isUsable($email): the address is unvalidated at this
         // point, and feeding it to a lookup here is how the leak would creep
