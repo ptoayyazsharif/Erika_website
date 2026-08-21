@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\AdminSessionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DesireController;
@@ -33,6 +34,13 @@ use Illuminate\Support\Facades\Route;
 |     bindings silently stop protecting you.
 |   - Admin routes sit behind 'auth' AND 'admin'. The admin middleware 404s
 |     rather than 403s, so the area is invisible to anyone without the role.
+|   - The four routes that call a paid provider — writing a reading, narrating
+|     one, rewriting one, writing a Rewind — additionally carry
+|     'verified-email'. Nothing else does: an unconfirmed account can still
+|     read, plan and write, because locking someone out of their own journal
+|     over a spam filter is a worse outcome than the one being prevented.
+|     That middleware reads the config flag per request rather than here, so
+|     the setting cannot be frozen into `route:cache` — see the class.
 |
 */
 
@@ -73,6 +81,17 @@ Route::get('/', fn () => redirect()->route(auth()->check() ? 'today' : 'login'))
 Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+    /* Confirming an email address. 'verification.notice' is the name the
+       'verified' middleware redirects to, so it is not free to rename. The
+       verify link is signed by the framework and checked by
+       EmailVerificationRequest; the resend sends mail, so it is throttled. */
+    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])
+        ->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+        ->middleware(['signed', 'throttle:6,60'])->name('verification.verify');
+    Route::post('/email/verify', [EmailVerificationController::class, 'resend'])
+        ->middleware('throttle:5,60')->name('verification.send');
+
     /* Account — taking a copy, and leaving. Both re-confirm the password. */
     Route::get('/account', [AccountController::class, 'show'])->name('account.index');
     Route::post('/account/export', [AccountController::class, 'export'])
@@ -99,13 +118,13 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
        the quota protects the bill, the throttle protects the queue. */
     Route::get('/stories', [StoryController::class, 'index'])->name('stories.index');
     Route::post('/desires/{desire}/stories', [StoryController::class, 'store'])
-        ->middleware('throttle:12,60')->name('stories.store');
+        ->middleware(['verified-email', 'throttle:12,60'])->name('stories.store');
     Route::get('/stories/{story}', [StoryController::class, 'show'])->name('stories.show');
     Route::get('/stories/{story}/state', [StoryController::class, 'state'])->name('stories.state');
     Route::post('/stories/{story}/narrate', [StoryController::class, 'narrate'])
-        ->middleware('throttle:12,60')->name('stories.narrate');
+        ->middleware(['verified-email', 'throttle:12,60'])->name('stories.narrate');
     Route::post('/stories/{story}/regenerate', [StoryController::class, 'regenerate'])
-        ->middleware('throttle:12,60')->name('stories.regenerate');
+        ->middleware(['verified-email', 'throttle:12,60'])->name('stories.regenerate');
     Route::get('/stories/{story}/edit', [StoryController::class, 'edit'])->name('stories.edit');
     Route::put('/stories/{story}', [StoryController::class, 'update'])->name('stories.update');
     Route::post('/stories/{story}/favourite', [StoryController::class, 'favourite'])->name('stories.favourite');
@@ -136,7 +155,7 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::post('/desires/{desire}/rewind', [RewindController::class, 'store'])->name('rewinds.store');
     Route::get('/rewinds/{rewind}', [RewindController::class, 'show'])->name('rewinds.show');
     Route::post('/rewinds/{rewind}/write', [RewindController::class, 'generate'])
-        ->middleware('throttle:12,60')->name('rewinds.generate');
+        ->middleware(['verified-email', 'throttle:12,60'])->name('rewinds.generate');
     Route::delete('/rewinds/{rewind}', [RewindController::class, 'destroy'])->name('rewinds.destroy');
 
     /* admin door — reachable only by an admin, invisible to everyone else */

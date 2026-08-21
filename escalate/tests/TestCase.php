@@ -21,9 +21,24 @@ abstract class TestCase extends BaseTestCase
             'password' => 'a-long-enough-password-1',
         ]);
 
+        // Verified, because this helper means "a user ready to act as" and an
+        // unverified one cannot reach the four routes that generate anything.
+        // Setting it here rather than turning the gate off suite-wide keeps
+        // 'verified-email' live in every other test, so gating the wrong route
+        // by accident still fails something. VerificationTest un-verifies
+        // deliberately.
+        $user->forceFill(['email_verified_at' => now()])->save();
+
         $user->profile()->create(['preferred_name' => $name]);
 
         return $user;
+    }
+
+    /** Drop the authenticated session, for tests that sign up more than once. */
+    protected function signOut(): void
+    {
+        auth()->logout();
+        $this->flushSession();
     }
 
     /**

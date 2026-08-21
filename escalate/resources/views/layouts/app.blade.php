@@ -81,6 +81,23 @@
 @endauth
 
 <main class="shell" id="main">
+    {{-- Unconfirmed email. Shown rather than enforced: the person can use the
+         whole app except the four things that cost money, so this is a nudge
+         and not a wall. It disappears the moment they click the link. --}}
+    @if (config('escalate.beta.require_verification')
+        && auth()->check()
+        && ! auth()->user()->hasVerifiedEmail()
+        && ! request()->routeIs('verification.*'))
+        <div class="notice notice-warn" role="status">
+            @include('partials.icon', ['name' => 'alert', 'size' => 18])
+            <div>
+                <strong>Confirm your email to start writing.</strong>
+                Everything else works — this only opens the readings and the voice.
+                <a href="{{ route('verification.notice') }}">Send the link again &rarr;</a>
+            </div>
+        </div>
+    @endif
+
     @if ($errors->any() && ! isset($suppressErrorSummary))
         <div class="notice notice-error" role="alert">
             @include('partials.icon', ['name' => 'alert', 'size' => 18])

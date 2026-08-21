@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\RejectSuspended;
+use App\Http\Middleware\RequireVerifiedEmail;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -22,6 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => EnsureAdmin::class,
             'not-suspended' => RejectSuspended::class,
+            // Not Laravel's own 'verified': this one honours the config flag at
+            // request time, so it survives route:cache. See the class.
+            'verified-email' => RequireVerifiedEmail::class,
         ]);
 
         /*

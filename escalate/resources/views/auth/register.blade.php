@@ -7,11 +7,25 @@
 <form method="POST" action="{{ route('register.store') }}" class="card" data-once>
     @csrf
 
+    @if (config('escalate.beta.invite_only'))
+        <div class="field">
+            <label for="invite">Invite code</label>
+            <span class="hint">Escalate is invite-only while it is being tested. The code came with your invitation — dashes and capitals are optional.</span>
+            <input class="input" id="invite" name="invite" type="text" required
+                   autocomplete="off" autocapitalize="characters" spellcheck="false"
+                   maxlength="32" value="{{ old('invite', $invite) }}"
+                   placeholder="ABCD-EFGH-JKMN"
+                   @error('invite') aria-invalid="true" @enderror
+                   @if (! old('invite', $invite)) autofocus @endif>
+        </div>
+    @endif
+
     <div class="field">
         <label for="name">What should we call you?</label>
         <input class="input" id="name" name="name" type="text" autocomplete="name"
-               required autofocus maxlength="80" value="{{ old('name') }}"
-               @error('name') aria-invalid="true" @enderror>
+               required maxlength="80" value="{{ old('name') }}"
+               @error('name') aria-invalid="true" @enderror
+               @if (! config('escalate.beta.invite_only') || old('invite', $invite)) autofocus @endif>
     </div>
 
     <div class="field">

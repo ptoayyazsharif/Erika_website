@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Story;
 use App\Services\Ai\Anthropic;
 use App\Services\StoryWriter;
+use App\Support\Ceiling;
 use App\Support\Quota;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -73,6 +74,15 @@ class WriteStory implements ShouldBeUnique, ShouldQueue
         */
         if (Quota::used($this->story->user, 'story') >= Quota::limit('story')) {
             $this->story->markFailed(Quota::message('story'));
+
+            return;
+        }
+
+        // The app-wide ceiling, re-checked here for the same reason as the
+        // quota above: many requests can pass the controller's check before
+        // any of them reaches a worker.
+        if (! Ceiling::allows('story')) {
+            $this->story->markFailed(Ceiling::message());
 
             return;
         }

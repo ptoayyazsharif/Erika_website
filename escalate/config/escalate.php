@@ -218,6 +218,56 @@ return [
     ],
 
     /*
+    | Beta.
+    |
+    | Both default to ON, and that is the deliberate choice: this app spends
+    | real money on someone else's API every time a button is pressed, and the
+    | safe default for a thing you are about to put on the internet is "closed".
+    | Opening it is then a decision someone made on purpose and can point at,
+    | rather than a default nobody noticed.
+    */
+    'beta' => [
+        // Registration requires an unclaimed invite code. Turn off to open
+        // signup to anyone who finds the URL.
+        'invite_only' => (bool) env('INVITE_ONLY', true),
+
+        // Generation requires a confirmed email address. Reading, writing
+        // desires and filling in My World all still work unverified — this
+        // gates the routes that cost money, not the app.
+        //
+        // Set INVITE_ONLY=false and REQUIRE_VERIFICATION=false together only if
+        // you mean it: that combination is an open door to your provider bill.
+        'require_verification' => (bool) env('REQUIRE_VERIFICATION', true),
+
+        // How long a minted invite stays good for, in days. Null for forever.
+        'invite_days' => (int) env('INVITE_DAYS', 30),
+    ],
+
+    /*
+    | The ceiling — a whole-application daily limit, on top of the per-user one.
+    |
+    | 'quotas' above bounds what ONE person can spend. Nothing bounded what
+    | EVERYONE could spend, which is the wrong shape of limit for the failure
+    | that actually happens: not one greedy user, but a hundred accounts that
+    | should not exist. The per-user quota multiplies by the number of accounts;
+    | this does not.
+    |
+    | Counted as successful generations in the last 24 hours across every user,
+    | out of the same ai_events ledger the per-user quota reads — deliberately
+    | counts, not currency, because a count is exact and needs no pricing table
+    | to be correct.
+    |
+    | Size it at roughly (beta users) × (per-user quota), with headroom. The
+    | defaults below suit twenty to thirty people. Raise them as you grow; the
+    | number existing at all is the point.
+    */
+    'ceiling' => [
+        'stories_per_day'    => (int) env('CEILING_STORIES_PER_DAY', 200),
+        'narrations_per_day' => (int) env('CEILING_NARRATIONS_PER_DAY', 300),
+        'rewinds_per_day'    => (int) env('CEILING_REWINDS_PER_DAY', 100),
+    ],
+
+    /*
     | Uploads. The brief caps photos hard, and so does this.
     */
     'images' => [

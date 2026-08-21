@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Narration;
 use App\Services\Ai\ElevenLabs;
 use App\Services\Ai\NarrationFailed;
+use App\Support\Ceiling;
 use App\Support\Quota;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -60,6 +61,12 @@ class NarrateStory implements ShouldBeUnique, ShouldQueue
         // Re-check at the point of spending — see the note in WriteStory.
         if (Quota::used($this->narration->user, 'narration') >= Quota::limit('narration')) {
             $this->narration->markFailed(Quota::message('narration'));
+
+            return;
+        }
+
+        if (! Ceiling::allows('narration')) {
+            $this->narration->markFailed(Ceiling::message());
 
             return;
         }

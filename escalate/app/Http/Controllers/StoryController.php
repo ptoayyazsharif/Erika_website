@@ -7,6 +7,7 @@ use App\Jobs\WriteStory;
 use App\Models\Desire;
 use App\Models\Narration;
 use App\Models\Story;
+use App\Support\Ceiling;
 use App\Support\Quota;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -42,6 +43,10 @@ class StoryController extends Controller
 
         if (! Quota::allows($request->user(), 'story')) {
             return back()->with('status', Quota::message('story'));
+        }
+
+        if (! Ceiling::allows('story')) {
+            return back()->with('status', Ceiling::message());
         }
 
         // forceFill because desire_id and state are server-derived: the desire
@@ -143,6 +148,10 @@ class StoryController extends Controller
             return back()->with('status', Quota::message('narration'));
         }
 
+        if (! Ceiling::allows('narration')) {
+            return back()->with('status', Ceiling::message());
+        }
+
         NarrateStory::dispatch(Narration::queueFor($story, $voice));
 
         return back();
@@ -159,6 +168,10 @@ class StoryController extends Controller
 
         if (! Quota::allows($request->user(), 'story')) {
             return back()->with('status', Quota::message('story'));
+        }
+
+        if (! Ceiling::allows('story')) {
+            return back()->with('status', Ceiling::message());
         }
 
         $story->forceFill([

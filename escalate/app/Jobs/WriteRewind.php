@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Rewind;
 use App\Services\Ai\Anthropic;
 use App\Services\RewindWriter;
+use App\Support\Ceiling;
 use App\Support\Quota;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -51,6 +52,12 @@ class WriteRewind implements ShouldBeUnique, ShouldQueue
         // any of them reaches here.
         if (Quota::used($this->rewind->user, 'rewind') >= Quota::limit('rewind')) {
             $this->markFailed(Quota::message('rewind'));
+
+            return;
+        }
+
+        if (! Ceiling::allows('rewind')) {
+            $this->markFailed(Ceiling::message());
 
             return;
         }

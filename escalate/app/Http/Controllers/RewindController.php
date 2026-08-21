@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\WriteRewind;
 use App\Models\Desire;
 use App\Models\Rewind;
+use App\Support\Ceiling;
 use App\Support\Quota;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -114,6 +115,10 @@ class RewindController extends Controller
 
         if (! Quota::allows($request->user(), 'rewind')) {
             return back()->with('status', Quota::message('rewind'));
+        }
+
+        if (! Ceiling::allows('rewind')) {
+            return back()->with('status', Ceiling::message());
         }
 
         $rewind->forceFill(['state' => 'queued', 'failure_reason' => null])->save();

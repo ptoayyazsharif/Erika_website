@@ -198,6 +198,73 @@ the area is invisible, not merely forbidden.
 
 ---
 
+## 4a. Running a closed beta
+
+Three gates stand between a fresh deploy and an unexpected provider invoice.
+All three default to on; none of them is a paywall, and none of them touches
+billing.
+
+**Invite-only registration.** `INVITE_ONLY=true` (the default) means `/register`
+needs an unclaimed code. Mint them from the container:
+
+```bash
+php artisan escalate:invite --count=10 --note="first testers"
+php artisan escalate:invite --email=maya@example.com --days=7   # bound to one address
+php artisan escalate:invites          # who has been invited, and who came in
+php artisan escalate:invites --open   # what is left to hand out
+```
+
+Each code prints with a signup link that prefills it, so the invitation is one
+tap. A code is single-use, enforced by a conditional UPDATE rather than a
+read-then-write — two people pasting the same code from a group chat is the race
+that matters, and the database decides it. A failed signup (mistyped password,
+say) does not spend the code.
+
+**Email verification.** `REQUIRE_VERIFICATION=true` (the default) means the four
+routes that call a paid provider — write a reading, narrate one, rewrite one,
+write a Rewind — need a confirmed address. Nothing else does: an unconfirmed
+account can still sign in, fill in My World and name desires. A spam filter
+should not be able to take somebody's journal away from them.
+
+> **This needs working SMTP.** So does password reset, so it is not a new
+> requirement — but if `MAIL_MAILER` is still `log`, beta users will never
+> receive the link and generation stays shut for all of them. Configure mail, or
+> set `REQUIRE_VERIFICATION=false` deliberately while you sort it out.
+
+**The ceiling.** A whole-application daily cap, on top of the per-user quotas:
+
+```
+CEILING_STORIES_PER_DAY=200
+CEILING_NARRATIONS_PER_DAY=300
+CEILING_REWINDS_PER_DAY=100
+```
+
+The per-user quota is an allowance and it multiplies by the number of accounts;
+this one does not. Size it at roughly (expected users) × (per-user quota) with
+headroom — the defaults suit twenty to thirty people. `0` means unlimited, not
+blocked, so an unset variable fails open rather than bricking the app.
+
+When the ceiling is reached everyone is told the same thing, and it is worded so
+nobody reads it as their own limit: *"Escalate has reached its limit for today
+across everyone using it."* Watch for it with:
+
+```bash
+php artisan tinker --execute="echo App\Support\Ceiling::remaining('story');"
+```
+
+### Opening up later
+
+Turning both gates off is two variables, and the combination is worth being
+deliberate about:
+
+```
+INVITE_ONLY=false
+REQUIRE_VERIFICATION=false   # <- do not set this one without a reason
+```
+
+`INVITE_ONLY=false` with verification still on is the normal post-beta state.
+Both false is an open door to your provider bill, guarded only by the ceiling.
+
 ## 5. Backups
 
 Back up **the volume**. `escalate-storage` holds the database and every audio

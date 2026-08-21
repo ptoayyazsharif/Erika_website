@@ -3,13 +3,25 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+/**
+ * MustVerifyEmail is what makes `event(new Registered($user))` in the register
+ * controller actually send something — the framework's own listener is bound to
+ * that event and checks for this interface.
+ *
+ * It does NOT gate the whole app. The 'verified' middleware is applied to the
+ * four routes that spend money and nowhere else, so an unverified person can
+ * still sign in, fill in My World and name a desire. Locking someone out of
+ * their own account because a confirmation email went to spam is a worse
+ * failure than the one being prevented.
+ */
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
