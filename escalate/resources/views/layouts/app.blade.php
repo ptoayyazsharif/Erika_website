@@ -53,25 +53,50 @@
 </header>
 
 @auth
-    <nav class="tabbar" aria-label="Sections">
-        @php
-            // Short label for the mobile tab bar, full label for the desktop
-            // sidebar and for screen readers. "My Stories" on a 60px tab wraps
-            // to two lines and drags the icon out of alignment with its
-            // neighbours, so the tab bar gets the one-word form.
-            $nav = [
-                ['today',          'Today',      'Today',      'sunrise'],
-                ['stories.index',  'My Stories', 'Stories',    'book'],
-                ['desires.index',  'Desires',    'Desires',    'compass'],
-                ['gratitude.index','Gratitude',  'Gratitude',  'heart'],
-                ['rewinds.index',  'My Rewinds', 'Rewinds',    'rewind'],
-                ['journey',        'My Journey', 'Journey',    'journey'],
-                ['world.edit',     'My World',   'World',      'world'],
-            ];
-        @endphp
+    @php
+        // The admin area gets its own navigation in the same bar.
+        //
+        // It used to render the seven customer sections — Today, My Stories,
+        // Gratitude — while you were standing in Settings, which is both
+        // confusing and wrong about where you are. Two different places, two
+        // different sets of destinations, one component.
+        //
+        // Short label for the mobile tab bar, full label for the desktop
+        // sidebar and for screen readers. "My Stories" on a 60px tab wraps to
+        // two lines and drags the icon out of alignment with its neighbours,
+        // so the tab bar gets the one-word form.
+        $inAdmin = request()->routeIs('admin.*');
+
+        $nav = $inAdmin ? [
+            ['admin.dashboard', 'Overview', 'Overview', 'journey'],
+            ['admin.users',     'People',   'People',   'compass'],
+            ['admin.plans',     'Plans',    'Plans',    'book'],
+            ['admin.invites',   'Invites',  'Invites',  'plus'],
+            ['admin.settings',  'Settings', 'Settings', 'world'],
+            ['today',           'Back to the app', 'Exit', 'sunrise'],
+        ] : [
+            ['today',          'Today',      'Today',      'sunrise'],
+            ['stories.index',  'My Stories', 'Stories',    'book'],
+            ['desires.index',  'Desires',    'Desires',    'compass'],
+            ['gratitude.index','Gratitude',  'Gratitude',  'heart'],
+            ['rewinds.index',  'My Rewinds', 'Rewinds',    'rewind'],
+            ['journey',        'My Journey', 'Journey',    'journey'],
+            ['world.edit',     'My World',   'World',      'world'],
+        ];
+    @endphp
+
+    <nav class="tabbar" aria-label="{{ $inAdmin ? 'Admin' : 'Sections' }}">
         @foreach ($nav as [$route, $label, $short, $icon])
+            @php
+                // 'admin.users' must not light up for 'admin.dashboard', so the
+                // admin entries match on their own full name rather than on the
+                // first segment the way the customer ones do.
+                $current = $inAdmin
+                    ? (request()->routeIs($route) || request()->routeIs($route.'.*'))
+                    : request()->routeIs(Str::before($route, '.').'*');
+            @endphp
             <a href="{{ route($route) }}" aria-label="{{ $label }}"
-               @if (request()->routeIs(Str::before($route, '.').'*')) aria-current="page" @endif>
+               @if ($current) aria-current="page" @endif>
                 @include('partials.icon', ['name' => $icon, 'size' => 21])
                 <span class="tab-short">{{ $short }}</span>
                 <span class="tab-full">{{ $label }}</span>

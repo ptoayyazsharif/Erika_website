@@ -60,13 +60,25 @@ class Settings
                 'escalate.voice.model'    => ['type' => 'string', 'label' => 'Model', 'help' => 'eleven_multilingual_v2 reads long-form far better than the flash models, at roughly twice the cost per character.'],
             ],
 
-            'Billing (Stripe)' => [
-                'escalate.billing.enabled'     => ['type' => 'bool', 'label' => 'Billing enabled', 'help' => 'Off means quotas ignore plans entirely and everyone gets the flat limits below — exactly how the app behaved before Stripe. Do not turn this on until the keys and price ids are real.'],
-                'cashier.key'                  => ['type' => 'string', 'label' => 'Publishable key', 'help' => 'pk_… — not a secret, but it identifies the account.'],
-                'cashier.secret'               => ['type' => 'secret', 'label' => 'Secret key', 'help' => 'sk_… — this can move money. Treat it accordingly.'],
-                'cashier.webhook.secret'       => ['type' => 'secret', 'label' => 'Webhook signing secret', 'help' => 'whsec_… Without it the webhook endpoint returns 403 and no subscription ever reaches the app.'],
-                'escalate.plans.monthly.price' => ['type' => 'string', 'label' => 'Monthly price id', 'help' => 'price_… from Stripe. A plan with no price id is hidden rather than offered.'],
-                'escalate.plans.yearly.price'  => ['type' => 'string', 'label' => 'Yearly price id', 'help' => 'price_… from Stripe.'],
+            'Billing' => [
+                'escalate.billing.enabled' => ['type' => 'bool', 'label' => 'Billing enabled', 'help' => 'Off means quotas ignore plans entirely and everyone gets the flat limits below — exactly how the app behaved before Stripe. Do not turn this on until the keys below are real and the plans carry price ids.'],
+                'escalate.billing.trial_days' => ['type' => 'int', 'label' => 'Free trial days', 'help' => 'Days of full access before the first charge. 0 for none.'],
+            ],
+
+            'Stripe — mode' => [
+                'escalate.stripe.mode' => ['type' => 'mode', 'label' => 'Use test mode', 'help' => 'Test mode swaps in the test keys below AND the test price id on every plan. Nothing is charged. Stripe keeps the two worlds entirely separate, so a price id from one is meaningless in the other — which is why each plan carries both.'],
+            ],
+
+            'Stripe — test keys' => [
+                'escalate.stripe.test.key'            => ['type' => 'string', 'label' => 'Test publishable key', 'help' => 'pk_test_…'],
+                'escalate.stripe.test.secret'         => ['type' => 'secret', 'label' => 'Test secret key', 'help' => 'sk_test_… Cannot move real money.'],
+                'escalate.stripe.test.webhook_secret' => ['type' => 'secret', 'label' => 'Test webhook signing secret', 'help' => 'whsec_… from `stripe listen` or a test-mode endpoint.'],
+            ],
+
+            'Stripe — live keys' => [
+                'escalate.stripe.live.key'            => ['type' => 'string', 'label' => 'Live publishable key', 'help' => 'pk_live_… — not a secret, but it identifies the account.'],
+                'escalate.stripe.live.secret'         => ['type' => 'secret', 'label' => 'Live secret key', 'help' => 'sk_live_… This one moves real money. Treat it accordingly.'],
+                'escalate.stripe.live.webhook_secret' => ['type' => 'secret', 'label' => 'Live webhook signing secret', 'help' => 'whsec_… Without it the webhook endpoint returns 403 and no subscription ever reaches the app.'],
             ],
 
             'Who can sign up' => [
@@ -169,6 +181,11 @@ class Settings
 
             config([$key => self::cast($key, $value)]);
         }
+
+        // Last, and it has to be last: it reads the mode and the key sets that
+        // the loop above may just have changed, and copies the active set into
+        // the cashier.* keys Cashier itself reads.
+        Stripe::apply();
     }
 
     private static function cast(string $key, mixed $value): mixed
@@ -176,6 +193,18 @@ class Settings
         return match (self::schema()[$key]['type'] ?? 'string') {
             'bool' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
             'int'  => (int) $value,
+            /*
+             * A two-value choice that arrives in two shapes.
+             *
+             * The settings form renders it as a checkbox and posts "1" or "0",
+             * but Settings::put() is a public entry point and the obvious thing
+             * to hand it is the word itself. Passing 'test' through
+             * FILTER_VALIDATE_BOOLEAN yields false — so writing the mode by its
+             * own name silently selected the opposite one. Accept both.
+             */
+            'mode' => in_array($value, [Stripe::TEST, Stripe::LIVE], true)
+                ? $value
+                : (filter_var($value, FILTER_VALIDATE_BOOLEAN) ? Stripe::TEST : Stripe::LIVE),
             default => $value,
         };
     }

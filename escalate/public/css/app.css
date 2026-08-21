@@ -94,6 +94,17 @@
 
   /* space — spacious, per the density dial */
   --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
+  /*
+   * How tall .topbar actually is, derived rather than guessed.
+   *
+   * The desktop sidebar sticks below the header, so it needs this number and
+   * it needs it to stay true. It was hardcoded as 57px in one place and 0 in
+   * another, while the real height is 69px — the 44px brand target plus the
+   * bar's own vertical padding and its bottom border. Written as a calc over
+   * the same tokens the bar is built from, so changing --s-3 moves both
+   * together instead of silently reopening the gap.
+   */
+  --topbar-h: calc(44px + (var(--s-3) * 2) + 1px);
   --s-5: 24px;  --s-6: 32px;  --s-7: 44px;  --s-8: 64px;  --s-9: 88px;
 
   --r-sm: 8px;  --r-md: 14px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
@@ -616,9 +627,23 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
   .topbar { grid-column: 1 / -1; }
   .tabbar {
     position: sticky;
-    top: 0;
+    /*
+     * Below the header, not behind it.
+     *
+     * This said `top: 0` while .topbar is also `position: sticky; top: 0` — so
+     * on any page long enough to scroll, the sidebar rode up to the viewport
+     * top and collided with the header. And because the mobile rule leaves it
+     * at z-index 30 against the header's 20, the sidebar won: the nav links
+     * painted OVER the wordmark and the theme button.
+     *
+     * The height was wrong by the same amount for the same reason — 57px
+     * against a real 69px — which left the sidebar overflowing the bottom of
+     * the viewport by 12px.
+     */
+    top: var(--topbar-h);
+    z-index: 10;
     align-self: start;
-    height: calc(100dvh - 57px);
+    height: calc(100dvh - var(--topbar-h));
     grid-auto-flow: row;
     grid-auto-columns: auto;
     align-content: start;

@@ -44,7 +44,7 @@ class SettingsController extends Controller
         foreach ($schema as $key => $meta) {
             $field = str_replace('.', '__', $key);
 
-            if ($meta['type'] === 'bool') {
+            if ($meta['type'] === 'bool' || $meta['type'] === 'mode') {
                 // A checkbox that is off sends nothing at all, so absence is
                 // meaningful here in a way it is not for the other types.
                 Settings::put($key, array_key_exists($field, $posted) ? '1' : '0', $request->user());

@@ -2,43 +2,108 @@
 
 namespace App\Support;
 
+use App\Models\Plan as PlanModel;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Which plan somebody is on, and what that entitles them to.
  *
- * The only place in the app that turns a Stripe subscription into a number.
+ * The only place in the app that turns a subscription into a number.
  * Everything else — Quota, the billing screen, the paywall message — asks here,
  * so "what does a paying user get" has one answer rather than one per screen.
  *
- * Note what this deliberately does NOT do: call Stripe. Entitlement is read
- * from the local `subscriptions` table that Cashier keeps in step via webhooks.
- * A generation request must not depend on a third party being reachable, and a
- * Stripe outage should slow nothing down here.
+ * Definitions now come from the `plans` table (App\Models\Plan) so an
+ * administrator can edit them, falling back to config/escalate.php when that
+ * table is empty or absent. Entitlement itself is still read from the local
+ * subscriptions table Cashier keeps in step via webhooks — never by calling
+ * Stripe. A generation request must not depend on a third party being
+ * reachable, and a Stripe outage should slow nothing down here.
  */
 class Plan
 {
     public const FREE = 'free';
 
-    /** Every configured plan, keyed as in config. */
+    private const CACHE_KEY = 'escalate.plans';
+
+    /**
+     * Every plan, keyed as before so existing call sites are unchanged.
+     *
+     * Shaped exactly like the old config array — label, blurb, price, display,
+     * interval, quotas — because half a dozen views read those keys. `price` is
+     * resolved for the ACTIVE Stripe mode, so nothing downstream has to know
+     * test mode exists.
+     */
     public static function all(): array
     {
-        return config('escalate.plans', []);
+        $rows = self::rows();
+
+        if ($rows === []) {
+            return config('escalate.plans', []);
+        }
+
+        return $rows;
     }
 
-    /** Plans someone can actually buy: a real price id, and not the free one. */
+    /** @return array<string, array> plan definitions from the database */
+    private static function rows(): array
+    {
+        try {
+            $plans = Cache::rememberForever(self::CACHE_KEY.'.'.Stripe::mode(), function () {
+                if (! Schema::hasTable('plans')) {
+                    return [];
+                }
+
+                return PlanModel::orderBy('position')->orderBy('id')->get()
+                    ->mapWithKeys(fn (PlanModel $p) => [$p->key => [
+                        'label'     => $p->label,
+                        'blurb'     => $p->blurb,
+                        'price'     => $p->priceId(),
+                        'display'   => $p->display,
+                        'interval'  => $p->interval,
+                        'quotas'    => $p->quotas ?? [],
+                        'is_active' => $p->is_active,
+                    ]])->all();
+            });
+
+            return is_array($plans) ? $plans : [];
+        } catch (\Throwable $e) {
+            // Same reasoning as Settings::stored(): this is read during a
+            // request that may be serving a page, and a cache or database
+            // fault must degrade to the deployed config rather than 500.
+            report($e);
+
+            return [];
+        }
+    }
+
+    public static function flush(): void
+    {
+        foreach ([Stripe::LIVE, Stripe::TEST] as $mode) {
+            try {
+                Cache::forget(self::CACHE_KEY.'.'.$mode);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+    }
+
+    /** Plans someone can actually buy: active, not free, and priced in this mode. */
     public static function purchasable(): array
     {
         return array_filter(
             self::all(),
-            fn ($plan, $key) => $key !== self::FREE && filled($plan['price'] ?? null),
+            fn ($plan, $key) => $key !== self::FREE
+                && ($plan['is_active'] ?? true)
+                && filled($plan['price'] ?? null),
             ARRAY_FILTER_USE_BOTH,
         );
     }
 
     public static function config(string $key): array
     {
-        return self::all()[$key] ?? self::all()[self::FREE];
+        return self::all()[$key] ?? self::all()[self::FREE] ?? [];
     }
 
     /** The plan key for a Stripe price id, or null if it is not one of ours. */
@@ -65,11 +130,6 @@ class Plan
      * inside its grace period after cancellation — both are cases where the
      * person has paid for access they still have, and taking it away early
      * because a cancel is pending would be theft of something they bought.
-     *
-     * A subscription whose price is no longer in config — a plan that was
-     * renamed or retired out from under a live subscriber — resolves to the
-     * first purchasable plan rather than to free. Silently demoting someone who
-     * is still being charged is the worse of the two failures.
      */
     public static function for(User $user): string
     {
@@ -97,6 +157,13 @@ class Plan
 
         $price = $user->subscription()?->stripe_price;
 
+        /*
+         * A subscription whose price is no longer known — a plan renamed or
+         * retired out from under a live subscriber, or a price minted in the
+         * other Stripe mode — resolves to a paid plan rather than to free.
+         * Silently demoting someone who is still being charged is the worse of
+         * the two failures.
+         */
         return self::keyForPrice($price)
             ?? array_key_first(self::purchasable())
             ?? self::FREE;

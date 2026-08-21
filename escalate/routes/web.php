@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\InviteController as AdminInvites;
+use App\Http\Controllers\Admin\PlanController as AdminPlans;
 use App\Http\Controllers\Admin\SettingsController as AdminSettings;
 use App\Http\Controllers\Admin\UserController as AdminUsers;
 use App\Http\Controllers\Auth\AdminSessionController;
@@ -214,6 +215,13 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         Route::get('/users/{user}', [AdminUsers::class, 'show'])->name('users.show');
         Route::patch('/users/{user}/plan', [AdminUsers::class, 'plan'])->name('users.plan');
         Route::post('/users/{user}/suspend', [AdminUsers::class, 'suspend'])->name('users.suspend');
+
+        Route::get('/plans', [AdminPlans::class, 'index'])->name('plans');
+        Route::get('/plans/create', [AdminPlans::class, 'create'])->name('plans.create');
+        Route::post('/plans', [AdminPlans::class, 'store'])->name('plans.store');
+        Route::get('/plans/{plan}/edit', [AdminPlans::class, 'edit'])->name('plans.edit');
+        Route::put('/plans/{plan}', [AdminPlans::class, 'update'])->name('plans.update');
+        Route::delete('/plans/{plan}', [AdminPlans::class, 'destroy'])->name('plans.destroy');
 
         Route::get('/invites', [AdminInvites::class, 'index'])->name('invites');
         Route::post('/invites', [AdminInvites::class, 'store'])->name('invites.store');

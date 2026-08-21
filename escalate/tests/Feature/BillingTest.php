@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Plan as PlanModel;
 use App\Support\Plan;
 use App\Support\Quota;
+use App\Support\Stripe;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
@@ -21,11 +23,22 @@ class BillingTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Billing on, with the seeded plans given price ids.
+     *
+     * Plans live in the `plans` table now rather than in config, so this writes
+     * rows. The seeding migration has already created free/monthly/yearly from
+     * config; all that is missing is the price ids, which config never had.
+     */
     private function withPlans(): void
     {
         Config::set('escalate.billing.enabled', true);
-        Config::set('escalate.plans.monthly.price', 'price_monthly_test');
-        Config::set('escalate.plans.yearly.price', 'price_yearly_test');
+        Config::set('escalate.stripe.mode', Stripe::LIVE);
+
+        PlanModel::where('key', 'monthly')->update(['stripe_price' => 'price_monthly_test']);
+        PlanModel::where('key', 'yearly')->update(['stripe_price' => 'price_yearly_test']);
+
+        Plan::flush();
     }
 
     /** A subscription row shaped the way Cashier's webhook would leave it. */
@@ -199,8 +212,10 @@ class BillingTest extends TestCase
     public function test_a_plan_without_a_price_id_is_not_offered(): void
     {
         Config::set('escalate.billing.enabled', true);
-        Config::set('escalate.plans.monthly.price', null);
-        Config::set('escalate.plans.yearly.price', null);
+        Config::set('escalate.stripe.mode', Stripe::LIVE);
+
+        PlanModel::query()->update(['stripe_price' => null, 'stripe_price_test' => null]);
+        Plan::flush();
 
         $this->assertSame([], Plan::purchasable());
 

@@ -256,6 +256,29 @@ return [
     | below resolve; a plan whose price id is empty cannot be checked out, and
     | the picker hides it rather than offering a button that 500s.
     */
+    /*
+    | Stripe has two entirely separate worlds. Test and live have their own
+    | keys, their own webhook signing secrets, their own customers and their own
+    | price ids — an id minted in one is meaningless in the other. So the mode
+    | selects a whole credential set, and plans carry a price id per mode. See
+    | App\Support\Stripe.
+    */
+    'stripe' => [
+        'mode' => env('STRIPE_MODE', 'live'),
+
+        'live' => [
+            'key'            => env('STRIPE_KEY'),
+            'secret'         => env('STRIPE_SECRET'),
+            'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        ],
+
+        'test' => [
+            'key'            => env('STRIPE_TEST_KEY'),
+            'secret'         => env('STRIPE_TEST_SECRET'),
+            'webhook_secret' => env('STRIPE_TEST_WEBHOOK_SECRET'),
+        ],
+    ],
+
     'billing' => [
         'enabled' => (bool) env('BILLING_ENABLED', false),
 

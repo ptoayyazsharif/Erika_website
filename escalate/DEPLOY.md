@@ -381,6 +381,41 @@ you are not sure what, reset is the safe move.
   before those tables exist on a fresh volume. It is wrapped so a failure falls
   back to no overrides and the app comes up with what it was deployed with.
 
+### Plans
+
+Admin → **Plans**. Create, edit, reorder, deactivate. Free is protected: it
+cannot be renamed, deactivated or deleted, because it is what everyone is on
+before they pay and what a lapsed subscription falls back to.
+
+A plan with people on it cannot be deleted either — deleting it would leave
+their subscriptions pointing at a price this app no longer recognises while
+Stripe carries on charging them. **Deactivate instead**: it disappears from the
+picker and keeps working for everyone already on it.
+
+Plans were in `config/escalate.php` and are now a table, seeded from that config
+on migrate. Config remains the fallback for an install whose table is empty.
+
+### Stripe test mode
+
+Admin → Settings → **Use test mode**, with separate test and live key sets.
+
+**Each plan carries two price ids, and that is not redundancy.** Stripe keeps
+test and live as entirely separate worlds — separate keys, separate customers,
+separate webhook secrets, and separate price ids. `price_abc` created in test
+does not exist in live. One column would mean flipping the switch silently
+pointed checkout at ids the active keys cannot resolve, and the failure would
+land in front of a customer rather than in a deploy.
+
+So the mode selects the whole set: keys, webhook secret, and which price id each
+plan uses. A plan priced only for live is hidden from the picker in test mode
+rather than offered as a button that errors.
+
+`App\Support\Stripe` is the one place that resolves this, and
+`Settings::apply()` copies the active set into `cashier.*` so Cashier needs no
+knowledge of any of it. **The webhook secret is per-mode too** — a test-mode
+endpoint has its own, and pointing Stripe's test webhooks at the live secret
+gives 403s that look like the endpoint is broken.
+
 ### Comping someone
 
 People → a person → Plan. It sets `users.plan_override`, which `Plan::for()`

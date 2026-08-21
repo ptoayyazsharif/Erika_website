@@ -34,9 +34,10 @@
             @foreach ($fields as $key => $meta)
                 @php $field = str_replace('.', '__', $key); $shown = $display[$key]; @endphp
 
-                @if ($meta['type'] === 'bool')
-                    <label class="option {{ config($key) ? 'is-on' : '' }}" style="margin-bottom:var(--s-4)">
-                        <input type="checkbox" name="settings[{{ $field }}]" value="1" @checked(config($key))>
+                @if ($meta['type'] === 'bool' || $meta['type'] === 'mode')
+                    @php $on = $meta['type'] === 'mode' ? (config($key) === 'test') : (bool) config($key); @endphp
+                    <label class="option {{ $on ? 'is-on' : '' }}" style="margin-bottom:var(--s-4)">
+                        <input type="checkbox" name="settings[{{ $field }}]" value="1" @checked($on)>
                         <span class="tick" aria-hidden="true"></span>
                         <span class="option-body">
                             <span class="option-label">{{ $meta['label'] }}</span>

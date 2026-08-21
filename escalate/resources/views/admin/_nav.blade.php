@@ -1,19 +1,14 @@
-{{-- The admin area's own nav. Not in the tabbar: that is the seven things a
-     person uses their journal for, and an admin link there would be visible in
-     the markup of every ordinary user's page. --}}
-<div class="chips" style="margin-bottom:var(--s-6)">
-    @foreach ([
-        ['admin.dashboard', 'Overview'],
-        ['admin.users', 'People'],
-        ['admin.invites', 'Invites'],
-        ['admin.settings', 'Settings'],
-    ] as [$route, $label])
-        <a class="chip {{ request()->routeIs($route) || request()->routeIs($route.'.*') ? 'is-on' : '' }}"
-           href="{{ route($route) }}">{{ $label }}</a>
-    @endforeach
+{{-- The admin area's destinations live in the main nav bar now — see
+     layouts/app.blade.php, which swaps the customer sections for these when
+     you are inside /admin. All that is left here is the way out, which is an
+     action rather than a destination and so does not belong in a nav list. --}}
+<div class="row-between wrap" style="gap:var(--s-3);margin-bottom:var(--s-6)">
+    <p class="small faint" style="margin:0">
+        Signed in as {{ auth()->user()->email }} · admin session expires after two hours idle
+    </p>
 
-    <form method="POST" action="{{ route('admin.leave') }}" style="margin-left:auto">
+    <form method="POST" action="{{ route('admin.leave') }}">
         @csrf
-        <button class="chip" type="submit">Leave admin</button>
+        <button class="btn btn-quiet btn-sm" type="submit">Leave admin</button>
     </form>
 </div>
