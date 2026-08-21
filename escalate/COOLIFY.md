@@ -100,6 +100,68 @@ To find the UUID again, or check what branch is wired up:
 curl -sS -H "Authorization: Bearer $COOLIFY_TOKEN" "$COOLIFY_API/applications"
 ```
 
+### 3a. Setting environment variables
+
+```sh
+curl -sS -X POST -H "Authorization: Bearer $COOLIFY_TOKEN" \
+  -H 'Content-Type: application/json' \
+  "$COOLIFY_API/applications/$APP_UUID/envs" \
+  -d '{"key":"INVITE_ONLY","value":"true","is_preview":false}'
+```
+
+**Do not send `is_build_time`.** This Coolify rejects it with
+`422 {"errors":{"is_build_time":["This field is not allowed."]}}` — the column
+is `is_buildtime` in the records the API returns, and the write endpoint does
+not accept either spelling. Omit it; the default is what you want.
+
+`is_preview` matters. `GET .../envs` returns **two rows for most keys**, and
+they legitimately disagree:
+
+| key | `is_preview:false` (production) | `is_preview:true` (preview builds) |
+|---|---|---|
+| `APP_URL` | `https://…` | `http://…` |
+| `SESSION_SECURE_COOKIE` | `true` | `false` |
+
+That is not a misconfiguration and does not need fixing — but a script that
+reads the list without filtering on `is_preview` will report the wrong value for
+production and send you chasing a cookie bug that is not there.
+
+### 3b. Beta gates
+
+Set on this instance as of c20d531:
+
+```
+INVITE_ONLY=true            # registration needs a code from escalate:invite
+REQUIRE_VERIFICATION=false  # see below
+INVITE_DAYS=30
+CEILING_STORIES_PER_DAY=200
+CEILING_NARRATIONS_PER_DAY=300
+CEILING_REWINDS_PER_DAY=100
+```
+
+**`REQUIRE_VERIFICATION` is off deliberately, and it is a stopgap.** There are
+no `MAIL_*` variables on this application at all, so `MAIL_MAILER` falls back to
+`log`. With verification on, nobody would ever receive a confirmation link and
+every user would be permanently unable to generate anything.
+
+The same gap means **password reset is silently broken in production today** —
+`/forgot-password` reports success and sends nothing. That predates the beta
+gates. Configure SMTP, then set `REQUIRE_VERIFICATION=true`.
+
+### 3c. Minting invites needs a shell, not the API
+
+`escalate:invite` runs inside the container. Coolify's
+`POST /applications/{uuid}/execute` exists, but a Claude Code session may be
+blocked from calling it by the permission classifier — arbitrary remote command
+execution on a production host is exactly what that guard is for. Use the
+**Terminal** tab in the Coolify panel, or ssh to `2.25.93.114` and
+`docker exec` into the container:
+
+```sh
+php artisan escalate:invite --count=10 --note="beta round one"
+php artisan escalate:invites --open
+```
+
 ### 4. Verify what is actually served
 
 Section 7 of [DEPLOY.md](DEPLOY.md) has the full list. The short version: curl
