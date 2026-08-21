@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          colors="true"
 >
     <testsuites>
@@ -23,9 +23,28 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
-        <env name="DB_URL" value=""/>
+        <!--
+            force="true" on all three, and it is not decoration.
+
+            PHPUnit's <env> does NOT overwrite a variable that is already set in
+            the environment. This suite uses RefreshDatabase, which drops every
+            table before each test — so in any shell that happens to have
+            DB_DATABASE exported, `php artisan test` silently retargets onto
+            that database and destroys it. Demonstrated on a scratch copy:
+            one filtered test run left `no such table: users`, and it did that
+            before the test itself even failed.
+
+            That shell is not hypothetical. docker/entrypoint.sh exports
+            DB_DATABASE, DEPLOY.md tells you to set it, and anyone debugging in
+            the Coolify terminal has it pointing at the live journal.
+
+            With force, the test database is :memory: no matter what the
+            surrounding environment says, and the suite cannot be aimed at a
+            real database by accident.
+        -->
+        <env name="DB_CONNECTION" value="sqlite" force="true"/>
+        <env name="DB_DATABASE" value=":memory:" force="true"/>
+        <env name="DB_URL" value="" force="true"/>
         <!-- The beta gate is off by default so every other test keeps its
              original meaning; InviteTest turns it on explicitly. -->
         <env name="INVITE_ONLY" value="false"/>

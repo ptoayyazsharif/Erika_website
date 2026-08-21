@@ -194,4 +194,21 @@ class HardeningTest extends TestCase
         $this->assertSame($first->id, $second->id);
         $this->assertSame(1, $user->profile()->count());
     }
+
+    /**
+     * The suite must never be able to run against a real database.
+     *
+     * RefreshDatabase drops every table before each test, so this assertion is
+     * about data destruction rather than tidiness. phpunit.xml alone could not
+     * guarantee it: a plain <env> does not overwrite an already-set variable,
+     * and even force="true" rewrites only getenv() and $_ENV — never $_SERVER,
+     * which is the one Laravel's env() reads first. tests/bootstrap.php pins
+     * all three; this fails the moment that stops being true.
+     */
+    public function test_the_suite_can_never_be_aimed_at_a_real_database(): void
+    {
+        $this->assertSame(':memory:', config('database.connections.sqlite.database'));
+        $this->assertSame(':memory:', $_SERVER['DB_DATABASE'] ?? null);
+        $this->assertSame(':memory:', env('DB_DATABASE'));
+    }
 }
