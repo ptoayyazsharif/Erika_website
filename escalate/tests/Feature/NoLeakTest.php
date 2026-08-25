@@ -206,7 +206,10 @@ class NoLeakTest extends TestCase
         $admin->forceFill(['role' => 'admin'])->save();
 
         // Role alone is not enough — no admin.verified flag on the session yet.
-        $this->actingAs($admin)->get('/admin')->assertNotFound();
+        // Sent to the password door rather than 404'd: the admin area still
+        // does not open, and only a holder of an admin account can see the
+        // difference, which is all the 404 was ever protecting.
+        $this->actingAs($admin)->get('/admin')->assertRedirect(route('admin.login'));
 
         $this->actingAs($admin)->get(route('admin.login'))->assertOk();
 

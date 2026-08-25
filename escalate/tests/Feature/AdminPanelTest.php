@@ -63,13 +63,59 @@ class AdminPanelTest extends TestCase
         }
     }
 
-    /** The role alone is not enough — the second password door still stands. */
-    public function test_an_admin_without_the_second_door_is_turned_away(): void
+    /**
+     * The role alone is not enough — the second password door still stands.
+     *
+     * Turned away, but to the door rather than into a wall. 404'ing here made
+     * /admin unreachable for a real admin who had never been told the login
+     * URL existed, which is the state every admin starts in.
+     */
+    public function test_an_admin_without_the_second_door_is_sent_to_it(): void
     {
         $user = $this->makeUser('halfway@escalate.test');
         $user->forceFill(['role' => 'admin'])->save();
 
-        $this->actingAs($user->fresh())->get(route('admin.dashboard'))->assertNotFound();
+        $this->actingAs($user->fresh())
+            ->get(route('admin.dashboard'))
+            ->assertRedirect(route('admin.login'));
+    }
+
+    /** And it remembers where they were going. */
+    public function test_the_door_returns_them_to_the_page_they_asked_for(): void
+    {
+        $user = $this->makeUser('deeplink@escalate.test', 'Admin');
+        $user->forceFill(['role' => 'admin'])->save();
+
+        $this->actingAs($user->fresh())
+            ->get(route('admin.settings'))
+            ->assertRedirect(route('admin.login'));
+
+        // The real password, and the flag asserted alongside the destination:
+        // a rejected password redirects back to the page it came from, which
+        // here is admin.settings too, so the destination alone proves nothing.
+        $this->post(route('admin.login.store'), ['password' => 'a-long-enough-password-1'])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('admin.settings'));
+
+        $this->assertTrue(session('admin.verified'));
+    }
+
+    /**
+     * A non-admin still cannot tell the admin area apart from a typo.
+     *
+     * This is the property the redirect above must not cost: the difference
+     * between 404 and a redirect is only visible to someone who already holds
+     * an admin account, and that is precisely what the 404 is hiding.
+     */
+    public function test_an_ordinary_user_still_gets_a_flat_404(): void
+    {
+        $this->actingAs($this->makeUser('curious@escalate.test'))
+            ->get(route('admin.dashboard'))
+            ->assertNotFound();
+
+        $this->actingAs($this->makeUser('curious2@escalate.test'))
+            ->get(route('admin.login'))
+            ->assertNotFound();
     }
 
     public function test_an_admin_who_came_through_the_door_gets_in(): void
