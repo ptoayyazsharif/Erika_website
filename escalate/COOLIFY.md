@@ -172,14 +172,17 @@ CEILING_NARRATIONS_PER_DAY=300
 CEILING_REWINDS_PER_DAY=100
 ```
 
-**`REQUIRE_VERIFICATION` is off deliberately, and it is a stopgap.** There are
-no `MAIL_*` variables on this application at all, so `MAIL_MAILER` falls back to
-`log`. With verification on, nobody would ever receive a confirmation link and
-every user would be permanently unable to generate anything.
+**`REQUIRE_VERIFICATION` is off deliberately, and it is a stopgap.** Until mail
+actually sends, `MAIL_MAILER` falls back to `log`. With verification on, nobody
+would receive a confirmation link and every user would be permanently unable to
+generate anything.
 
 The same gap means **password reset is silently broken in production today** —
 `/forgot-password` reports success and sends nothing. That predates the beta
-gates. Configure SMTP, then set `REQUIRE_VERIFICATION=true`.
+gates. Fill in the Mail group in **Admin → Settings**, press *Send a test
+email*, and only once a real message arrives set `REQUIRE_VERIFICATION=true`.
+Mail is configured from the admin panel now, not from `MAIL_*` variables — see
+[Mail](#mail).
 
 ### 3c. Minting invites needs a shell, not the API
 
@@ -240,3 +243,68 @@ through the egress proxy, HTTP or HTTPS, and it is not a certificate problem
 So a browser run proves the code, against a local server running that same
 commit. Pair it with the curl checks above to prove production is serving that
 commit. Say it that way — do not imply the live site was driven in a browser.
+
+## Mail
+
+There are two halves and they do different jobs. Keep them straight.
+
+### Sending: Resend, from the admin panel
+
+The app sends nothing on its own. Fill in **Admin → Settings → Mail** and press
+*Send a test email*; that button really sends, so a silence there is a real
+failure and not a config guess. Nothing is stored in `MAIL_*` on the Coolify
+application — the settings live in the `settings` table and `Settings::apply()`
+overlays them onto `config('mail')` at boot.
+
+Sending from the mailbox below instead would be a mistake. VPS IPs have no
+sending reputation, `2.25.93.114` has no SPF or DKIM behind it, and a password
+reset that lands in spam is a password reset that did not happen.
+
+### Receiving: `escalate-mail`, a Coolify service
+
+Poste.io, service uuid `nn5prfsrcz7k8qsd8bhbphgt`, in project ESCALATE /
+production. One container carrying SMTP, IMAP, Roundcube webmail and an admin
+UI. It exists so the domain owns a real mailbox — somewhere to sign up to
+services from, and to keep what arrives, without renting that from anyone.
+
+Admin UI: <http://mail-nn5prfsrcz7k8qsd8bhbphgt.2.25.93.114.sslip.io>
+First visit lands on `/admin/install/server`, which creates the first mailbox.
+
+Receiving is the easy half of mail. No reputation is involved, and the outbound
+port-25 blocks that stop VPS hosts sending do not affect what arrives.
+
+**DNS is already right for receiving.** `escalate.cloud` A → `2.25.93.114`, and
+MX → `10 escalate.cloud.`, so other mail servers already deliver to this host.
+Nothing was listening before; now something is.
+
+Two things are still open, and both need a human:
+
+- **`mail.escalate.cloud` does not resolve** (NXDOMAIN). Add an A record to
+  `2.25.93.114` at Hostinger, then set the domain on the service in the Coolify
+  UI — the API has no field for a sub-service's FQDN, only `name`,
+  `description`, `connect_to_docker_network` and `docker_compose_raw`, and
+  re-parsing the compose does not overwrite an FQDN that was already assigned.
+  The `SERVICE_FQDN_MAIL*` env vars on the service are already set to the
+  intended hostname. Until then the sslip.io URL above is the way in, and it
+  works today.
+- **Inbound port 25 is unverified.** The Claude Code sandbox egresses on 80 and
+  443 only, so it cannot open an SMTP connection to prove it. From a laptop:
+  `nc -vz escalate.cloud 25`, or just send the new mailbox a message.
+
+### The ports are published to the host, not routed by Traefik
+
+`25`, `143`, `993`, `587`, `465`. Mail protocols are not HTTP; Traefik has
+nothing to do with them. Only the web UI goes through Traefik, which is why the
+container runs with `HTTPS=OFF` — it would otherwise fight Traefik for a
+certificate.
+
+Mail lives in the named volume `nn5prfsrcz7k8qsd8bhbphgt_mail-data`. That is
+the whole point of the service, so do not `docker volume rm` it while cleaning
+up, and do not swap it for a bind mount without moving the data first.
+
+### One trap in the plan
+
+If the Resend account's recovery address is a mailbox on this box, then a VPS
+outage takes out both the mailbox and the means to recover the service you
+would need in order to fix it. Put a second recovery method on the Resend
+account — a phone number, or an address somewhere else.

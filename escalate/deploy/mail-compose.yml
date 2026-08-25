@@ -1,0 +1,44 @@
+# Mail for escalate.cloud — receiving first, sending incidental.
+#
+# The point of this box is to OWN a mailbox on the domain: somewhere to sign up
+# to services from, and to keep what arrives, without depending on a provider
+# that can start charging. Receiving is the easy half of mail — no sending
+# reputation is involved, and the outbound port-25 block that stops VPS hosts
+# sending does not affect what comes in.
+#
+# Poste.io because it is one container for the whole job: SMTP to receive, IMAP
+# to read, Roundcube webmail, and an admin UI to make mailboxes. The alternative
+# is three or four services wired together, which is more to keep alive.
+services:
+  mail:
+    image: 'analogic/poste.io:2'
+    hostname: mail.escalate.cloud
+    restart: unless-stopped
+    environment:
+      - TZ=UTC
+      # Coolify's Traefik terminates TLS for the web UI, so the container serves
+      # it plainly on 80 and does not fight over a certificate of its own.
+      - HTTPS=OFF
+      - 'SERVICE_FQDN_MAIL_80=https://mail.escalate.cloud'
+    ports:
+      # Published straight to the host: mail protocols are not HTTP and cannot
+      # go through Traefik. 25 is the one that matters — it is where other mail
+      # servers deliver. The rest are for reading and for authenticated sending.
+      - '25:25'     # SMTP in, from the rest of the internet
+      - '143:143'   # IMAP
+      - '993:993'   # IMAP over TLS
+      - '587:587'   # submission, authenticated
+      - '465:465'   # submission over TLS, authenticated
+    volumes:
+      # Everything lives here: mailboxes, accounts, certificates, config.
+      # A named volume so a redeploy of the service does not take the mail with
+      # it — the whole reason for running this is to keep what arrives.
+      - 'mail-data:/data'
+
+volumes:
+  mail-data:
+
+# Deployed as Coolify service nn5prfsrcz7k8qsd8bhbphgt ("escalate-mail") in
+# project ESCALATE / production. This file is the source of truth for what that
+# service runs; Coolify holds its own copy, so change both together or the next
+# person reads a lie. See COOLIFY.md § Mail.
