@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Support\Plan;
 use App\Support\Quota;
+use App\Support\StripeReconcile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -28,6 +29,22 @@ class BillingController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
+
+        /*
+         * Settle anything Stripe knows and this app does not.
+         *
+         * Narrow on purpose. Coming back from Checkout is the moment it
+         * matters, and "has a Stripe customer but no subscription row at all"
+         * is the state left behind when the webhook never landed — the state
+         * that shows a paying customer the free plan. Someone who cancelled
+         * still has a row, so they do not keep hitting Stripe on every visit,
+         * and a free user has no Stripe id and never touches this at all.
+         */
+        if ($request->query('checkout') === 'done' || ($user->hasStripeId() && ! $user->subscriptions()->exists())) {
+            if (StripeReconcile::forUser($user)) {
+                $user->refresh()->load('subscriptions');
+            }
+        }
 
         return view('billing.index', [
             'user'         => $user,
