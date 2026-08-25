@@ -81,6 +81,29 @@ class Settings
                 'escalate.stripe.live.webhook_secret' => ['type' => 'secret', 'label' => 'Live webhook signing secret', 'help' => 'whsec_… Without it the webhook endpoint returns 403 and no subscription ever reaches the app.'],
             ],
 
+            /*
+            | Mail.
+            |
+            | Editable here so pointing at a provider is a paste and a save
+            | rather than a redeploy — and so the same screen that tells you
+            | verification is switched off can be the one where you fix it.
+            |
+            | Password reset and email verification are transactional mail: they
+            | have to arrive, in the inbox, within a minute. That rules out
+            | sending them from this server's own IP — see the note in DEPLOY.md
+            | on why self-hosting outbound SMTP is the wrong tool for this job.
+            */
+            'Mail' => [
+                'mail.default'          => ['type' => 'string', 'label' => 'Mailer', 'help' => 'smtp for a provider, log to write mail into the log instead of sending it. Nothing is delivered while this says log — password reset reports success and sends nothing.'],
+                'mail.mailers.smtp.host' => ['type' => 'string', 'label' => 'SMTP host', 'help' => 'e.g. smtp.resend.com, smtp.postmarkapp.com, smtp-relay.brevo.com'],
+                'mail.mailers.smtp.port' => ['type' => 'int', 'label' => 'Port', 'help' => '587 for STARTTLS, 465 for TLS. Port 25 is blocked outbound by most hosts, this one included until proven otherwise.'],
+                'mail.mailers.smtp.username' => ['type' => 'string', 'label' => 'Username'],
+                'mail.mailers.smtp.password' => ['type' => 'secret', 'label' => 'Password or API key'],
+                'mail.mailers.smtp.scheme'   => ['type' => 'string', 'label' => 'Scheme', 'help' => 'smtps for port 465. Leave blank for 587.'],
+                'mail.from.address'     => ['type' => 'string', 'label' => 'From address', 'help' => 'Must be on a domain the provider has verified, or everything is rejected or filed as spam.'],
+                'mail.from.name'        => ['type' => 'string', 'label' => 'From name'],
+            ],
+
             'Who can sign up' => [
                 'escalate.beta.invite_only'          => ['type' => 'bool', 'label' => 'Invite only', 'help' => 'Registration requires an unclaimed code. This is the main thing standing between a public URL and your provider bill.'],
                 'escalate.beta.require_verification' => ['type' => 'bool', 'label' => 'Require a confirmed email', 'help' => 'Gates the four routes that cost money. Needs working mail — with none, nobody can generate anything.'],

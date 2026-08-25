@@ -457,6 +457,51 @@ Making an admin is still `php artisan escalate:make-admin <email>`. There is no
 web route that grants the role, on purpose: privilege escalation should need a
 shell, not a form someone might find.
 
+## 4d. Mail
+
+Configured in **Admin → Settings → Mail**, with a **Send a test email** button
+that sends one real message to the administrator pressing it. Nothing else is a
+real test: the only proof of mail is mail that arrives.
+
+The button refuses while the mailer is `log`, because that is the state where
+"it worked" is most misleading — the log driver succeeds at everything and
+delivers nothing. That is exactly what this deployment did for a long time, and
+it is why `/forgot-password` reported success and sent nothing.
+
+### Do not self-host outbound SMTP for this
+
+It is tempting — there is a server, Coolify runs services, and it feels tidier
+than another account. It is the wrong tool here, for reasons that have nothing
+to do with effort:
+
+- **Port 25 outbound is blocked by most VPS providers**, which is the port other
+  mail servers accept on. That alone usually ends it.
+- **A fresh IP has no sending reputation.** Gmail and Outlook treat unknown
+  senders as suspicious by default, and this is transactional mail — a password
+  reset that lands in spam is an account somebody cannot get back into.
+- **SPF, DKIM, DMARC and a matching PTR record** are all required before the
+  large providers will even consider you, and a PTR needs the host to set it.
+- A shared IP that ever sends something spammy is one that stops delivering for
+  everything, including the reset links.
+
+Use a transactional provider. Resend, Postmark, Brevo and Mailgun all have free
+tiers that cover a beta comfortably, and every one of them is SMTP credentials
+pasted into the settings screen — the same one-time paste as anything else, not
+an ongoing back-and-forth.
+
+Whichever you pick: **verify the sending domain with them** (they will give you
+DNS records for `escalate.cloud`), and set the From address to something on that
+domain. An unverified From is rejected or filed as spam no matter how correct
+the SMTP settings are.
+
+### Seeing mail without sending it
+
+If you want to watch what the app produces without delivering anything —
+useful while testing the verification and reset screens — Coolify can run
+**Mailpit** as a service: a fake SMTP server with a web inbox. Point the mail
+host at it and every message the app sends appears in a browser. It delivers to
+nobody, so it is for testing the flow, never for real users.
+
 ## 5. Backups
 
 Back up **the volume**. `escalate-storage` holds the database and every audio

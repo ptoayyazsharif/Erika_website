@@ -96,6 +96,42 @@ class SettingsController extends Controller
         return back()->with('stripe_check', StripeCheck::run());
     }
 
+    /**
+     * Send one real email to the administrator pressing the button.
+     *
+     * The only honest test of mail is mail that arrives. A configuration that
+     * looks right and silently fails is the normal failure here — the app has
+     * been reporting "a reset link is on its way" and sending nothing for as
+     * long as MAIL_MAILER has said `log`.
+     *
+     * Sent to the administrator's own address so this cannot be used to send
+     * anything to anyone else.
+     */
+    public function testMail(Request $request): RedirectResponse
+    {
+        $to = $request->user()->email;
+
+        if (config('mail.default') === 'log') {
+            return back()->withErrors(['mail' =>
+                'The mailer is set to “log”, so nothing is delivered — it is written to the log instead. '
+                .'Set a real mailer above before testing.']);
+        }
+
+        try {
+            \Illuminate\Support\Facades\Mail::raw(
+                "This is a test from Escalate.\n\n"
+                ."If you are reading it, password reset and email verification will reach people too.\n\n"
+                .'Sent '.now()->toDayDateTimeString().' from '.config('app.url'),
+                fn ($m) => $m->to($to)->subject('Escalate — mail is working'),
+            );
+        } catch (\Throwable $e) {
+            return back()->withErrors(['mail' => 'Sending failed: '.\Illuminate\Support\Str::limit($e->getMessage(), 200)]);
+        }
+
+        return back()->with('status',
+            "Handed to the mail server for {$to}. It arriving is the real test — check the inbox, and the spam folder.");
+    }
+
     /** Drop one override and fall back to whatever the server was deployed with. */
     public function reset(Request $request): RedirectResponse
     {

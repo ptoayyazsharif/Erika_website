@@ -56,6 +56,23 @@
     @endif
 </div>
 
+<div class="card" data-enter>
+    <div class="row-between wrap" style="gap:var(--s-3)">
+        <div>
+            <h3 style="margin:0 0 var(--s-2)">Send a test email</h3>
+            <p class="small muted" style="margin:0">
+                Sends one real message to <strong>{{ auth()->user()->email }}</strong> using the
+                mail settings below. The only honest test of mail is mail that arrives —
+                a configuration that looks right and quietly fails is the normal way this breaks.
+            </p>
+        </div>
+        <form method="POST" action="{{ route('admin.settings.mail') }}" data-once>
+            @csrf
+            <button class="btn btn-ghost" type="submit" data-busy="Sending…">Send it</button>
+        </form>
+    </div>
+</div>
+
 <form method="POST" action="{{ route('admin.settings.update') }}" data-once>
     @csrf
     @method('PUT')

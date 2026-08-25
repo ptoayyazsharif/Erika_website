@@ -213,6 +213,9 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         // Read-only against Stripe; throttled because it is an outbound call.
         Route::post('/settings/stripe-check', [AdminSettings::class, 'stripe'])
             ->middleware('throttle:20,10')->name('settings.stripe');
+        // Sends real mail, to the admin's own address only. Throttled hard.
+        Route::post('/settings/mail-test', [AdminSettings::class, 'testMail'])
+            ->middleware('throttle:6,10')->name('settings.mail');
 
         Route::get('/users', [AdminUsers::class, 'index'])->name('users');
         Route::get('/users/{user}', [AdminUsers::class, 'show'])->name('users.show');
