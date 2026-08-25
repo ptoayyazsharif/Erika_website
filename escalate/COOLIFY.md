@@ -172,17 +172,19 @@ CEILING_NARRATIONS_PER_DAY=300
 CEILING_REWINDS_PER_DAY=100
 ```
 
-**`REQUIRE_VERIFICATION` is off deliberately, and it is a stopgap.** Until mail
-actually sends, `MAIL_MAILER` falls back to `log`. With verification on, nobody
-would receive a confirmation link and every user would be permanently unable to
-generate anything.
+**`REQUIRE_VERIFICATION` is off, and it is now the only thing holding it off.**
+It was a stopgap for a real gap: mail fell back to `log`, so with verification
+on nobody would have received a confirmation link and every user would have
+been permanently unable to generate anything. The same gap meant password reset
+reported success and sent nothing.
 
-The same gap means **password reset is silently broken in production today** —
-`/forgot-password` reports success and sends nothing. That predates the beta
-gates. Fill in the Mail group in **Admin → Settings**, press *Send a test
-email*, and only once a real message arrives set `REQUIRE_VERIFICATION=true`.
-Mail is configured from the admin panel now, not from `MAIL_*` variables — see
-[Mail](#mail).
+**That gap is closed.** Resend is wired up through the admin panel and mail is
+confirmed delivering — a test from `hello@escalate.cloud` landed in a Gmail
+inbox, not spam, on 25 Aug 2026. Password reset works from that moment on, and
+`REQUIRE_VERIFICATION=true` is now safe to set.
+
+Mail is configured from **Admin → Settings → Mail**, not from `MAIL_*`
+variables — see [Mail](#mail).
 
 ### 3c. Minting invites needs a shell, not the API
 
@@ -250,11 +252,14 @@ There are two halves and they do different jobs. Keep them straight.
 
 ### Sending: Resend, from the admin panel
 
-The app sends nothing on its own. Fill in **Admin → Settings → Mail** and press
-*Send a test email*; that button really sends, so a silence there is a real
-failure and not a config guess. Nothing is stored in `MAIL_*` on the Coolify
-application — the settings live in the `settings` table and `Settings::apply()`
-overlays them onto `config('mail')` at boot.
+**Live and confirmed** as of 25 Aug 2026: Resend, sending as
+`hello@escalate.cloud`, proven by a test email that reached a Gmail inbox
+rather than the spam folder.
+
+Configured in **Admin → Settings → Mail**; *Send a test email* really sends, so
+a silence there is a real failure and not a config guess. Nothing is stored in
+`MAIL_*` on the Coolify application — the settings live in the `settings` table
+and `Settings::apply()` overlays them onto `config('mail')` at boot.
 
 Sending from the mailbox below instead would be a mistake. VPS IPs have no
 sending reputation, `2.25.93.114` has no SPF or DKIM behind it, and a password
