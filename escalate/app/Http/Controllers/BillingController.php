@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Laravel\Cashier\Exceptions\IncompletePayment;
+use Stripe\Exception\ApiErrorException;
 
 /**
  * Plans, and the two doors into Stripe.
@@ -100,21 +101,53 @@ class BillingController extends Controller
                     'cashier.payment',
                     [$e->payment->id, 'redirect' => route('billing.index')],
                 );
+            } catch (ApiErrorException $e) {
+                return $this->stripeIsNotAnswering($e);
             }
 
             return redirect()->route('billing.index')->with('status', 'Your plan is changed.');
         }
 
-        $checkout = $user->newSubscription('default', $price);
+        try {
+            $checkout = $user->newSubscription('default', $price);
 
-        if ($days = (int) config('escalate.billing.trial_days')) {
-            $checkout->trialDays($days);
+            if ($days = (int) config('escalate.billing.trial_days')) {
+                $checkout->trialDays($days);
+            }
+
+            $session = $checkout->checkout([
+                'success_url' => route('billing.index').'?checkout=done',
+                'cancel_url'  => route('billing.index').'?checkout=cancelled',
+            ]);
+        } catch (ApiErrorException $e) {
+            return $this->stripeIsNotAnswering($e);
         }
 
-        return $checkout->checkout([
-            'success_url' => route('billing.index').'?checkout=done',
-            'cancel_url'  => route('billing.index').'?checkout=cancelled',
-        ])->redirect();
+        return $session->redirect();
+    }
+
+    /**
+     * Stripe refused, and the customer is standing at the till.
+     *
+     * Every call in this file can fail for reasons that have nothing to do
+     * with the person clicking: an outage, a rate limit, a key rotated or
+     * revoked, a price archived out from under a plan. Unhandled, all of them
+     * render Laravel's error page — a 500 at the exact moment somebody is
+     * trying to give you money, with no indication of whether they were
+     * charged.
+     *
+     * So: back to the billing page, told plainly that nothing happened to
+     * their card, with the real reason in the log rather than on the screen —
+     * a Stripe message can name a price id or a key prefix, and neither
+     * belongs in front of a customer.
+     */
+    private function stripeIsNotAnswering(\Throwable $e): RedirectResponse
+    {
+        report($e);
+
+        return redirect()->route('billing.index')->withErrors(['billing' =>
+            'Stripe could not be reached just now, so nothing has changed and '
+            .'your card has not been charged. Please try again in a minute.']);
     }
 
     /**
@@ -134,6 +167,10 @@ class BillingController extends Controller
                 ->with('status', 'There is nothing to manage yet — you are on the free plan.');
         }
 
-        return $user->redirectToBillingPortal(route('billing.index'));
+        try {
+            return $user->redirectToBillingPortal(route('billing.index'));
+        } catch (ApiErrorException $e) {
+            return $this->stripeIsNotAnswering($e);
+        }
     }
 }

@@ -317,4 +317,52 @@ class BillingTest extends TestCase
             'id'   => 'evt_forged',
         ], ['Stripe-Signature' => 't=1,v1=deadbeef'])->assertForbidden();
     }
+
+    /**
+     * Stripe failing must not become a 500 in the customer's face.
+     *
+     * Found by clicking the button with no key configured, which is artificial
+     * — but the exception class is not. An outage, a rate limit, a rotated or
+     * revoked key, or a price archived out from under a plan all arrive as the
+     * same ApiErrorException, and unhandled they all rendered Laravel's error
+     * page at the exact moment somebody was trying to pay, with no indication
+     * of whether their card had been charged.
+     */
+    public function test_a_stripe_failure_at_checkout_is_not_a_500(): void
+    {
+        $this->withPlans();
+
+        Config::set('escalate.stripe.live.secret', null);
+        Config::set('cashier.secret', null);
+
+        $user = $this->makeUser('paying@escalate.test');
+
+        $this->actingAs($user)
+            ->post(route('billing.checkout'), ['plan' => 'monthly'])
+            ->assertRedirect(route('billing.index'))
+            ->assertSessionHasErrors('billing');
+
+        // And it says the thing that actually matters to them.
+        $this->assertStringContainsString(
+            'has not been charged',
+            session('errors')->first('billing'),
+        );
+    }
+
+    /** The billing portal is the same exposure and gets the same treatment. */
+    public function test_a_stripe_failure_at_the_portal_is_not_a_500(): void
+    {
+        $this->withPlans();
+
+        Config::set('escalate.stripe.live.secret', null);
+        Config::set('cashier.secret', null);
+
+        $user = $this->makeUser('managing@escalate.test');
+        $user->forceFill(['stripe_id' => 'cus_gone'])->save();
+
+        $this->actingAs($user->fresh())
+            ->get(route('billing.portal'))
+            ->assertRedirect(route('billing.index'))
+            ->assertSessionHasErrors('billing');
+    }
 }
