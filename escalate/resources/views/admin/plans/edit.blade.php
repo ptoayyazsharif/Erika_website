@@ -45,16 +45,6 @@
                    value="{{ old('blurb', $plan->blurb) }}">
         </div>
 
-        <div class="field">
-            <label for="display">Price, as written</label>
-            <span class="hint">
-                Only a label. What the customer is actually charged lives in Stripe —
-                if this disagrees with Stripe, this is the bug.
-            </span>
-            <input class="input" id="display" name="display" type="text" maxlength="60"
-                   value="{{ old('display', $plan->display) }}" placeholder="$12 / month">
-        </div>
-
         <div class="field" style="margin-bottom:0">
             <label class="label" for="interval">Billing interval</label>
             <select class="select" id="interval" name="interval">
@@ -84,27 +74,64 @@
 
     @unless ($plan->isFree())
         <div class="card" data-enter>
-            <h3 style="margin-bottom:var(--s-2)">Stripe price ids</h3>
+            <h3 style="margin-bottom:var(--s-2)">What it costs</h3>
             <p class="small muted" style="margin-bottom:var(--s-5)">
-                Two, because Stripe's test and live worlds are entirely separate and a
-                price id from one does not exist in the other. Whichever matches the
-                current mode — <strong>{{ $mode }}</strong> — is the one used at checkout.
-                The other is not wasted: it is what makes flipping the mode work.
+                Set the amount here and the product and price are created in Stripe for
+                you, in whichever mode you are in — currently <strong>{{ $mode }}</strong>.
+                You do not need to open the Stripe dashboard.
             </p>
 
-            <div class="field">
-                <label for="stripe_price">Live price id {!! $mode === 'live' ? '<span class="pill">in use</span>' : '' !!}</label>
-                <input class="input" id="stripe_price" name="stripe_price" type="text" maxlength="120"
-                       autocomplete="off" spellcheck="false" placeholder="price_..."
-                       value="{{ old('stripe_price', $plan->stripe_price) }}">
+            <div class="row wrap" style="gap:var(--s-3)">
+                <div class="field grow" style="min-width:10rem">
+                    <label for="amount_major">Amount</label>
+                    <span class="hint">Per {{ $plan->interval ?: 'billing period' }}. Leave blank to price this plan by hand instead.</span>
+                    <input class="input" id="amount_major" name="amount_major" type="number"
+                           step="0.01" min="0" max="99999" placeholder="12.00"
+                           value="{{ old('amount_major', $plan->amount !== null ? number_format($plan->amount / 100, 2, '.', '') : '') }}">
+                </div>
+
+                <div class="field" style="min-width:7rem">
+                    <label class="label" for="currency">Currency</label>
+                    <select class="select" id="currency" name="currency">
+                        @foreach (['usd' => 'USD $', 'gbp' => 'GBP £', 'eur' => 'EUR €'] as $c => $label)
+                            <option value="{{ $c }}" @selected(old('currency', $plan->currency ?: config('escalate.billing.currency','usd')) === $c)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
-            <div class="field" style="margin-bottom:0">
-                <label for="stripe_price_test">Test price id {!! $mode === 'test' ? '<span class="pill">in use</span>' : '' !!}</label>
-                <input class="input" id="stripe_price_test" name="stripe_price_test" type="text" maxlength="120"
-                       autocomplete="off" spellcheck="false" placeholder="price_..."
-                       value="{{ old('stripe_price_test', $plan->stripe_price_test) }}">
-            </div>
+            {{-- A Stripe Price cannot be edited, so changing the amount makes a new
+                 one and archives the old. Said here rather than discovered later,
+                 because the consequence — existing subscribers keep their old price —
+                 is the behaviour you want but not the one people expect. --}}
+            @if ($plan->exists && filled($plan->amount))
+                <p class="small faint" style="margin:0 0 var(--s-4)">
+                    Changing this creates a new price in Stripe and archives the current
+                    one. Anyone already subscribed keeps paying what they agreed to until
+                    you move them deliberately.
+                </p>
+            @endif
+
+            <div class="rule">What Stripe has</div>
+
+            <table style="width:100%;border-collapse:collapse">
+                @foreach ([['live', $plan->stripe_price, $plan->stripe_product], ['test', $plan->stripe_price_test, $plan->stripe_product_test]] as [$m, $price, $product])
+                    <tr>
+                        <td class="small" style="padding:6px 0;vertical-align:top">
+                            {{ ucfirst($m) }}
+                            @if ($m === $mode)<span class="pill">in use</span>@endif
+                        </td>
+                        <td class="small faint" style="padding:6px 0;text-align:right;word-break:break-all">
+                            {{ $price ?: 'not created yet' }}
+                        </td>
+                    </tr>
+                @endforeach
+            </table>
+
+            <p class="small faint" style="margin:var(--s-3) 0 0">
+                Created the first time you save with an amount and an interval set, using
+                the keys for that mode. Switch mode and save again to create the other side.
+            </p>
         </div>
     @endunless
 

@@ -45,7 +45,7 @@
             </div>
             <div class="row" style="gap:var(--s-2)">
                 @unless ($plan->is_active)<span class="pill">inactive</span>@endunless
-                <span class="pill">{{ $plan->display ?: '—' }}</span>
+                <span class="pill">{{ $plan->priceLabel() }}</span>
             </div>
         </div>
 
@@ -65,7 +65,12 @@
         @unless ($plan->isFree())
             @if (blank($price))
                 <p class="small" style="margin:0 0 var(--s-4);color:var(--danger)">
-                    No {{ $mode }} price id — this plan is hidden from the picker until one is set.
+                    Not in Stripe's {{ $mode }} mode yet — hidden from the picker.
+                    @if (filled($plan->amount))
+                        Open it and save to create it.
+                    @else
+                        Open it and set an amount.
+                    @endif
                 </p>
             @else
                 <p class="small faint" style="margin:0 0 var(--s-4)"><code>{{ $price }}</code></p>

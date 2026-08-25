@@ -395,6 +395,27 @@ picker and keeps working for everyone already on it.
 Plans were in `config/escalate.php` and are now a table, seeded from that config
 on migrate. Config remains the fallback for an install whose table is empty.
 
+### Pricing a plan
+
+Set the **amount** on the plan in the admin panel. The Stripe Product and Price
+are created for you, in whichever mode you are in, using that mode's keys. You
+do not open the Stripe dashboard to sell something.
+
+This needs **Products (write)** and **Prices (write)** on the API key — more
+than a read-only key. Nothing is ever deleted in Stripe; old prices are
+archived.
+
+**A Stripe Price cannot be edited.** Changing an amount therefore creates a new
+price and archives the old one, and that is the behaviour you want: everyone
+already subscribed keeps paying what they agreed to until you move them
+deliberately. Raising a price does not silently raise it for existing
+customers — which for auto-renewal is very often the legally required
+behaviour, not merely the decent one.
+
+The plan is saved locally **before** Stripe is called. If the key is wrong or
+Stripe is unreachable, the typing is safe and the message says what did not
+happen over there; saving again once it is fixed picks up where it left off.
+
 ### Stripe test mode
 
 Admin → Settings → **Use test mode**, with separate test and live key sets.

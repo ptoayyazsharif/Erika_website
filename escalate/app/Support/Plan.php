@@ -60,7 +60,7 @@ class Plan
                         'label'     => $p->label,
                         'blurb'     => $p->blurb,
                         'price'     => $p->priceId(),
-                        'display'   => $p->display,
+                        'display'   => $p->priceLabel(),
                         'interval'  => $p->interval,
                         'quotas'    => $p->quotas ?? [],
                         'is_active' => $p->is_active,

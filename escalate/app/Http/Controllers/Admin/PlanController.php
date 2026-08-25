@@ -7,6 +7,7 @@ use App\Models\Plan;
 use App\Models\User;
 use App\Support\Plan as Entitlement;
 use App\Support\Stripe;
+use App\Support\StripeSync;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -64,9 +65,7 @@ class PlanController extends Controller
     {
         $plan = Plan::create($this->validated($request));
 
-        Entitlement::flush();
-
-        return redirect()->route('admin.plans')->with('status', "“{$plan->label}” created.");
+        return $this->saved($plan, "“{$plan->label}” created.");
     }
 
     public function update(Request $request, Plan $plan): RedirectResponse
@@ -82,9 +81,36 @@ class PlanController extends Controller
 
         $plan->update($data);
 
+        return $this->saved($plan, "“{$plan->label}” saved.");
+    }
+
+    /**
+     * Save locally first, then try Stripe.
+     *
+     * That order matters. If Stripe is unreachable or the key is wrong, the
+     * administrator's typing is already safe here and the message says what did
+     * not happen over there — rather than losing the edit to someone else's
+     * outage. Saving again once the key is fixed picks up where it left off.
+     */
+    private function saved(Plan $plan, string $message): RedirectResponse
+    {
         Entitlement::flush();
 
-        return redirect()->route('admin.plans')->with('status', "“{$plan->label}” saved.");
+        try {
+            if ($note = StripeSync::plan($plan->fresh())) {
+                $message .= ' '.$note;
+            }
+        } catch (\RuntimeException $e) {
+            Entitlement::flush();
+
+            return redirect()->route('admin.plans')
+                ->with('status', $message)
+                ->withErrors(['stripe' => $e->getMessage()]);
+        }
+
+        Entitlement::flush();
+
+        return redirect()->route('admin.plans')->with('status', $message);
     }
 
     public function destroy(Request $request, Plan $plan): RedirectResponse
@@ -127,6 +153,11 @@ class PlanController extends Controller
             'blurb'    => ['nullable', 'string', 'max:200'],
             'display'  => ['nullable', 'string', 'max:60'],
             'interval' => ['nullable', 'string', 'in:month,year'],
+            // Typed as major units on the form — 12.00 — and stored as minor
+            // units, because Stripe counts in cents and money in a float is
+            // how rounding errors reach an invoice.
+            'amount_major' => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'currency' => ['nullable', 'string', 'size:3'],
             'stripe_price'      => ['nullable', 'string', 'max:120', 'starts_with:price_'],
             'stripe_price_test' => ['nullable', 'string', 'max:120', 'starts_with:price_'],
             'position'  => ['nullable', 'integer', 'min:0', 'max:999'],
@@ -137,6 +168,14 @@ class PlanController extends Controller
             'stripe_price.starts_with' => 'A Stripe price id starts with price_. A product id (prod_…) will not work.',
             'stripe_price_test.starts_with' => 'A Stripe price id starts with price_. A product id (prod_…) will not work.',
         ]);
+
+        $data['amount'] = filled($data['amount_major'] ?? null)
+            ? (int) round(((float) $data['amount_major']) * 100)
+            : null;
+        $data['currency'] = filled($data['currency'] ?? null)
+            ? strtolower($data['currency'])
+            : config('escalate.billing.currency', 'usd');
+        unset($data['amount_major']);
 
         $data['is_active'] = $request->boolean('is_active');
         $data['position'] = (int) ($data['position'] ?? 0);
