@@ -22,9 +22,28 @@ belong in git — see [The token](#the-token).
 | Application UUID | `um4fjdz4zww4aiv7xmj37czt` |
 | **Live app** | **`https://escalate.cloud`** (and `www.`) |
 | Old URL, still serving | `https://um4fjdz4zww4aiv7xmj37czt.2.25.93.114.sslip.io` |
-| Deployed branch | `claude/erika-manifestation-demo-jgjpch` |
+| Deployed branch | `claude/escalate-app-bugs-l73sgw` (changed 25 Aug 2026 — see below) |
 | Server | `2.25.93.114` (`srv1871005.hstgr.cloud`) |
 | Coolify version | 4.3.8 |
+
+### The deployed branch changed on 25 Aug 2026
+
+It was `claude/erika-manifestation-demo-jgjpch`, and production silently fell
+four commits behind: a redeploy rebuilt the same code, so a fix that was
+committed, tested and pushed was reported as live and was not. Pushing across
+branches is blocked from a Claude Code session, so Coolify was pointed at
+`claude/escalate-app-bugs-l73sgw` instead.
+
+Both branches still exist. To put it back, PATCH `git_branch` on the
+application and redeploy — but then remember that work landing on the other
+branch will not reach production on its own.
+
+**Check what is actually deployed before believing a fix is live:**
+
+```sh
+curl -s "$COOLIFY_API/applications/$APP_UUID" -H "Authorization: Bearer $TOKEN" \
+  | jq '{git_branch, status}'
+```
 
 ### The panel is HTTP. The app is HTTPS.
 
