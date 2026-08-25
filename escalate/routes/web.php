@@ -210,6 +210,9 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         Route::get('/settings', [AdminSettings::class, 'edit'])->name('settings');
         Route::put('/settings', [AdminSettings::class, 'update'])->name('settings.update');
         Route::post('/settings/reset', [AdminSettings::class, 'reset'])->name('settings.reset');
+        // Read-only against Stripe; throttled because it is an outbound call.
+        Route::post('/settings/stripe-check', [AdminSettings::class, 'stripe'])
+            ->middleware('throttle:20,10')->name('settings.stripe');
 
         Route::get('/users', [AdminUsers::class, 'index'])->name('users');
         Route::get('/users/{user}', [AdminUsers::class, 'show'])->name('users.show');

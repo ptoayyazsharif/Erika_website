@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Support\Settings;
+use App\Support\StripeCheck;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -80,6 +81,19 @@ class SettingsController extends Controller
         }
 
         return redirect()->route('admin.settings')->with('status', 'Saved. These take effect immediately.');
+    }
+
+    /**
+     * Check the Stripe configuration, without changing anything.
+     *
+     * Read-only on both sides: it retrieves from Stripe and writes nothing
+     * there, and it touches no table in this application beyond reading the
+     * plans' price ids. Pressing it cannot cost money, cannot create a
+     * customer, and cannot alter a single row here.
+     */
+    public function stripe(Request $request): RedirectResponse
+    {
+        return back()->with('stripe_check', StripeCheck::run());
     }
 
     /** Drop one override and fall back to whatever the server was deployed with. */

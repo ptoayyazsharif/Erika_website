@@ -23,6 +23,39 @@
     </div>
 </div>
 
+{{-- Stripe connection check. Read-only: it retrieves from Stripe and writes
+     nothing on either side, so it is safe to press at any time. --}}
+<div class="card" data-enter>
+    <div class="row-between wrap" style="gap:var(--s-3)">
+        <div>
+            <h3 style="margin:0 0 var(--s-2)">Check the Stripe setup</h3>
+            <p class="small muted" style="margin:0">
+                Verifies the keys for the mode you are in, that every plan's price id
+                actually resolves, and that a webhook secret is present. It only reads —
+                nothing is created in Stripe and nothing here is changed.
+            </p>
+        </div>
+        <form method="POST" action="{{ route('admin.settings.stripe') }}" data-once>
+            @csrf
+            <button class="btn btn-ghost" type="submit" data-busy="Checking…">Run the check</button>
+        </form>
+    </div>
+
+    @if ($result = session('stripe_check'))
+        <div class="rule">{{ $result['mode'] }} mode — {{ $result['ok'] ? 'all clear' : 'needs attention' }}</div>
+
+        @foreach ($result['checks'] as $c)
+            @php $colour = ['pass'=>'var(--text-muted)','warn'=>'var(--brass)','fail'=>'var(--danger)'][$c['state']]; @endphp
+            <div style="margin-bottom:var(--s-4)">
+                <p class="small" style="margin:0 0 2px;color:{{ $colour }}">
+                    <strong>{{ $c['state'] === 'pass' ? '✓' : ($c['state'] === 'warn' ? '!' : '✕') }} {{ $c['name'] }}</strong>
+                </p>
+                <p class="small muted" style="margin:0">{{ $c['detail'] }}</p>
+            </div>
+        @endforeach
+    @endif
+</div>
+
 <form method="POST" action="{{ route('admin.settings.update') }}" data-once>
     @csrf
     @method('PUT')
