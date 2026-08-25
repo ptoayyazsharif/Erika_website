@@ -124,4 +124,37 @@ class StripeCheckTest extends TestCase
         $this->assertNull($plan->priceId(), 'In test mode a live-only plan must expose no price id.');
         $this->assertFalse($plan->isPurchasable());
     }
+
+    /**
+     * The check must talk to Stripe the way the app does.
+     *
+     * The first version built its own StripeClient with an API version written
+     * into this file. Two things were wrong with that, and only the first was
+     * visible: the date was one Stripe rejected, so a perfectly good key was
+     * reported as broken. The quieter fault was that even a valid hardcoded
+     * date would have meant the check exercised a different API version than a
+     * real checkout — so passing would not have meant what it said.
+     *
+     * Cashier pins Stripe\Util\ApiVersion::CURRENT, which ships with the SDK
+     * and moves when the SDK does.
+     */
+    public function test_the_check_uses_cashiers_client_and_pins_no_version_of_its_own(): void
+    {
+        $source = file_get_contents(app_path('Support/StripeCheck.php'));
+
+        $this->assertStringContainsString(
+            'Cashier::stripe(',
+            $source,
+            'StripeCheck must go through Cashier so it uses the same client and API version as a real checkout.',
+        );
+
+        $this->assertDoesNotMatchRegularExpression(
+            "/'stripe_version'\s*=>\s*'/",
+            $source,
+            'StripeCheck hardcodes an API version again. That is how a good key got reported as broken.',
+        );
+
+        // And the version the app actually uses is the SDK's own current one.
+        $this->assertSame(\Stripe\Util\ApiVersion::CURRENT, \Laravel\Cashier\Cashier::STRIPE_VERSION);
+    }
 }

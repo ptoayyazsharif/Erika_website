@@ -3,7 +3,7 @@
 namespace App\Support;
 
 use App\Models\Plan as PlanModel;
-use Stripe\StripeClient;
+use Laravel\Cashier\Cashier;
 use Throwable;
 
 /**
@@ -63,7 +63,23 @@ class StripeCheck
             return ['ok' => false, 'mode' => $mode, 'checks' => $checks];
         }
 
-        $client = new StripeClient(['api_key' => $creds['secret'], 'stripe_version' => '2024-06-20']);
+        /*
+         * Cashier's own factory, not a hand-rolled client.
+         *
+         * The first version of this built a StripeClient with an API version
+         * hardcoded here, and that was wrong twice over. It was a date I picked
+         * rather than one the SDK recognises, so Stripe rejected the call and
+         * the check reported a perfectly good key as broken. And even had the
+         * date been valid, the check would have been talking to a different API
+         * version than the application does — so a pass would not have meant
+         * what it claimed.
+         *
+         * Cashier pins Stripe\Util\ApiVersion::CURRENT, which ships with the
+         * SDK and moves when the SDK is upgraded. Going through Cashier means
+         * this check exercises the same client, the same version and the same
+         * configuration as a real checkout.
+         */
+        $client = Cashier::stripe(['api_key' => $creds['secret']]);
 
         /* ── does it authenticate, and does it have Prices read ──────────── */
 
@@ -167,6 +183,10 @@ class StripeCheck
             str_contains($m, 'does not have the required permissions'),
             str_contains($m, 'insufficient')          => 'The key authenticates but lacks a permission this needs. If it is a restricted key, add Prices (read).',
             str_contains($m, 'No such price')         => 'No such price in this mode. A price id from the other mode will not resolve here.',
+            // Reported as itself rather than as a bad key: the credentials are
+            // fine and the fix is a composer update, not a new key.
+            str_contains($m, 'API version'),
+            str_contains($m, 'outdated')              => 'The key is fine — Stripe is refusing the API version this app pins. That comes from the Stripe SDK, so the fix is updating laravel/cashier, not the key. Stripe said: '.\Illuminate\Support\Str::limit($m, 140),
             str_contains($m, 'Could not resolve host'),
             str_contains($m, 'Connection')            => 'Could not reach Stripe from the server. That is a network problem, not a key problem.',
             default                                   => \Illuminate\Support\Str::limit($m, 180),
