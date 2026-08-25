@@ -44,6 +44,54 @@ class HardeningTest extends TestCase
         $this->assertNotNull($secure->headers->get('Strict-Transport-Security'));
     }
 
+    /**
+     * The directive that stranded everyone on "Taking you to Stripe…".
+     *
+     * Checkout is reached by POSTing a form here and being redirected out to
+     * Stripe, and browsers apply form-action to the redirect target as well as
+     * to the action attribute. With 'self' alone the POST succeeded, the 302
+     * came back, and the browser silently declined to follow it — the button
+     * span forever and the console blamed our own URL, so it read as a broken
+     * route rather than a header.
+     */
+    public function test_the_stripe_handoff_is_allowed_out_of_form_action(): void
+    {
+        $csp = $this->get('/login')->headers->get('Content-Security-Policy');
+
+        preg_match('/form-action ([^;]+)/', $csp, $m);
+        $this->assertNotEmpty($m, 'form-action is missing from the CSP entirely.');
+
+        $this->assertStringContainsString("'self'", $m[1]);
+        $this->assertStringContainsString('https://checkout.stripe.com', $m[1]);
+        $this->assertStringContainsString('https://billing.stripe.com', $m[1]);
+    }
+
+    /**
+     * And the exception stays an exception.
+     *
+     * form-action is the only directive allowed to name a third party. If a
+     * host ever appears in one of the others, it was either a mistake or the
+     * kind of change that deserves to be argued for rather than absorbed.
+     */
+    public function test_no_other_directive_admits_a_third_party(): void
+    {
+        $csp = $this->get('/login')->headers->get('Content-Security-Policy');
+
+        foreach (explode(';', $csp) as $directive) {
+            $directive = trim($directive);
+
+            if ($directive === '' || str_starts_with($directive, 'form-action')) {
+                continue;
+            }
+
+            $this->assertStringNotContainsString(
+                '//',
+                $directive,
+                "“{$directive}” names an external host. Only form-action may.",
+            );
+        }
+    }
+
     public function test_a_forged_forwarded_header_cannot_change_the_client_ip(): void
     {
         // trustProxies used to be at:'*', which made $request->ip() whatever

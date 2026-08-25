@@ -17,6 +17,14 @@ use Symfony\Component\HttpFoundation\Response;
  * 'unsafe-inline' is absent from script-src on purpose. Inline handlers and
  * inline <script> blocks will not run — pass data to JS through data-*
  * attributes or a JSON <script type="application/json"> block instead.
+ *
+ * form-action is the one exception to 'self', and it has to be. Checkout and
+ * the Billing Portal are reached by POSTing a form here and being redirected
+ * to Stripe — and browsers apply form-action to the redirect target, not just
+ * the URL in the action attribute. With 'self' alone the POST succeeds, the
+ * 302 comes back, and the browser silently refuses to follow it: the button
+ * sits on "Taking you to Stripe…" forever and the only evidence is a console
+ * line naming our own URL, which reads as though the app is at fault.
  */
 class SecurityHeaders
 {
@@ -34,7 +42,13 @@ class SecurityHeaders
             "media-src 'self' blob:",
             "font-src 'self'",
             "connect-src 'self'",
-            "form-action 'self'",
+            /*
+             * Two fixed Stripe hosts, named rather than wildcarded: Checkout
+             * sessions live on checkout.stripe.com and the Billing Portal on
+             * billing.stripe.com. Nothing else in the app posts anywhere but
+             * here, so this is the entire third-party surface.
+             */
+            "form-action 'self' https://checkout.stripe.com https://billing.stripe.com",
             "frame-ancestors 'none'",
             "base-uri 'self'",
             "object-src 'none'",
