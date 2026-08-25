@@ -94,6 +94,23 @@
                             @isset($meta['help'])<small>{{ $meta['help'] }}</small>@endisset
                         </span>
                     </label>
+                @elseif ($meta['type'] === 'choice')
+                    <div class="field">
+                        <label for="{{ $field }}">{{ $meta['label'] }}</label>
+                        @isset($meta['help'])<span class="hint">{{ $meta['help'] }}</span>@endisset
+
+                        <select class="select" id="{{ $field }}" name="settings[{{ $field }}]">
+                            @foreach ($meta['options'] as $value => $optionLabel)
+                                <option value="{{ $value }}" @selected(config($key) === $value)>{{ $optionLabel }}</option>
+                            @endforeach
+                        </select>
+
+                        @if (\App\Support\Settings::isOverridden($key))
+                            <div class="row small faint" style="gap:var(--s-3);margin-top:4px">
+                                <span>Overridden here.</span>
+                            </div>
+                        @endif
+                    </div>
                 @else
                     <div class="field">
                         <label for="{{ $field }}">{{ $meta['label'] }}</label>

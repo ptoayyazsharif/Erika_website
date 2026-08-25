@@ -67,6 +67,22 @@ class SettingsController extends Controller
                 continue;
             }
 
+            if ($meta['type'] === 'choice') {
+                // The dropdown only offers these, so anything else was hand
+                // crafted. Reject rather than coerce: silently picking a
+                // neighbouring value is how a mailer ends up set to something
+                // nobody chose.
+                if (! array_key_exists($value, $meta['options'])) {
+                    return back()->withErrors([
+                        'settings' => "“{$meta['label']}” has to be one of the offered choices.",
+                    ]);
+                }
+
+                Settings::put($key, $value, $request->user());
+
+                continue;
+            }
+
             if ($meta['type'] === 'int') {
                 if (! is_numeric($value) || (int) $value < 0) {
                     return back()->withErrors([
@@ -113,8 +129,8 @@ class SettingsController extends Controller
 
         if (config('mail.default') === 'log') {
             return back()->withErrors(['mail' =>
-                'The mailer is set to “log”, so nothing is delivered — it is written to the log instead. '
-                .'Set a real mailer above before testing.']);
+                '“How mail is sent” is set to “do not send”, so this would be written to the log '
+                .'and delivered to nobody. Change it to “Send it”, fill in the SMTP details, save, then test.']);
         }
 
         try {

@@ -101,4 +101,72 @@ class MailSettingsTest extends TestCase
             ->post(route('admin.settings.mail'))
             ->assertNotFound();
     }
+
+    /**
+     * How mail is sent is picked from a list, not typed.
+     *
+     * The two values are `smtp` and `log`, neither of which an administrator
+     * would guess, and getting it wrong fails in the worst available way:
+     * `log` reports success on every screen and delivers nothing.
+     */
+    public function test_how_mail_is_sent_is_offered_as_a_dropdown(): void
+    {
+        $this->admin();
+
+        $page = $this->get(route('admin.settings'))->assertOk();
+
+        $page->assertSee('name="settings[mail__default]"', false)
+            ->assertSee('<option value="smtp"', false)
+            ->assertSee('<option value="log"', false);
+
+        // And it is a list, not a text box someone can type anything into.
+        $this->assertStringNotContainsString(
+            '<input class="input" id="mail__default"',
+            $page->getContent(),
+        );
+    }
+
+    /** A value that was never on the list is refused, not coerced. */
+    public function test_a_mailer_that_was_never_offered_is_refused(): void
+    {
+        Config::set('mail.default', 'smtp');
+
+        $this->admin();
+
+        $this->put(route('admin.settings.update'), ['settings' => [
+            'mail__default' => 'sendmail',
+        ]])->assertSessionHasErrors('settings');
+
+        Settings::flush();
+        Settings::apply();
+
+        $this->assertSame('smtp', config('mail.default'));
+    }
+
+    /**
+     * A stored value that has since left the list stops applying.
+     *
+     * Shrinking the options is how a driver gets retired; the row for it can
+     * outlive the change, and forcing config() to a mailer Laravel no longer
+     * has configured would take the app down on the first send.
+     */
+    public function test_an_override_that_left_the_list_falls_back(): void
+    {
+        Config::set('mail.default', 'smtp');
+
+        Settings::put('mail.default', 'log');
+        Settings::apply();
+        $this->assertSame('log', config('mail.default'));
+
+        // Simulate the option being withdrawn by writing past the allowlist
+        // the way a leftover row would read.
+        \App\Models\Setting::where('key', 'mail.default')
+            ->update(['value' => 'sendmail']);
+
+        Settings::flush();
+        Config::set('mail.default', 'smtp');
+        Settings::apply();
+
+        $this->assertSame('smtp', config('mail.default'));
+    }
 }

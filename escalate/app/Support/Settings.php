@@ -43,6 +43,7 @@ class Settings
      * `type` drives both validation and the input rendered:
      *   secret — write-only, masked on display
      *   bool   — checkbox
+     *   choice — a fixed set, rendered as a dropdown; `options` is value => label
      *   int    — number input, validated as a non-negative integer
      *   string — plain text
      */
@@ -94,7 +95,22 @@ class Settings
             | on why self-hosting outbound SMTP is the wrong tool for this job.
             */
             'Mail' => [
-                'mail.default'          => ['type' => 'string', 'label' => 'Mailer', 'help' => 'smtp for a provider, log to write mail into the log instead of sending it. Nothing is delivered while this says log — password reset reports success and sends nothing.'],
+                /*
+                 * A dropdown rather than a text field because the two values
+                 * are not guessable and the wrong one fails silently: `log`
+                 * lets every screen report success and deliver nothing, which
+                 * is exactly how password reset came to be broken in
+                 * production for weeks without anybody noticing.
+                 */
+                'mail.default'          => [
+                    'type'    => 'choice',
+                    'label'   => 'How mail is sent',
+                    'options' => [
+                        'smtp' => 'Send it — through the SMTP details below',
+                        'log'  => 'Do not send — write it to the log (testing only)',
+                    ],
+                    'help'    => 'Nothing reaches anybody while this says do not send. Password reset and email confirmation both report success and deliver nothing.',
+                ],
                 'mail.mailers.smtp.host' => ['type' => 'string', 'label' => 'SMTP host', 'help' => 'e.g. smtp.resend.com, smtp.postmarkapp.com, smtp-relay.brevo.com'],
                 'mail.mailers.smtp.port' => ['type' => 'int', 'label' => 'Port', 'help' => '587 for STARTTLS, 465 for TLS. Port 25 is blocked outbound by most hosts, this one included until proven otherwise.'],
                 'mail.mailers.smtp.username' => ['type' => 'string', 'label' => 'Username'],
@@ -216,6 +232,16 @@ class Settings
         return match (self::schema()[$key]['type'] ?? 'string') {
             'bool' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
             'int'  => (int) $value,
+            /*
+             * An override that is not one of the offered values is not an
+             * override. The controller validates on the way in, so this only
+             * catches a row left behind by an option list that has since
+             * shrunk — and there, falling back to the deployed value beats
+             * forcing config() to a string nothing downstream recognises.
+             */
+            'choice' => array_key_exists((string) $value, self::schema()[$key]['options'] ?? [])
+                ? $value
+                : config($key),
             /*
              * A two-value choice that arrives in two shapes.
              *
