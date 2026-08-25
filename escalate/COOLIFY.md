@@ -20,7 +20,8 @@ belong in git — see [The token](#the-token).
 | Panel | `http://coolify.2.25.93.114.sslip.io` |
 | API base | `http://coolify.2.25.93.114.sslip.io/api/v1` |
 | Application UUID | `um4fjdz4zww4aiv7xmj37czt` |
-| Live app | `https://um4fjdz4zww4aiv7xmj37czt.2.25.93.114.sslip.io` |
+| **Live app** | **`https://escalate.cloud`** (and `www.`) |
+| Old URL, still serving | `https://um4fjdz4zww4aiv7xmj37czt.2.25.93.114.sslip.io` |
 | Deployed branch | `claude/erika-manifestation-demo-jgjpch` |
 | Server | `2.25.93.114` (`srv1871005.hstgr.cloud`) |
 | Coolify version | 4.3.8 |
@@ -30,6 +31,38 @@ belong in git — see [The token](#the-token).
 `https://coolify.2.25.93.114.sslip.io` does not answer — only `http://` does.
 Probing the `https://` form and concluding the panel is unreachable wastes an
 hour. The app itself is the opposite: HTTPS, with HTTP redirecting to it.
+
+### Domains
+
+`fqdn` holds all three, comma separated:
+
+```
+https://escalate.cloud,https://www.escalate.cloud,https://um4fjdz4zww4aiv7xmj37czt.2.25.93.114.sslip.io
+```
+
+The sslip.io entry is kept on purpose. It is the address that cannot stop
+working because of a DNS or certificate problem, which makes it the one to
+check against when escalate.cloud misbehaves — if sslip is fine and the domain
+is not, the fault is in DNS or the certificate, not in the app.
+
+`APP_URL` is `https://escalate.cloud`. It must match, because `asset()` builds
+absolute URLs from it and the CSP sends `upgrade-insecure-requests` on a secure
+request — an `APP_URL` on the wrong scheme or host is how every stylesheet and
+script on the page silently fails to load. See the note in SecurityHeaders.
+
+Setting a domain through the API is a PATCH with a **`domains`** field, not
+`fqdn`:
+
+```sh
+curl -sS -X PATCH -H "Authorization: Bearer $COOLIFY_TOKEN" \
+  -H 'Content-Type: application/json' "$COOLIFY_API/applications/$APP_UUID" \
+  -d '{"domains":"https://escalate.cloud,https://www.escalate.cloud"}'
+```
+
+`escalate.cloud` has an AAAA record as well as an A record. Both currently
+answer, but if certificate renewal ever fails with nothing else changed, an
+IPv6 address that no longer reaches this server is the first thing to check —
+ACME will try it and will not fall back.
 
 ### `coolify.dot-kode.com` is dead
 
