@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Support\Plan;
+use App\Support\PlanChange;
+use App\Support\PlanSchedule;
 use App\Support\Quota;
 use App\Support\StripeReconcile;
 use Illuminate\Http\RedirectResponse;
@@ -53,6 +55,11 @@ class BillingController extends Controller
             'plans'        => Plan::purchasable(),
             'free'         => Plan::config(Plan::FREE),
             'subscription' => $user->subscription(),
+            // The plan a scheduled downgrade is heading for, so the page can
+            // name it rather than showing a bare Stripe price id.
+            'scheduledPlan' => ($p = $user->subscription()?->scheduled_price)
+                ? (Plan::all()[Plan::keyForPrice($p)] ?? null)
+                : null,
             // What their plan actually buys them today, so the page answers
             // "what am I paying for" with numbers rather than adjectives.
             'remaining'    => [
@@ -94,8 +101,30 @@ class BillingController extends Controller
          * rather than support tickets.
          */
         if ($user->subscribed()) {
+            $subscription = $user->subscription();
+
+            /*
+             * A downgrade waits for the period they have already bought.
+             *
+             * swapAndInvoice() here was the bug: somebody eleven months into a
+             * year who tapped the monthly card handed over their annual plan
+             * on the spot and got Stripe account credit instead of a refund.
+             * See App\Support\PlanChange for why nobody does it that way.
+             */
+            if (PlanChange::direction($user->planKey(), $data['plan']) === PlanChange::DOWNGRADE) {
+                try {
+                    $on = PlanSchedule::downgradeAtPeriodEnd($subscription, $price);
+                } catch (ApiErrorException $e) {
+                    return $this->stripeIsNotAnswering($e);
+                }
+
+                return redirect()->route('billing.index')->with('status', $on
+                    ? 'Done. You keep everything you have now until '.$on->format('j F Y').', and move to the new plan then. Nothing has been charged.'
+                    : 'Done. You move to the new plan when this one renews. Nothing has been charged.');
+            }
+
             try {
-                $user->subscription()->swapAndInvoice($price);
+                $subscription->swapAndInvoice($price);
             } catch (IncompletePayment $e) {
                 return redirect()->route(
                     'cashier.payment',
@@ -148,6 +177,25 @@ class BillingController extends Controller
         return redirect()->route('billing.index')->withErrors(['billing' =>
             'Stripe could not be reached just now, so nothing has changed and '
             .'your card has not been charged. Please try again in a minute.']);
+    }
+
+    /** Call off a scheduled downgrade and stay on the current plan. */
+    public function keepPlan(Request $request): RedirectResponse
+    {
+        $subscription = $request->user()->subscription();
+
+        if (! $subscription?->scheduled_price) {
+            return redirect()->route('billing.index');
+        }
+
+        try {
+            PlanSchedule::cancelScheduledChange($subscription);
+        } catch (ApiErrorException $e) {
+            return $this->stripeIsNotAnswering($e);
+        }
+
+        return redirect()->route('billing.index')
+            ->with('status', 'Kept. Your plan carries on exactly as it was.');
     }
 
     /**

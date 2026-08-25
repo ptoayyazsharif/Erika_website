@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Listeners\RecordSubscriptionPeriod;
+use App\Models\Subscription;
+use Laravel\Cashier\Cashier;
+use Illuminate\Support\Facades\Event;
+use Laravel\Cashier\Events\WebhookReceived;
+
 use App\Support\Settings;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +26,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        /*
+         * When the next charge falls due, kept locally.
+         *
+         * Cashier records what someone is on but not when it renews, and its
+         * own accessor asks Stripe every time it is read — a network call on a
+         * page render. This copies the date off the webhook instead.
+         */
+        Event::listen(WebhookReceived::class, RecordSubscriptionPeriod::class);
+
+        // Cashier declares its own $casts, so the renewal date this app added
+        // arrives as a string and ->format() fatals on the billing page.
+        Cashier::useSubscriptionModel(Subscription::class);
+
         /*
          * Administrator overrides, laid over the config files.
          *

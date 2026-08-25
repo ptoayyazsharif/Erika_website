@@ -116,6 +116,9 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
     Route::post('/billing/checkout', [BillingController::class, 'checkout'])
         ->middleware('throttle:12,60')->name('billing.checkout');
+    // Undo a scheduled downgrade. Same throttle: it is a Stripe write too.
+    Route::post('/billing/keep-plan', [BillingController::class, 'keepPlan'])
+        ->middleware('throttle:12,60')->name('billing.keep');
     Route::get('/billing/portal', [BillingController::class, 'portal'])
         ->middleware('throttle:12,60')->name('billing.portal');
 

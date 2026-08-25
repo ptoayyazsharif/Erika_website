@@ -108,6 +108,15 @@ class StripeReconcile
             }
 
             $recorder->record($subscription);
+
+            // The row exists now; give it the renewal date from the same
+            // payload rather than making the billing page ask Stripe for it.
+            $local = $user->subscriptions()->where('stripe_id', $subscription['id'])->first();
+
+            if ($local) {
+                SubscriptionPeriod::syncFrom($local, $subscription);
+            }
+
             $recorded = true;
         }
 

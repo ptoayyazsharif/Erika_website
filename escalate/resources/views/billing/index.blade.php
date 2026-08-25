@@ -41,6 +41,47 @@
     </p>
 </div>
 
+{{-- When the next charge falls, which is the question anybody on a paid plan
+     opens this page to answer. Read from our own column: no Stripe call, so
+     it still draws when Stripe is down. --}}
+@if ($subscription && ! $subscription->onGracePeriod() && $current !== 'free')
+    <div class="card card-quiet" data-enter>
+        <p class="eyebrow">Your subscription</p>
+        <p style="margin:var(--s-2) 0 0">
+            <strong>{{ \App\Support\Plan::config($current)['label'] ?? 'Paid' }}</strong>
+            @if ($priceLabel = \App\Support\Plan::config($current)['display'] ?? null)
+                <span class="muted"> — {{ $priceLabel }}</span>
+            @endif
+        </p>
+        <p class="small muted" style="margin:var(--s-2) 0 0">
+            @if ($subscription->scheduled_price && $scheduledPlan)
+                Changes to <strong>{{ $scheduledPlan['label'] }}</strong>
+                @if ($subscription->current_period_end)
+                    on {{ $subscription->current_period_end->format('j F Y') }}
+                @else
+                    when this period ends
+                @endif.
+                Nothing more is charged before then, and nothing you have changes.
+            @elseif ($subscription->onTrial())
+                Free until {{ $subscription->trial_ends_at->format('j F Y') }}, then it renews.
+            @elseif ($subscription->current_period_end)
+                Renews automatically on {{ $subscription->current_period_end->format('j F Y') }}.
+            @else
+                Renews automatically. The exact date appears after the next update from Stripe.
+            @endif
+        </p>
+
+        @if ($subscription->scheduled_price)
+            <form method="POST" action="{{ route('billing.keep') }}" data-once style="margin-top:var(--s-4)">
+                @csrf
+                <button class="btn btn-quiet btn-sm" type="submit" data-busy="Keeping…">
+                    Keep my current plan instead
+                </button>
+            </form>
+        @endif
+    </div>
+@endif
+
 @if ($subscription?->onGracePeriod())
     <div class="notice notice-warn" role="status" data-enter>
         @include('partials.icon', ['name' => 'timer', 'size' => 18])
@@ -96,7 +137,7 @@
                 <input type="hidden" name="plan" value="{{ $key }}">
                 <button class="btn btn-full" type="submit" data-busy="Taking you to Stripe…"
                         @unless (config('escalate.billing.enabled')) aria-disabled="true" disabled @endunless>
-                    {{ $current === 'free' ? 'Choose this plan' : 'Switch to this' }}
+                    {{ \App\Support\PlanChange::label($user, $key) }}
                 </button>
             </form>
         @endif
