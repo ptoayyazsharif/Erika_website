@@ -76,7 +76,7 @@ button:hover{background:#9C4A3E}
 $pages = manifest();
 $pageIds = array_keys($pages);
 $cur = $_GET['page'] ?? 'home';
-if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty'], true)) $cur = 'home';
+if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty', 'gallery-photos'], true)) $cur = 'home';
 
 /* ---------- change password ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_password'])) {
@@ -149,6 +149,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_lofty'])) {
     $cur = 'lofty';
 }
 
+/* ---------- save the gallery list ---------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_gallery'])) {
+    csrf_check();
+    $items = [];
+    foreach (($_POST['gi'] ?? []) as $row) {
+        if (!is_array($row) || !empty($row['rm'])) continue;
+        $src = gallery_safe_src((string) ($row['src'] ?? ''));
+        if ($src === '') continue;
+        $items[] = [
+            'src' => $src,
+            'cap' => trim((string) ($row['cap'] ?? '')),
+            'ar'  => in_array($row['ar'] ?? '', GALLERY_RATIOS, true) ? $row['ar'] : '3/4',
+            'cat' => isset(GALLERY_CATS[$row['cat'] ?? '']) ? $row['cat'] : '',
+            'ord' => (float) ($row['ord'] ?? 0),
+        ];
+    }
+    usort($items, fn($a, $b) => $a['ord'] <=> $b['ord']);
+    foreach ($items as &$it) unset($it['ord']);
+    unset($it);
+
+    // new pictures are appended in the order they were chosen
+    $added = 0;
+    $newCat = isset(GALLERY_CATS[$_POST['gal_new_cat'] ?? '']) ? $_POST['gal_new_cat'] : '';
+    $names = $_FILES['gal_new']['name'] ?? [];
+    foreach (array_keys($names) as $i) {
+        if ($_FILES['gal_new']['error'][$i] === UPLOAD_ERR_NO_FILE) continue;
+        [$path, $uerr] = handle_upload([
+            'name'     => $_FILES['gal_new']['name'][$i],
+            'tmp_name' => $_FILES['gal_new']['tmp_name'][$i],
+            'error'    => $_FILES['gal_new']['error'][$i],
+            'size'     => $_FILES['gal_new']['size'][$i],
+        ]);
+        if ($uerr) { $err = $_FILES['gal_new']['name'][$i] . ': ' . $uerr; break; }
+        if ($path) { $items[] = ['src' => $path, 'cap' => '', 'ar' => '3/4', 'cat' => $newCat]; $added++; }
+    }
+
+    if (!$err) {
+        gallery_items_save($items);
+        $flash = 'Gallery saved — ' . count($items) . ' picture' . (count($items) === 1 ? '' : 's')
+               . ($added ? ", $added just added" : '') . '.';
+    }
+    $cur = 'gallery-photos';
+}
+
 /* ---------- save content ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     csrf_check();
@@ -203,6 +247,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
                     }
                     continue;
                 }
+                if ($f['t'] === 'file') {
+                    if (isset($_FILES['up']['name'][$k]) && $_FILES['up']['error'][$k] !== UPLOAD_ERR_NO_FILE) {
+                        [$path, $uerr] = handle_upload([
+                            'name'     => $_FILES['up']['name'][$k],
+                            'tmp_name' => $_FILES['up']['tmp_name'][$k],
+                            'error'    => $_FILES['up']['error'][$k],
+                            'size'     => $_FILES['up']['size'][$k],
+                        ]);
+                        if ($uerr) { $err = $f['label'] . ': ' . $uerr; }
+                        elseif ($path) { content_set($k, $path); $saved++; }
+                    } elseif (!empty($_POST['clear'][$k])) {
+                        content_set($k, '');
+                        $saved++;
+                    }
+                    continue;
+                }
                 if (!isset($_POST['f'][$k])) continue;
                 $v = (string) $_POST['f'][$k];
                 if ($f['t'] === 'rich') $v = unwrap_quill(strip_bad($v));
@@ -214,7 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     }
 }
 
-$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : $pages[$cur]['title']));
+$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : ($cur === 'gallery-photos' ? 'Gallery photos' : $pages[$cur]['title'])));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -306,6 +366,7 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
       <a href="admin.php?page=<?= esc($pid) ?>" class="<?= $pid === $cur ? 'on' : '' ?>"><?= esc($p['title']) ?></a>
     <?php endforeach; ?>
     <div class="grp">Account</div>
+    <a href="admin.php?page=gallery-photos" class="<?= $cur === 'gallery-photos' ? 'on' : '' ?>">Gallery photos</a>
     <a href="admin.php?page=email" class="<?= $cur === 'email' ? 'on' : '' ?>">Email / Forms</a>
     <a href="admin.php?page=lofty" class="<?= $cur === 'lofty' ? 'on' : '' ?>">CRM / Lofty</a>
     <a href="admin.php?page=settings" class="<?= $cur === 'settings' ? 'on' : '' ?>">Settings</a>
@@ -416,20 +477,115 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
       </div>
       <?php endif; ?>
 
+    <?php elseif ($cur === 'gallery-photos'): ?>
+      <h1>Gallery photos</h1>
+      <p class="hint">Add as many pictures as you like — there is no limit. Each one gets a caption
+        and a category, and the categories are the buttons visitors use to filter the gallery.
+        Videos (MP4) work here too. Drag nothing: to reorder, change the numbers in <b>Order</b>.</p>
+
+      <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+        <?php $gitems = gallery_items(); ?>
+
+        <div class="sec" style="padding:16px">
+          <div class="lib-head">Add pictures<small>choose several at once — they are added to the end of the gallery</small></div>
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px">
+            <input type="file" name="gal_new[]" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.mp4,.webm">
+            <label style="font-size:13px">Put them in
+              <select name="gal_new_cat">
+                <option value="">— no category —</option>
+                <?php foreach (GALLERY_CATS as $cid => $clabel): ?>
+                  <option value="<?= esc($cid) ?>"><?= esc($clabel) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="fields" style="margin-top:18px">
+        <?php foreach ($gitems as $i => $gi): $ext = strtolower(pathinfo($gi['src'], PATHINFO_EXTENSION)); ?>
+          <div class="fld">
+            <div class="imgrow">
+              <?php if (in_array($ext, ['mp4','webm'])): ?>
+                <video class="thumb" src="<?= esc($gi['src']) ?>" muted loop playsinline></video>
+              <?php else: ?>
+                <img class="thumb" src="<?= esc($gi['src']) ?>" alt="" loading="lazy">
+              <?php endif; ?>
+              <input type="hidden" name="gi[<?= $i ?>][src]" value="<?= esc($gi['src']) ?>">
+              <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:240px">
+                <input type="text" name="gi[<?= $i ?>][cap]" value="<?= esc($gi['cap']) ?>" placeholder="Caption shown under the picture">
+                <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                  <label style="font-size:12.5px">Category
+                    <select name="gi[<?= $i ?>][cat]">
+                      <option value="">— none —</option>
+                      <?php foreach (GALLERY_CATS as $cid => $clabel): ?>
+                        <option value="<?= esc($cid) ?>"<?= $gi['cat'] === $cid ? ' selected' : '' ?>><?= esc($clabel) ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </label>
+                  <label style="font-size:12.5px">Shape
+                    <select name="gi[<?= $i ?>][ar]">
+                      <?php foreach (GALLERY_RATIOS as $r): ?>
+                        <option value="<?= esc($r) ?>"<?= $gi['ar'] === $r ? ' selected' : '' ?>><?= esc($r) ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </label>
+                  <label style="font-size:12.5px">Order
+                    <input type="number" name="gi[<?= $i ?>][ord]" value="<?= $i + 1 ?>" step="1" style="width:78px">
+                  </label>
+                  <label class="rm"><input type="checkbox" name="gi[<?= $i ?>][rm]" value="1"> remove</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        <?php endforeach; ?>
+        </div>
+
+        <div class="save">
+          <button name="do_gallery" value="1">Save gallery</button>
+          <span class="hint" style="margin-left:12px"><?= count($gitems) ?> picture<?= count($gitems) === 1 ? '' : 's' ?> right now</span>
+        </div>
+      </form>
+
     <?php else: ?>
       <h1><?= esc($pages[$cur]['title']) ?></h1>
       <p class="hint">Open a section, edit the text or replace pictures, then hit <b>Save</b>. Leaving a picture empty shows the designed placeholder.</p>
 
       <form method="post" enctype="multipart/form-data" id="pageform">
         <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+        <?php if ($cur === 'gallery'): ?>
+          <p class="hint">The gallery pictures themselves are managed under
+            <a href="admin.php?page=gallery-photos"><b>Gallery photos</b></a> in the sidebar.</p>
+        <?php endif; ?>
         <?php $si = 0; foreach ($pages[$cur]['sections'] as $sec): $si++; ?>
         <details class="sec" <?= $si === 1 ? 'open' : '' ?>>
           <summary><?= esc($sec['title']) ?><small><?= count($sec['fields']) ?> field<?= count($sec['fields']) > 1 ? 's' : '' ?></small></summary>
           <div class="fields">
-            <?php foreach ($sec['fields'] as $f): $k = $f['k']; $v = cms($k); $id = 'x' . substr(md5($k), 0, 10); ?>
+            <?php foreach ($sec['fields'] as $f): $k = $f['k'];
+              // The gallery is no longer a fixed set of slots — it has its own
+              // editor in the sidebar, so these originals stay out of the way.
+              if (str_starts_with($k, 'gallery.section-2.')) continue;
+              $v = cms($k); $id = 'x' . substr(md5($k), 0, 10); ?>
               <div class="fld">
                 <label><?= esc($f['label']) ?></label>
-                <?php if ($f['t'] === 'image'): $adj = setting($k . '__adj', '50 50 100'); $ap = preg_split('/\s+/', $adj); ?>
+                <?php if ($f['t'] === 'file'): ?>
+                  <div class="imgrow">
+                    <?php if ($v !== ''): ?>
+                      <a class="thumb" href="<?= esc($v) ?>" target="_blank"
+                         style="display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;padding:6px">
+                        <?= esc(strtoupper(pathinfo($v, PATHINFO_EXTENSION))) ?><br>view
+                      </a>
+                    <?php else: ?><div class="thumb">no file</div><?php endif; ?>
+                    <div>
+                      <input type="file" name="up[<?= esc($k) ?>]" accept=".pdf">
+                      <?php if ($v !== ''): ?>
+                        <label class="rm"><input type="checkbox" name="clear[<?= esc($k) ?>]" value="1"> remove</label>
+                      <?php else: ?>
+                        <p class="hint" style="margin:6px 0 0">No file yet, so the download buttons stay hidden on the site.</p>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+                <?php elseif ($f['t'] === 'image'): $adj = setting($k . '__adj', '50 50 100'); $ap = preg_split('/\s+/', $adj); ?>
                   <div class="imgrow">
                     <?php if ($v !== ''): $ext = strtolower(pathinfo($v, PATHINFO_EXTENSION)); ?>
                       <?php if (in_array($ext, ['mp4','webm'])): ?><video class="thumb" src="<?= esc($v) ?>" muted></video>

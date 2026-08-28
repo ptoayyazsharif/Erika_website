@@ -115,9 +115,9 @@ function photo_is_library_path(string $path): bool {
 /* ---------- content ---------- */
 
 /** All DB overrides, loaded once per request. */
-function content_all(): array {
+function content_all(bool $refresh = false): array {
     static $all;
-    if ($all === null) {
+    if ($all === null || $refresh) {
         $all = [];
         try {
             foreach (db()->query('SELECT k, v FROM content') as $r) $all[$r['k']] = $r['v'];
@@ -151,6 +151,10 @@ function content_set(string $k, string $v): void {
         ? 'INSERT OR REPLACE INTO content (k, v) VALUES (?, ?)'
         : 'INSERT INTO content (k, v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v = VALUES(v)';
     db()->prepare($sql)->execute([$k, $v]);
+    // Keep the request's cached copy in step with the table, so anything read
+    // back after a save — the admin re-rendering its own form, for one — sees
+    // what was just written rather than the values the page started with.
+    content_all(true);
 }
 
 /* ---------- output helpers used by the template ---------- */
@@ -300,14 +304,71 @@ function img_variants(string $path, int $cap = 0): array {
  * $slot names the kind of box the picture sits in (see SLOT_SIZES) so the browser
  * can pick a file scaled for that box rather than downloading the full-size photo.
  */
+/**
+ * A video's displayed pixel size, read straight out of the MP4 header so the
+ * browser can reserve the right shape before a single byte of video arrives.
+ * Phone footage is normally stored landscape with a rotation matrix beside it,
+ * so the matrix is read too and the sides swapped when it says the picture is
+ * turned on its end. This is the video counterpart of img_variants().
+ */
+function video_meta(string $path): array {
+    static $cache = [];
+    if (isset($cache[$path])) return $cache[$path];
+
+    $out = ['w' => 0, 'h' => 0];
+    $abs = __DIR__ . '/' . ltrim($path, '/');
+    if (is_file($abs) && ($fh = @fopen($abs, 'rb'))) {
+        $head = fread($fh, 262144);
+        fclose($fh);
+        // A file has one tkhd per track. The sound track carries 0x0, so keep
+        // looking until a track reports a real picture size.
+        $at = 0;
+        while (($at = strpos($head, 'tkhd', $at)) !== false) {
+            $box  = $at - 4;                        // step back over the box length
+            $ver  = ord($head[$box + 8]);
+            $skip = $ver === 1 ? 32 : 20;           // v1 stores 64-bit timestamps
+            $mtx  = $box + 28 + $skip;              // 3x3 display matrix
+            $dim  = $mtx + 36;                      // then width, then height
+            $at  += 4;
+            if ($box < 0 || strlen($head) < $dim + 8) continue;
+            $a  = unpack('N', substr($head, $mtx, 4))[1];
+            $b  = unpack('N', substr($head, $mtx + 4, 4))[1];
+            $w  = unpack('N', substr($head, $dim, 4))[1] >> 16;      // 16.16 fixed
+            $h  = unpack('N', substr($head, $dim + 4, 4))[1] >> 16;
+            if ($a === 0 && $b !== 0) [$w, $h] = [$h, $w];           // quarter turn
+            if ($w > 0 && $h > 0) { $out = ['w' => $w, 'h' => $h]; break; }
+        }
+    }
+    return $cache[$path] = $out;
+}
+
+/** assets/video/clip.mp4 -> assets/video/clip.poster.webp, when that frame exists. */
+function video_poster(string $path): string {
+    $guess = preg_replace('/\.[^.]+$/', '.poster.webp', $path);
+    return is_file(__DIR__ . '/' . ltrim($guess, '/')) ? $guess : '';
+}
+
 function cms_img(string $k, bool $eager = false, string $slot = 'half'): string {
     $v = cms($k);
     if ($v === '') return '';
-    $style = adjust_style($k);
+    return media_tag($v, fields_flat()[$k]['label'] ?? '', $eager, $slot, adjust_style($k));
+}
+
+/**
+ * Render one picture or video file as a tag. Split out of cms_img() so the
+ * gallery, whose items are stored as plain paths rather than named fields, gets
+ * exactly the same responsive images, posters and sizing rules.
+ */
+function media_tag(string $v, string $alt = '', bool $eager = false, string $slot = 'half', string $style = ''): string {
     $styleAttr = $style !== '' ? ' style="' . esc($style) . '"' : '';
     $ext = strtolower(pathinfo($v, PATHINFO_EXTENSION));
     if (in_array($ext, ['mp4', 'webm'], true)) {
-        return '<video src="' . esc($v) . '" autoplay muted loop playsinline preload="metadata"' . $styleAttr . '></video>';
+        $m = video_meta($v);
+        $dimAttr = $m['w'] > 0 ? ' width="' . $m['w'] . '" height="' . $m['h'] . '"' : '';
+        $poster  = video_poster($v);
+        $posterAttr = $poster !== '' ? ' poster="' . esc($poster) . '"' : '';
+        return '<video src="' . esc($v) . '"' . $dimAttr . $posterAttr
+            . ' autoplay muted loop playsinline preload="metadata"' . $styleAttr . '></video>';
     }
 
     [$sizes, $cap] = SLOT_SIZES[$slot] ?? SLOT_SIZES['half'];
@@ -322,7 +383,112 @@ function cms_img(string $k, bool $eager = false, string $slot = 'half'): string 
     $loading = $eager ? ' fetchpriority="high" decoding="async"' : ' loading="lazy" decoding="async"';
 
     return '<img src="' . esc($v) . '"' . $srcAttr . $dimAttr
-        . ' alt="' . esc(fields_flat()[$k]['label'] ?? '') . '"' . $loading . $styleAttr . '>';
+        . ' alt="' . esc($alt) . '"' . $loading . $styleAttr . '>';
+}
+
+/* ---------- gallery ----------
+ * The gallery is the one part of the site with no fixed number of slots: Erika
+ * adds as many pictures as she likes from the admin. The whole list therefore
+ * lives as one JSON value in the content table rather than as named fields, so
+ * growing it never needs a code change or a database migration.
+ */
+
+/** Category id => the label printed on its filter chip. */
+const GALLERY_CATS = [
+    'listings'  => 'Listings',
+    'sold'      => 'Sold',
+    'speaking'  => 'Speaking',
+    'lifestyle' => 'Lifestyle',
+    'atlanta'   => 'Atlanta',
+    'video'     => 'Videos',
+    'bts'       => 'Behind the Scenes',
+];
+
+/** Shapes a gallery tile may take; the mixed heights are what makes the grid read well. */
+const GALLERY_RATIOS = ['3/4', '4/3', '1/1', '16/9'];
+
+/**
+ * The gallery as it stands before anyone has arranged their own. Reads the
+ * original fifteen fixed slots so the pictures already chosen for the site (and
+ * any swap made in the admin since) carry straight over on the first load.
+ */
+function gallery_seed(): array {
+    $seed = [
+        ['img-luxury-listing-exterio',  'cap1',  '3/4',  'listings'],
+        ['img-erika-on-stage',          'cap2',  '4/3',  'speaking'],
+        ['img-sold-family-home',        'cap3',  '1/1',  'sold'],
+        ['img-video-speaker-reel',      'cap4',  '16/9', 'video'],
+        ['img-atlanta-skyline-at-dus',  'cap5',  '3/4',  'atlanta'],
+        ['img-staged-interior-living',  'cap6',  '4/3',  'listings'],
+        ['img-erika-editorial-portra',  'cap7',  '3/4',  'lifestyle'],
+        ['img-video-client-story',      'cap8',  '16/9', 'video'],
+        ['img-peachtree-city-golf-ca',  'cap9',  '4/3',  'atlanta'],
+        ['img-closing-day-keys-hando',  'cap10', '1/1',  'sold'],
+        ['img-luxury-kitchen-detail',   'cap11', '3/4',  'listings'],
+        ['img-panel-discussion',        'cap12', '4/3',  'speaking'],
+        ['img-lifestyle-shoot-atlant',  'cap13', '1/1',  'lifestyle'],
+        ['img-video-erika-explains-b',  'cap14', '16/9', 'bts'],
+        ['img-sold-gwinnett-colonial',  'cap15', '3/4',  'sold'],
+    ];
+
+    $out = [];
+    foreach ($seed as [$img, $cap, $ar, $cat]) {
+        $src = cms('gallery.section-2.' . $img);
+        if ($src === '') continue;   // an unfilled slot is not a gallery picture
+        $out[] = [
+            'src' => $src,
+            'cap' => cms('gallery.section-2.' . $cap),
+            'ar'  => $ar,
+            'cat' => $cat,
+        ];
+    }
+    $out[] = [
+        'src' => 'assets/photos/08/a6-lets-make-a-deal.jpg',
+        'cap' => "Let's make a deal",
+        'ar'  => '3/4',
+        'cat' => 'sold',
+    ];
+    return $out;
+}
+
+/**
+ * A gallery path is only ever a file that lives with the site. The list is
+ * posted back from a form, so the path is re-checked on the way in rather than
+ * trusted, and anything pointing outside assets/ or uploads/ is dropped.
+ */
+function gallery_safe_src(string $p): string {
+    $p = ltrim(trim($p), '/');
+    if ($p === '' || strpos($p, '..') !== false) return '';
+    if (!preg_match('#^(assets|uploads)/[A-Za-z0-9._/\-]+$#', $p)) return '';
+    return is_file(__DIR__ . '/' . $p) ? $p : '';
+}
+
+/** Every gallery picture, in display order. */
+function gallery_items(): array {
+    $raw = setting('gallery.items', '');
+    if ($raw !== '') {
+        $list = json_decode($raw, true);
+        if (is_array($list)) {
+            $out = [];
+            foreach ($list as $i) {
+                if (!is_array($i)) continue;
+                $src = gallery_safe_src((string) ($i['src'] ?? ''));
+                if ($src === '') continue;
+                $out[] = [
+                    'src' => $src,
+                    'cap' => (string) ($i['cap'] ?? ''),
+                    'ar'  => in_array($i['ar'] ?? '', GALLERY_RATIOS, true) ? $i['ar'] : '3/4',
+                    'cat' => isset(GALLERY_CATS[$i['cat'] ?? '']) ? $i['cat'] : '',
+                ];
+            }
+            return $out;
+        }
+    }
+    return gallery_seed();
+}
+
+function gallery_items_save(array $items): void {
+    set_setting('gallery.items', json_encode(array_values($items), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 }
 
 /* ---------- app settings (SMTP etc.) — stored in the content table ---------- */
@@ -616,8 +782,9 @@ function handle_upload(array $file): array {
         'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png',
         'webp' => 'image/webp', 'gif' => 'image/gif',
         'mp4' => 'video/mp4', 'webm' => 'video/webm',
+        'pdf' => 'application/pdf',
     ];
-    if (!isset($allowed[$ext])) return ['', 'Only JPG, PNG, WEBP, GIF, MP4 or WEBM files are allowed.'];
+    if (!isset($allowed[$ext])) return ['', 'Only JPG, PNG, WEBP, GIF, MP4, WEBM or PDF files are allowed.'];
 
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
     if ($mime !== $allowed[$ext]) return ['', 'File content does not match its extension.'];
@@ -630,7 +797,7 @@ function handle_upload(array $file): array {
     // Build the scaled-down copies straight away, so a picture uploaded here is
     // as light on a phone as the ones that ship with the site. A failure here is
     // not fatal: cms_img() serves the original when no copies exist.
-    if (!in_array($ext, ['mp4', 'webm'], true)) {
+    if (!in_array($ext, ['mp4', 'webm', 'pdf'], true)) {
         require_once __DIR__ . '/lib/imgvariants.php';
         img_build_variants(__DIR__, 'uploads/' . $name);
     }

@@ -104,6 +104,7 @@ return [
                 ['r' => 'A3', 'f' => 'assets/photos/08/a3-closing-day-sold.jpg', 'label' => 'Closing day, SOLD sign with client', 'note' => '', 'pos' => '57 34'],
                 ['r' => 'A4', 'f' => 'assets/photos/08/a4-sold-yard-sign.jpg', 'label' => 'SOLD yard sign, Erika Page branding', 'note' => '', 'pos' => '39 69'],
                 ['r' => 'A5', 'f' => 'assets/photos/08/a5-listing-announcement.jpg', 'label' => 'Living Luxury listing announcement', 'note' => '', 'pos' => '75 59'],
+                ['r' => 'A6', 'f' => 'assets/photos/08/a6-lets-make-a-deal.jpg', 'label' => "Holding the LET'S MAKE A DEAL sign", 'note' => '', 'pos' => '55 42'],
             ],
         ],
         '09' => [
@@ -155,6 +156,7 @@ return [
                 ['r' => 'A4', 'f' => 'assets/photos/13/a4-vineyard-golden-hour.jpg', 'label' => 'Vineyard, golden hour', 'note' => '', 'pos' => '51 40'],
                 ['r' => 'A5', 'f' => 'assets/photos/13/a5-garden-white-blazer.jpg', 'label' => 'Garden lounge, white blazer', 'note' => '', 'pos' => '39 35'],
                 ['r' => 'A6', 'f' => 'assets/photos/13/a6-resort-sunset.jpg', 'label' => 'Resort sunset by the ocean', 'note' => '', 'pos' => '45 36'],
+                ['r' => 'A7', 'f' => 'assets/photos/13/a7-rooftop-yellow.jpg', 'label' => 'Rooftop in yellow, umbrella and skyline trees', 'note' => '', 'pos' => '52 38'],
             ],
         ],
         '14' => [
@@ -216,7 +218,7 @@ return [
         'speaking.speaker-bio.img-erika-keynote-stage-ph' => ['lib' => '03', 'pick' => 'A4'],
         'speaking.audience-types.img-speaker-reel-stage-cli' => ['lib' => '03', 'pick' => 'A9'],
         'collaborations.collaborations.img-brand-collaboration-sh' => ['lib' => '07', 'pick' => 'A3'],
-        'lifestyle.lifestyle-magazine.img-atlanta-lifestyle-edit' => ['lib' => '13', 'pick' => 'A3'],
+        'lifestyle.lifestyle-magazine.img-atlanta-lifestyle-edit' => ['lib' => '13', 'pick' => 'A7'],
         'lifestyle.featured-stories.img-atlanta-skyline-featur' => ['lib' => '11', 'pick' => 'A2'],
         'lifestyle.featured-stories.img-travel-feature' => ['lib' => '13', 'pick' => 'A1'],
         'lifestyle.featured-stories.img-wealth-feature' => ['lib' => '12', 'pick' => 'A1'],

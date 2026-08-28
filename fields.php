@@ -375,7 +375,8 @@ return [
       ['k' => 'speaking.speaking.p1', 't' => 'rich', 'label' => 'Text: “Keynotes, panels, and workshops backed…”', 'd' => 'Keynotes, panels, and workshops backed by 24+ years of real-world authority — for conferences, corporate audiences, women\'s events, brokerages, and agent masterminds.'],
       ['k' => 'speaking.speaking.btn1', 't' => 'text', 'label' => 'Button: “Book Erika to Speak”', 'd' => 'Book Erika to Speak'],
       ['k' => 'speaking.speaking.btn2', 't' => 'text', 'label' => 'Button: “Download One-Sheet”', 'd' => 'Download One-Sheet'],
-      ['k' => 'speaking.speaking.img-speaker-reel-preview', 't' => 'image', 'label' => 'Speaker Reel — Preview', 'd' => 'assets/photos/03/a1-mic-mid-gesture.jpg'],
+      ['k' => 'speaking.speaking.onesheet', 't' => 'file', 'label' => 'Speaker one-sheet (PDF) — the file both Download buttons hand out', 'd' => ''],
+      ['k' => 'speaking.speaking.img-speaker-reel-preview', 't' => 'image', 'label' => 'Speaker Reel — Preview', 'd' => 'assets/video/speaking-keynote.mp4'],
     ]],
     ['title' => 'Speaker Bio', 'fields' => [
       ['k' => 'speaking.speaker-bio.heading1', 't' => 'text', 'label' => 'Heading: “Substance first. Stage presence se…”', 'd' => 'Substance first. Stage presence second.'],
@@ -415,7 +416,7 @@ return [
       ['k' => 'speaking.audience-types.check5', 't' => 'text', 'label' => 'Checklist item 5', 'd' => 'Community, church & civic organizations'],
       ['k' => 'speaking.audience-types.heading1', 't' => 'text', 'label' => 'Heading: “Who books Erika”', 'd' => 'Who books Erika'],
       ['k' => 'speaking.audience-types.eyebrow1', 't' => 'text', 'label' => 'Small label (eyebrow)', 'd' => 'Audience Types'],
-      ['k' => 'speaking.audience-types.img-speaker-reel-stage-cli', 't' => 'image', 'label' => 'Speaker Reel / Stage Clips', 'd' => 'assets/photos/03/a9-keynote-wide-stage-ai.jpg'],
+      ['k' => 'speaking.audience-types.img-speaker-reel-stage-cli', 't' => 'image', 'label' => 'Speaker Reel / Stage Clips', 'd' => 'assets/video/speaking-behind-the-scenes.mp4'],
     ]],
     ['title' => 'Event Planner Proof', 'fields' => [
       ['k' => 'speaking.event-planner-proof.tst1-quote', 't' => 'text', 'label' => 'Testimonial 1 — quote', 'd' => '"The most talked-about session of our entire conference. We\'re booking her again next year."'],
@@ -489,7 +490,7 @@ return [
       ['k' => 'lifestyle.lifestyle-magazine.heading1', 't' => 'rich', 'label' => 'Heading: “Atlanta living, luxury & the life …”', 'd' => 'Atlanta living, luxury &amp; the life real estate <em>makes possible</em>.'],
       ['k' => 'lifestyle.lifestyle-magazine.eyebrow1', 't' => 'text', 'label' => 'Small label (eyebrow)', 'd' => 'Lifestyle & Magazine'],
       ['k' => 'lifestyle.lifestyle-magazine.p1', 't' => 'rich', 'label' => 'Text: “Home, wealth, travel, hospitality, and…”', 'd' => 'Home, wealth, travel, hospitality, and Atlanta life — curated through the lens of a real estate expert who believes where you live shapes how you live.'],
-      ['k' => 'lifestyle.lifestyle-magazine.img-atlanta-lifestyle-edit', 't' => 'image', 'label' => 'Atlanta Lifestyle Editorial', 'd' => 'assets/photos/13/a3-blush-gown-swing.jpg'],
+      ['k' => 'lifestyle.lifestyle-magazine.img-atlanta-lifestyle-edit', 't' => 'image', 'label' => 'Atlanta Lifestyle Editorial', 'd' => 'assets/photos/13/a7-rooftop-yellow.jpg'],
     ]],
     ['title' => 'Featured Stories', 'fields' => [
       ['k' => 'lifestyle.featured-stories.res1-cat', 't' => 'text', 'label' => 'Card 1 — category', 'd' => 'Atlanta Living'],
@@ -617,7 +618,7 @@ return [
       ['k' => 'resources.resources.heading1', 't' => 'rich', 'label' => 'Heading: “Real estate resources, guides & in…”', 'd' => 'Real estate resources, guides &amp; <em>insights</em>.'],
       ['k' => 'resources.resources.eyebrow1', 't' => 'text', 'label' => 'Small label (eyebrow)', 'd' => 'Resources'],
       ['k' => 'resources.resources.p1', 't' => 'rich', 'label' => 'Text: “Guides, videos, articles, and tools fo…”', 'd' => 'Guides, videos, articles, and tools for sellers, buyers, agents, and wealth-builders — the Erika Page resource hub.'],
-      ['k' => 'resources.resources.img-guides-resources-flat', 't' => 'image', 'label' => 'Guides & Resources Flat-Lay', 'd' => ''],
+      ['k' => 'resources.resources.img-guides-resources-flat', 't' => 'image', 'label' => 'Guides & Resources Flat-Lay', 'd' => 'assets/video/working-loop.mp4'],
     ]],
     ['title' => 'Featured Guides', 'fields' => [
       ['k' => 'resources.featured-guides.res1-cat', 't' => 'text', 'label' => 'Card 1 — category', 'd' => 'Seller'],

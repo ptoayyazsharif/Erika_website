@@ -86,6 +86,15 @@ img{max-width:100%;display:block}
 /* drop an <img> or <video> inside any .ph box to replace the placeholder */
 .ph>img,.ph>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ph:has(>img)::after,.ph:has(>video)::after{display:none}
+/* A slot holding a real video needs no imitation play button on top of it, and
+   should not be cropped square: the box takes the clip's own shape instead.
+   object-fit:contain is the backstop so a clip can never be stretched, only
+   letterboxed against the dark ground. aspect-ratio has to be forced because the
+   per-context rules below (.res-card .ph, .hero-media, .video-frame ...) are more
+   specific than this one. */
+.ph:has(>video){aspect-ratio:auto!important;width:fit-content;max-width:100%;margin-inline:auto;background:none}
+.ph:has(>video)>video{position:static;display:block;width:auto;height:auto;max-width:100%;max-height:min(70vh,620px)}
+.ph:has(>video) .play{display:none}
 /* An empty picture slot is a to-do note for the admin, not content. Visitors should
    never see a pink box captioned "GUIDE COVER" — the slot simply collapses until a
    picture is set. Every slot is still listed in the admin whether it is filled or not. */
@@ -843,7 +852,7 @@ html,body{max-width:100%;overflow-x:clip}
 <p class="eyebrow on-dark"><?= cms_e('speaking.speaking.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('speaking.speaking.heading1') ?></h1>
 <p><?= cms_rich('speaking.speaking.p1') ?></p>
-<div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('spk-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('speaking.speaking.btn1') ?></a>  <a class="btn btn-outline" onclick="alert('Downloads speaker one-sheet PDF (mockup)')"><?= cms_e('speaking.speaking.btn2') ?></a></div>
+<div style="margin-top:30px"><a class="btn btn-gold" onclick="document.getElementById('spk-form').scrollIntoView({behavior:'smooth'})"><?= cms_e('speaking.speaking.btn1') ?></a>  <?php if (($onesheet = cms('speaking.speaking.onesheet')) !== ''): ?><a class="btn btn-outline" href="<?= esc($onesheet) ?>" download><?= cms_e('speaking.speaking.btn2') ?></a><?php endif; ?></div>
 </div><div class="ph hero-media" data-label="Speaker Reel — Preview"><?= cms_img('speaking.speaking.img-speaker-reel-preview', false, 'media') ?><div class="play"></div></div></div>
 </header>
 <section>
@@ -855,7 +864,7 @@ html,body{max-width:100%;overflow-x:clip}
 <div class="rule"></div>
 <p><?= cms_rich('speaking.speaker-bio.p1') ?></p>
 <p><?= cms_rich('speaking.speaker-bio.p2') ?></p>
-<a class="btn btn-outline-dark" onclick="alert('Downloads one-sheet (mockup)')"><?= cms_e('speaking.speaker-bio.btn1') ?></a>
+<?php if (($onesheet = cms('speaking.speaking.onesheet')) !== ''): ?><a class="btn btn-outline-dark" href="<?= esc($onesheet) ?>" download><?= cms_e('speaking.speaker-bio.btn1') ?></a><?php endif; ?>
 </div>
 </div>
 </section>
@@ -1678,34 +1687,23 @@ html,body{max-width:100%;overflow-x:clip}
 </div>
 <!-- ==================== GALLERY /gallery ==================== -->
 <div class="page" id="page-gallery">
+<?php $galItems = gallery_items(); $galCats = array_column($galItems, 'cat'); ?>
 <header class="page-hero">
 <div class="wrap hero2"><div>
 <p class="eyebrow on-dark"><?= cms_e('gallery.gallery.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('gallery.gallery.heading1') ?></h1>
 <p><?= cms_rich('gallery.gallery.p1') ?></p>
 <div class="rev-filter">
-<span class="chip on">All</span><span class="chip">Listings</span><span class="chip">Sold</span><span class="chip">Speaking</span><span class="chip">Lifestyle</span><span class="chip">Atlanta</span><span class="chip">Videos</span><span class="chip">Behind the Scenes</span>
+<span class="chip on" data-cat="">All</span><?php foreach (GALLERY_CATS as $cid => $clabel): if (!in_array($cid, $galCats, true)) continue; ?><span class="chip" data-cat="<?= esc($cid) ?>"><?= esc($clabel) ?></span><?php endforeach; ?>
 </div>
 </div><div class="ph hero-media" data-label="Featured — Gallery Highlight"><?= cms_img('gallery.gallery.img-featured-gallery-highl', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
 <div class="gal">
-<div class="g"><div class="ph" data-label="Luxury Listing — Exterior" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-luxury-listing-exterio', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap1') ?></div></div>
-<div class="g"><div class="ph" data-label="Erika On Stage" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-erika-on-stage', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap2') ?></div></div>
-<div class="g"><div class="ph" data-label="Sold — Family Home" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-sold-family-home', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap3') ?></div></div>
-<div class="g"><div class="ph" data-label="Video · Speaker Reel" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-speaker-reel', false, 'gal') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap4') ?></div></div>
-<div class="g"><div class="ph" data-label="Atlanta Skyline at Dusk" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-atlanta-skyline-at-dus', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap5') ?></div></div>
-<div class="g"><div class="ph" data-label="Staged Interior — Living Room" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-staged-interior-living', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap6') ?></div></div>
-<div class="g"><div class="ph" data-label="Erika — Editorial Portrait" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-erika-editorial-portra', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap7') ?></div></div>
-<div class="g"><div class="ph" data-label="Video · Client Story" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-client-story', false, 'gal') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap8') ?></div></div>
-<div class="g"><div class="ph" data-label="Peachtree City — Golf Cart Path" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-peachtree-city-golf-ca', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap9') ?></div></div>
-<div class="g"><div class="ph" data-label="Closing Day — Keys Handoff" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-closing-day-keys-hando', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap10') ?></div></div>
-<div class="g"><div class="ph" data-label="Luxury Kitchen Detail" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-luxury-kitchen-detail', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap11') ?></div></div>
-<div class="g"><div class="ph" data-label="Panel Discussion" style="aspect-ratio:4/3"><?= cms_img('gallery.section-2.img-panel-discussion', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap12') ?></div></div>
-<div class="g"><div class="ph" data-label="Lifestyle Shoot — Atlanta Dining" style="aspect-ratio:1/1"><?= cms_img('gallery.section-2.img-lifestyle-shoot-atlant', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap13') ?></div></div>
-<div class="g"><div class="ph" data-label="Video · Erika Explains BTS" style="aspect-ratio:16/9"><?= cms_img('gallery.section-2.img-video-erika-explains-b', false, 'gal') ?><div class="play" style="width:52px;height:52px"></div></div><div class="cap"><?= cms_e('gallery.section-2.cap14') ?></div></div>
-<div class="g"><div class="ph" data-label="Sold — Gwinnett Colonial" style="aspect-ratio:3/4"><?= cms_img('gallery.section-2.img-sold-gwinnett-colonial', false, 'gal') ?></div><div class="cap"><?= cms_e('gallery.section-2.cap15') ?></div></div>
+<?php foreach ($galItems as $gi): ?>
+<div class="g" data-cat="<?= esc($gi['cat']) ?>"><div class="ph" style="aspect-ratio:<?= esc($gi['ar']) ?>"><?= media_tag($gi['src'], $gi['cap'], false, 'gal') ?></div><div class="cap"><?= esc($gi['cap']) ?></div></div>
+<?php endforeach; ?>
 </div>
 <p style="text-align:center;margin-top:36px;font-size:14px"><?= cms_rich('gallery.section-2.p1') ?></p>
 <div style="text-align:center;margin-top:24px"><a class="btn btn-primary" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('gallery.section-2.btn1') ?></a></div>
@@ -1827,6 +1825,14 @@ document.querySelectorAll('.chip').forEach(function(c){
   function activate(){
     c.parentElement.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});
     c.classList.add('on');
+    /* Only the gallery chips carry a category; the ones on other pages stay
+       decorative until those sections have real categories of their own. */
+    var cat=c.getAttribute('data-cat');
+    if(cat===null)return;
+    var page=c.closest('.page');
+    (page||document).querySelectorAll('.gal .g').forEach(function(g){
+      g.style.display=(cat===''||g.getAttribute('data-cat')===cat)?'':'none';
+    });
   }
   c.addEventListener('click',activate);
   c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();activate();}});
