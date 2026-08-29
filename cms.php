@@ -463,6 +463,18 @@ function gallery_safe_src(string $p): string {
     return is_file(__DIR__ . '/' . $p) ? $p : '';
 }
 
+/**
+ * True for the fifteen fixed slots (and their captions) that the gallery list
+ * replaced. They still seed the list on a first load, so the fields stay in the
+ * manifest — but the admin hides them, because the gallery is edited on its own
+ * screen now. Deliberately narrow: the section also holds the paragraph and the
+ * button under the grid, and those are still ordinary page copy.
+ */
+function gallery_grid_field(string $k): bool {
+    return str_starts_with($k, 'gallery.section-2.img-')
+        || (bool) preg_match('/^gallery\.section-2\.cap\d+$/', $k);
+}
+
 /** Every gallery picture, in display order. */
 function gallery_items(): array {
     $raw = setting('gallery.items', '');

@@ -365,8 +365,8 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
     <?php foreach ($pages as $pid => $p): ?>
       <a href="admin.php?page=<?= esc($pid) ?>" class="<?= $pid === $cur ? 'on' : '' ?>"><?= esc($p['title']) ?></a>
     <?php endforeach; ?>
-    <div class="grp">Account</div>
     <a href="admin.php?page=gallery-photos" class="<?= $cur === 'gallery-photos' ? 'on' : '' ?>">Gallery photos</a>
+    <div class="grp">Account</div>
     <a href="admin.php?page=email" class="<?= $cur === 'email' ? 'on' : '' ?>">Email / Forms</a>
     <a href="admin.php?page=lofty" class="<?= $cur === 'lofty' ? 'on' : '' ?>">CRM / Lofty</a>
     <a href="admin.php?page=settings" class="<?= $cur === 'settings' ? 'on' : '' ?>">Settings</a>
@@ -554,17 +554,24 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
       <form method="post" enctype="multipart/form-data" id="pageform">
         <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
         <?php if ($cur === 'gallery'): ?>
-          <p class="hint">The gallery pictures themselves are managed under
-            <a href="admin.php?page=gallery-photos"><b>Gallery photos</b></a> in the sidebar.</p>
+          <div class="sec" style="padding:16px;margin-bottom:18px">
+            <div class="lib-head">The gallery pictures live on their own screen<small>this page holds the
+              heading, the intro and the closing text — the photographs are added and ordered next door</small></div>
+            <p style="margin:12px 0 0"><a class="btn" href="admin.php?page=gallery-photos"
+               style="display:inline-block;text-decoration:none">Open Gallery photos →</a></p>
+          </div>
         <?php endif; ?>
-        <?php $si = 0; foreach ($pages[$cur]['sections'] as $sec): $si++; ?>
+        <?php $si = 0; foreach ($pages[$cur]['sections'] as $sec):
+          // Work out what this section actually shows before drawing anything, so
+          // the count in the header and the fields below it can never disagree.
+          // The retired gallery slots are the only thing held back.
+          $vis = array_values(array_filter($sec['fields'], fn($f) => !gallery_grid_field($f['k'])));
+          if (!$vis) continue;              // nothing left to edit — draw no section at all
+          $si++; ?>
         <details class="sec" <?= $si === 1 ? 'open' : '' ?>>
-          <summary><?= esc($sec['title']) ?><small><?= count($sec['fields']) ?> field<?= count($sec['fields']) > 1 ? 's' : '' ?></small></summary>
+          <summary><?= esc($sec['title']) ?><small><?= count($vis) ?> field<?= count($vis) > 1 ? 's' : '' ?></small></summary>
           <div class="fields">
-            <?php foreach ($sec['fields'] as $f): $k = $f['k'];
-              // The gallery is no longer a fixed set of slots — it has its own
-              // editor in the sidebar, so these originals stay out of the way.
-              if (str_starts_with($k, 'gallery.section-2.')) continue;
+            <?php foreach ($vis as $f): $k = $f['k'];
               $v = cms($k); $id = 'x' . substr(md5($k), 0, 10); ?>
               <div class="fld">
                 <label><?= esc($f['label']) ?></label>
