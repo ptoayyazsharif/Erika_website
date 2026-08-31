@@ -1,6 +1,25 @@
 @extends('layouts.app', ['title' => 'Today'])
 
 @section('content')
+{{-- A week in, once, and never in the way. Dismissing it hides it for this
+     session; answering hides it for good. There is no version of this that
+     stands between somebody and their own journal. --}}
+@if (\App\Http\Controllers\FeedbackController::isDue($user, request()))
+    <div class="notice" role="status" data-enter>
+        @include('partials.icon', ['name' => 'sparkle', 'size' => 18])
+        <div>
+            <p style="margin:0">You have had Escalate a week. Would you tell us how it is going?</p>
+            <div class="row wrap" style="gap:var(--s-3);margin-top:var(--s-3)">
+                <a class="btn btn-sm" href="{{ route('feedback') }}">Four questions</a>
+                <form method="POST" action="{{ route('feedback.defer') }}">
+                    @csrf
+                    <button class="btn btn-quiet btn-sm" type="submit">Not now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+@endif
+
 <div class="page-head" data-enter-hero>
     <p class="eyebrow">{{ $greeting }}</p>
     <h1>{{ $user->callMe() }}</h1>

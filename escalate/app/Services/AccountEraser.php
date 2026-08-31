@@ -94,6 +94,17 @@ class AccountEraser
                 'email'         => $user->email,
                 'joined'        => $user->created_at?->toIso8601String(),
                 'last_login_at' => $user->last_login_at?->toIso8601String(),
+                'cohort'        => $user->cohort,
+
+                // The dates the app was opened. Held so a beta can tell whether
+                // people came back; exported because it is data about them, and
+                // "everything Escalate holds about you" has to mean it. Removed
+                // with the account by the cascade on activity_days.user_id.
+                'days_you_opened_the_app' => DB::table('activity_days')
+                    ->where('user_id', $user->id)
+                    ->orderBy('day')
+                    ->pluck('day')
+                    ->all(),
             ],
 
             'my_world' => $profile ? [

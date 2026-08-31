@@ -71,6 +71,8 @@
             ['admin.dashboard', 'Overview', 'Overview', 'journey'],
             ['admin.users',     'People',   'People',   'compass'],
             ['admin.plans',     'Plans',    'Plans',    'book'],
+            ['admin.beta',      'Beta',     'Beta',     'sparkle'],
+            ['admin.feedback',  'Said',     'Feedback', 'book'],
             ['admin.applications', 'Apply', 'Applications', 'heart'],
             ['admin.invites',   'Invites',  'Invites',  'plus'],
             ['admin.settings',  'Settings', 'Settings', 'world'],

@@ -110,6 +110,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(AffirmationSet::class)->latest('for_date');
     }
 
+    /** Their answers to the day-seven survey, if they have given any. */
+    public function feedbackResponse(): HasOne
+    {
+        return $this->hasOne(FeedbackResponse::class);
+    }
+
     public function affirmations(): HasMany
     {
         return $this->hasMany(Affirmation::class);

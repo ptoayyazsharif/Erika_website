@@ -112,7 +112,7 @@ view and no config.
 
 ## Plan
 
-### Phase A — the funnel, so applications can open
+### Phase A — the funnel, so applications can open — **DONE**, live at `c253c0b`
 
 1. **Public landing page** at `/` for guests, redirecting to `/today` when signed
    in. Brand story, tagline, the five beta benefits, the invite-only framing, one
@@ -129,7 +129,7 @@ view and no config.
 4. **Two Mailables** — "we have your application" and "you're in, here's your
    code". First things in `app/Mail/`.
 
-### Phase B — keep the promise
+### Phase B — keep the promise — **DONE**, live at `6b5fca5`
 
 5. **Daily Affirmation Cards** — controller, route, Today-screen card and a
    dedicated screen; daily set generated from the user's desires and world,
@@ -142,12 +142,78 @@ view and no config.
    field: all 25 comped permanently on selection. No new billing code, no Stripe
    coupon to maintain, reversible per person, and they never meet a card form.
 
-### Phase C — run the beta with numbers
+### Phase C — run the beta with numbers — **NEXT**
 
-7. **Admin → Beta** — activation, habit, emotional connection, retention and
-   completion, per tester and in aggregate, from the tables above.
-8. **Day-7 feedback survey** — in-app, triggered on day 7, including the killer
-   question; answers visible in admin.
+#### 7. A record of which days somebody was active
+
+Erika's scorecard asks "did they come back the next day?" and "still engaged at
+7–14 days?". Neither is answerable today: `users.last_login_at` is a single
+timestamp, overwritten on every sign-in, so it can say when somebody was last
+here and nothing about the shape of their week.
+
+- Migration `activity_days`: `user_id`, `day` (date), unique on both, index on
+  `day`. One tiny row per person per day.
+- Middleware `App\Http\Middleware\RecordActivityDay`, appended to the `web`
+  group in `bootstrap/app.php` alongside `SecurityHeaders`. Signed-in GET
+  requests only. Guarded by a cache key per user per day so it is one
+  `insertOrIgnore` a day rather than one a request, and wrapped so a write
+  fault can never cost somebody their page.
+- Chosen over deriving activity from content timestamps because somebody who
+  returns daily to *listen to and re-read* their stories is exactly the user a
+  journal must not score as absent.
+- **`App\Services\AccountEraser` must delete and export these rows too.** It
+  enumerates tables explicitly; a new one that is not added there is a hole in
+  both erasure and export.
+
+#### 8. Admin → Beta
+
+New `Admin\BetaController` + `resources/views/admin/beta.blade.php`, added to the
+admin nav in `resources/views/layouts/app.blade.php`. Erika's five measures, per
+tester and in aggregate:
+
+| Measure | Answered by |
+|---|---|
+| Activation | has at least one story |
+| Habit | active on a day after the day they joined |
+| Emotional connection | has used narration, gratitude, a rewind, or kept a card |
+| Retention | active within the last 7 days; still active 7–14 days in |
+| Completion | 4 or more active days inside their first 7 — Erika's own bar |
+
+- Aggregate tiles first, then a per-person table; `withCount` as
+  `Admin\UserController@index` already does, so it stays one query per column
+  rather than N+1.
+- Filterable by cohort, defaulting to Founding 25, since that is the group under
+  test — but the rest stay visible.
+- **Counts only, never content.** `Admin\DashboardController`'s docstring makes
+  this the standing rule for the admin area: an administrator supporting
+  somebody must be able to see that they have written nothing without being able
+  to read what they wrote. Nothing on this screen decrypts anything.
+
+#### 9. The day-7 survey
+
+The Sean Ellis product-market-fit set, which is where Erika's killer question
+comes from, so the answers are comparable to other products rather than only to
+themselves:
+
+1. How would you feel if you could no longer use Escalate? *(very disappointed /
+   somewhat disappointed / not disappointed)* — the killer question
+2. What type of person do you think would benefit most from Escalate?
+3. What is the main benefit you get from it?
+4. How can we improve it for you?
+
+- Migration `feedback_responses` + `App\Models\FeedbackResponse`: one row per
+  user, `disappointment` in plaintext (it is the scored answer and needs
+  grouping), the three prose answers **encrypted** like every other thing a
+  person writes here. `$fillable = []` and `forceFill`, matching `Application`.
+- `FeedbackController` at `/feedback`, behind `auth` and `not-suspended`.
+- Invited by a dismissible nudge on Today from day 7 (`created_at` older than 7
+  days, no response yet). "Not now" hides it for that session only — never a
+  wall in front of somebody's journal.
+- `Admin\FeedbackController` lists responses and reports the PMF score: the
+  share answering "very disappointed", the number that matters.
+- These answers are content, but content *addressed to* the person reading them
+  — the same footing as an application, and unlike a journal entry, which is why
+  admin may read them at all.
 
 ### Phase D — brand
 
@@ -164,11 +230,22 @@ view and no config.
 
 ## Verification
 
-- `php artisan test` — the suite is at 241 and every phase above adds to it.
-- The public application endpoint gets the same abuse tests as `/register`:
-  `?field[]=x` array injection, throttling, no enumeration, honeypot.
+- `php artisan test` — the suite is at 277 after Phase B; Phase C adds to it.
+- **Phase C specifically:**
+  - Activity days: a second request the same day writes no second row; a request
+    the next day does; the middleware never breaks a page when the write fails;
+    `AccountEraser` removes them and includes them in the export.
+  - Metrics: build a tester with a known shape — joined 10 days ago, active on 5
+    of the first 7, one story, one narration — and assert each of the five
+    measures reads correctly off it. Assert an inactive person is not counted
+    activated.
+  - Survey: not offered before day 7, offered after, not offered twice, one row
+    per person, prose answers encrypted at rest, and the PMF score counts only
+    "very disappointed".
+  - Ownership, as everywhere: one person cannot read or answer for another, and
+    the whole Beta and Feedback area is a 404 to a non-admin.
 - Browser-driven pass on a local server at the deployed commit
   (`tests/browser/journey.mjs` pattern, Chromium at `/opt/pw-browsers/chromium`),
-  covering apply → select → email → redeem invite → sign up → first story.
+  clicking the nudge through to a submitted response and reading it in admin.
 - Live `curl` checks against `escalate.cloud` to confirm production serves the
   same commit; the sandbox cannot drive a browser against the live host.

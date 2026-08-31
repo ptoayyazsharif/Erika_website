@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AffirmationController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Admin\ApplicationController as AdminApplications;
+use App\Http\Controllers\Admin\BetaController as AdminBeta;
+use App\Http\Controllers\Admin\FeedbackController as AdminFeedback;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\InviteController as AdminInvites;
 use App\Http\Controllers\Admin\PlanController as AdminPlans;
@@ -184,6 +187,12 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::get('/stories', [StoryController::class, 'index'])->name('stories.index');
     Route::post('/desires/{desire}/stories', [StoryController::class, 'store'])
         ->middleware(['verified-email', 'throttle:12,60'])->name('stories.store');
+    /* The day-seven survey. No verified-email gate and no throttle beyond the
+       ordinary: answering costs nothing and reaches no provider. */
+    Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback');
+    Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::post('/feedback/later', [FeedbackController::class, 'defer'])->name('feedback.defer');
+
     /* Daily affirmation cards. `verified-email` and the same throttle as the
        other two paid routes: drawing a set calls the writing provider. */
     Route::get('/affirmations', [AffirmationController::class, 'index'])->name('affirmations');
@@ -275,6 +284,9 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         Route::get('/plans/{plan}/edit', [AdminPlans::class, 'edit'])->name('plans.edit');
         Route::put('/plans/{plan}', [AdminPlans::class, 'update'])->name('plans.update');
         Route::delete('/plans/{plan}', [AdminPlans::class, 'destroy'])->name('plans.destroy');
+
+        Route::get('/beta', AdminBeta::class)->name('beta');
+        Route::get('/feedback', AdminFeedback::class)->name('feedback');
 
         Route::get('/applications', [AdminApplications::class, 'index'])->name('applications');
         Route::get('/applications/{application}', [AdminApplications::class, 'show'])->name('applications.show');

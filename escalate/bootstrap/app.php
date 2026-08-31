@@ -4,6 +4,7 @@ use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\RejectSuspended;
 use App\Http\Middleware\RequireStripeWebhookSecret;
 use App\Http\Middleware\RequireVerifiedEmail;
+use App\Http\Middleware\RecordActivityDay;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             SecurityHeaders::class,
+            // Which days somebody was here — the only thing that can answer
+            // "did they come back". See the class: a date and a person, never
+            // a path or a time.
+            RecordActivityDay::class,
         ]);
 
         $middleware->alias([
