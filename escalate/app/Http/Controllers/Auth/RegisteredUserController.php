@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\ApplicationController as AdminApplications;
 use App\Models\Invite;
 use App\Models\User;
+use App\Support\Plan;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -104,6 +106,27 @@ class RegisteredUserController extends Controller
                 throw ValidationException::withMessages([
                     'invite' => 'That invite has just been used. Ask for another.',
                 ]);
+            }
+
+            /*
+             * The cohort, and what was promised with it.
+             *
+             * An invite minted by Admin → Applications carries "Founding 25" in
+             * its note. Copying it onto the user here means the promise outlives
+             * the invite row, and the comp is applied at the same moment rather
+             * than being something somebody has to remember to do afterwards —
+             * a founding tester who gets billed because a step was missed is
+             * the one mistake this cohort must not experience.
+             *
+             * plan_override rather than a Stripe coupon: Plan::for() checks it
+             * before Stripe, it costs no billing code, it is visible on the
+             * admin People screen, and they never meet a card form at all.
+             */
+            if ($invite && $invite->note === AdminApplications::COHORT) {
+                $user->forceFill([
+                    'cohort'        => AdminApplications::COHORT,
+                    'plan_override' => Plan::paidKey(),
+                ])->save();
             }
 
             // Timestamped, so the consent can be evidenced later rather than

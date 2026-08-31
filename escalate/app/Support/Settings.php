@@ -129,6 +129,7 @@ class Settings
                 'escalate.quotas.stories_per_day'    => ['type' => 'int', 'label' => 'Readings', 'help' => 'Used when billing is off. With billing on, the per-plan numbers below apply instead.'],
                 'escalate.quotas.narrations_per_day' => ['type' => 'int', 'label' => 'Narrations'],
                 'escalate.quotas.rewinds_per_day'    => ['type' => 'int', 'label' => 'Rewinds'],
+                'escalate.quotas.affirmations_per_day' => ['type' => 'int', 'label' => 'Card draws', 'help' => 'How many times a day someone may draw a fresh set of affirmation cards. One draw is five cards.'],
                 'escalate.quotas.regenerations_per_story' => ['type' => 'int', 'label' => 'Rewrites per reading'],
             ],
 
@@ -136,15 +137,18 @@ class Settings
                 'escalate.plans.free.quotas.story'        => ['type' => 'int', 'label' => 'Free — readings'],
                 'escalate.plans.free.quotas.narration'    => ['type' => 'int', 'label' => 'Free — narrations'],
                 'escalate.plans.free.quotas.rewind'       => ['type' => 'int', 'label' => 'Free — rewinds'],
+                'escalate.plans.free.quotas.affirmation'  => ['type' => 'int', 'label' => 'Free — card draws'],
                 'escalate.plans.monthly.quotas.story'     => ['type' => 'int', 'label' => 'Paid — readings'],
                 'escalate.plans.monthly.quotas.narration' => ['type' => 'int', 'label' => 'Paid — narrations'],
                 'escalate.plans.monthly.quotas.rewind'    => ['type' => 'int', 'label' => 'Paid — rewinds'],
+                'escalate.plans.monthly.quotas.affirmation' => ['type' => 'int', 'label' => 'Paid — card draws'],
             ],
 
             'The ceiling, across everyone' => [
                 'escalate.ceiling.stories_per_day'    => ['type' => 'int', 'label' => 'Readings a day', 'help' => 'A whole-application cap. The per-person limit multiplies by the number of accounts; this one does not. 0 means unlimited.'],
                 'escalate.ceiling.narrations_per_day' => ['type' => 'int', 'label' => 'Narrations a day'],
                 'escalate.ceiling.rewinds_per_day'    => ['type' => 'int', 'label' => 'Rewinds a day'],
+                'escalate.ceiling.affirmations_per_day' => ['type' => 'int', 'label' => 'Card draws a day'],
             ],
         ];
     }

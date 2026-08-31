@@ -22,6 +22,12 @@
 @endif
 
 <div class="card" data-enter>
+    @if ($person->cohort)
+        <p class="small" style="margin:0 0 var(--s-4)">
+            <span class="pill">{{ $person->cohort }}</span>
+        </p>
+    @endif
+
     <p class="eyebrow">What they have</p>
     <div class="row wrap" style="gap:var(--s-6);margin-top:var(--s-3)">
         @foreach ([['desires','desires'],['stories','readings'],['gratitude','gratitude entries'],['rewinds','rewinds']] as [$k,$label])

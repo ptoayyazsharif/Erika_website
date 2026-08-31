@@ -101,6 +101,40 @@ class Plan
         );
     }
 
+    /**
+     * The plan to put somebody on when we mean "give them everything".
+     *
+     * Used for comps: a founding tester, a refund case, a friend. Picked by
+     * what a plan grants rather than by name, so it keeps meaning "the full
+     * one" if a tier is added later — and it does not require the plan to be
+     * purchasable, because a comp is not a purchase and must still work while
+     * billing is switched off or a price id is missing.
+     *
+     * Falls back to free rather than to nothing: an override that names a plan
+     * which no longer exists would be ignored by for(), and silently leaving
+     * somebody on free is better than a null that has to be handled everywhere.
+     */
+    public static function paidKey(): string
+    {
+        $best = self::FREE;
+        $bestQuota = -1;
+
+        foreach (self::all() as $key => $plan) {
+            if ($key === self::FREE || ! ($plan['is_active'] ?? true)) {
+                continue;
+            }
+
+            $quota = array_sum(array_map('intval', $plan['quotas'] ?? []));
+
+            if ($quota > $bestQuota) {
+                $best = $key;
+                $bestQuota = $quota;
+            }
+        }
+
+        return $best;
+    }
+
     public static function config(string $key): array
     {
         return self::all()[$key] ?? self::all()[self::FREE] ?? [];
@@ -194,7 +228,10 @@ class Plan
         return match ($kind) {
             'story'        => (int) config('escalate.quotas.stories_per_day'),
             'narration'    => (int) config('escalate.quotas.narrations_per_day'),
-            'affirmations' => (int) config('escalate.quotas.affirmations_per_day'),
+            // Singular, like every other kind. It was 'affirmations' — the only
+            // plural in the list — so Quota::limit('affirmation') fell through
+            // to 0 and the feature could never have run.
+            'affirmation'  => (int) config('escalate.quotas.affirmations_per_day'),
             'rewind'       => (int) config('escalate.quotas.rewinds_per_day'),
             default        => 0,
         };

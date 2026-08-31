@@ -1309,9 +1309,44 @@ a.card:active, button.card:active { transform: translateY(0); }
 .timeline-body:hover .timeline-title { color: var(--accent); }
 .timeline-title { font-family: var(--serif); font-size: var(--t-md); line-height: 1.35; }
 
+/* ── Affirmation cards ───────────────────────────────────────────────────
+   A card is a real <details>, so turning it over needs no JavaScript. The
+   summary marker is removed on both engines — Safari needs the ::-webkit-
+   pseudo-element, everything else honours list-style — because the default
+   triangle sits badly against a serif line and reads as a file tree.
+   ------------------------------------------------------------------------ */
+
+.affirm-card > summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  cursor: pointer;
+  list-style: none;
+  /* The whole card is the target, so it is comfortably over 44px. */
+  min-height: 44px;
+}
+
+.affirm-card > summary::-webkit-details-marker { display: none; }
+
+.affirm-card > summary:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: var(--r-sm);
+}
+
+.affirm-front {
+  font-size: var(--t-md);
+  line-height: 1.5;
+}
+
+.affirm-card[open] .affirm-hint { display: none; }
+
 @media print {
   .topbar, .tabbar, .toast, .btn, body::before { display: none !important; }
   body { background: #fff; color: #000; }
   .shell { padding: 0; max-width: none; }
   .card { border: 0; box-shadow: none; padding: 0; }
+  /* Print a card face-up and face-down: a kept affirmation is worth more with
+     the line saying what it stands on. */
+  .affirm-card > *:not(summary) { display: block !important; }
 }

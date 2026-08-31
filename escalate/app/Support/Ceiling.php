@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\AffirmationSet;
 use App\Models\AiEvent;
 use App\Models\Narration;
 use App\Models\Rewind;
@@ -41,6 +42,7 @@ class Ceiling
             'story'     => (int) config('escalate.ceiling.stories_per_day'),
             'narration' => (int) config('escalate.ceiling.narrations_per_day'),
             'rewind'    => (int) config('escalate.ceiling.rewinds_per_day'),
+            'affirmation' => (int) config('escalate.ceiling.affirmations_per_day'),
             default     => 0,
         };
     }
@@ -62,6 +64,7 @@ class Ceiling
             'story'     => Story::whereIn('state', ['queued', 'writing'])->count(),
             'narration' => Narration::whereIn('state', ['queued', 'rendering'])->count(),
             'rewind'    => Rewind::whereIn('state', ['queued', 'writing'])->count(),
+            'affirmation' => AffirmationSet::whereIn('state', ['queued', 'writing'])->count(),
             default     => 0,
         };
     }

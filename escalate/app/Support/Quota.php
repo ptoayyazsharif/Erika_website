@@ -65,6 +65,11 @@ class Quota
             'rewind' => $user->rewinds()
                 ->whereIn('state', ['queued', 'writing'])
                 ->count(),
+            // Same shape as the three above, and included from the start rather
+            // than added after the same window is found open a second time.
+            'affirmation' => $user->affirmationSets()
+                ->whereIn('state', ['queued', 'writing'])
+                ->count(),
             default => 0,
         };
     }
@@ -110,6 +115,7 @@ class Quota
                 'story'     => 'That is the free plan’s reading for today. There is more on a full plan — or come back tomorrow, which costs nothing.',
                 'narration' => 'That is the free plan’s narration for today. The words are still here to read, and there is more on a full plan.',
                 'rewind'    => 'That is the free plan’s rewind for today. Your answers are saved either way.',
+                'affirmation' => 'That is the free plan’s cards for today. There are more on a full plan — and today’s are still here to read.',
                 default     => 'That is the free plan’s limit for today.',
             };
         }
@@ -118,6 +124,7 @@ class Quota
             'story'     => 'You have used today’s readings. More tomorrow — a reading is worth returning to more than it is worth replacing.',
             'narration' => 'You have used today’s narrations. The words are still here to read.',
             'rewind'    => 'You have used today’s rewinds.',
+            'affirmation' => 'You have drawn today’s cards. They are still here to read, and there are new ones tomorrow.',
             default     => 'You have reached today’s limit for this.',
         };
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AffirmationController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Admin\ApplicationController as AdminApplications;
@@ -183,6 +184,15 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::get('/stories', [StoryController::class, 'index'])->name('stories.index');
     Route::post('/desires/{desire}/stories', [StoryController::class, 'store'])
         ->middleware(['verified-email', 'throttle:12,60'])->name('stories.store');
+    /* Daily affirmation cards. `verified-email` and the same throttle as the
+       other two paid routes: drawing a set calls the writing provider. */
+    Route::get('/affirmations', [AffirmationController::class, 'index'])->name('affirmations');
+    Route::post('/affirmations', [AffirmationController::class, 'store'])
+        ->middleware(['verified-email', 'throttle:12,60'])->name('affirmations.store');
+    Route::get('/affirmations/state', [AffirmationController::class, 'state'])->name('affirmations.state');
+    Route::post('/affirmations/{affirmation}/favourite', [AffirmationController::class, 'favourite'])
+        ->name('affirmations.favourite');
+
     Route::get('/stories/{story}', [StoryController::class, 'show'])->name('stories.show');
     Route::get('/stories/{story}/state', [StoryController::class, 'state'])->name('stories.state');
     Route::post('/stories/{story}/narrate', [StoryController::class, 'narrate'])

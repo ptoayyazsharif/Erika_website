@@ -77,6 +77,7 @@
             ['today',           'Back to the app', 'Exit', 'sunrise'],
         ] : [
             ['today',          'Today',      'Today',      'sunrise'],
+            ['affirmations',   'My Cards',   'Cards',      'sparkle'],
             ['stories.index',  'My Stories', 'Stories',    'book'],
             ['desires.index',  'Desires',    'Desires',    'compass'],
             ['gratitude.index','Gratitude',  'Gratitude',  'heart'],

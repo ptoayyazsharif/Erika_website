@@ -320,7 +320,7 @@ return [
             'price'  => null,
             'display' => 'Free',
             'interval' => null,
-            'quotas' => ['story' => 1, 'narration' => 1, 'rewind' => 1],
+            'quotas' => ['story' => 1, 'narration' => 1, 'rewind' => 1, 'affirmation' => 1],
         ],
 
         'monthly' => [
@@ -329,7 +329,7 @@ return [
             'price'  => env('STRIPE_PRICE_MONTHLY'),
             'display' => env('STRIPE_PRICE_MONTHLY_LABEL', '$12 / month'),
             'interval' => 'month',
-            'quotas' => ['story' => 5, 'narration' => 8, 'rewind' => 3],
+            'quotas' => ['story' => 5, 'narration' => 8, 'rewind' => 3, 'affirmation' => 2],
         ],
 
         'yearly' => [
@@ -338,7 +338,7 @@ return [
             'price'  => env('STRIPE_PRICE_YEARLY'),
             'display' => env('STRIPE_PRICE_YEARLY_LABEL', '$120 / year'),
             'interval' => 'year',
-            'quotas' => ['story' => 5, 'narration' => 8, 'rewind' => 3],
+            'quotas' => ['story' => 5, 'narration' => 8, 'rewind' => 3, 'affirmation' => 2],
         ],
     ],
 
@@ -364,6 +364,7 @@ return [
         'stories_per_day'    => (int) env('CEILING_STORIES_PER_DAY', 200),
         'narrations_per_day' => (int) env('CEILING_NARRATIONS_PER_DAY', 300),
         'rewinds_per_day'    => (int) env('CEILING_REWINDS_PER_DAY', 100),
+        'affirmations_per_day' => (int) env('CEILING_AFFIRMATIONS_PER_DAY', 300),
     ],
 
     /*
