@@ -241,6 +241,11 @@ return [
 
         // How long a minted invite stays good for, in days. Null for forever.
         'invite_days' => (int) env('INVITE_DAYS', 30),
+
+        // The Founding 25. A number whose whole point is that it runs out, so
+        // the admin screen can say how many seats are left rather than letting
+        // somebody hand out a twenty-sixth by accident.
+        'founding_seats' => (int) env('FOUNDING_SEATS', 25),
     ],
 
     /*

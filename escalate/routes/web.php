@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\Admin\ApplicationController as AdminApplications;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\InviteController as AdminInvites;
 use App\Http\Controllers\Admin\PlanController as AdminPlans;
@@ -60,6 +62,31 @@ Route::view('/offline', 'offline')->name('offline');
    that is the whole point of a disclosure. */
 Route::view('/privacy', 'privacy')->name('privacy');
 
+/* The private beta application.
+ *
+ * Deliberately outside the 'guest' group: these links go out on social, and
+ * somebody already signed in who taps one should read the page rather than be
+ * bounced to Today with no explanation.
+ *
+ * Throttled because it writes a row and sends mail on behalf of someone who has
+ * proved nothing — but not as hard as /forgot-password, and the difference is
+ * deliberate.
+ *
+ * These limits key on IP, and mobile carriers put thousands of unrelated people
+ * behind one address. A password reset is rare per person, so five an hour
+ * there never collides. An application form during a launch push is the
+ * opposite: a burst of strangers arriving from Instagram, most of them on
+ * mobile, many sharing a carrier NAT. At five an hour the sixth real applicant
+ * meets a 429 and does not come back.
+ *
+ * Twenty still stops a script, and what a flood could achieve is bounded
+ * anyway: the honeypot catches the naive case, a repeat address updates its
+ * own row rather than making a new one, and everything that lands is a row an
+ * administrator reads before it grants anything. */
+Route::get('/apply', [ApplicationController::class, 'create'])->name('apply');
+Route::post('/apply', [ApplicationController::class, 'store'])
+    ->middleware('throttle:20,60')->name('apply.store');
+
 /* ── guests ──────────────────────────────────────────────────────────────── */
 
 Route::middleware('guest')->group(function () {
@@ -84,7 +111,14 @@ Route::middleware('guest')->group(function () {
         ->name('register.store');
 });
 
-Route::get('/', fn () => redirect()->route(auth()->check() ? 'today' : 'login'));
+/* The front door.
+ *
+ * A signed-in person still goes straight to Today — the app is the thing they
+ * came for. Everyone else now gets the landing page instead of being dropped
+ * on a login form with no idea what this is. */
+Route::get('/', fn () => auth()->check()
+    ? redirect()->route('today')
+    : response()->view('landing'))->name('landing');
 
 /* ── signed in ───────────────────────────────────────────────────────────── */
 
@@ -231,6 +265,11 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         Route::get('/plans/{plan}/edit', [AdminPlans::class, 'edit'])->name('plans.edit');
         Route::put('/plans/{plan}', [AdminPlans::class, 'update'])->name('plans.update');
         Route::delete('/plans/{plan}', [AdminPlans::class, 'destroy'])->name('plans.destroy');
+
+        Route::get('/applications', [AdminApplications::class, 'index'])->name('applications');
+        Route::get('/applications/{application}', [AdminApplications::class, 'show'])->name('applications.show');
+        Route::post('/applications/{application}/select', [AdminApplications::class, 'select'])->name('applications.select');
+        Route::post('/applications/{application}/decline', [AdminApplications::class, 'decline'])->name('applications.decline');
 
         Route::get('/invites', [AdminInvites::class, 'index'])->name('invites');
         Route::post('/invites', [AdminInvites::class, 'store'])->name('invites.store');

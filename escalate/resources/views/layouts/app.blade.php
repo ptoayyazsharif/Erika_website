@@ -71,6 +71,7 @@
             ['admin.dashboard', 'Overview', 'Overview', 'journey'],
             ['admin.users',     'People',   'People',   'compass'],
             ['admin.plans',     'Plans',    'Plans',    'book'],
+            ['admin.applications', 'Apply', 'Applications', 'heart'],
             ['admin.invites',   'Invites',  'Invites',  'plus'],
             ['admin.settings',  'Settings', 'Settings', 'world'],
             ['today',           'Back to the app', 'Exit', 'sunrise'],
