@@ -17,9 +17,12 @@
 
     <div class="field">
         <label for="password">Password</label>
-        <input class="input" id="password" name="password" type="password"
-               autocomplete="current-password" required
-               @error('password') aria-invalid="true" @enderror>
+        <div class="field-reveal">
+            <input class="input" id="password" name="password" type="password"
+                   autocomplete="current-password" required
+                   @error('password') aria-invalid="true" @enderror>
+            @include('partials.password-toggle', ['for' => 'password'])
+        </div>
     </div>
 
     <label class="option" style="margin-bottom:var(--s-5)">

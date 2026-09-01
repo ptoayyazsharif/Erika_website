@@ -17,15 +17,21 @@
 
     <div class="field">
         <label for="password">New password</label>
-        <input class="input" id="password" name="password" type="password"
-               autocomplete="new-password" required autofocus
-               @error('password') aria-invalid="true" @enderror>
+        <div class="field-reveal">
+            <input class="input" id="password" name="password" type="password"
+                   autocomplete="new-password" required autofocus
+                   @error('password') aria-invalid="true" @enderror>
+            @include('partials.password-toggle', ['for' => 'password'])
+        </div>
     </div>
 
     <div class="field">
         <label for="password_confirmation">New password again</label>
-        <input class="input" id="password_confirmation" name="password_confirmation"
-               type="password" autocomplete="new-password" required>
+        <div class="field-reveal">
+            <input class="input" id="password_confirmation" name="password_confirmation"
+                   type="password" autocomplete="new-password" required>
+            @include('partials.password-toggle', ['for' => 'password_confirmation'])
+        </div>
     </div>
 
     <p class="small muted" style="margin-bottom:var(--s-5)">

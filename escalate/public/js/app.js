@@ -171,6 +171,48 @@
     });
   }
 
+  /* ── show the password you are typing ──────────────────────────────────── */
+
+  /*
+   * Asked for by users signing in. The buttons are rendered hidden and unhidden
+   * here, so a browser with this file blocked gets a plain password field
+   * rather than a control that does nothing when pressed.
+   *
+   * The choice is deliberately never remembered — not in localStorage, not in a
+   * cookie, not across a page load. A password left revealed on a screen
+   * somebody else can see is a worse failure than typing it twice, and this is
+   * an app whose whole promise is that what is inside it stays private.
+   */
+  function initPasswordReveal() {
+    $$('[data-reveal]').forEach(btn => {
+      const input = document.getElementById(btn.dataset.reveal);
+      if (!input) return;
+
+      btn.hidden = false;
+
+      btn.addEventListener('click', () => {
+        const shown = input.type === 'text';
+        input.type = shown ? 'password' : 'text';
+
+        btn.setAttribute('aria-pressed', String(!shown));
+        const label = shown ? 'Show password' : 'Hide password';
+        btn.setAttribute('aria-label', label);
+        btn.title = label;
+
+        // Swapping an input's type moves the caret to position 0 in several
+        // browsers, so somebody who reveals mid-password carries on typing at
+        // the front of it. Put it back at the end.
+        const end = input.value.length;
+        input.focus();
+        try {
+          input.setSelectionRange(end, end);
+        } catch {
+          // Some input types refuse setSelectionRange. Focus alone is fine.
+        }
+      });
+    });
+  }
+
   /* ── textareas that grow ───────────────────────────────────────────────── */
 
   function initAutogrow() {
@@ -412,6 +454,7 @@
     initFlash();
     initMotion();
     initCounters();
+    initPasswordReveal();
     initAutogrow();
     initOptions();
     initCircle();

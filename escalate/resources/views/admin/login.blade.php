@@ -13,9 +13,12 @@
 
     <div class="field">
         <label for="password">Password</label>
-        <input class="input" id="password" name="password" type="password"
-               autocomplete="current-password" required autofocus
-               @error('password') aria-invalid="true" @enderror>
+        <div class="field-reveal">
+            <input class="input" id="password" name="password" type="password"
+                   autocomplete="current-password" required autofocus
+                   @error('password') aria-invalid="true" @enderror>
+            @include('partials.password-toggle', ['for' => 'password'])
+        </div>
     </div>
 
     <button class="btn btn-full" type="submit" data-busy="Checking…">Unlock admin</button>

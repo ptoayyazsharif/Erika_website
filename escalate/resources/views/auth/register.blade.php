@@ -38,15 +38,21 @@
     <div class="field">
         <label for="password">Password</label>
         <span class="hint">At least twelve characters, with letters and numbers. This is the only thing standing between your journal and anyone else.</span>
-        <input class="input" id="password" name="password" type="password"
-               autocomplete="new-password" required
-               @error('password') aria-invalid="true" @enderror>
+        <div class="field-reveal">
+            <input class="input" id="password" name="password" type="password"
+                   autocomplete="new-password" required
+                   @error('password') aria-invalid="true" @enderror>
+            @include('partials.password-toggle', ['for' => 'password'])
+        </div>
     </div>
 
     <div class="field">
         <label for="password_confirmation">Password again</label>
-        <input class="input" id="password_confirmation" name="password_confirmation"
-               type="password" autocomplete="new-password" required>
+        <div class="field-reveal">
+            <input class="input" id="password_confirmation" name="password_confirmation"
+                   type="password" autocomplete="new-password" required>
+            @include('partials.password-toggle', ['for' => 'password_confirmation'])
+        </div>
     </div>
 
     <label class="option {{ old('agree') ? 'is-on' : '' }}" style="margin-bottom:var(--s-3)">
