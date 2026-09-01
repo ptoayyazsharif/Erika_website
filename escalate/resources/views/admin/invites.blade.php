@@ -12,6 +12,15 @@
 
 @include('admin._nav')
 
+@if (filled(config('escalate.copy.outreach')))
+    {{-- The message Erika sends people, kept where somebody already is when
+         they need it. Editable in Settings → Words on the public pages. --}}
+    <details class="card card-quiet" data-enter>
+        <summary><span class="small">The message to send</span></summary>
+        <p style="margin:var(--s-3) 0 0;white-space:pre-wrap">{{ config('escalate.copy.outreach') }}</p>
+    </details>
+@endif
+
 <form method="POST" action="{{ route('admin.invites.store') }}" class="card" data-once data-enter>
     @csrf
     <h3 style="margin-bottom:var(--s-5)">Mint some</h3>

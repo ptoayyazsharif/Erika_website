@@ -58,7 +58,9 @@ class ApplicationController extends Controller
             'agree' => ['accepted'],
         ], [
             'agree.accepted' => 'Please confirm you have read what happens to what you write.',
-            'changing.required' => 'This one matters most — tell us what you are working toward.',
+            // Quotes nothing from the question itself, so rewording it in the
+            // admin panel cannot leave this sentence contradicting it.
+            'changing.required' => 'This one matters most — please answer the first question.',
         ]);
 
         $email = Application::normaliseEmail($data['email']);

@@ -11,11 +11,7 @@
 
 <div class="card" data-enter>
     <p class="eyebrow">The app in one sentence</p>
-    <p style="margin:var(--s-3) 0 0">
-        Escalate helps you write personal stories about the life you want,
-        listen to them daily, and keep a living record of your gratitude,
-        answered prayers and how it all came together.
-    </p>
+    <p style="margin:var(--s-3) 0 0">{{ config('escalate.copy.intro') }}</p>
 </div>
 
 <div class="rule">What you get</div>
@@ -43,10 +39,8 @@
 
 <div class="card card-raised" data-enter>
     <p class="eyebrow">Private beta</p>
-    <h3 style="margin:var(--s-2) 0 var(--s-3)">Escalate is invite-only.</h3>
-    <p class="small muted" style="margin:0 0 var(--s-5)">
-        We are opening a small number of seats to founding testers. If you are
-        selected you get early access, and a real say in what this becomes.
+    <p class="small muted" style="margin:var(--s-3) 0 var(--s-5)">
+        {{ config('escalate.copy.not_launched') }}
     </p>
 
     <a class="btn btn-full" href="{{ route('apply') }}">Request private access</a>

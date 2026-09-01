@@ -94,6 +94,20 @@
                             @isset($meta['help'])<small>{{ $meta['help'] }}</small>@endisset
                         </span>
                     </label>
+                @elseif ($meta['type'] === 'text')
+                    <div class="field">
+                        <label for="{{ $field }}">{{ $meta['label'] }}</label>
+                        @isset($meta['help'])<span class="hint">{{ $meta['help'] }}</span>@endisset
+
+                        <textarea class="textarea" id="{{ $field }}" name="settings[{{ $field }}]"
+                                  style="min-height:96px" maxlength="2000">{{ $shown['value'] }}</textarea>
+
+                        <div class="row small faint" style="gap:var(--s-3);margin-top:4px">
+                            @if (\App\Support\Settings::isOverridden($key))
+                                <span>Edited here. Clear the box to go back to the original wording.</span>
+                            @endif
+                        </div>
+                    </div>
                 @elseif ($meta['type'] === 'choice')
                     <div class="field">
                         <label for="{{ $field }}">{{ $meta['label'] }}</label>

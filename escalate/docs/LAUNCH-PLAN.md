@@ -215,6 +215,183 @@ themselves:
   — the same footing as an application, and unlike a journal entry, which is why
   admin may read them at all.
 
+### Urgent — the reading that named a stranger
+
+**Context.** A desire naming nobody ("Whole family together enjoying in ranch,
+all brothers and their kids live at same place") produced a reading in which
+*"Zarak calls out from the second house."* There is no Zarak in the account —
+not in My Circle, not anywhere. For a private journal whose whole promise is
+that it writes back *your* life, a stranger standing in it is the worst class of
+bug this app can have.
+
+It was not a hallucination out of nowhere. **The prompt ordered it.**
+
+#### Root cause
+
+`app/Services/StoryWriter.php`, `system()`, rule 4:
+
+> Every place, number and object they gave you must appear at least once,
+> spelled exactly as they wrote it, **and so must the names of other people in
+> their life.** Do not invent names for people they did not name.
+
+Two clauses in direct contradiction, and the contradiction goes live *precisely
+when the user has named nobody*: names must appear, and there are none to use.
+The model resolved it the way this same file's docstring records the perspective
+rule being resolved — the MUST won, so it manufactured a name to satisfy it. The
+desire mentions brothers; it produced a brother.
+
+The same rule fails on the opposite input. `StoryWriter::user()` sends the
+**entire** My Circle, unscoped, under "use these names exactly" — so a desire
+about a new job is required to mention a daughter. `people_involved` (the
+checkbox list of circle members on the desire form,
+`resources/views/desires/create.blade.php:92`) is passed to the prompt but never
+used to decide who is *sent*.
+
+`app/Services/RewindWriter.php` rule 6 already states the correct rule — "Name
+the people they named, exactly as written, and only those." StoryWriter is the
+outlier. **`app/Services/AffirmationWriter.php` copied StoryWriter's unscoped
+circle block when I wrote it in Phase B, so the cards carry the same fault.**
+
+#### Fix
+
+1. **Split rule 4.** Places, numbers and objects keep their "must appear" —
+   that clause is what stops a reading sounding generic and it is doing its job.
+   Names become permission, never obligation. When nobody is attached the rule
+   is positive and concrete rather than a prohibition: *nobody is named; people
+   appear by relationship* — "my brother", "his eldest", "the neighbour". The
+   model already proved it writes this register well in the very same piece —
+   *"one of my brothers' kids is arguing with a dog"* is exactly right — and it
+   only reached for a name because it was told one had to appear.
+2. **Scope the circle to `people_involved`.** Anyone not attached to this desire
+   is not sent at all. A name that never reaches the prompt cannot reach the
+   prose, which is a stronger guarantee than any instruction.
+3. **The same two changes in `AffirmationWriter`**, which has the same block.
+4. **Check before storing.** The writer asks for a declared list of everyone the
+   piece names, verifies it against the allowlist, and treats a name outside it
+   as a failed generation — one retry, then a visible failure rather than a
+   stored reading with a stranger in it. Parsed and stripped exactly like the
+   `(DESIRE n)` tag in `AffirmationWriter::parse()`.
+
+   **This is a net, not a proof.** A model that names someone and omits it from
+   its own declaration still gets through. The prompt is the fix; the check
+   catches the case where the model is honest but wrong, and every circle name,
+   which is an exact string comparison.
+
+#### Status — written and tested, not shipped
+
+The four changes are **applied to the working tree and pass their own tests**;
+nothing is committed or deployed.
+
+- `app/Services/StoryWriter.php` — rule 4 split so places/numbers/objects keep
+  their "must appear" and names do not; new `namingRule()` and `peopleFor()`;
+  circle filtered to `people_involved`; the loose "People involved" context line
+  removed so who may be named has exactly one home; `NAMES:` declaration added
+  to the output contract, with `splitNames()` stripping it and
+  `refuseStrangers()` throwing on anyone off the allowlist.
+- `app/Services/AffirmationWriter.php` — same scoping and its own
+  `namingRule()` / `namedAcross()`.
+- `tests/Feature/NamingTest.php` — new, **7/7 passing**, asserting the prompt
+  itself: the ranch desire with nobody attached forbids naming anyone, the old
+  mandate is gone rather than softened, unattached circle members never reach
+  the prompt, attached ones do, a declared stranger is refused and not stored,
+  and the `NAMES:` line never reaches a reader.
+
+`WriteStory` needed no change: an exception from the writer already retries once
+(`$tries = 2`) and then lands in `failed()`, which marks the reading failed with
+a plain message — one retry, then a visible failure, which is what this wants.
+
+**Not yet done, and the reason this is not finished:**
+
+1. **The full suite has not been run since the change.** `GenerationTest`,
+   `CircleTest`, `BlankFieldsTest` and `CeilingTest` all exercise this path.
+   Nothing asserts the removed "People involved" line — checked — but that is an
+   argument for expecting it to pass, not evidence that it does.
+2. Commit and deploy.
+3. Then regenerate the ranch reading on the live app, as the proof.
+
+#### Afterwards
+
+The ruined reading can be replaced from the app — `stories.regenerate` already
+exists on the reading screen. Worth doing on this desire specifically, as the
+proof the fix worked.
+
+**One limit stated plainly:** a model that names somebody and leaves them out of
+its own `NAMES:` line still gets through. There is no reliable way to find an
+arbitrary invented name in prose, so the prompt is the fix and the check is a
+net. What the net catches for certain is every circle name, which is an exact
+comparison, and the honest-but-wrong case — which, on the evidence of the
+reading that started this, is the one that actually happens.
+
+### Erika's copy, and putting it under her control
+
+**Context.** Erika has rewritten the public wording and adjusted three of the
+five application questions. Right now every one of those strings is hardcoded in
+a Blade template, so each revision is a code change and a deploy — which for
+marketing copy, during a launch, is the wrong shape entirely. She has asked for
+the copy to be editable from the admin panel, and she is right to.
+
+#### The new wording, verbatim
+
+Intro: *"A private AI-powered personal growth experience that turns your goals
+into personalized stories you can read and listen to—while helping you reflect
+on your progress, gratitude and wins along the way."*
+
+Below it: *"Escalate hasn't been publicly launched yet. We're inviting a small
+group of founding testers to experience it first and help shape what it
+becomes."*
+
+Questions intro: *"Five quick questions. There are no right answers—we're
+looking for a diverse group of thoughtful testers who will actually use Escalate
+and tell us what they think."*
+
+- **Q1** *"What area of your life are you currently focused on changing,
+  improving or creating something new in?"* — helper: *"Career, money,
+  relationships, health, family, lifestyle, personal growth—or anything else
+  that matters to you."*
+- **Q2** *"Do you currently use any reflection or personal-growth practices—such
+  as journaling, visualization, prayer, meditation or affirmations?"* — helper:
+  *"If yes, tell us what you use and what you like about it. If not, that's
+  useful for us to know too."*
+- **Q3** *"Have you ever used a manifestation, visualization, journaling or
+  personal-development app? If so, which one—and what did you like or dislike
+  about it?"*
+- **Q4 and Q5** unchanged.
+
+Her outreach message ("I've been quietly developing…") is not a page in the app,
+but it is the thing she will paste into DMs all week, so it gets a home too —
+stored alongside the rest and shown on **Admin → Invites**, where somebody is
+already standing when they need it.
+
+#### How
+
+1. **A `copy` block in `config/escalate.php`** holding every one of these
+   strings as its default. Erika's wording is the default, so a fresh install
+   and an untouched database both say exactly what she wrote — the admin
+   override is a change of mind, not the source of truth.
+2. **The views read `config('escalate.copy.*')`** — `resources/views/landing.blade.php`
+   and `resources/views/apply.blade.php`, whose questions stop being a literal
+   array in the template. `Admin\ApplicationController`'s answer labels and the
+   `changing.required` validation message in `ApplicationController` read from
+   the same place, so a reworded question cannot drift from the label above the
+   answer it produced.
+3. **A "Words on the public pages" group in `Settings::editable()`** — the
+   allowlist stays the security boundary, exactly as for every other setting.
+   It needs one new type, `text`, rendered as a textarea in
+   `resources/views/admin/settings.blade.php`; `SettingsController::update()`
+   needs no branch for it, since its default path already trims a string.
+4. **Rendered with `{{ }}`, never `{!! !!}`.** Copy an administrator types is
+   still untrusted input by the time it reaches a public page, and this app has
+   a `script-src 'self'` CSP precisely so that a mistake here is not the last
+   line of defence.
+
+#### The one wrinkle worth stating
+
+Answers already given were given to the *old* question. Editing a question later
+re-labels answers that were written to different words. For a beta of 25 that is
+acceptable and not worth a versioning table — but the admin field carries a line
+saying so, because discovering it from confusing data later is worse than
+reading it now.
+
 ### Phase D — brand
 
 9. **Icons and logo** once Erika supplies the doorway E as SVG + 1024px PNG:
@@ -230,7 +407,37 @@ themselves:
 
 ## Verification
 
-- `php artisan test` — the suite is at 277 after Phase B; Phase C adds to it.
+### The name fix
+
+The prompt is the thing that broke, so the prompt is what gets asserted — built
+and inspected directly, not inferred from output:
+
+- With nobody attached to the desire: the built prompt contains the "nobody is
+  named" instruction, contains **no** circle name, and contains no clause
+  requiring a name to appear.
+- With two circle members attached: exactly those two appear, and a third
+  circle member who was not attached does not.
+- Regression, named for what happened: a desire whose text mentions "brothers"
+  and whose `people_involved` is empty must produce a prompt that forbids
+  naming anyone.
+- With the Anthropic client faked to return a piece naming somebody outside the
+  allowlist: nothing is stored, and the reading ends in a visible failure.
+- The same three assertions against `AffirmationWriter`.
+
+### Erika's copy
+
+- The landing page and the application form serve her exact wording out of the
+  box, with no settings row present — defaults are the source of truth.
+- Saving an override in admin changes what the public page serves.
+- Copy containing `<script>` comes back escaped on the live page, never raw.
+- A reworded question and the label above that answer in Admin → Applications
+  stay in step, because both read the same key.
+
+### Everything else
+
+- `php artisan test` — the suite is at 300 after Phase C, plus the 7 in
+  `NamingTest`. **The full suite has not been run since the naming change and
+  must be, before anything is committed.**
 - **Phase C specifically:**
   - Activity days: a second request the same day writes no second row; a request
     the next day does; the middleware never breaks a page when the write fails;

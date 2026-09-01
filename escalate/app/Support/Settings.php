@@ -44,6 +44,7 @@ class Settings
      *   secret — write-only, masked on display
      *   bool   — checkbox
      *   choice — a fixed set, rendered as a dropdown; `options` is value => label
+     *   text   — multi-line prose, rendered as a textarea
      *   int    — number input, validated as a non-negative integer
      *   string — plain text
      */
@@ -118,6 +119,40 @@ class Settings
                 'mail.mailers.smtp.scheme'   => ['type' => 'string', 'label' => 'Scheme', 'help' => 'smtps for port 465. Leave blank for 587.'],
                 'mail.from.address'     => ['type' => 'string', 'label' => 'From address', 'help' => 'Must be on a domain the provider has verified, or everything is rejected or filed as spam.'],
                 'mail.from.name'        => ['type' => 'string', 'label' => 'From name'],
+            ],
+
+            /*
+             * Erika's copy, editable without a deploy.
+             *
+             * Every one of these is rendered with {{ }} on a public page, so
+             * what is typed here is escaped rather than executed — see the
+             * escaping test in LandingTest. The config defaults remain the
+             * source of truth; clearing a field here restores Erika's original
+             * wording rather than emptying the page.
+             */
+            'Words on the public pages' => [
+                'escalate.copy.intro' => ['type' => 'text', 'label' => 'What Escalate is, in one sentence', 'help' => 'The first thing anybody reads on the landing page.'],
+                'escalate.copy.not_launched' => ['type' => 'text', 'label' => 'Why they cannot just sign up', 'help' => 'Sits above the button on the landing page.'],
+                'escalate.copy.questions_intro' => ['type' => 'text', 'label' => 'Above the five questions', 'help' => 'The first thing anybody reads on the application form.'],
+                'escalate.copy.outreach' => ['type' => 'text', 'label' => 'The message you send people', 'help' => 'Not shown to anybody in the app — kept here so there is one copy of it, and shown on the Invites screen to paste from.'],
+            ],
+
+            /*
+             * Rewording a question after somebody has answered it re-labels
+             * their answer, which is stated on the first field rather than
+             * discovered later from confusing data.
+             */
+            'The five questions' => [
+                'escalate.copy.q_changing'      => ['type' => 'text', 'label' => '1. The question', 'help' => 'Answers already given were given to the wording that was showing at the time. Rewording a question re-labels older answers; with a small beta that is usually fine, but it is worth knowing.'],
+                'escalate.copy.q_changing_help' => ['type' => 'text', 'label' => '1. Helper line'],
+                'escalate.copy.q_practice'      => ['type' => 'text', 'label' => '2. The question'],
+                'escalate.copy.q_practice_help' => ['type' => 'text', 'label' => '2. Helper line'],
+                'escalate.copy.q_tried_apps'      => ['type' => 'text', 'label' => '3. The question'],
+                'escalate.copy.q_tried_apps_help' => ['type' => 'text', 'label' => '3. Helper line'],
+                'escalate.copy.q_will_use'      => ['type' => 'text', 'label' => '4. The question'],
+                'escalate.copy.q_will_use_help' => ['type' => 'text', 'label' => '4. Helper line'],
+                'escalate.copy.q_will_feedback'      => ['type' => 'text', 'label' => '5. The question'],
+                'escalate.copy.q_will_feedback_help' => ['type' => 'text', 'label' => '5. Helper line'],
             ],
 
             'Who can sign up' => [

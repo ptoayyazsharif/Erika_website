@@ -24,12 +24,34 @@ class LandingTest extends TestCase
             ->assertSee('Request private access');
     }
 
+    /** The copy on the page is the copy in config, so admin edits reach it. */
+    public function test_the_page_serves_the_editable_copy(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertSee(config('escalate.copy.intro'))
+            ->assertSee(config('escalate.copy.not_launched'));
+    }
+
+    /** An administrator's typing is still untrusted on a public page. */
+    public function test_copy_is_escaped_rather_than_rendered(): void
+    {
+        config(['escalate.copy.intro' => '<script>alert(1)</script>']);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('<script>alert(1)</script>', false)
+            ->assertSee('&lt;script&gt;', false);
+    }
+
     /** It says what the app is, not only that it exists. */
     public function test_it_explains_the_product_and_the_way_in(): void
     {
         $page = $this->get('/')->assertOk();
 
-        $page->assertSee('invite-only', false);
+        // Erika's wording, which replaced "invite-only" — the page has to say
+        // it is not open yet, however that is currently phrased.
+        $page->assertSee('founding testers', false);
         $page->assertSee(route('apply'), false);
         $page->assertSee(route('login'), false);
         $page->assertSee(route('privacy'), false);

@@ -5,8 +5,7 @@
 
 @section('form')
 <p class="small muted" style="margin-bottom:var(--s-5)">
-    Escalate is invite-only. Five questions — answer them honestly rather than
-    impressively; we are choosing for fit, not for enthusiasm.
+    {{ config('escalate.copy.questions_intro') }}
 </p>
 
 <form method="POST" action="{{ route('apply.store') }}" class="card" data-once>
@@ -39,13 +38,10 @@
 
     <div class="rule">Five questions</div>
 
-    @foreach ([
-        ['changing', 'What area of your life are you currently believing, praying, planning or working toward changing?', null],
-        ['practice', 'Do you currently journal, visualise, pray, meditate or use affirmations?', 'However you do it, or if you do not — both are useful to know.'],
-        ['tried_apps', 'Have you ever used a manifestation or personal development app?', 'Which ones, and what made you stop.'],
-        ['will_use', 'Would you realistically use Escalate at least 4 times during a 7-day test?', 'A truthful no here is more useful to us than an optimistic yes.'],
-        ['will_feedback', 'Are you willing to provide candid feedback after the test?', null],
-    ] as $i => [$field, $question, $hint])
+    {{-- The five questions come from config so Erika can reword them from the
+         admin panel without a deploy. Keyed by the column the answer lands in,
+         so the question and the label above that answer cannot drift apart. --}}
+    @foreach (\App\Support\Copy::questions() as $i => [$field, $question, $hint])
         <div class="field">
             <label for="{{ $field }}">{{ $i + 1 }}. {{ $question }}</label>
             @if ($hint)<span class="hint">{{ $hint }}</span>@endif

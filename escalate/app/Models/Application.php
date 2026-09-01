@@ -52,16 +52,22 @@ class Application extends Model
         return $this->status === self::PENDING;
     }
 
-    /** The five answers in the order they were asked, for the admin screen. */
+    /**
+     * The five answers under the questions that produced them.
+     *
+     * Labels read from App\Support\Copy rather than being written out again
+     * here, so rewording a question in the admin panel cannot leave an answer
+     * sitting under the sentence it was never asked.
+     *
+     * A question edited after answers exist does re-label older answers. For a
+     * beta of twenty-five that is worth accepting rather than versioning, and
+     * the admin field says so.
+     */
     public function answers(): array
     {
-        return [
-            'What they are working toward'      => $this->changing,
-            'Whether they already have a practice' => $this->practice,
-            'Apps they have tried'              => $this->tried_apps,
-            'Whether they would use it 4+ times' => $this->will_use,
-            'Whether they will give feedback'   => $this->will_feedback,
-        ];
+        return collect(\App\Support\Copy::labels())
+            ->mapWithKeys(fn (string $question, string $field) => [$question => $this->$field])
+            ->all();
     }
 
     /** Same normalisation the unique index relies on. */

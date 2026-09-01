@@ -226,6 +226,61 @@ return [
     | Opening it is then a decision someone made on purpose and can point at,
     | rather than a default nobody noticed.
     */
+    /*
+    |---------------------------------------------------------------------------
+    | The words on the public pages
+    |---------------------------------------------------------------------------
+    |
+    | Erika's wording, and the defaults are the source of truth: a fresh install
+    | and an untouched database both say exactly what she wrote. Every one of
+    | these is editable from Admin → Settings, because copy that needs a deploy
+    | to change is copy that stays wrong during the week it matters most.
+    |
+    | Rendered with {{ }} everywhere, never {!! !!}. An administrator's typing is
+    | still untrusted by the time it reaches a public page.
+    */
+    'copy' => [
+        'intro' => env('COPY_INTRO', 'A private AI-powered personal growth experience that turns your goals into personalized stories you can read and listen to—while helping you reflect on your progress, gratitude and wins along the way.'),
+
+        'not_launched' => env('COPY_NOT_LAUNCHED', 'Escalate hasn’t been publicly launched yet. We’re inviting a small group of founding testers to experience it first and help shape what it becomes.'),
+
+        'questions_intro' => env('COPY_QUESTIONS_INTRO', 'Five quick questions. There are no right answers—we’re looking for a diverse group of thoughtful testers who will actually use Escalate and tell us what they think.'),
+
+        /*
+        | The five questions, and the helper line under each.
+        |
+        | Keyed by the column the answer lands in, so a question and the label
+        | above that answer in Admin → Applications cannot drift apart.
+        |
+        | Editing a question after answers exist re-labels answers that were
+        | written to different words. For twenty-five testers that is worth
+        | accepting rather than building a versioning table for — but the admin
+        | field says so, because finding it out from confusing data later is
+        | worse.
+        */
+        'q_changing'      => env('COPY_Q1', 'What area of your life are you currently focused on changing, improving or creating something new in?'),
+        'q_changing_help' => env('COPY_Q1_HELP', 'Career, money, relationships, health, family, lifestyle, personal growth—or anything else that matters to you.'),
+
+        'q_practice'      => env('COPY_Q2', 'Do you currently use any reflection or personal-growth practices—such as journaling, visualization, prayer, meditation or affirmations?'),
+        'q_practice_help' => env('COPY_Q2_HELP', 'If yes, tell us what you use and what you like about it. If not, that’s useful for us to know too.'),
+
+        'q_tried_apps'      => env('COPY_Q3', 'Have you ever used a manifestation, visualization, journaling or personal-development app? If so, which one—and what did you like or dislike about it?'),
+        'q_tried_apps_help' => env('COPY_Q3_HELP', ''),
+
+        'q_will_use'      => env('COPY_Q4', 'Would you realistically use Escalate at least 4 times during a 7-day test?'),
+        'q_will_use_help' => env('COPY_Q4_HELP', 'A truthful no here is more useful to us than an optimistic yes.'),
+
+        'q_will_feedback'      => env('COPY_Q5', 'Are you willing to provide candid feedback after the test?'),
+        'q_will_feedback_help' => env('COPY_Q5_HELP', ''),
+
+        /*
+        | Not a page in the app — the message Erika pastes into DMs all week.
+        | It lives here so there is one canonical copy of it, and it is shown on
+        | Admin → Invites, which is where somebody already is when they need it.
+        */
+        'outreach' => env('COPY_OUTREACH', 'I’ve been quietly 🤫 developing a new AI personal-growth app called Escalate, and we’re now in private beta testing. It turns your goals into personalized stories you can read and listen to, while helping you reflect on your progress and wins. I haven’t publicly announced it yet, 🤐 but I’m inviting a small group of people to test it. Want in?'),
+    ],
+
     'beta' => [
         // Registration requires an unclaimed invite code. Turn off to open
         // signup to anyone who finds the URL.
