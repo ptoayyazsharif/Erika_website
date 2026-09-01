@@ -25,7 +25,12 @@
 
 <main class="auth-main">
     <div class="auth-say" data-enter-hero>
-        <p class="eyebrow">Escalate</p>
+        {{-- The lockup, not the word alone: for most people arriving from a DM
+             this is the first time they see the brand at all. --}}
+        <a class="auth-brand" href="{{ route('landing') }}" aria-label="Escalate">
+            @include('partials.mark', ['size' => 34])
+            <span class="brand-word">Escalate</span>
+        </a>
         <h1>@yield('heading')</h1>
         <p class="lede">@yield('sub')</p>
 

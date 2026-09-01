@@ -99,9 +99,10 @@ people who apply and are not selected.
 
 `public/icons/` holds favicon, apple-touch, 192/512 and maskable icons — none of
 them the doorway E. The topbar wordmark is text (`Escalat<span>e</span>`), not the
-logo lockup. **This needs exported assets from Erika** — ideally an SVG of the
-doorway E plus a 1024×1024 PNG; I can generate every size from those but cannot
-draw the mark.
+logo lockup.
+
+**Since resolved** — the mark was hand-authored to Erika's geometry rather than
+waiting on an export. See "The new brand", step two.
 
 ### 10. The tagline appears nowhere
 
@@ -477,11 +478,111 @@ section and scope the loop to that section's fields — and it gets a test of it
 own, because the failure is silent, destructive, and would look exactly like a
 setting Erika swears she never touched.
 
-### Phase D — brand
+### The new brand — apply site first, because ten people are waiting
 
-9. **Icons and logo** once Erika supplies the doorway E as SVG + 1024px PNG:
-   regenerate `public/icons/*`, swap the topbar wordmark for the lockup, add the
-   tagline to the landing page, login and register screens.
+**Context.** Erika has issued a full brand direction: a warm-neutral palette
+with violet iridescence, a per-screen colour strategy, and the doorway E worked
+out in detail. She also said the highest priority is having the apply site ready
+for ten people who are waiting. Those two facts set the order below.
+
+#### The palette
+
+```
+Warm Ivory      #F4F0E8      Deep Aubergine  #241D2B
+Mushroom Taupe  #C9BFB2      Royal Violet    #6946A2
+Cocoa Taupe     #74675F      Electric Iris   #8B6FE8
+Champagne       #C7A86B      Indigo Blue     #4058A6
+
+Iridescent      #9A7CF0 → #7456C7 → #4966B3
+```
+
+The part that does not fit the current architecture: **this is not one theme.**
+Escalate picks a single theme and paints the whole app with it. Erika is asking
+for everyday screens light, immersive screens dark, iridescence only at
+transformation moments, and champagne only where something was earned. That is
+a per-surface decision, not a per-user one, and it is the real work in this
+brief. It is also not what the ten people need today.
+
+#### Step one — the public pages — **DONE**
+
+`/`, `/apply`, `/login`, `/register`, `/privacy` all run through
+`resources/views/layouts/auth.blade.php`, and `escalate.public_theme` already
+decides their colour, so this was a new theme plus one setting.
+
+- **Ivory** and **Aubergine** added to `config/escalate.php` and
+  `public/css/app.css`, exactly as Amethyst and Wisteria were. `public_theme`
+  now points at Ivory.
+- The iridescent gradient as a `--iridescent` token, spent in exactly two
+  places: the apply page's submit button and the landing page's "Getting in"
+  rule. Those are the threshold; nothing else on the public site is one.
+- `escalate.brand` holds the eight named colours, so the admin fields planned
+  below have somewhere to write to.
+
+**Three things this turned up that were not in the brief:**
+
+1. **Parchment declares no `--ring`.** It inherited `:root`'s, which is built
+   from a pale sage picked to glow on ink navy and which all but disappears on
+   cream — so the focus ring on a whole theme was close to invisible. Found by
+   widening the token-parity test from a hardcoded list of themes to every
+   theme in config. Given its own ring in its accent.
+2. **Champagne was the colour of everything.** Ivory set `--brass` — which
+   paints eyebrows, the tab indicator, today's dot and progress bars — to the
+   champagne hex, so the reserved colour was on every screen. `--brass` is now
+   cocoa taupe on Ivory and mushroom on Aubergine; champagne lives in
+   `--champagne` and is read by one thing, the Founding pill.
+3. **The iridescent button rendered flat.** `.btn-iridescent` is declared beside
+   the tokens that explain it, 445 lines above `.btn`; at equal specificity the
+   later rule wins. Doubled to `.btn.btn-iridescent`. This is the failure mode
+   worth remembering: it does not look broken, it looks deliberate.
+
+#### Step two — the doorway E — **DONE**
+
+Hand-authored SVG at `public/brand/mark.svg` and `public/brand/lockup.svg`, to
+Erika's geometry: three strokes, bottom one longest and lifting at the tip,
+middle one shortest, doorway as an arch in the **lower** counter with the
+iridescent gradient through it and a spill on the floor.
+
+The door is in the lower counter because the first attempt put it mid-letter,
+where it ate the middle arm and turned the whole mark into a bracket with a lamp
+in it. The bottom arm is the most emphatic stroke because the one failure
+available to this mark is reading as an F, and an F has no bottom arm.
+
+- `resources/views/partials/mark.blade.php` inlines it in `currentColor`, so one
+  file serves ivory-on-aubergine and aubergine-on-ivory. Gradient ids are
+  suffixed per render: two marks on a page sharing an id means the second paints
+  with the first one's gradient.
+- On the public pages as a lockup above the heading; in the signed-in topbar
+  beside a tracked-wide ESCALATE, replacing `Escalat<span>e</span>`.
+- `public/icons/*` regenerated from it — aubergine ground, ivory ink, maskable
+  variants held inside the 80% safe circle. The manifest's ground moved from
+  Midnight navy to aubergine to match.
+- Rendered at 32/48/64/120/192/512 on both grounds and **looked at**, because
+  the previous concept failed by reading as an F and no assertion catches that.
+
+**Stated plainly:** this is a clean geometric letterform, not a drawn
+high-contrast serif. It is good enough to launch behind and swaps out for a
+designer's file without touching anything else. Typography stays Lora over
+Raleway — already self-hosted, no build step.
+
+#### Step three — the per-screen strategy — **NOT STARTED**
+
+`Theme::forUser()` becomes surface-aware: `@section('surface', 'immersive')` on
+the reading, narration and Rewind views resolves to Aubergine while everything
+else stays on Ivory. Champagne gets bound to the remaining achievement states.
+The largest piece and the least urgent.
+
+#### Admin — **NOT STARTED**
+
+The brand colours as `text` fields under **How it looks**, so Erika can adjust
+hexes without a deploy — the same pattern as her copy, config defaults
+remaining the source of truth. Each field renders a live swatch and a contrast
+reading against its own ground, because a colour box she can type into is a
+colour box that can be made unreadable.
+
+#### What is deliberately not here
+
+No crowns, butterflies, stars, moons, crystals or lotus flowers, and no
+inheriting Escaluxe's black/cream/gold.
 
 ### Also, before real testers arrive
 
@@ -534,9 +635,28 @@ and inspected directly, not inferred from output:
 - A theme somebody is already using cannot be hidden from them by an admin
   un-ticking it.
 
+### The new brand
+
+- **The gate for step one, met:** `/`, `/apply` and `/login` loaded in Chromium
+  at 390×844 serve `data-theme="ivory"` — warm ivory ground, aubergine ink, no
+  horizontal scroll. Body text 14.37:1, muted text 5.34:1, both measured with
+  the alpha composited against the ground rather than off the raw channels,
+  which reported 14.37:1 for the muted colour too and was simply wrong.
+- Ivory and Aubergine declare every token Midnight does — and so does every
+  other theme, since that test now iterates config rather than a written list.
+  That is what turned up Parchment's missing focus ring.
+- The doorway E rendered at 32/48/64/120/192/512 on both grounds and looked at.
+- `--brass` is not the champagne hex on either brand theme, and exactly one
+  thing reads `--champagne`. Asserted against the palette rather than by
+  grepping templates: the grep version passed while every eyebrow on the public
+  site was gold, which is worse than having no test at all.
+- Both brand utilities are written doubled, so they outrank the components they
+  are declared above. Verified in a browser: the apply button's computed
+  `background-image` is the gradient, not `none`.
+
 ### Everything else
 
-- `php artisan test` — 317 passing as of `f899c2c`.
+- `php artisan test` — 343 passing.
 - **Phase C specifically:**
   - Activity days: a second request the same day writes no second row; a request
     the next day does; the middleware never breaks a page when the write fails;

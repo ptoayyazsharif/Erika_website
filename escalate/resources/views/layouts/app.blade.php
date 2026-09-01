@@ -29,7 +29,10 @@
 <body class="app-shell" @if (session('status')) data-flash="{{ session('status') }}" @endif>
 
 <header class="topbar">
-    <a class="brand" href="{{ route('today') }}">Escalat<span>e</span></a>
+    <a class="brand" href="{{ route('today') }}">
+        @include('partials.mark', ['size' => 26])
+        <span class="brand-word">Escalate</span>
+    </a>
     <div class="grow"></div>
 
     <button type="button" class="btn btn-icon" data-install hidden
