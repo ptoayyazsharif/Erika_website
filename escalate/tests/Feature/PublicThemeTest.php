@@ -61,7 +61,16 @@ class PublicThemeTest extends TestCase
         $css = file_get_contents(public_path('css/app.css'));
 
         $tokensIn = function (string $selector) use ($css): array {
-            preg_match('/\['.preg_quote($selector, '/').'\]\s*\{(.*?)\}/s', $css, $m);
+            // Some palettes share a block — Parchment is written as
+            // `[data-theme='parchment'], [data-theme='light'] {` — so the
+            // pattern allows a comma-separated tail before the brace. Without
+            // it those themes read as empty, which looks like a pass with a
+            // hardcoded list and like a false failure without one.
+            preg_match(
+                '/\['.preg_quote($selector, '/')."\\](?:\s*,\s*\[data-theme='[a-z0-9-]+'\\])*\s*\{(.*?)\}/s",
+                $css,
+                $m,
+            );
             preg_match_all('/(--[a-z0-9-]+)\s*:/i', $m[1] ?? '', $found);
 
             return array_unique($found[1] ?? []);
@@ -71,7 +80,13 @@ class PublicThemeTest extends TestCase
 
         $this->assertNotEmpty($baseline, 'Could not read the Midnight palette.');
 
-        foreach (['amethyst', 'wisteria'] as $theme) {
+        // Every theme in config, not a list written here: a list written here
+        // is a list that stops covering the theme added after it.
+        foreach (array_keys(Theme::all()) as $theme) {
+            if ($theme === 'midnight') {
+                continue;
+            }
+
             $missing = array_diff($baseline, $tokensIn("data-theme='{$theme}'"));
 
             $this->assertSame([], array_values($missing),

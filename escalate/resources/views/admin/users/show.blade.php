@@ -24,7 +24,7 @@
 <div class="card" data-enter>
     @if ($person->cohort)
         <p class="small" style="margin:0 0 var(--s-4)">
-            <span class="pill">{{ $person->cohort }}</span>
+            <span class="pill pill-founding">{{ $person->cohort }}</span>
         </p>
     @endif
 

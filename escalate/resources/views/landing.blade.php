@@ -35,7 +35,9 @@
     </p>
 </div>
 
-<div class="rule">Getting in</div>
+{{-- The threshold, marked. The rule above it stays plain, so the change of
+     colour is the thing that says this section is different. --}}
+<div class="rule rule-iridescent">Getting in</div>
 
 <div class="card card-raised" data-enter>
     <p class="eyebrow">Private beta</p>

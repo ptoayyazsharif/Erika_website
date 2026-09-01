@@ -103,7 +103,7 @@
         <div class="row wrap" style="gap:var(--s-3);align-items:center">
             @include('partials.icon', ['name' => 'sparkle', 'size' => 18])
             <div>
-                <p style="margin:0"><strong>{{ $user->cohort }}</strong></p>
+                <p style="margin:0"><span class="pill pill-founding">{{ $user->cohort }}</span></p>
                 <p class="small muted" style="margin:var(--s-1) 0 0">
                     You were here first. Your plan stays as it is, for as long
                     as you want it — there is nothing to pay.

@@ -186,6 +186,30 @@ return [
             'chrome' => '#141517',
             'swatch' => ['#141517', '#9AA3AD', '#C2B49A'],
         ],
+        /*
+        | Erika's brand palette, and the app's default from here on.
+        |
+        | Ivory is the everyday one — profile, My World, gratitude, forms,
+        | settings, reading. Aubergine is for the screens meant to be sat
+        | inside: audio, bedtime listening, Rewind. The brief is explicit that
+        | the app should be neither entirely light nor entirely dark.
+        */
+        'ivory' => [
+            'counterpart' => 'aubergine',
+            'label'  => 'Ivory',
+            'note'   => 'Warm ivory and aubergine, with violet. The brand default.',
+            'scheme' => 'light',
+            'chrome' => '#F4F0E8',
+            'swatch' => ['#F4F0E8', '#6946A2', '#C7A86B'],
+        ],
+        'aubergine' => [
+            'counterpart' => 'ivory',
+            'label'  => 'Aubergine',
+            'note'   => 'Deep aubergine and iris. For listening in the dark.',
+            'scheme' => 'dark',
+            'chrome' => '#241D2B',
+            'swatch' => ['#241D2B', '#8B6FE8', '#C7A86B'],
+        ],
         'amethyst' => [
             'counterpart' => 'wisteria',
             'label'  => 'Amethyst',
@@ -234,7 +258,7 @@ return [
     |
     | Signed-in people are unaffected. Their own choice still wins over this.
     */
-    'public_theme' => env('PUBLIC_THEME', 'midnight'),
+    'public_theme' => env('PUBLIC_THEME', 'ivory'),
 
     /*
     | Which themes appear in the picker in My World. Empty means all of them.
@@ -243,6 +267,31 @@ return [
     | Theme::offered(), which always includes the current one.
     */
     'themes_offered' => array_filter(explode(',', (string) env('THEMES_OFFERED', ''))),
+
+    /*
+    |---------------------------------------------------------------------------
+    | The brand colours
+    |---------------------------------------------------------------------------
+    |
+    | Erika's palette, named as she named it. These are what the Ivory and
+    | Aubergine themes are built from, and they are editable from admin so a
+    | hex can be nudged without a deploy.
+    |
+    | Champagne is deliberately not a general-purpose accent. The brief asks for
+    | it to carry meaning — achievement, completion, Founding Tester, manifested
+    | states — rather than decorate, so it is applied at those points and not as
+    | a border colour on every card.
+    */
+    'brand' => [
+        'ivory'     => env('BRAND_IVORY', '#F4F0E8'),
+        'mushroom'  => env('BRAND_MUSHROOM', '#C9BFB2'),
+        'cocoa'     => env('BRAND_COCOA', '#74675F'),
+        'aubergine' => env('BRAND_AUBERGINE', '#241D2B'),
+        'violet'    => env('BRAND_VIOLET', '#6946A2'),
+        'iris'      => env('BRAND_IRIS', '#8B6FE8'),
+        'indigo'    => env('BRAND_INDIGO', '#4058A6'),
+        'champagne' => env('BRAND_CHAMPAGNE', '#C7A86B'),
+    ],
 
     /*
     | Faith language. Shapes vocabulary in every generated text. 'none' is the

@@ -145,6 +145,12 @@
   --brass:         var(--brass-500);
   --danger:        var(--clay-500);
 
+  /* Parchment had no --ring of its own and inherited :root's, which is built
+     from --sage-400 — a pale sage picked to glow against ink navy and which
+     all but disappears on cream. Its own accent, the darker sage-600, is what
+     a focus ring here has to be drawn in to be seen at all. */
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--sage-600);
+
   --shadow-sm: 0 1px 2px rgba(27,33,48,.06);
   --shadow-md: 0 6px 20px -8px rgba(27,33,48,.14);
   --shadow-lg: 0 24px 56px -22px rgba(27,33,48,.20);
@@ -391,6 +397,138 @@
   color-scheme: light;
 }
 
+/* ── Ivory — Erika's everyday palette ─────────────────────────────────────
+   Warm ivory ground, aubergine ink, mushroom and cocoa carrying the lines and
+   the quieter text. Royal violet is the accent; champagne is NOT wired in here
+   as a decorative colour, because the brief is explicit that it should mean
+   something — achievement, completion, Founding Tester — rather than sit on
+   every card edge. It lives in --champagne, used only where that is true.
+
+   The neutrals are warm on purpose. A cool grey ivory reads as a spreadsheet;
+   the warmth is what stops "light" turning into "clinical", which is the whole
+   risk in lightening an app that was designed dark.
+   ------------------------------------------------------------------------ */
+
+[data-theme='ivory'] {
+  --bg:            #F4F0E8;
+  --bg-deep:       #E8E2D6;
+  --surface:       #FBF9F4;
+  --surface-raised: #FFFFFF;
+  --surface-sunk:  #EDE7DC;
+
+  --text:          #241D2B;
+  --text-muted:    rgba(36, 29, 43, 0.68);
+  --text-faint:    rgba(116, 103, 95, 0.85);
+
+  --line:          rgba(116, 103, 95, 0.20);
+  --line-strong:   rgba(116, 103, 95, 0.34);
+
+  --accent:        #6946A2;
+  --accent-quiet:  #8B6FE8;
+  --on-accent:     #FFFFFF;
+  /* Not champagne. --brass paints eyebrows, the tab indicator, today's dot
+     and the end of a progress bar — none of which is an achievement. Painting
+     it gold would put the reserved colour on every screen in the app and empty
+     it of meaning. Cocoa taupe carries the same warmth and claims nothing. */
+  --brass:         #74675F;
+  --danger:        #A6486A;
+
+  /* Reserved: Founding Tester, completion, a manifested state. Nothing else. */
+  --champagne:     #C7A86B;
+  --iridescent:    linear-gradient(120deg, #9A7CF0 0%, #7456C7 52%, #4966B3 100%);
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px #6946A2;
+
+  --shadow-sm: 0 1px 2px rgba(36,29,43,.06);
+  --shadow-md: 0 6px 20px -8px rgba(36,29,43,.14);
+  --shadow-lg: 0 24px 56px -22px rgba(36,29,43,.20);
+
+  color-scheme: light;
+}
+
+/* ── Aubergine — the immersive counterpart ────────────────────────────────
+   For the screens meant to be sat inside rather than worked through: audio,
+   bedtime listening, Rewind. Defined now because Ivory needs a counterpart to
+   toggle to, and because the per-screen work later needs it to exist.
+   ------------------------------------------------------------------------ */
+
+[data-theme='aubergine'] {
+  --bg:            #241D2B;
+  --bg-deep:       #191320;
+  --surface:       #2E2537;
+  --surface-raised: #392E44;
+  --surface-sunk:  #1D1725;
+
+  --text:          #F4F0E8;
+  --text-muted:    rgba(244, 240, 232, 0.66);
+  --text-faint:    rgba(244, 240, 232, 0.42);
+
+  --line:          rgba(244, 240, 232, 0.12);
+  --line-strong:   rgba(244, 240, 232, 0.22);
+
+  --accent:        #8B6FE8;
+  --accent-quiet:  #6946A2;
+  --on-accent:     #1A1422;
+  --brass:         #C9BFB2;   /* mushroom taupe — see the note under Ivory */
+  --danger:        #C2708C;
+
+  --champagne:     #C7A86B;
+  --iridescent:    linear-gradient(120deg, #9A7CF0 0%, #7456C7 52%, #4966B3 100%);
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px #8B6FE8;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.34);
+  --shadow-md: 0 6px 20px -8px rgba(0,0,0,.50);
+  --shadow-lg: 0 24px 56px -22px rgba(0,0,0,.62);
+
+  color-scheme: dark;
+}
+
+[data-theme='aubergine'] body::before {
+  background:
+    radial-gradient(58% 58% at 20% 6%, rgba(139, 111, 232, 0.18), transparent 70%),
+    radial-gradient(52% 52% at 84% 0%, rgba(64, 88, 166, 0.12), transparent 72%);
+}
+
+/* ── Iridescence, used only at transformation moments ─────────────────────
+   Violet → iris → indigo. The brief asks for this "selectively … not rainbow,
+   glittery or overly feminine", so it is a named utility rather than a default
+   on anything: a thing has to ask for it.
+   ------------------------------------------------------------------------ */
+
+/* ── champagne, the earned colour ─────────────────────────────────────────
+   The counterpart rule to iridescence: iridescence marks a moment of change,
+   champagne marks something reached. Both are utilities a thing has to ask
+   for, because a reserved colour that anything may use is just a colour.
+
+   Falls back to --brass on the themes that predate the brand, so a Founding
+   pill is still a warm pill on Midnight rather than an unstyled one.
+   ------------------------------------------------------------------------ */
+
+/* Doubled selectors — .btn.btn-iridescent rather than .btn-iridescent — because
+   these two utilities are declared here, beside the tokens they explain, while
+   .btn and .pill are declared several hundred lines below in the component
+   layer. At equal specificity the later rule wins, so a single class here loses
+   silently: the button renders flat accent and looks deliberate. */
+
+.pill.pill-founding {
+  color: var(--champagne, var(--brass));
+  border-color: color-mix(in srgb, var(--champagne, var(--brass)) 40%, transparent);
+}
+
+.btn.btn-iridescent {
+  background: var(--iridescent, linear-gradient(120deg, #9A7CF0, #7456C7 52%, #4966B3));
+  border-color: transparent;
+  color: #FFFFFF;
+}
+
+.btn.btn-iridescent:hover { filter: brightness(1.06); }
+
+/* A hairline of the same gradient. Used to mark a threshold — the top of the
+   landing hero — and nowhere that is merely a divider. */
+.rule-iridescent::after,
+.rule-iridescent::before { background: var(--iridescent); height: 2px; opacity: .8; }
+
 /* ── theme picker swatches ───────────────────────────────────────────────── */
 
 .swatch {
@@ -452,7 +590,8 @@ body::before {
 }
 
 [data-theme='parchment'] body::before, [data-theme='linen'] body::before,
-[data-theme='wisteria'] body::before, [data-theme='light'] body::before {
+[data-theme='wisteria'] body::before, [data-theme='ivory'] body::before,
+[data-theme='light'] body::before {
   background:
     radial-gradient(60% 60% at 22% 8%, rgba(110, 154, 139, 0.20), transparent 70%),
     radial-gradient(52% 52% at 82% 0%, rgba(191, 161, 115, 0.16), transparent 72%);
@@ -586,16 +725,50 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
 .topbar .brand {
   display: inline-flex;
   align-items: center;
+  gap: var(--s-2);
   min-height: 44px;
   padding-right: var(--s-2);
-  font-family: var(--serif);
-  font-size: var(--t-md);
-  letter-spacing: 0.04em;
   color: var(--text);
   text-decoration: none;
 }
 
-.topbar .brand span { color: var(--brass); }
+/* The mark is painted in currentColor, so it inherits whatever the surface
+   around it is doing — one file for every theme, light and dark. */
+.mark {
+  display: block;
+  flex: none;
+  overflow: visible;
+}
+
+/* Tracked wide, because generous letterspacing is what buys a text serif the
+   composure of a display one. The old wordmark put a brass E on the end; the
+   mark carries that job now, so the word is left alone. */
+.brand-word {
+  font-family: var(--serif);
+  font-size: var(--t-md);
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* The lockup on the public pages: bigger, stacked over the heading, and a link
+   home rather than a label. */
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.auth-brand .brand-word {
+  font-size: var(--t-lg);
+  letter-spacing: 0.16em;
+}
+
+.auth-brand:hover { color: var(--text); }
 
 .page-head { margin-bottom: var(--s-6); }
 .page-head h1 { margin-bottom: var(--s-2); }

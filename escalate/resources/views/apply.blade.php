@@ -62,7 +62,10 @@
     </label>
     @error('agree')<span class="error">{{ $message }}</span>@enderror
 
-    <button class="btn btn-full" type="submit" data-busy="Sending…">Request private access</button>
+    {{-- Iridescent here and nowhere else on this page: the brief reserves the
+         gradient for transformation moments, and this button is the only thing
+         on the public site that changes anybody's state. --}}
+    <button class="btn btn-iridescent btn-full" type="submit" data-busy="Sending…">Request private access</button>
 </form>
 
 <p class="small faint center" style="margin-top:var(--s-5)">
