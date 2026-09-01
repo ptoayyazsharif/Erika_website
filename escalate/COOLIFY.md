@@ -94,6 +94,27 @@ dot-kode.com                        → 31.97.44.211, answers 200
 
 Not a proxy or policy problem — the record is simply gone. Don't chase it.
 
+### `coolify.escaluxe.com` is not the panel either
+
+Nor was it ever. It is a plausible-looking guess — the Coolify instance does host
+`escaluxe.com` — and on 1 Sep 2026 a whole deploy was reported to the user as
+blocked by the environment on the strength of it. The correct address is in the
+table at the top of this file and always was.
+
+What the failure looks like from a Claude Code session, so it is recognised
+rather than re-diagnosed:
+
+```
+curl → 000
+agent-proxy status → connect_rejected, "gateway answered 502 to CONNECT
+                     (policy denial or upstream failure)"
+```
+
+That reads exactly like an egress policy denial and is not one. The tell is that
+every other host answers — `escaluxe.com`, `escalate.cloud` and `api.github.com`
+all returned 200 in the same minute. **When one host fails and the rest are
+fine, suspect the hostname before the network, and read this file.**
+
 ## The token
 
 A Coolify API token, shaped `2|…`. **Not stored in this repository and never to
