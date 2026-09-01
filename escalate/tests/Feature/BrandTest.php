@@ -48,37 +48,54 @@ class BrandTest extends TestCase
     }
 
     /**
-     * The letterform is currentColor and only the light through the door is a
-     * fixed colour. If somebody hardcodes the ink, the mark goes invisible on
-     * one of the two grounds and nothing else fails.
+     * Every palette says which colourway of the mark it needs.
+     *
+     * The mark used to be inline SVG painted in currentColor, so one file
+     * served both grounds and there was nothing to get wrong. Erika's artwork
+     * is a raster: a light theme has to name the dark file and a dark theme the
+     * light one, and getting it backwards means an ivory mark on an ivory page
+     * — invisible, and invisible in a way no page-renders-fine check catches.
      */
-    public function test_the_letterform_is_painted_in_currentcolor(): void
+    public function test_every_theme_names_a_mark_and_names_the_right_one(): void
     {
-        $partial = file_get_contents(resource_path('views/partials/mark.blade.php'));
+        $css = file_get_contents(public_path('css/app.css'));
 
-        $this->assertStringContainsString('fill="currentColor"', $partial);
+        preg_match_all(
+            "/^((?:\\[data-theme='[a-z0-9-]+'\\]\\s*,\\s*)*\\[data-theme='[a-z0-9-]+'\\]\\s*)\\{(.*?)^\\}/sm",
+            $css,
+            $blocks,
+            PREG_SET_ORDER,
+        );
 
-        // The ivory and aubergine hexes must not appear in the letterform at all.
-        $this->assertStringNotContainsString('#F4F0E8', $partial);
-        $this->assertStringNotContainsString('#241D2B', $partial);
+        $this->assertGreaterThanOrEqual(10, count($blocks), 'Could not read the palettes.');
+
+        foreach ($blocks as [, $selector, $body]) {
+            $name = trim($selector);
+
+            preg_match('/color-scheme:\s*(light|dark);/', $body, $scheme);
+            preg_match('/--mark-url:\s*url\(\x27([^\x27]+)\x27\)/', $body, $mark);
+
+            $this->assertNotEmpty($mark[1] ?? null, "{$name} declares no --mark-url.");
+
+            $wanted = ($scheme[1] ?? '') === 'light' ? 'mark-aubergine.png' : 'mark-ivory.png';
+
+            $this->assertStringContainsString($wanted, $mark[1],
+                "{$name} is {$scheme[1]} but points at ".basename($mark[1]).
+                ' — that is the mark you cannot see on this ground.');
+        }
     }
 
-    /**
-     * Two marks on one page sharing a gradient id means the second one paints
-     * with the first one's gradient — which looks fine until the day the two
-     * differ, and is then very hard to see.
-     */
-    public function test_two_marks_on_one_page_do_not_share_a_gradient_id(): void
+    public function test_both_colourways_are_actually_on_disk(): void
     {
-        $html = $this->get('/')->getContent();
+        foreach (['mark-ivory.png', 'mark-aubergine.png'] as $file) {
+            $path = public_path("brand/{$file}");
 
-        preg_match_all('/id="(mk[a-f0-9]{6}[ls])"/', $html, $found);
+            $this->assertFileExists($path);
 
-        $this->assertSame(
-            count($found[1]),
-            count(array_unique($found[1])),
-            'Two marks were rendered with the same gradient id.',
-        );
+            // A truncated or placeholder PNG still "exists".
+            $this->assertGreaterThan(20_000, filesize($path), "{$file} is too small to be the artwork.");
+            $this->assertSame("\x89PNG", substr(file_get_contents($path, false, null, 0, 4), 0, 4));
+        }
     }
 
     /**

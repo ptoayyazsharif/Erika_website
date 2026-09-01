@@ -78,6 +78,7 @@
   --danger:        var(--clay-400);
 
   --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--sage-400);
+  --mark-url: url('/brand/mark-ivory.png');
 
   /* type */
   --serif: 'Lora', Georgia, 'Times New Roman', serif;
@@ -155,6 +156,15 @@
   --shadow-md: 0 6px 20px -8px rgba(27,33,48,.14);
   --shadow-lg: 0 24px 56px -22px rgba(27,33,48,.20);
 
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-aubergine.png');
+
+
   color-scheme: light;
 }
 
@@ -197,6 +207,15 @@
   --danger:        var(--clay-400);
 
   --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--sage-400);
+
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-ivory.png');
+
   color-scheme: dark;
 }
 
@@ -222,6 +241,15 @@
   --danger:        #B9705A;
 
   --ring: 0 0 0 2px var(--bg), 0 0 0 4px #C79A5C;
+
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-ivory.png');
+
   color-scheme: dark;
 }
 
@@ -253,6 +281,15 @@
   --danger:        #C87F6B;
 
   --ring: 0 0 0 2px var(--bg), 0 0 0 4px #7FB8BE;
+
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-ivory.png');
+
   color-scheme: dark;
 }
 
@@ -284,6 +321,15 @@
   --danger:        #C08475;
 
   --ring: 0 0 0 2px var(--bg), 0 0 0 4px #9AA3AD;
+
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-ivory.png');
+
   color-scheme: dark;
 }
 
@@ -316,6 +362,15 @@
   --shadow-sm: 0 1px 2px rgba(44,37,32,.06);
   --shadow-md: 0 6px 20px -8px rgba(44,37,32,.14);
   --shadow-lg: 0 24px 56px -22px rgba(44,37,32,.20);
+
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-aubergine.png');
+
 
   color-scheme: light;
 }
@@ -351,6 +406,15 @@
   --shadow-sm: 0 1px 2px rgba(0,0,0,.34);
   --shadow-md: 0 6px 20px -8px rgba(0,0,0,.50);
   --shadow-lg: 0 24px 56px -22px rgba(0,0,0,.62);
+
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-ivory.png');
+
 
   color-scheme: dark;
 }
@@ -393,6 +457,15 @@
   --shadow-sm: 0 1px 2px rgba(42,35,55,.06);
   --shadow-md: 0 6px 20px -8px rgba(42,35,55,.14);
   --shadow-lg: 0 24px 56px -22px rgba(42,35,55,.20);
+
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-aubergine.png');
+
 
   color-scheme: light;
 }
@@ -443,6 +516,15 @@
   --shadow-md: 0 6px 20px -8px rgba(36,29,43,.14);
   --shadow-lg: 0 24px 56px -22px rgba(36,29,43,.20);
 
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-aubergine.png');
+
+
   color-scheme: light;
 }
 
@@ -480,6 +562,15 @@
   --shadow-sm: 0 1px 2px rgba(0,0,0,.34);
   --shadow-md: 0 6px 20px -8px rgba(0,0,0,.50);
   --shadow-lg: 0 24px 56px -22px rgba(0,0,0,.62);
+
+  /* Which colourway of the doorway E this palette needs. Erika's artwork is a
+     raster, so it cannot take its colour from the surface the way the drawn
+     mark did — a light theme has to name the dark file and a dark theme the
+     light one. Declared here rather than branched in Blade, so the
+     token-parity test makes a new theme that forgets it fail the suite instead
+     of shipping a mark nobody can see. */
+  --mark-url: url('/brand/mark-ivory.png');
+
 
   color-scheme: dark;
 }
@@ -732,12 +823,17 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
   text-decoration: none;
 }
 
-/* The mark is painted in currentColor, so it inherits whatever the surface
-   around it is doing — one file for every theme, light and dark. */
+/* The mark takes its colourway from the palette, via --mark-url. The fallback
+   is the ivory file rather than nothing: a theme that somehow reaches this
+   without declaring one should show the wrong colourway, which is visible and
+   reportable, rather than an empty box, which reads as a layout bug. */
 .mark {
   display: block;
   flex: none;
-  overflow: visible;
+  background-image: var(--mark-url, url('/brand/mark-ivory.png'));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 /* Tracked wide, because generous letterspacing is what buys a text serif the
