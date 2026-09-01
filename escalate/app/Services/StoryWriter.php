@@ -43,12 +43,76 @@ class StoryWriter
             'story',
         );
 
+        [$text, $declared] = $this->splitNames($text);
+
+        // Refuse rather than store. A reading with a stranger in it is worse
+        // than no reading: the whole promise is that this is the reader's own
+        // life, and one invented brother costs more trust than a failure does.
+        $this->refuseStrangers($declared, $this->peopleFor($user, $desire));
+
         $story->body = $this->tidy($text);
         $story->title = $this->titleFor($desire, $story->body);
         $story->word_count = str_word_count($story->body);
         $story->model = config('escalate.story.model');
         $story->state = 'ready';
         $story->save();
+    }
+
+    /**
+     * Take the NAMES line off the end, and report what it claimed.
+     *
+     * Same shape as the (DESIRE n) tag in AffirmationWriter: a routing
+     * instruction that must never survive into something a person reads.
+     *
+     * @return array{0: string, 1: array<int, string>}
+     */
+    private function splitNames(string $text): array
+    {
+        if (! preg_match('/^\s*\**NAMES\**\s*:\s*(.*)$/im', $text, $m, PREG_OFFSET_CAPTURE)) {
+            // No line at all. Older behaviour, and not itself a reason to throw
+            // away a piece — the allowlist check below simply has nothing to
+            // check, and the prompt remains the thing doing the work.
+            return [$text, []];
+        }
+
+        $prose = rtrim(substr($text, 0, $m[0][1]));
+
+        $names = collect(preg_split('/[,;]+/', $m[1][0]))
+            ->map(fn ($name) => trim($name, " \t\n\r\0\x0B\"'*.·-"))
+            ->filter()
+            ->reject(fn ($name) => in_array(mb_strtolower($name), ['none', 'nobody', 'no one', 'n/a'], true))
+            ->values()
+            ->all();
+
+        return [$prose, $names];
+    }
+
+    /**
+     * Throw if the piece named somebody the reader did not.
+     *
+     * A net, not a proof: a model that names a person and leaves them off its
+     * own declaration still gets through, and no reliable way exists to find an
+     * arbitrary invented name in prose. The prompt is the fix. This catches the
+     * case where the model is honest and wrong, which — on the evidence of the
+     * reading that started this — is the case that actually happens.
+     *
+     * @param  array<int, string>  $declared
+     * @param  array<int, string>  $allowed
+     */
+    private function refuseStrangers(array $declared, array $allowed): void
+    {
+        $allowedLower = array_map('mb_strtolower', $allowed);
+
+        $strangers = array_values(array_filter(
+            $declared,
+            fn ($name) => ! in_array(mb_strtolower($name), $allowedLower, true),
+        ));
+
+        if ($strangers !== []) {
+            throw new \RuntimeException(
+                'The reading named somebody the reader did not: '.implode(', ', $strangers),
+            );
+        }
     }
 
     /* ── prompts ─────────────────────────────────────────────────────────── */
@@ -101,6 +165,7 @@ class StoryWriter
 
         $faith = $this->faithRule($profile->faith_language);
         $style = $this->styleRule($desire?->tone ?: $profile->tone, $profile->story_style);
+        $naming = $this->namingRule($this->peopleFor($user, $desire));
 
         return <<<PROMPT
         You write manifestation readings: short pieces of prose that describe an
@@ -115,14 +180,13 @@ class StoryWriter
            lines. No headings, no lists, no titles, no markdown, no preamble —
            begin with the first sentence of the piece itself.
         4. Use the reader's own specifics. Every place, number and object they
-           gave you must appear at least once, spelled exactly as they wrote it,
-           and so must the names of other people in their life. Do not invent
-           names for people they did not name.
+           gave you must appear at least once, spelled exactly as they wrote it.
 
-           The reader's own name is the one exception, and it is absolute: it
-           never appears in the prose. It is only there so you know how to
-           address them. Writing it drags the whole piece into third person,
-           which breaks rule 2.
+           {$naming}
+
+           The reader's own name never appears in the prose, whatever else is
+           allowed. It is only there so you know how to address them. Writing it
+           drags the whole piece into third person, which breaks rule 2.
         5. Include one contrast beat, and place it near the middle: name a
            small, specific thing they used to do out of scarcity or fear, and
            then show them not doing it. Not as triumph — as something that
@@ -143,8 +207,91 @@ class StoryWriter
         Avoid "abundance", "vibration", "alignment", "journey", "grateful for
         this beautiful". Never use an exclamation mark.
 
-        Output only the piece.
+        OUTPUT
+
+        The piece, then a final line on its own:
+
+        NAMES: a comma-separated list of every person you named in the prose, or
+        NAMES: none
+
+        Count only people. Not places, not pets, not brands. This line is
+        removed before anybody reads the piece, so it costs the reader nothing
+        and it is not optional.
         PROMPT;
+    }
+
+    /**
+     * Who, if anyone, may be named in this piece.
+     *
+     * This rule replaces a clause that said the names of other people in the
+     * reader's life "must appear at least once" alongside "do not invent names
+     * for people they did not name" — two instructions in direct contradiction,
+     * and the contradiction went live exactly when somebody had named nobody.
+     * Told that a name must appear and given none, a model does the only thing
+     * left: it makes one up. A desire about a family ranch, with nobody
+     * attached to it, came back with a brother called Zarak who does not exist.
+     *
+     * So the empty case is stated positively rather than as a prohibition. "Do
+     * not invent names" is a rule about what not to write; "people appear by
+     * their relationship" is a rule about what to write instead, and a model
+     * follows the second far more reliably than the first. The piece that
+     * invented Zarak also contained "one of my brothers' kids is arguing with a
+     * dog", which is exactly the register being asked for here — it could
+     * already do this, and only reached for a name because it was ordered to.
+     *
+     * @param  array<int, string>  $people  names the reader attached to this desire
+     */
+    private function namingRule(array $people): string
+    {
+        if ($people === []) {
+            return <<<'N'
+            NOBODY IS NAMED IN THIS PIECE. The reader has not told you the name
+               of a single person, so you do not know one — and a name you chose
+               yourself is a stranger standing in their life.
+
+               People appear by their relationship instead, and this is the
+               normal way to write it, not a workaround: "my brother", "his
+               eldest", "one of the kids", "the neighbour with the dog". Write
+               as many people as the piece needs. Give none of them a name.
+            N;
+        }
+
+        $list = implode(', ', $people);
+
+        return <<<N
+            The only people who may be named are the ones the reader named:
+               {$list}. Spell each exactly as written. Use them only where they
+               fit; none of them has to appear.
+
+               Anyone else appears by relationship — "my brother", "the
+               neighbour". No other name may appear in the piece, including one
+               that would seem to fit.
+            N;
+    }
+
+    /**
+     * The names the reader attached to this desire, and only those.
+     *
+     * The circle used to be sent whole, so a desire about a new job arrived
+     * with a daughter attached and a rule saying to use her. `people_involved`
+     * is the checkbox list of circle members on the desire form — it is the
+     * reader saying who this one is about, and it was being passed to the model
+     * as context while every other name was passed alongside it.
+     *
+     * A name that never reaches the prompt cannot reach the prose, which is
+     * worth more than any instruction telling a model to ignore something.
+     *
+     * @return array<int, string>
+     */
+    private function peopleFor(User $user, ?Desire $desire): array
+    {
+        $named = collect($desire?->people_involved ?? [])
+            ->filter()
+            ->map(fn ($name) => trim((string) $name))
+            ->filter()
+            ->values();
+
+        return $named->all();
     }
 
     private function user(User $user, ?Desire $desire): string
@@ -161,11 +308,25 @@ class StoryWriter
         $this->add($lines, 'What matters most to them', $this->list($p->values));
         $this->add($lines, 'A place or object that grounds them', $p->anchor);
 
-        $circle = $user->circle;
+        /*
+         * Only the people the reader attached to THIS desire.
+         *
+         * The whole circle used to go into every reading under "use these names
+         * exactly", so a desire about a new job arrived carrying a daughter and
+         * an instruction to write her in. Anyone not ticked on this desire is
+         * not described here at all — a name that never reaches the prompt
+         * cannot reach the prose, and that is worth more than telling a model
+         * to ignore something already in front of it.
+         */
+        $named = $this->peopleFor($user, $desire);
+
+        $circle = $user->circle->filter(
+            fn ($person) => in_array(trim((string) $person->name), $named, true),
+        );
 
         if ($circle->isNotEmpty()) {
             $lines[] = '';
-            $lines[] = 'THEIR CIRCLE — use these names exactly, only where they fit naturally';
+            $lines[] = 'THE PEOPLE THEY NAMED FOR THIS ONE — spell these exactly; no other name may appear';
 
             foreach ($circle as $person) {
                 // details() rather than ->note: a person can carry as many
@@ -184,7 +345,9 @@ class StoryWriter
             $this->add($lines, 'Why it matters', $desire->why_it_matters);
             $this->add($lines, 'How they want to feel', $this->list($desire->desired_feelings));
             $this->add($lines, 'Non-negotiable', $desire->non_negotiables);
-            $this->add($lines, 'People involved', $this->list($desire->people_involved));
+            // Deliberately not repeated here: who may be named is rule 4's
+            // subject, and listing them again as context reads as a checklist.
+
             $this->add($lines, 'Timeframe they named', $this->timeframe($desire->timeframe));
 
             if ($desire->open_to_better) {

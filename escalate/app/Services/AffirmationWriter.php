@@ -36,7 +36,7 @@ class AffirmationWriter
         $desires = $this->desiresFor($user);
 
         $text = $this->anthropic->write(
-            $this->system($user),
+            $this->system($user, $this->namedAcross($desires)),
             $this->context($user, $desires),
             $user,
             'affirmation',
@@ -103,10 +103,12 @@ class AffirmationWriter
 
     /* ── prompts ─────────────────────────────────────────────────────────── */
 
-    private function system(User $user): string
+    /** @param array<int, string> $named the only people who may appear */
+    private function system(User $user, array $named = []): string
     {
         $profile = $user->world();
         $faith = $this->faithRule($profile->faith_language);
+        $naming = $this->namingRule($named);
         $cards = self::CARDS;
 
         return <<<PROMPT
@@ -133,7 +135,8 @@ class AffirmationWriter
         6. Plain language. No exclamation marks, no "abundance", no "manifest",
            no "vibration", no "journey", no capitalised Universe unless their
            own words below use that register.
-        7. {$faith}
+        7. {$naming}
+        8. {$faith}
 
         OUTPUT
 
@@ -155,11 +158,26 @@ class AffirmationWriter
         $this->add($lines, 'What matters most to them', $this->list($p->values));
         $this->add($lines, 'A place or object that grounds them', $p->anchor);
 
-        if ($user->circle->isNotEmpty()) {
-            $lines[] = '';
-            $lines[] = 'THEIR CIRCLE — real people; use these names exactly, only where they fit';
+        /*
+         * Only the people attached to one of the desires below.
+         *
+         * This block used to send the whole circle, copied from StoryWriter
+         * before that file's naming rule was found to be ordering invented
+         * names into readings. Same fault, same fix: a card may only name
+         * somebody the reader themselves attached to the desire it is drawn
+         * from.
+         */
+        $named = $this->namedAcross($desires);
 
-            foreach ($user->circle as $person) {
+        $circle = $user->circle->filter(
+            fn ($person) => in_array(trim((string) $person->name), $named, true),
+        );
+
+        if ($circle->isNotEmpty()) {
+            $lines[] = '';
+            $lines[] = 'THE PEOPLE THEY NAMED — spell these exactly; no other name may appear';
+
+            foreach ($circle as $person) {
                 $bits = array_filter([$person->relationship, ...$person->details()]);
                 $lines[] = '- '.$person->name.($bits ? ' ('.implode('; ', $bits).')' : '');
             }
@@ -188,6 +206,42 @@ class AffirmationWriter
         $lines[] = 'Write the cards.';
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * Every person the reader attached to any of the desires in play.
+     *
+     * @return array<int, string>
+     */
+    private function namedAcross($desires): array
+    {
+        return collect($desires)
+            ->flatMap(fn ($desire) => $desire->people_involved ?? [])
+            ->filter()
+            ->map(fn ($name) => trim((string) $name))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Who may be named on a card. Same reasoning as StoryWriter::namingRule().
+     *
+     * @param  array<int, string>  $named
+     */
+    private function namingRule(array $named): string
+    {
+        if ($named === []) {
+            return 'Name nobody. The reader has not told you anyone\'s name, so '
+                .'you do not know one, and a name you chose is a stranger in '
+                .'their life. Where a card needs another person, use the '
+                .'relationship: "my brother", "the kids", "the neighbour".';
+        }
+
+        return 'The only people who may be named are the ones the reader named: '
+            .implode(', ', $named).'. Spell each exactly. Anyone else appears by '
+            .'relationship, never by a name you chose.';
     }
 
     /** Shared with StoryWriter's rule, so both speak in the same register. */

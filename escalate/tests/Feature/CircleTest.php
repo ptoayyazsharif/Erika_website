@@ -103,7 +103,16 @@ class CircleTest extends TestCase
         $this->assertSame(['Real detail'], $circle->first()->details());
     }
 
-    public function test_the_readings_prompt_sees_every_detail(): void
+    /**
+     * Details reach the prompt for somebody attached to the desire.
+     *
+     * This used to pass a null desire and expect the whole circle regardless,
+     * which was the behaviour that put a brother nobody had named into a
+     * reading about a ranch. The point it was written to protect — details the
+     * user typed must actually be used — is unchanged; who they are used for
+     * is now the reader's choice rather than everybody at once.
+     */
+    public function test_the_readings_prompt_sees_every_detail_of_someone_named(): void
     {
         $user = $this->makeUser('prompt@escalate.test');
 
@@ -111,13 +120,34 @@ class CircleTest extends TestCase
             ['name' => 'Marta', 'relationship' => 'sister', 'notes' => ['Drinks tea', 'Calls on Sundays']],
         ]))->assertRedirect();
 
-        // The prompt builder is the whole reason the circle is stored at all;
-        // details that never reach it are details the user typed for nothing.
+        $desire = $user->desires()->create([
+            'title' => 'Sunday afternoons that are not rushed',
+            'people_involved' => ['Marta'],
+        ]);
+
         $prompt = (new \ReflectionMethod(\App\Services\StoryWriter::class, 'user'))
-            ->invoke(app(\App\Services\StoryWriter::class), $user->fresh(), null);
+            ->invoke(app(\App\Services\StoryWriter::class), $user->fresh(), $desire);
 
         $this->assertStringContainsString('Marta', $prompt);
         $this->assertStringContainsString('Drinks tea', $prompt);
         $this->assertStringContainsString('Calls on Sundays', $prompt);
+    }
+
+    /** And somebody they did not attach stays out of it entirely. */
+    public function test_the_prompt_does_not_carry_people_the_desire_never_named(): void
+    {
+        $user = $this->makeUser('unnamed@escalate.test');
+
+        $this->actingAs($user)->put(route('world.update'), $this->world([
+            ['name' => 'Marta', 'relationship' => 'sister', 'notes' => ['Drinks tea']],
+        ]))->assertRedirect();
+
+        $desire = $user->desires()->create(['title' => 'A quiet office of my own']);
+
+        $prompt = (new \ReflectionMethod(\App\Services\StoryWriter::class, 'user'))
+            ->invoke(app(\App\Services\StoryWriter::class), $user->fresh(), $desire);
+
+        $this->assertStringNotContainsString('Marta', $prompt);
+        $this->assertStringNotContainsString('Drinks tea', $prompt);
     }
 }
