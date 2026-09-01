@@ -263,7 +263,8 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', AdminDashboard::class)->name('dashboard');
 
-        Route::get('/settings', [AdminSettings::class, 'edit'])->name('settings');
+        Route::get('/settings', [AdminSettings::class, 'index'])->name('settings');
+        Route::get('/settings/{section}', [AdminSettings::class, 'edit'])->name('settings.section');
         Route::put('/settings', [AdminSettings::class, 'update'])->name('settings.update');
         Route::post('/settings/reset', [AdminSettings::class, 'reset'])->name('settings.reset');
         // Read-only against Stripe; throttled because it is an outbound call.

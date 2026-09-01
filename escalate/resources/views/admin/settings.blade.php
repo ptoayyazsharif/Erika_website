@@ -1,30 +1,36 @@
-@extends('layouts.app', ['title' => 'Settings'])
+@extends('layouts.app', ['title' => $meta['label']])
 
 @section('content')
 <div class="page-head" data-enter-hero>
-    <p class="eyebrow">Admin</p>
-    <h1>Settings</h1>
-    <p class="lede">
-        These override what the server was deployed with, and take effect
-        immediately — no redeploy. Clear a field to fall back to the deployed
-        value.
-    </p>
+    <p class="eyebrow"><a href="{{ route('admin.settings') }}">Settings</a></p>
+    <h1>{{ $meta['label'] }}</h1>
+    <p class="lede">{{ $meta['blurb'] }}</p>
 </div>
 
 @include('admin._nav')
 
-<div class="notice" role="status" data-enter>
-    @include('partials.icon', ['name' => 'lock', 'size' => 18])
-    <div>
-        API keys can be replaced here but never read back. A saved key shows only
-        its last four characters — an admin session is the one most worth
-        stealing, and a page that prints live keys would turn one stolen session
-        into two stolen vendor accounts.
-    </div>
+<div class="row wrap" style="gap:var(--s-2);margin-bottom:var(--s-5)">
+    @foreach ($sections as $key => $item)
+        <a class="chip {{ $key === $section ? 'is-on' : '' }}"
+           href="{{ route('admin.settings.section', $key) }}">{{ $item['label'] }}</a>
+    @endforeach
 </div>
+
+@if ($section === 'money' || $section === 'ai')
+    <div class="notice" role="status" data-enter>
+        @include('partials.icon', ['name' => 'lock', 'size' => 18])
+        <div>
+            API keys can be replaced here but never read back. A saved key shows only
+            its last four characters — an admin session is the one most worth
+            stealing, and a page that prints live keys would turn one stolen session
+            into two stolen vendor accounts.
+        </div>
+    </div>
+@endif
 
 {{-- Stripe connection check. Read-only: it retrieves from Stripe and writes
      nothing on either side, so it is safe to press at any time. --}}
+@if ($section === 'money')
 <div class="card" data-enter>
     <div class="row-between wrap" style="gap:var(--s-3)">
         <div>
@@ -55,7 +61,9 @@
         @endforeach
     @endif
 </div>
+@endif
 
+@if ($section === 'mail')
 <div class="card" data-enter>
     <div class="row-between wrap" style="gap:var(--s-3)">
         <div>
@@ -72,10 +80,16 @@
         </form>
     </div>
 </div>
+@endif
 
 <form method="POST" action="{{ route('admin.settings.update') }}" data-once>
     @csrf
     @method('PUT')
+
+    {{-- Which page was saved. The controller scopes its write to this section's
+         fields; without it, saving here would read every checkbox on every
+         OTHER page as unticked and switch them all off. --}}
+    <input type="hidden" name="section" value="{{ $section }}">
 
     @foreach ($groups as $group => $fields)
         <div class="card" data-enter>

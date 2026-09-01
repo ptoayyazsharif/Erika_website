@@ -52,7 +52,7 @@ class MailSettingsTest extends TestCase
 
         $this->admin();
 
-        $this->get(route('admin.settings'))
+        $this->get(route('admin.settings.section', 'mail'))
             ->assertOk()
             ->assertDontSee('super-secret-smtp-password')
             ->assertSee('••••word');
@@ -113,7 +113,7 @@ class MailSettingsTest extends TestCase
     {
         $this->admin();
 
-        $page = $this->get(route('admin.settings'))->assertOk();
+        $page = $this->get(route('admin.settings.section', 'mail'))->assertOk();
 
         $page->assertSee('name="settings[mail__default]"', false)
             ->assertSee('<option value="smtp"', false)

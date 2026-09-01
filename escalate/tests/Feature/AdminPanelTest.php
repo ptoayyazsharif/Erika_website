@@ -87,7 +87,7 @@ class AdminPanelTest extends TestCase
         $user->forceFill(['role' => 'admin'])->save();
 
         $this->actingAs($user->fresh())
-            ->get(route('admin.settings'))
+            ->get(route('admin.settings.section', 'limits'))
             ->assertRedirect(route('admin.login'));
 
         // The real password, and the flag asserted alongside the destination:
@@ -95,7 +95,7 @@ class AdminPanelTest extends TestCase
         // here is admin.settings too, so the destination alone proves nothing.
         $this->post(route('admin.login.store'), ['password' => 'a-long-enough-password-1'])
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('admin.settings'));
+            ->assertRedirect(route('admin.settings.section', 'limits'));
 
         $this->assertTrue(session('admin.verified'));
     }
@@ -124,6 +124,7 @@ class AdminPanelTest extends TestCase
 
         $this->get(route('admin.dashboard'))->assertOk()->assertSee('Overview');
         $this->get(route('admin.settings'))->assertOk();
+        $this->get(route('admin.settings.section', 'limits'))->assertOk();
         $this->get(route('admin.users'))->assertOk();
         $this->get(route('admin.invites'))->assertOk();
     }
@@ -190,11 +191,18 @@ class AdminPanelTest extends TestCase
 
         $this->admin();
 
-        $this->get(route('admin.settings'))
+        // Every section, not just the one the keys live on: a key leaking onto
+        // a page it has no business being on is exactly the leak worth finding.
+        foreach (array_keys(\App\Support\Settings::sections()) as $section) {
+            $this->get(route('admin.settings.section', $section))
+                ->assertOk()
+                ->assertDontSee('sk-ant-supersecretvalue-1234')
+                ->assertDontSee('el-secretvalue-9876');
+        }
+
+        // And the tail does show, so one key can be told from another.
+        $this->get(route('admin.settings.section', 'ai'))
             ->assertOk()
-            ->assertDontSee('sk-ant-supersecretvalue-1234')
-            ->assertDontSee('el-secretvalue-9876')
-            // Only the tail, enough to tell one key from another.
             ->assertSee('••••1234')
             ->assertSee('••••9876');
     }

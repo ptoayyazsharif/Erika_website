@@ -38,6 +38,91 @@ class Settings
     private const CACHE_KEY = 'escalate.settings';
 
     /**
+     * The sections the admin panel is divided into.
+     *
+     * Thirteen groups on one page had become genuinely daunting to open, which
+     * is a reliability problem as much as a design one: a settings screen
+     * nobody wants to scroll is a settings screen where the wrong field gets
+     * changed.
+     *
+     * Groups keep their existing names and shape — the allowlist in editable()
+     * is the security boundary and is deliberately untouched by this. All this
+     * does is say which groups appear together.
+     *
+     * @return array<string, array{label: string, blurb: string, groups: array<int, string>}>
+     */
+    public static function sections(): array
+    {
+        return [
+            'look' => [
+                'label' => 'How it looks',
+                'blurb' => 'The colour people see before they sign in.',
+                'groups' => ['How it looks'],
+            ],
+            'words' => [
+                'label' => 'Words',
+                'blurb' => 'What the public pages say, and the five questions.',
+                'groups' => ['Words on the public pages', 'The five questions'],
+            ],
+            'access' => [
+                'label' => 'Who gets in',
+                'blurb' => 'Invites, and whether an email has to be confirmed.',
+                'groups' => ['Who can sign up'],
+            ],
+            'limits' => [
+                'label' => 'Limits',
+                'blurb' => 'How much anybody can generate in a day, and the cap across everyone.',
+                'groups' => ['Daily limits, per person', 'Daily limits, per plan', 'The ceiling, across everyone'],
+            ],
+            'money' => [
+                'label' => 'Money',
+                'blurb' => 'Stripe keys, and whether billing is switched on at all.',
+                'groups' => ['Billing', 'Stripe — mode', 'Stripe — test keys', 'Stripe — live keys'],
+            ],
+            'mail' => [
+                'label' => 'Mail',
+                'blurb' => 'Who email comes from, and a button that really sends one.',
+                'groups' => ['Mail'],
+            ],
+            'ai' => [
+                'label' => 'Writing and voice',
+                'blurb' => 'The keys and models behind readings and narration.',
+                'groups' => ['Writing (Anthropic)', 'Voice (ElevenLabs)'],
+            ],
+        ];
+    }
+
+    /** The groups on one section's page, or every group for an unknown key. */
+    public static function groupsFor(?string $section): array
+    {
+        $wanted = self::sections()[$section]['groups'] ?? null;
+
+        if ($wanted === null) {
+            return self::editable();
+        }
+
+        return array_intersect_key(self::editable(), array_flip($wanted));
+    }
+
+    /**
+     * The config keys that live on one section's page.
+     *
+     * This is what stops a split settings screen from silently switching things
+     * off. SettingsController walks the schema and treats an ABSENT checkbox as
+     * "off" — correct when one page holds every checkbox, catastrophic once it
+     * does not: saving Mail would have turned off invite-only, email
+     * confirmation and billing, none of which were on the form.
+     *
+     * @return array<int, string>
+     */
+    public static function keysFor(?string $section): array
+    {
+        return collect(self::groupsFor($section))
+            ->flatMap(fn (array $group) => array_keys($group))
+            ->all();
+    }
+
+    /**
      * Every setting an administrator may change, grouped for the page.
      *
      * `type` drives both validation and the input rendered:
@@ -50,6 +135,10 @@ class Settings
      */
     public static function editable(): array
     {
+        $themes = collect(Theme::all())
+            ->map(fn (array $theme, string $key) => $theme['label'].' — '.$theme['note'])
+            ->all();
+
         return [
             'Writing (Anthropic)' => [
                 'escalate.anthropic.key'   => ['type' => 'secret', 'label' => 'API key', 'help' => 'Without this no reading can be written. Nothing else in the app depends on it.'],
@@ -130,6 +219,15 @@ class Settings
              * source of truth; clearing a field here restores Erika's original
              * wording rather than emptying the page.
              */
+            'How it looks' => [
+                'escalate.public_theme' => [
+                    'type' => 'choice',
+                    'label' => 'The theme people see before they sign in',
+                    'options' => $themes,
+                    'help' => 'Used on the landing page, the application form and the sign-in screen. Somebody who has chosen their own theme keeps it.',
+                ],
+            ],
+
             'Words on the public pages' => [
                 'escalate.copy.intro' => ['type' => 'text', 'label' => 'What Escalate is, in one sentence', 'help' => 'The first thing anybody reads on the landing page.'],
                 'escalate.copy.not_launched' => ['type' => 'text', 'label' => 'Why they cannot just sign up', 'help' => 'Sits above the button on the landing page.'],

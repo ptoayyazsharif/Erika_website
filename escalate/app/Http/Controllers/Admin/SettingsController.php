@@ -18,12 +18,25 @@ use Illuminate\View\View;
  */
 class SettingsController extends Controller
 {
-    public function edit(Request $request): View
+    /** The index: the sections, and nothing else to scroll past. */
+    public function index(Request $request): View
     {
+        return view('admin.settings.index', ['sections' => Settings::sections()]);
+    }
+
+    /** One section's page. An unknown key 404s rather than showing everything. */
+    public function edit(Request $request, string $section): View
+    {
+        abort_unless(array_key_exists($section, Settings::sections()), 404);
+
+        $groups = Settings::groupsFor($section);
+
         return view('admin.settings', [
-            'groups'  => Settings::editable(),
-            'display' => collect(Settings::schema())
-                ->keys()
+            'section'  => $section,
+            'meta'     => Settings::sections()[$section],
+            'sections' => Settings::sections(),
+            'groups'   => $groups,
+            'display'  => collect(Settings::keysFor($section))
                 ->mapWithKeys(fn ($key) => [$key => Settings::display($key)])
                 ->all(),
         ]);
@@ -31,7 +44,22 @@ class SettingsController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
-        $schema = Settings::schema();
+        $section = scalar_input($request->input('section')) ?: null;
+
+        /*
+         * Only the settings that were ON THE PAGE THAT WAS SAVED.
+         *
+         * This is not a tidiness measure, it is the whole reason splitting the
+         * settings screen is safe. The loop below treats an absent checkbox as
+         * "off", which is right when one page carries every checkbox and
+         * catastrophic the moment it does not: saving Mail would have switched
+         * off invite-only, email confirmation and billing, none of which were
+         * on that form, and the only evidence would have been an open beta.
+         */
+        $schema = array_intersect_key(
+            Settings::schema(),
+            array_flip(Settings::keysFor($section)),
+        );
 
         /*
          * The posted field names are config keys with dots replaced, because a
@@ -96,7 +124,9 @@ class SettingsController extends Controller
             Settings::put($key, $value, $request->user());
         }
 
-        return redirect()->route('admin.settings')->with('status', 'Saved. These take effect immediately.');
+        return redirect()
+            ->route('admin.settings.section', ['section' => $section ?? 'look'])
+            ->with('status', 'Saved. These take effect immediately.');
     }
 
     /**

@@ -392,6 +392,91 @@ acceptable and not worth a versioning table — but the admin field carries a li
 saying so, because discovering it from confusing data later is worse than
 reading it now.
 
+### The public pages get a colour, and Erika gets the admin panel back
+
+**Context.** Two asks, unrelated except that both are about somebody being able
+to change something without me.
+
+The **public pages** — landing, apply, login, register, privacy, offline, all
+six through `resources/views/layouts/auth.blade.php` — are always Midnight navy.
+Not by choice: `active_theme()` in `app/Support/helpers.php` reads the signed-in
+user's `profiles.theme` and falls back to a hardcoded `'midnight'`, and a guest
+has no profile. So the first thing anybody ever sees is a colour nobody picked,
+and Erika cannot change it.
+
+And **Admin → Settings is now thirteen groups on one page** — Writing, Voice,
+Billing, three Stripe groups, Mail, two copy groups, sign-up, three limit
+groups. It has grown with every phase and it is genuinely daunting to open.
+
+#### Themes
+
+Six exist already (`config/escalate.php` → `themes`): Midnight, Ember, Tide,
+Graphite, Parchment, Linen. Adding one is a config key plus a
+`[data-theme='key']` block in `public/css/app.css` — that is all, and the config
+comment already says so.
+
+**Two purple ones**, per the request:
+
+- **Amethyst** (dark) — deep aubergine ground, soft violet accent, a warm
+  off-white for text. Reads premium and calm rather than pink.
+- **Wisteria** (light) — pale lilac-grey paper, deep plum ink, muted violet
+  accent. The light counterpart, so the pair toggles between each other the way
+  Midnight/Parchment already do.
+
+Both stay inside the brief the config states: *premium, calm, gender-neutral, no
+pinks, no wellness pastels*. Purple is compatible with that at low saturation
+and high depth; it stops being so the moment it brightens toward magenta, which
+is the line these two sit well behind.
+
+Each also needs its `body::before` gradient block, as Ember and Tide have, or
+the ambient wash silently reverts to Midnight's.
+
+#### One setting, covering every public page
+
+`escalate.public_theme`, exposed in admin as a dropdown of every theme. The
+hardcoded `'midnight'` in `active_theme()` becomes that config value; the
+signed-in path is untouched, so a person's own choice still wins over it.
+
+Because all six public pages already extend one layout, this is a single change
+that colours the entire public site.
+
+A second setting, `escalate.themes_offered`, controls which themes appear in the
+user's picker in My World — useful, but secondary to the public one, and it must
+never hide a theme somebody is already using out from under them.
+
+#### Breaking up Settings
+
+Sections, each its own page at `/admin/settings/{section}`, with the existing
+`/admin/settings` becoming a short index that names them:
+
+| Section | What is in it |
+|---|---|
+| Look | Public theme, which themes people can pick |
+| Words | The public copy, and the five questions |
+| Who gets in | Invite-only, confirmed email |
+| Limits | Per person, per plan, the ceiling |
+| Money | Billing, Stripe mode, test keys, live keys |
+| Mail | Provider details, the test-send button |
+| Writing and voice | The Anthropic and ElevenLabs keys and models |
+
+`Settings::editable()` keeps returning groups; a `sections()` map alongside it
+says which groups belong to which section, so nothing about the allowlist —
+which is the security boundary — changes shape.
+
+**The trap this must not fall into.** `SettingsController::update()` iterates the
+whole schema, and for `bool` and `mode` it treats *absence* as off:
+
+```php
+Settings::put($key, array_key_exists($field, $posted) ? '1' : '0', ...)
+```
+
+That is correct for one page holding every checkbox. Split the page naively and
+saving *Mail* silently switches off invite-only, email confirmation and billing,
+because none of their checkboxes were on the form. The fix is to post the
+section and scope the loop to that section's fields — and it gets a test of its
+own, because the failure is silent, destructive, and would look exactly like a
+setting Erika swears she never touched.
+
 ### Phase D — brand
 
 9. **Icons and logo** once Erika supplies the doorway E as SVG + 1024px PNG:
@@ -433,11 +518,25 @@ and inspected directly, not inferred from output:
 - A reworded question and the label above that answer in Admin → Applications
   stay in step, because both read the same key.
 
+### Themes and the settings split
+
+- A guest on `/`, `/apply` and `/login` gets the theme Erika chose, and changing
+  it in admin changes all three.
+- A signed-in person's own theme still beats the public setting.
+- Both purple themes declare every token their siblings do — asserted by
+  comparing the custom properties in each `[data-theme]` block against
+  Midnight's, so a half-finished palette fails rather than silently inheriting.
+- Each theme's `scheme` and `chrome` reach `<html>` and the `theme-color` meta,
+  so browser chrome follows the page.
+- **The destructive one:** saving the Mail section leaves invite-only, email
+  confirmation and billing exactly as they were. This is the test that matters
+  most in the whole change.
+- A theme somebody is already using cannot be hidden from them by an admin
+  un-ticking it.
+
 ### Everything else
 
-- `php artisan test` — the suite is at 300 after Phase C, plus the 7 in
-  `NamingTest`. **The full suite has not been run since the naming change and
-  must be, before anything is committed.**
+- `php artisan test` — 317 passing as of `f899c2c`.
 - **Phase C specifically:**
   - Activity days: a second request the same day writes no second row; a request
     the next day does; the middleware never breaks a page when the write fails;
