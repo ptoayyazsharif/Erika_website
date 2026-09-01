@@ -186,6 +186,14 @@ return [
             'chrome' => '#141517',
             'swatch' => ['#141517', '#9AA3AD', '#C2B49A'],
         ],
+        'amethyst' => [
+            'counterpart' => 'wisteria',
+            'label'  => 'Amethyst',
+            'note'   => 'Deep aubergine and soft violet. Purple with the volume down.',
+            'scheme' => 'dark',
+            'chrome' => '#171326',
+            'swatch' => ['#171326', '#A996D9', '#C6A98F'],
+        ],
         'parchment' => [
             'counterpart' => 'midnight',
             'label'  => 'Parchment',
@@ -202,7 +210,39 @@ return [
             'chrome' => '#F5EFE6',
             'swatch' => ['#F5EFE6', '#9A6A55', '#7C7A63'],
         ],
+        'wisteria' => [
+            'counterpart' => 'amethyst',
+            'label'  => 'Wisteria',
+            'note'   => 'Lilac paper and plum ink. Amethyst in daylight.',
+            'scheme' => 'light',
+            'chrome' => '#F3F0F7',
+            'swatch' => ['#F3F0F7', '#6B549C', '#8A7A62'],
+        ],
     ],
+
+    /*
+    |---------------------------------------------------------------------------
+    | The colour a stranger sees
+    |---------------------------------------------------------------------------
+    |
+    | Every public page — the landing page, the application form, sign in,
+    | register, the privacy note — runs through layouts/auth.blade.php, which
+    | asks active_theme(). A guest has no profile to read a preference from, so
+    | that used to fall back to a hardcoded 'midnight': the first thing anybody
+    | ever saw was a colour nobody chose, and no way to change it short of a
+    | deploy.
+    |
+    | Signed-in people are unaffected. Their own choice still wins over this.
+    */
+    'public_theme' => env('PUBLIC_THEME', 'midnight'),
+
+    /*
+    | Which themes appear in the picker in My World. Empty means all of them.
+    |
+    | Never used to take a theme away from somebody already using it — see
+    | Theme::offered(), which always includes the current one.
+    */
+    'themes_offered' => array_filter(explode(',', (string) env('THEMES_OFFERED', ''))),
 
     /*
     | Faith language. Shapes vocabulary in every generated text. 'none' is the

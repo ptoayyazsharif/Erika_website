@@ -46,11 +46,9 @@ if (! function_exists('active_theme')) {
      */
     function active_theme(): string
     {
-        $key = auth()->user()?->profile?->theme;
-
-        return array_key_exists((string) $key, config('escalate.themes'))
-            ? $key
-            : 'midnight';
+        // The fallback is a setting now, not a constant: a guest on the landing
+        // page gets whatever theme the admin panel says the public site wears.
+        return \App\Support\Theme::forUser(auth()->user());
     }
 }
 
@@ -60,7 +58,9 @@ if (! function_exists('theme_meta')) {
     {
         $key ??= active_theme();
 
-        return config("escalate.themes.{$key}") ?? config('escalate.themes.midnight');
+        return config("escalate.themes.{$key}")
+            ?? config('escalate.themes.'.\App\Support\Theme::public())
+            ?? config('escalate.themes.'.\App\Support\Theme::FALLBACK);
     }
 }
 

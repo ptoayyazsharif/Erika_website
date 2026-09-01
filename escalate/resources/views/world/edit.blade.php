@@ -153,7 +153,7 @@
         </p>
 
         <div class="options" data-theme-picker>
-            @foreach (config('escalate.themes') as $key => $theme)
+            @foreach (\App\Support\Theme::offered($profile->theme) as $key => $theme)
                 <label class="option {{ old('theme', $profile->theme) === $key ? 'is-on' : '' }}">
                     <input type="radio" name="theme" value="{{ $key }}"
                            data-theme-choice="{{ $key }}"

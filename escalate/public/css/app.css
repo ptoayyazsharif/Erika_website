@@ -314,6 +314,83 @@
   color-scheme: light;
 }
 
+/* ── Amethyst — deep aubergine and soft violet ────────────────────────────
+   Purple at low saturation and real depth: premium and quiet rather than
+   sweet. The accent sits well back from magenta on purpose — the brief says
+   no pinks, and violet only reads as one when it brightens.
+   ------------------------------------------------------------------------ */
+
+[data-theme='amethyst'] {
+  --bg:            #171326;
+  --bg-deep:       #100D1B;
+  --surface:       #201A33;
+  --surface-raised: #2A2240;
+  --surface-sunk:  #130F20;
+
+  --text:          #E9E3F2;
+  --text-muted:    rgba(233, 227, 242, 0.64);
+  --text-faint:    rgba(233, 227, 242, 0.40);
+
+  --line:          rgba(233, 227, 242, 0.11);
+  --line-strong:   rgba(233, 227, 242, 0.21);
+
+  --accent:        #A996D9;
+  --accent-quiet:  #6F5CA0;
+  --on-accent:     #14101F;
+  --brass:         #C6A98F;
+  --danger:        #C2708C;
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px #A996D9;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.34);
+  --shadow-md: 0 6px 20px -8px rgba(0,0,0,.50);
+  --shadow-lg: 0 24px 56px -22px rgba(0,0,0,.62);
+
+  color-scheme: dark;
+}
+
+[data-theme='amethyst'] body::before {
+  background:
+    radial-gradient(60% 60% at 20% 6%, rgba(169, 150, 217, 0.16), transparent 70%),
+    radial-gradient(54% 54% at 84% 0%, rgba(198, 169, 143, 0.09), transparent 72%);
+}
+
+/* ── Wisteria — lilac paper and plum ink ──────────────────────────────────
+   Amethyst's daylight counterpart, so the two toggle between each other the
+   way Midnight and Parchment already do. The ground is barely violet; the
+   colour lives in the ink and the accent, which is what keeps a light theme
+   readable for long stretches.
+   ------------------------------------------------------------------------ */
+
+[data-theme='wisteria'] {
+  --bg:            #F3F0F7;
+  --bg-deep:       #E7E2EF;
+  --surface:       #FAF8FC;
+  --surface-raised: #FFFFFF;
+  --surface-sunk:  #ECE7F3;
+
+  --text:          #2A2337;
+  --text-muted:    rgba(42, 35, 55, 0.66);
+  --text-faint:    rgba(42, 35, 55, 0.42);
+
+  --line:          rgba(42, 35, 55, 0.10);
+  --line-strong:   rgba(42, 35, 55, 0.20);
+
+  --accent:        #6B549C;
+  --accent-quiet:  #8E79B8;
+  --on-accent:     #FFFFFF;
+  --brass:         #8A7A62;
+  --danger:        #A6486A;
+
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px #6B549C;
+
+  --shadow-sm: 0 1px 2px rgba(42,35,55,.06);
+  --shadow-md: 0 6px 20px -8px rgba(42,35,55,.14);
+  --shadow-lg: 0 24px 56px -22px rgba(42,35,55,.20);
+
+  color-scheme: light;
+}
+
 /* ── theme picker swatches ───────────────────────────────────────────────── */
 
 .swatch {
@@ -374,7 +451,8 @@ body::before {
   animation: drift 22s var(--ease-in-out) infinite alternate;
 }
 
-[data-theme='parchment'] body::before, [data-theme='linen'] body::before, [data-theme='light'] body::before {
+[data-theme='parchment'] body::before, [data-theme='linen'] body::before,
+[data-theme='wisteria'] body::before, [data-theme='light'] body::before {
   background:
     radial-gradient(60% 60% at 22% 8%, rgba(110, 154, 139, 0.20), transparent 70%),
     radial-gradient(52% 52% at 82% 0%, rgba(191, 161, 115, 0.16), transparent 72%);
