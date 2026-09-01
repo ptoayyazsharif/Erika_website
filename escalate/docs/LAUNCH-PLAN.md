@@ -1,5 +1,11 @@
 # Escalate: launch notes vs. what is actually built
 
+> **This file is the reasoning, not the state.** For what is built, what is next
+> and what is waiting on a human, read [`NEXT.md`](NEXT.md) first. The sections
+> below are kept as they were written when each piece was planned, so the "why"
+> behind a decision survives. Status markers are updated; the arguments are not
+> rewritten after the fact.
+
 ## Context
 
 Erika has produced brand and launch materials for a private beta — logo concepts
@@ -95,7 +101,7 @@ disappeared tomorrow?" Nothing exists.
 The funnel ends "Testimonials → Waitlist → Public launch". Nothing captures the
 people who apply and are not selected.
 
-### 9. Brand assets are the old ones
+### 9. Brand assets are the old ones — **RESOLVED**
 
 `public/icons/` holds favicon, apple-touch, 192/512 and maskable icons — none of
 them the doorway E. The topbar wordmark is text (`Escalat<span>e</span>`), not the
@@ -143,7 +149,7 @@ view and no config.
    field: all 25 comped permanently on selection. No new billing code, no Stripe
    coupon to maintain, reversible per person, and they never meet a card form.
 
-### Phase C — run the beta with numbers — **NEXT**
+### Phase C — run the beta with numbers — **DONE**
 
 #### 7. A record of which days somebody was active
 
@@ -278,10 +284,10 @@ circle block when I wrote it in Phase B, so the cards carry the same fault.**
    catches the case where the model is honest but wrong, and every circle name,
    which is an exact string comparison.
 
-#### Status — written and tested, not shipped
+#### Status — **SHIPPED** in `284525c`, live
 
-The four changes are **applied to the working tree and pass their own tests**;
-nothing is committed or deployed.
+The four changes are committed, deployed, and covered by `NamingTest`, which
+runs green as part of the suite.
 
 - `app/Services/StoryWriter.php` — rule 4 split so places/numbers/objects keep
   their "must appear" and names do not; new `namingRule()` and `peopleFor()`;
@@ -301,14 +307,10 @@ nothing is committed or deployed.
 (`$tries = 2`) and then lands in `failed()`, which marks the reading failed with
 a plain message — one retry, then a visible failure, which is what this wants.
 
-**Not yet done, and the reason this is not finished:**
-
-1. **The full suite has not been run since the change.** `GenerationTest`,
-   `CircleTest`, `BlankFieldsTest` and `CeilingTest` all exercise this path.
-   Nothing asserts the removed "People involved" line — checked — but that is an
-   argument for expecting it to pass, not evidence that it does.
-2. Commit and deploy.
-3. Then regenerate the ranch reading on the live app, as the proof.
+**Still outstanding, and it is not code:** the ranch reading that started this
+is still the ruined one. `stories.regenerate` on the reading screen replaces it,
+and doing so on that specific desire is the proof the fix worked. Tracked in
+[`NEXT.md`](NEXT.md) under "Waiting on a human".
 
 #### Afterwards
 
@@ -564,14 +566,14 @@ high-contrast serif. It is good enough to launch behind and swaps out for a
 designer's file without touching anything else. Typography stays Lora over
 Raleway — already self-hosted, no build step.
 
-#### Step three — the per-screen strategy — **NOT STARTED**
+#### Step three — the per-screen strategy — **NOT STARTED**, see `NEXT.md` §2
 
 `Theme::forUser()` becomes surface-aware: `@section('surface', 'immersive')` on
 the reading, narration and Rewind views resolves to Aubergine while everything
 else stays on Ivory. Champagne gets bound to the remaining achievement states.
 The largest piece and the least urgent.
 
-#### Admin — **NOT STARTED**
+#### Admin — **NOT STARTED**, see `NEXT.md` §1
 
 The brand colours as `text` fields under **How it looks**, so Erika can adjust
 hexes without a deploy — the same pattern as her copy, config defaults
@@ -656,7 +658,7 @@ and inspected directly, not inferred from output:
 
 ### Everything else
 
-- `php artisan test` — 343 passing.
+- `php artisan test` — 343 passing as of `0014262`.
 - **Phase C specifically:**
   - Activity days: a second request the same day writes no second row; a request
     the next day does; the middleware never breaks a page when the write fails;
