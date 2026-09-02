@@ -68,6 +68,21 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === 'admin';
     }
 
+    /**
+     * The administrators who can actually act.
+     *
+     * Suspended is excluded deliberately. Suspending an administrator is how
+     * their access is taken away, so continuing to post applicants' answers to
+     * their inbox would leave a hole open that the admin panel has already
+     * closed.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
+     */
+    public function scopeAdmins($query): void
+    {
+        $query->where('role', 'admin')->whereNull('suspended_at');
+    }
+
     public function isSuspended(): bool
     {
         return $this->suspended_at !== null;

@@ -256,6 +256,7 @@ class Settings
             'Who can sign up' => [
                 'escalate.beta.invite_only'          => ['type' => 'bool', 'label' => 'Invite only', 'help' => 'Registration requires an unclaimed code. This is the main thing standing between a public URL and your provider bill.'],
                 'escalate.beta.require_verification' => ['type' => 'bool', 'label' => 'Require a confirmed email', 'help' => 'Gates the four routes that cost money. Needs working mail — with none, nobody can generate anything.'],
+                'escalate.beta.notify_admins'        => ['type' => 'bool', 'label' => 'Email admins when somebody applies', 'help' => 'Sends every administrator the five answers and a link to decide. The answers are encrypted in the app but not in an inbox, so switching this off leaves them only on this screen.'],
             ],
 
             'Daily limits, per person' => [

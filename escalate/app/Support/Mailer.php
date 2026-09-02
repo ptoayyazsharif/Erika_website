@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\User;
 use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Mail;
 
@@ -42,5 +43,27 @@ class Mailer
 
             return false;
         }
+    }
+
+    /**
+     * Send one message to every administrator who can act on it.
+     *
+     * Separately rather than as one message with several recipients, so that
+     * one bad address cannot take the others down with it — each goes through
+     * send() above and so fails on its own.
+     *
+     * Inline, like every other send in this app. The queue exists and a worker
+     * runs, but putting this on it would buy a second failure mode — a job
+     * dying in the worker where nobody is looking — to save about a second on a
+     * form that will be submitted a few dozen times. If the admin list ever
+     * grows past a handful, this is the thing to move.
+     *
+     * @return int how many were handed to the mail server
+     */
+    public static function toAdmins(Mailable $mailable): int
+    {
+        return User::admins()->get()
+            ->filter(fn (User $admin) => self::send($admin->email, clone $mailable))
+            ->count();
     }
 }

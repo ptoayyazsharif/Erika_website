@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ApplicationReceived;
+use App\Mail\ApplicationSubmitted;
 use App\Models\Application;
 use App\Support\Mailer;
 use Illuminate\Http\RedirectResponse;
@@ -83,6 +84,11 @@ class ApplicationController extends Controller
             return redirect()->route('apply')->with('status', self::RECEIVED);
         }
 
+        // Captured before the save, which makes exists() true either way. The
+        // early return above means this can only be an update of a still-
+        // pending application — a decided one never reaches here.
+        $isUpdate = $application->exists;
+
         $application->forceFill([
             'name'          => scalar_input($data['name']),
             'email'         => $email,
@@ -94,9 +100,17 @@ class ApplicationController extends Controller
             'status'        => Application::PENDING,
         ])->save();
 
-        // Sent after the row is safe. A mail failure must not lose an
+        // Both sends happen after the row is safe, and both go through Mailer,
+        // which swallows a transport fault. A mail failure must not lose an
         // application — better a silent thank-you than a discarded answer.
         Mailer::send($email, new ApplicationReceived($application));
+
+        // The people who have to read it. Without this the only way to find a
+        // new application is to remember to open the admin panel, which is how
+        // somebody ends up waiting three days for a reply.
+        if (config('escalate.beta.notify_admins')) {
+            Mailer::toAdmins(new ApplicationSubmitted($application, $isUpdate));
+        }
 
         return redirect()->route('apply')->with('status', self::RECEIVED);
     }

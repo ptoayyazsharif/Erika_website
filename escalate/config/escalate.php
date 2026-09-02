@@ -383,6 +383,16 @@ return [
         // you mean it: that combination is an open door to your provider bill.
         'require_verification' => (bool) env('REQUIRE_VERIFICATION', true),
 
+        // Email every administrator when somebody applies, with the answers in
+        // the message so an application can be read and decided from a phone.
+        //
+        // Those answers are encrypted at rest, so mailing them puts them in
+        // inboxes and in the provider's logs, where AccountEraser cannot reach
+        // them — deleting an application does not unsend an email. Kept on
+        // because a founding tester waiting three days is the likelier harm,
+        // but this is the switch if that judgement changes.
+        'notify_admins' => (bool) env('NOTIFY_ADMINS', true),
+
         // How long a minted invite stays good for, in days. Null for forever.
         'invite_days' => (int) env('INVITE_DAYS', 30),
 
