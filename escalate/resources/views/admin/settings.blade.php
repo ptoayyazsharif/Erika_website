@@ -82,6 +82,31 @@
 </div>
 @endif
 
+{{-- Previews. Outside the settings form on purpose: a <form> cannot nest
+     inside another one, and each preview is its own submission. --}}
+@if ($section === 'emails')
+<div class="card" data-enter>
+    <h3 style="margin:0 0 var(--s-2)">See one in a real inbox</h3>
+    <p class="small muted" style="margin:0 0 var(--s-4)">
+        Sends the wording as it stands right now to
+        <strong>{{ auth()->user()->email }}</strong>. Save first — a preview shows
+        what is stored, not what is typed on screen. Codes and buttons are
+        stand-ins; the real email fills them in.
+    </p>
+
+    <div class="row wrap" style="gap:var(--s-2)">
+        @foreach (App\Support\EmailTemplates::TEMPLATES as $key => $meta)
+            <form method="POST" action="{{ route('admin.settings.email-test', $key) }}" data-once>
+                @csrf
+                <button class="btn btn-quiet btn-sm" type="submit" data-busy="Sending…">
+                    {{ $meta['label'] }}
+                </button>
+            </form>
+        @endforeach
+    </div>
+</div>
+@endif
+
 <form method="POST" action="{{ route('admin.settings.update') }}" data-once>
     @csrf
     @method('PUT')

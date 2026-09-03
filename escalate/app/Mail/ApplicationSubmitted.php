@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Application;
+use App\Support\EmailTemplates;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -41,15 +42,28 @@ class ApplicationSubmitted extends Mailable
 
     public function envelope(): Envelope
     {
-        $what = $this->isUpdate ? 'Updated application' : 'New application';
-
         // The applicant's name is in the subject so a full inbox stays
         // scannable, and so two applications never look like the same mail.
-        return new Envelope(subject: "{$what}: {$this->application->name}");
+        // An updated application says so, prefixed here rather than in the
+        // editable subject — an admin should not have to remember to keep it.
+        $subject = EmailTemplates::subject('admin_application', $this->tokens());
+
+        return new Envelope(subject: $this->isUpdate ? "Updated — {$subject}" : $subject);
+    }
+
+    /** @return array<string, string> */
+    private function tokens(): array
+    {
+        return [
+            'name'  => $this->application->name,
+            'email' => $this->application->email,
+        ];
     }
 
     public function content(): Content
     {
-        return new Content(markdown: 'mail.application-submitted');
+        return new Content(markdown: 'mail.application-submitted', with: [
+            'body' => EmailTemplates::body('admin_application', $this->tokens()),
+        ]);
     }
 }

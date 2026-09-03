@@ -1,13 +1,9 @@
+{{-- Prose from App\Support\EmailTemplates, so Erika can reword it without a
+     deploy. {!! !!} is safe and necessary here: $body is an HtmlString from
+     Laravel's mail Markdown, which escapes HTML input and strips unsafe links.
+     Escaping it again would print the markup instead of rendering it. --}}
 <x-mail::message>
-# Thank you.
-
-Your application to the Escalate private beta is in. We read every one.
-
-We are keeping the first group small on purpose — the point is candid feedback
-from people who will actually use it, not a big number. You will hear from us
-by email either way.
-
-Nothing else is needed from you for now.
+{!! $body !!}
 
 <br>
 Escalate<br>

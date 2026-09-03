@@ -1,9 +1,11 @@
+{{-- The prose is editable; everything below it is not.
+
+     The code, the button and the expiry line stay here on purpose. An admin
+     rewording this email cannot accidentally send a selection with no code in
+     it or no way to sign up — which is the one failure that would make this
+     particular email useless to the person who waited for it. --}}
 <x-mail::message>
-# You’re in.
-
-{{ $application->name }} — you have a seat in the Escalate private beta.
-
-Your invite code is:
+{!! $body !!}
 
 <x-mail::panel>
 {{ $invite->code }}
@@ -13,19 +15,12 @@ Your invite code is:
 Set up your account
 </x-mail::button>
 
-The link above fills the code in for you. If you would rather type it, the
-code goes in the last field on the sign-up form.
-
 @if ($invite->expires_at)
 The code is good until **{{ $invite->expires_at->format('j F Y') }}**, and it is
 tied to this email address.
 @else
 The code is tied to this email address.
 @endif
-
-**What we would like from you:** use it at least four times over the next seven
-days, and then tell us the truth about it. Not what is nice about it — what is
-missing, what is confusing, and what you would not miss.
 
 <br>
 Escalate<br>

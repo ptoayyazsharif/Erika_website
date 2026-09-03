@@ -1,17 +1,16 @@
+{{-- Prose editable; the answers and the review button are not. --}}
 <x-mail::message>
-# {{ $isUpdate ? 'An application was updated' : 'Somebody applied' }}
-
-@if ($isUpdate)
-**{{ $application->name }}** has replaced their earlier answers. What follows is
-the current version — the one they applied with is gone.
-@else
-**{{ $application->name }}** has applied to the private beta.
-@endif
+{!! $body !!}
 
 {{-- Explicit <br>, because markdown collapses a single newline and these two
      ran together on one line the first time this was rendered and looked at. --}}
 **Email:** {{ $application->email }}<br>
 **{{ $isUpdate ? 'Updated' : 'Applied' }}:** {{ $application->updated_at->format('j F Y, H:i') }}
+
+@if ($isUpdate)
+They have replaced their earlier answers. What follows is the current version —
+the one they applied with is gone.
+@endif
 
 ---
 

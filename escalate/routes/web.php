@@ -272,6 +272,9 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         Route::post('/settings/stripe-check', [AdminSettings::class, 'stripe'])
             ->middleware('throttle:20,10')->name('settings.stripe');
         // Sends real mail, to the admin's own address only. Throttled hard.
+        Route::post('/settings/email-test/{key}', [AdminSettings::class, 'testEmail'])
+            ->middleware('throttle:10,10')->name('settings.email-test');
+
         Route::post('/settings/mail-test', [AdminSettings::class, 'testMail'])
             ->middleware('throttle:6,10')->name('settings.mail');
 

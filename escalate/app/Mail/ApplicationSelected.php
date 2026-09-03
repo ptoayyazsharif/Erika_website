@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Models\Application;
 use App\Models\Invite;
+use App\Support\EmailTemplates;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -25,13 +26,28 @@ class ApplicationSelected extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'You’re in — welcome to the Escalate private beta');
+        return new Envelope(subject: EmailTemplates::subject('selected', $this->tokens()));
     }
 
     public function content(): Content
     {
         return new Content(markdown: 'mail.application-selected', with: [
-            'url' => route('register', ['invite' => $this->invite->code]),
+            'body' => EmailTemplates::body('selected', $this->tokens()),
+            'url'  => route('register', ['invite' => $this->invite->code]),
         ]);
+    }
+
+    /**
+     * Display-only. The code, the button and its URL are in the Blade, so an
+     * admin who deletes every token from the prose still sends a usable invite.
+     *
+     * @return array<string, string>
+     */
+    private function tokens(): array
+    {
+        return [
+            'name'    => $this->application->name,
+            'expires' => $this->invite->expires_at?->format('j F Y') ?? 'no fixed date',
+        ];
     }
 }

@@ -388,6 +388,73 @@ return [
         'confirm_password' => (bool) env('ADMIN_CONFIRM_PASSWORD', false),
     ],
 
+    /*
+    | What every email says.
+    |
+    | Today's exact wording, so an untouched install sends precisely what it
+    | sent before this block existed and an admin edit is a change of mind
+    | rather than the source of truth — the same shape as `copy` above.
+    |
+    | Bodies are Markdown. Codes, buttons and links are NOT here: they live in
+    | the Blade files, so no edit can send a selection email with no code in it
+    | or a password reset with no link. See App\Support\EmailTemplates.
+    */
+    'emails' => [
+        'applied' => [
+            'subject' => env('EMAIL_APPLIED_SUBJECT', 'Your Escalate application'),
+            'body' => "# Thank you.\n\n"
+                ."Your application to the Escalate private beta is in. We read every one.\n\n"
+                ."We are keeping the first group small on purpose — the point is candid feedback "
+                ."from people who will actually use it, not a big number. You will hear from us "
+                ."by email either way.\n\n"
+                .'Nothing else is needed from you for now.',
+        ],
+
+        'selected' => [
+            'subject' => env('EMAIL_SELECTED_SUBJECT', 'You’re in — your Escalate invite'),
+            'body' => "# You’re in.\n\n"
+                ."{{ name }} — you have a seat in the Escalate private beta.\n\n"
+                ."Your invite code is below. The button fills it in for you; if you would rather "
+                ."type it, the code goes in the last field on the sign-up form.\n\n"
+                ."**What we would like from you:** use it at least four times over the next seven "
+                ."days, and then tell us the truth about it. Not what is nice about it — what is "
+                .'missing, what is confusing, and what you would not miss.',
+        ],
+
+        'revoked' => [
+            'subject' => env('EMAIL_REVOKED_SUBJECT', 'Your Escalate invite has been released'),
+            'body' => "# Your invite has been released\n\n"
+                ."{{ name }} — your Escalate invite went unused, so we have passed the seat to "
+                ."somebody else waiting for one.\n\n"
+                ."Nothing has gone wrong and there is nothing you need to do. The private beta is "
+                ."small on purpose, and we would rather a seat sat with somebody ready to use it "
+                ."this week than sat idle.\n\n"
+                ."**You are still on the list.** If you would like a code when the next group "
+                .'opens, you do not need to apply again — we already have your answers.',
+        ],
+
+        'admin_application' => [
+            'subject' => env('EMAIL_ADMIN_APPLICATION_SUBJECT', 'New application: {{ name }}'),
+            'body' => "**{{ name }}** has applied to the private beta.\n\n"
+                .'Their answers are below.',
+        ],
+
+        'password_reset' => [
+            'subject' => env('EMAIL_PASSWORD_RESET_SUBJECT', 'Reset your Escalate password'),
+            'body' => "# Reset your password\n\n"
+                ."Somebody asked to reset the password on this address. Use the button below.\n\n"
+                ."The link expires in {{ minutes }} minutes.\n\n"
+                .'If it was not you, nothing has happened and you can ignore this.',
+        ],
+
+        'verify_email' => [
+            'subject' => env('EMAIL_VERIFY_SUBJECT', 'Confirm your email for Escalate'),
+            'body' => "# One tap and you are set\n\n"
+                ."Confirm this address with the button below.\n\n"
+                .'If you did not create an Escalate account, you can ignore this.',
+        ],
+    ],
+
     'beta' => [
         // Registration requires an unclaimed invite code. Turn off to open
         // signup to anyone who finds the URL.

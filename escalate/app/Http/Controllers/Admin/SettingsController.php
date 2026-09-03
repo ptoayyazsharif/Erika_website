@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Support\EmailTemplates;
 use App\Support\Settings;
 use App\Support\StripeCheck;
 use Illuminate\Http\RedirectResponse;
@@ -153,6 +154,54 @@ class SettingsController extends Controller
      * Sent to the administrator's own address so this cannot be used to send
      * anything to anyone else.
      */
+    /**
+     * Send one real email to yourself, with the wording as it stands.
+     *
+     * Sample values stand in for the tokens: the point is to see the sentences
+     * and the layout, and building a throwaway Application to render a preview
+     * would mean writing to the database to look at a paragraph.
+     *
+     * It refuses on the `log` mailer for the same reason testMail() does — a
+     * test that quietly writes to a file is how password reset came to be
+     * broken for weeks without anybody noticing.
+     */
+    public function testEmail(Request $request, string $key): RedirectResponse
+    {
+        abort_unless(EmailTemplates::exists($key), 404);
+
+        if (config('mail.default') === 'log') {
+            return back()->withErrors(['mail' =>
+                '“How mail is sent” is set to “do not send”, so this would be written to the log '
+                .'and delivered to nobody. Change it under Settings → Mail first.']);
+        }
+
+        $to = $request->user()->email;
+
+        $sample = [
+            'name'    => $request->user()->name ?: 'Amara Okafor',
+            'email'   => $to,
+            'expires' => now()->addDays(30)->format('j F Y'),
+            'minutes' => '60',
+        ];
+
+        try {
+            \Illuminate\Support\Facades\Mail::send(
+                'mail.auth-action',
+                [
+                    'body'   => EmailTemplates::body($key, $sample),
+                    'action' => 'Where a button would go',
+                    'url'    => config('app.url'),
+                ],
+                fn ($m) => $m->to($to)->subject('[preview] '.EmailTemplates::subject($key, $sample)),
+            );
+        } catch (\Throwable $e) {
+            return back()->withErrors(['mail' => 'Sending failed: '.\Illuminate\Support\Str::limit($e->getMessage(), 200)]);
+        }
+
+        return back()->with('status',
+            "Preview of “{$key}” sent to {$to}. Codes and buttons are stand-ins — the real email fills them in.");
+    }
+
     public function testMail(Request $request): RedirectResponse
     {
         $to = $request->user()->email;

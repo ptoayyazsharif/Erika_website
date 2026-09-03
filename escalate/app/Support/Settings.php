@@ -79,6 +79,14 @@ class Settings
                 'blurb' => 'Stripe keys, and whether billing is switched on at all.',
                 'groups' => ['Billing', 'Stripe — mode', 'Stripe — test keys', 'Stripe — live keys'],
             ],
+            'emails' => [
+                'label' => 'Emails',
+                'blurb' => 'What every email the app sends actually says.',
+                'groups' => array_map(
+                    fn (string $key) => 'Email — '.\App\Support\EmailTemplates::TEMPLATES[$key]['label'],
+                    \App\Support\EmailTemplates::keys(),
+                ),
+            ],
             'mail' => [
                 'label' => 'Mail',
                 'blurb' => 'Who email comes from, and a button that really sends one.',
@@ -219,6 +227,8 @@ class Settings
              * source of truth; clearing a field here restores Erika's original
              * wording rather than emptying the page.
              */
+            ...self::emailGroups(),
+
             'How it looks' => [
                 'escalate.public_theme' => [
                     'type' => 'choice',
@@ -293,6 +303,41 @@ class Settings
     public static function schema(): array
     {
         return array_merge(...array_values(self::editable()));
+    }
+
+    /**
+     * One group per email, each holding its subject and body.
+     *
+     * Generated from App\Support\EmailTemplates rather than written out, so
+     * adding an email cannot leave it uneditable — the registry is the single
+     * list, and this and the section above both read it.
+     *
+     * @return array<string, array<string, array>>
+     */
+    private static function emailGroups(): array
+    {
+        $groups = [];
+
+        foreach (\App\Support\EmailTemplates::TEMPLATES as $key => $meta) {
+            $tokens = $meta['tokens']
+                ? ' You can use '.collect($meta['tokens'])->map(fn ($t) => '{{ '.$t.' }}')->join(', ').'.'
+                : '';
+
+            $groups['Email — '.$meta['label']] = [
+                "escalate.emails.{$key}.subject" => [
+                    'type'  => 'string',
+                    'label' => 'Subject',
+                    'help'  => $meta['blurb'].$tokens,
+                ],
+                "escalate.emails.{$key}.body" => [
+                    'type'  => 'text',
+                    'label' => 'Message',
+                    'help'  => 'Markdown. Blank lines make paragraphs, **stars** make bold. Anything else the email needs — codes, buttons, links — is added automatically and is not typed here.',
+                ],
+            ];
+        }
+
+        return $groups;
     }
 
     public static function isEditable(string $key): bool

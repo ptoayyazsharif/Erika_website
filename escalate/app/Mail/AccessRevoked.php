@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Application;
+use App\Support\EmailTemplates;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -31,11 +32,19 @@ class AccessRevoked extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'Your Escalate invite has been released');
+        return new Envelope(subject: EmailTemplates::subject('revoked', $this->tokens()));
     }
 
     public function content(): Content
     {
-        return new Content(markdown: 'mail.access-revoked');
+        return new Content(markdown: 'mail.access-revoked', with: [
+            'body' => EmailTemplates::body('revoked', $this->tokens()),
+        ]);
+    }
+
+    /** @return array<string, string> */
+    private function tokens(): array
+    {
+        return ['name' => $this->application->name];
     }
 }

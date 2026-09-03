@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Application;
+use App\Support\EmailTemplates;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -18,11 +19,19 @@ class ApplicationReceived extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'Your Escalate application');
+        return new Envelope(subject: EmailTemplates::subject('applied', $this->tokens()));
     }
 
     public function content(): Content
     {
-        return new Content(markdown: 'mail.application-received');
+        return new Content(markdown: 'mail.application-received', with: [
+            'body' => EmailTemplates::body('applied', $this->tokens()),
+        ]);
+    }
+
+    /** @return array<string, string> */
+    private function tokens(): array
+    {
+        return ['name' => $this->application->name];
     }
 }
