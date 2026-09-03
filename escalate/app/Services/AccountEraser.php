@@ -121,6 +121,12 @@ class AccountEraser
                 'tone'           => $profile->tone,
                 'default_length' => $profile->default_length,
                 'consented_at'   => $profile->consented_at?->toIso8601String(),
+
+                // A choice they made, so it belongs in "everything Escalate
+                // holds about you". Which banners they closed does not — that
+                // is interface state nobody would recognise as their data, and
+                // padding an export with it buries what matters.
+                'announcement_emails' => (bool) $profile->announcement_emails,
             ] : null,
 
             // details() rather than ->note. `note` is the retired single-detail

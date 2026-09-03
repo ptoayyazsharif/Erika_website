@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use Illuminate\Mail\Markdown;
 use Illuminate\Support\HtmlString;
 
 /**
@@ -93,42 +92,15 @@ class EmailTemplates
     /**
      * The body as HTML, ready to echo.
      *
-     * ── Why the angle brackets are escaped by hand ───────────────────────────
-     *
-     * `Markdown::parse()` does NOT escape HTML. It looks as though it does —
-     * `html_input => 'escape'` appears in that file — but only inside the
-     * `$encoded === true` branch, on a second converter used for interpolated
-     * values. The default path builds a converter with `allow_unsafe_links`
-     * alone, and CommonMark's own default for `html_input` is to allow it. So
-     * a `<script>` an admin typed reached the rendered email intact, and a
-     * test asserting otherwise is what caught it rather than the vendor code
-     * reading as though it were safe.
-     *
-     * Escaping `<` and `>` before parsing is deliberate over passing
-     * `html_input` to `Markdown::converter()`: that method is marked
-     * `@internal`, so relying on it makes a framework upgrade able to reopen a
-     * hole silently. Nothing in Markdown needs a literal angle bracket —
-     * headings, bold, lists and links all still work — so this costs nothing
-     * and depends on no parser configuration at all.
-     *
-     * Unsafe links are a separate matter and Laravel's default converter does
-     * handle those: a `javascript:` href is dropped, verified in the same test.
-     *
-     * The views echo the result with {!! !!}, which CLAUDE.md otherwise
-     * forbids. That is correct here and only here: what is echoed is parser
-     * output over already-escaped input, not the admin's text.
+     * The escaping and the reasoning behind it live in App\Support\SafeMarkdown,
+     * which announcements use too — one copy, so there is one place to get it
+     * wrong rather than two that can drift apart.
      */
     public static function body(string $key, array $tokens = []): HtmlString
     {
-        $source = str_replace(
-            ['<', '>'],
-            ['&lt;', '&gt;'],
-            (string) config("escalate.emails.{$key}.body"),
-        );
+        $html = (string) SafeMarkdown::render((string) config("escalate.emails.{$key}.body"));
 
-        return new HtmlString(
-            self::substitute((string) Markdown::parse($source), $tokens, escape: true),
-        );
+        return new HtmlString(self::substitute($html, $tokens, escape: true));
     }
 
     /**

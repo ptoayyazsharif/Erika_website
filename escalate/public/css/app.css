@@ -1510,6 +1510,14 @@ a.card:active, button.card:active { transform: translateY(0); }
 
 /* ── toast ───────────────────────────────────────────────────────────────── */
 
+/* Announcement bodies are Markdown, so they arrive as real paragraphs and
+   lists rather than one block of text. The first and last get their margins
+   trimmed so the card does not gain a dead band top and bottom. */
+.announcement-body > :first-child { margin-top: 0; }
+.announcement-body > :last-child { margin-bottom: 0; }
+.announcement-body p { margin: 0 0 var(--s-3); }
+.announcement-body ul, .announcement-body ol { margin: 0 0 var(--s-3) var(--s-5); }
+
 /* ── the install tip ──────────────────────────────────────────────────────
    Anchored under the topbar rather than floating over the bottom of the
    screen, where it would sit on top of the tab bar — the one piece of

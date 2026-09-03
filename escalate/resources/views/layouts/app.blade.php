@@ -89,6 +89,7 @@
             ['admin.feedback',  'Said',     'Feedback', 'book'],
             ['admin.applications', 'Apply', 'Applications', 'heart'],
             ['admin.testers',   'Testers',  'Testers',  'timer'],
+            ['admin.announcements', 'Say',  'Announcements', 'quote'],
             ['admin.invites',   'Invites',  'Invites',  'plus'],
             ['admin.settings',  'Settings', 'Settings', 'world'],
             ['today',           'Back to the app', 'Exit', 'sunrise'],
@@ -125,6 +126,10 @@
 @endauth
 
 <main class="shell" id="main">
+@auth
+    @include('partials.announcement-banner')
+@endauth
+
 {{-- The install nudge.
 
      The topbar button alone only ever appears when `beforeinstallprompt`

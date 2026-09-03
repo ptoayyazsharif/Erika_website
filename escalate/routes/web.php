@@ -6,7 +6,9 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Admin\ApplicationController as AdminApplications;
+use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncements;
 use App\Http\Controllers\Admin\TesterController as AdminTesters;
+use App\Http\Controllers\AnnouncementController as PublicAnnouncements;
 use App\Http\Controllers\Admin\BetaController as AdminBeta;
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedback;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
@@ -125,6 +127,23 @@ Route::get('/', fn () => auth()->check()
     ? redirect()->route('today')
     : response()->view('landing'))->name('landing');
 
+/*
+ * Unsubscribing from announcements.
+ *
+ * Public and unauthenticated on purpose: this is clicked from a mail client,
+ * usually on a device nobody is signed in on, and an unsubscribe that demands a
+ * password first is an unsubscribe that does not work. `signed` stands in for
+ * authentication — the URL carries the app's own signature, so the id in it
+ * cannot be edited to opt somebody else out.
+ */
+Route::middleware('signed')->group(function () {
+    Route::get('/unsubscribe/{user}', [PublicAnnouncements::class, 'unsubscribe'])
+        ->name('announcements.unsubscribe');
+
+    Route::get('/resubscribe/{user}', [PublicAnnouncements::class, 'resubscribe'])
+        ->name('announcements.resubscribe');
+});
+
 /* ── signed in ───────────────────────────────────────────────────────────── */
 
 Route::middleware(['auth', 'not-suspended'])->group(function () {
@@ -242,6 +261,9 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         ->middleware(['verified-email', 'throttle:12,60'])->name('rewinds.generate');
     Route::delete('/rewinds/{rewind}', [RewindController::class, 'destroy'])->name('rewinds.destroy');
 
+    Route::post('/announcements/{announcement}/dismiss', [PublicAnnouncements::class, 'dismiss'])
+        ->name('announcements.dismiss');
+
     /* admin door — reachable only by an admin, invisible to everyone else */
     Route::get('/admin/login', [AdminSessionController::class, 'create'])->name('admin.login');
     Route::post('/admin/login', [AdminSessionController::class, 'store'])
@@ -292,6 +314,13 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
 
         Route::get('/beta', AdminBeta::class)->name('beta');
         Route::get('/feedback', AdminFeedback::class)->name('feedback');
+
+        Route::get('/announcements', [AdminAnnouncements::class, 'index'])->name('announcements');
+        Route::post('/announcements', [AdminAnnouncements::class, 'store'])->name('announcements.store');
+        Route::post('/announcements/{announcement}/send', [AdminAnnouncements::class, 'send'])
+            ->middleware('throttle:20,10')->name('announcements.send');
+        Route::delete('/announcements/{announcement}', [AdminAnnouncements::class, 'destroy'])
+            ->name('announcements.destroy');
 
         Route::get('/testers', [AdminTesters::class, 'index'])->name('testers');
         Route::post('/testers/{application}/revoke', [AdminTesters::class, 'revoke'])->name('testers.revoke');

@@ -83,6 +83,22 @@ class User extends Authenticatable implements MustVerifyEmail
         $query->where('role', 'admin')->whereNull('suspended_at');
     }
 
+    /**
+     * Whether they want announcement emails.
+     *
+     * Only announcements. An invite, a password reset or a confirmation is a
+     * reply to something the person did, and still reaches somebody who opted
+     * out of the newsletter — conflating the two is how an opt-out ends up
+     * swallowing the email a person is actually waiting for.
+     *
+     * Defaults to true when there is no profile row, which is the state a very
+     * old account or a half-finished sign-up can be in.
+     */
+    public function wantsAnnouncementEmails(): bool
+    {
+        return (bool) ($this->profile?->announcement_emails ?? true);
+    }
+
     public function isSuspended(): bool
     {
         return $this->suspended_at !== null;

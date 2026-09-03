@@ -32,6 +32,12 @@ class Profile extends Model
             'faith_language' => 'encrypted',
             'values'         => 'encrypted:array',
             'onboarded'      => 'boolean',
+
+            // Cast but deliberately NOT fillable. It is a consent flag, and the
+            // My World form mass-assigns this model — a field name added to
+            // that request should not be able to opt somebody back in to
+            // email. The unsubscribe route sets it explicitly.
+            'announcement_emails' => 'boolean',
             'consented_at'   => 'datetime',
             'affirmations_generated_at' => 'datetime',
         ];
