@@ -66,25 +66,6 @@
     </button>
 </header>
 
-{{-- The install nudge.
-
-     The topbar button alone only ever appears when `beforeinstallprompt`
-     fires, which is Chrome and Android. iOS Safari never fires it, so on an
-     iPhone there was no way to discover the app is installable at all — and for
-     a beta handed round by DM that is most of the audience.
-
-     Shown once, dismissible, and never in an already-installed window. The
-     wording is filled in by app.js because it differs by platform: Android gets
-     a button that opens the real prompt, iOS gets the only instruction that
-     works there. --}}
-<div class="install-tip" data-install-tip hidden role="status" aria-live="polite">
-    <p class="install-tip-text" data-install-tip-text></p>
-    <div class="install-tip-actions">
-        <button type="button" class="btn btn-sm" data-install-tip-go hidden>Add it</button>
-        <button type="button" class="btn btn-quiet btn-sm" data-install-tip-close>Not now</button>
-    </div>
-</div>
-
 @auth
     @php
         // The admin area gets its own navigation in the same bar.
@@ -143,6 +124,25 @@
 @endauth
 
 <main class="shell" id="main">
+{{-- The install nudge.
+
+     The topbar button alone only ever appears when `beforeinstallprompt`
+     fires, which is Chrome and Android. iOS Safari never fires it, so on an
+     iPhone there was no way to discover the app is installable at all — and for
+     a beta handed round by DM that is most of the audience.
+
+     Shown once, dismissible, and never in an already-installed window. The
+     wording is filled in by app.js because it differs by platform: Android gets
+     a button that opens the real prompt, iOS gets the only instruction that
+     works there. --}}
+<div class="install-tip" data-install-tip hidden role="status" aria-live="polite">
+    <p class="install-tip-text" data-install-tip-text></p>
+    <div class="install-tip-actions">
+        <button type="button" class="btn btn-sm" data-install-tip-go hidden>Add it</button>
+        <button type="button" class="btn btn-quiet btn-sm" data-install-tip-close>Not now</button>
+    </div>
+</div>
+
     {{-- Unconfirmed email. Shown rather than enforced: the person can use the
          whole app except the four things that cost money, so this is a nudge
          and not a wall. It disappears the moment they click the link. --}}

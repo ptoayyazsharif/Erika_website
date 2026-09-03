@@ -970,8 +970,43 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
    * 1440px screen with the other 1200px empty. It is the first screen anyone
    * sees, and on desktop it looked broken because it was.
    */
-  body.app-shell { display: grid; grid-template-columns: 236px 1fr; }
-  .topbar { grid-column: 1 / -1; }
+  body.app-shell {
+    display: grid;
+    grid-template-columns: 236px 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  /*
+   * Every child is placed explicitly. Only .topbar used to be, and the other
+   * two landed in the right cells purely because they happened to be the
+   * second and third children — nothing said so.
+   *
+   * Adding one element to the shell was therefore enough to turn the whole
+   * desktop layout inside out: the install tip took the sidebar cell, the nav
+   * shifted into the wide column, and the entire page was auto-placed into the
+   * 236px sliver. Which is the same failure the note above describes for the
+   * sign-in form, arriving again by a different route.
+   *
+   * Both axes are named, not just columns, so nothing here depends on anybody's
+   * reading of the auto-placement algorithm.
+   *
+   * The install tip that caused all this now lives inside <main> rather than
+   * being a child of the shell. Giving it a row of its own was tried first and
+   * lost to the sidebar: .tabbar is sticky and a full viewport tall, so it
+   * covers anything placed in a row above it. Content belongs in the content
+   * column; only the three boxes below are part of the frame.
+   */
+  .topbar { grid-column: 1 / -1; grid-row: 1; }
+  .tabbar { grid-column: 1;      grid-row: 2; }
+  .shell  { grid-column: 2;      grid-row: 2; }
+
+  /*
+   * The nav lives inside @auth, so a signed-out render of this layout has no
+   * column 1 to fill and the page would sit in the sidebar on its own. That
+   * predates the breakage above and is the same bug; it gets closed here rather
+   * than left as a known hole beside the one being fixed.
+   */
+  body.app-shell:not(:has(.tabbar)) .shell { grid-column: 1 / -1; }
   .tabbar {
     position: sticky;
     /*
@@ -1491,7 +1526,7 @@ a.card:active, button.card:active { transform: translateY(0); }
   flex-wrap: wrap;
   align-items: center;
   gap: var(--s-3);
-  margin: 0 var(--s-4);
+  margin: 0 0 var(--s-5);
   padding: var(--s-3) var(--s-4);
   background: var(--surface-raised);
   border: 1px solid var(--line-strong);
