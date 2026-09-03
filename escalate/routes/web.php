@@ -6,6 +6,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Admin\ApplicationController as AdminApplications;
+use App\Http\Controllers\Admin\TesterController as AdminTesters;
 use App\Http\Controllers\Admin\BetaController as AdminBeta;
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedback;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
@@ -288,6 +289,9 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
 
         Route::get('/beta', AdminBeta::class)->name('beta');
         Route::get('/feedback', AdminFeedback::class)->name('feedback');
+
+        Route::get('/testers', [AdminTesters::class, 'index'])->name('testers');
+        Route::post('/testers/{application}/revoke', [AdminTesters::class, 'revoke'])->name('testers.revoke');
 
         Route::get('/applications', [AdminApplications::class, 'index'])->name('applications');
         Route::get('/applications/{application}', [AdminApplications::class, 'show'])->name('applications.show');

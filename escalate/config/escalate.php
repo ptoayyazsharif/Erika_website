@@ -411,6 +411,12 @@ return [
         // but this is the switch if that judgement changes.
         'notify_admins' => (bool) env('NOTIFY_ADMINS', true),
 
+        // Tell somebody when a seat they never claimed is taken back. There is
+        // a fair case either way — silence spares an awkward email to somebody
+        // who was simply busy, and saying nothing leaves them wondering — so it
+        // is a choice rather than a decision baked in.
+        'notify_revoked' => (bool) env('NOTIFY_REVOKED', true),
+
         // How long a minted invite stays good for, in days. Null for forever.
         'invite_days' => (int) env('INVITE_DAYS', 30),
 

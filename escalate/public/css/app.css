@@ -1516,6 +1516,15 @@ a.card:active, button.card:active { transform: translateY(0); }
    navigation somebody needs while deciding whether to dismiss this.
    ------------------------------------------------------------------------ */
 
+/* A card that is mostly a link but carries an action of its own. The link
+   fills the card so the whole row is still clickable; the action sits outside
+   it, because a <form> inside an <a> is invalid and gets reparented. */
+.card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
 .install-tip {
   /* In normal flow, not sticky. The topbar's height is padding plus
      env(safe-area-inset-top), so it has no fixed value to anchor to — and the
