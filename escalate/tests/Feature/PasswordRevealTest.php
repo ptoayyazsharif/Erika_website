@@ -91,6 +91,9 @@ class PasswordRevealTest extends TestCase
 
     public function test_the_admin_door_has_one_too(): void
     {
+        // The second door is optional and off by default. This test is about the
+        // door itself, so it switches it on rather than asserting the default.
+        Config::set('escalate.admin.confirm_password', true);
         $admin = User::factory()->create(['role' => 'admin']);
 
         $this->actingAs($admin)

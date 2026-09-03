@@ -1475,6 +1475,43 @@ a.card:active, button.card:active { transform: translateY(0); }
 
 /* ── toast ───────────────────────────────────────────────────────────────── */
 
+/* ── the install tip ──────────────────────────────────────────────────────
+   Anchored under the topbar rather than floating over the bottom of the
+   screen, where it would sit on top of the tab bar — the one piece of
+   navigation somebody needs while deciding whether to dismiss this.
+   ------------------------------------------------------------------------ */
+
+.install-tip {
+  /* In normal flow, not sticky. The topbar's height is padding plus
+     env(safe-area-inset-top), so it has no fixed value to anchor to — and the
+     note above .tabbar records what guessing a bar height costs on an iPhone.
+     A one-time tip that scrolls away with the page is the right behaviour
+     anyway. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin: 0 var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-md);
+}
+
+.install-tip-text {
+  flex: 1 1 12rem;
+  margin: 0;
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+
+.install-tip-actions {
+  display: flex;
+  gap: var(--s-2);
+  margin-left: auto;
+}
+
 .toast {
   position: fixed;
   left: 50%;

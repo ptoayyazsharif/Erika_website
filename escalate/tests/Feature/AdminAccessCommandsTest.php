@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 /**
@@ -62,6 +63,9 @@ class AdminAccessCommandsTest extends TestCase
 
     public function test_granting_the_role_lets_that_account_through_the_door(): void
     {
+        // The second door is optional and off by default. This test is about the
+        // door itself, so it switches it on rather than asserting the default.
+        Config::set('escalate.admin.confirm_password', true);
         $user = $this->makeUser('promote@escalate.test');
 
         $this->assertFalse($user->isAdmin());

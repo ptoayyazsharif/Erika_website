@@ -9,11 +9,15 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Admin gate.
  *
- * Two conditions, both required: an authenticated user with the admin role,
- * and a session flag proving they came through /admin/login rather than the
- * ordinary one. The second condition is what stops a stolen ordinary session
- * from reaching the admin area — an admin browsing the app as a user has no
- * admin session flag until they log in again on the admin form.
+ * The role check is unconditional. The second door — a session flag proving
+ * they came through /admin/login rather than the ordinary one — is behind
+ * `escalate.admin.confirm_password`, and is off by default.
+ *
+ * What that flag buys when it is on: a stolen or borrowed ordinary session
+ * cannot reach the admin area, because an admin browsing the app as a user
+ * holds no admin flag until they deliberately re-authenticate. With it off, an
+ * unlocked device is an unlocked admin panel. That is a real trade, made
+ * knowingly, and reversible from Settings without a deploy.
  *
  * A failed role check 404s rather than 403s. There is no reason to confirm to
  * a prober that /admin exists.
@@ -33,6 +37,14 @@ class EnsureAdmin
 
         if (! $user || ! $user->isAdmin()) {
             abort(404);
+        }
+
+        // The second door is optional, and off by default. Somebody who is
+        // already signed in reads "Confirm it's you" as having been signed out,
+        // which is a poor greeting for the two people who use this daily. The
+        // role check above is unconditional and does not move.
+        if (! config('escalate.admin.confirm_password')) {
+            return $next($request);
         }
 
         // guest() rather than route(): it records where they were heading, so

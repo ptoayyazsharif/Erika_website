@@ -20,9 +20,19 @@
    That is the intended trade. Reading your own journal requires a connection.
    ========================================================================= */
 
-/* Bumped to v2 to evict every escalate-v1-shell cache still in the wild. Those
-   caches are poisoned: see the note on VERSIONED below. */
-const VERSION = 'escalate-v2';
+/* Bumped to v3 to evict every escalate-v2-shell cache still in the wild, which
+   were holding the pre-brand app icons and the pre-brand manifest.
+
+   The icons were replaced on disk without this constant moving, so activate()
+   kept the old cache and every phone that had ever opened the app went on being
+   handed the old artwork — and the old theme_color with it. That is the same
+   failure the note on VERSIONED below describes for CSS and JS, arriving a
+   second time by a different door: the lesson was applied to VERSIONED and not
+   to SHELL_ASSETS.
+
+   Bumping fixes the phones. Not precaching the icons at all, below, is what
+   stops it happening a third time. */
+const VERSION = 'escalate-v3';
 const SHELL = `${VERSION}-shell`;
 
 /*
@@ -33,9 +43,12 @@ const SHELL_ASSETS = [
   '/offline',
   '/fonts/lora-var.woff2',
   '/fonts/raleway-var.woff2',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
   '/manifest.webmanifest',
+  // The app icons used to be here and are deliberately not any more. Nothing in
+  // the app renders them — the topbar mark comes from /brand/ — they are read
+  // by the operating system at install time, from the network. Precaching them
+  // bought nothing offline and created the one thing that can go wrong with a
+  // fixed URL: serving a stale copy for ever.
 ];
 
 /*

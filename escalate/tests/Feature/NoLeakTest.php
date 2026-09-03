@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Narration;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -202,6 +203,9 @@ class NoLeakTest extends TestCase
 
     public function test_an_admin_still_needs_the_second_door(): void
     {
+        // The second door is optional and off by default. This test is about the
+        // door itself, so it switches it on rather than asserting the default.
+        Config::set('escalate.admin.confirm_password', true);
         $admin = $this->user();
         $admin->forceFill(['role' => 'admin'])->save();
 

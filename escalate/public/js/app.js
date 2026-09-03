@@ -357,32 +357,92 @@
        nothing to repopulate it — so offline mode died after the first logout. */
   }
 
+  /*
+   * The topbar button only ever appeared when `beforeinstallprompt` fired,
+   * which is Chrome and Android. iOS Safari never fires it, so on an iPhone
+   * there was no way to discover the app is installable at all — and for a beta
+   * handed round by DM that is most of the audience. Hence the tip, which is
+   * shown once, is dismissible, and says something different on iOS because
+   * the Share sheet is the only route there.
+   */
   function initInstall() {
-    let prompt = null;
     const btn = $('[data-install]');
+    const tip = $('[data-install-tip]');
+    const tipText = $('[data-install-tip-text]');
+    const tipGo = $('[data-install-tip-go]');
+    const TIP_KEY = 'escalate.install-tip';
+
+    let prompt = null;
+
+    // An already-installed window has nothing to be told. Two checks, because
+    // the standard one is not the one iOS answers to.
+    const installed = () =>
+      matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+
+    // Chooses the wording only, never whether the feature runs, so a browser
+    // that reports something unexpected still gets a usable message.
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+    // localStorage throws outright in some privacy modes, so every touch of it
+    // is wrapped. Failing to remember a dismissal is a far gentler outcome than
+    // a tip that cannot be dismissed at all.
+    const dismissed = () => {
+      try {
+        return localStorage.getItem(TIP_KEY) === 'dismissed';
+      } catch {
+        return false;
+      }
+    };
+
+    const dismiss = () => {
+      if (tip) tip.hidden = true;
+      try {
+        localStorage.setItem(TIP_KEY, 'dismissed');
+      } catch {
+        // Then it offers once more next time. Acceptable.
+      }
+    };
+
+    const showTip = (message, canPrompt) => {
+      if (!tip || !tipText || dismissed() || installed()) return;
+      tipText.textContent = message;
+      if (tipGo) tipGo.hidden = !canPrompt;
+      tip.hidden = false;
+    };
+
+    const openPrompt = async () => {
+      if (!prompt) {
+        toast('Use your browser menu → Add to Home Screen.');
+        return;
+      }
+      prompt.prompt();
+      const { outcome } = await prompt.userChoice;
+      prompt = null;
+      if (btn) btn.hidden = true;
+      if (tip) tip.hidden = true;
+      if (outcome === 'accepted') toast('Escalate is on your home screen.');
+    };
+
+    if (installed()) return;
 
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault();
       prompt = e;
       if (btn) btn.hidden = false;
+      showTip('Keep Escalate on your home screen — it opens like an app.', true);
     });
 
-    if (btn) {
-      btn.addEventListener('click', async () => {
-        if (!prompt) {
-          toast('Use your browser menu → Add to Home Screen.');
-          return;
-        }
-        prompt.prompt();
-        const { outcome } = await prompt.userChoice;
-        prompt = null;
-        btn.hidden = true;
-        if (outcome === 'accepted') toast('Escalate is on your home screen.');
-      });
+    if (isIos) {
+      showTip('Add Escalate to your home screen: tap Share, then Add to Home Screen.', false);
     }
+
+    btn?.addEventListener('click', openPrompt);
+    tipGo?.addEventListener('click', openPrompt);
+    $('[data-install-tip-close]')?.addEventListener('click', dismiss);
 
     window.addEventListener('appinstalled', () => {
       if (btn) btn.hidden = true;
+      dismiss();
     });
   }
 

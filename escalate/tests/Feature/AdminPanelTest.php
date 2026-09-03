@@ -72,6 +72,9 @@ class AdminPanelTest extends TestCase
      */
     public function test_an_admin_without_the_second_door_is_sent_to_it(): void
     {
+        // The second door is optional and off by default. This test is about the
+        // door itself, so it switches it on rather than asserting the default.
+        Config::set('escalate.admin.confirm_password', true);
         $user = $this->makeUser('halfway@escalate.test');
         $user->forceFill(['role' => 'admin'])->save();
 
@@ -83,6 +86,9 @@ class AdminPanelTest extends TestCase
     /** And it remembers where they were going. */
     public function test_the_door_returns_them_to_the_page_they_asked_for(): void
     {
+        // The second door is optional and off by default. This test is about the
+        // door itself, so it switches it on rather than asserting the default.
+        Config::set('escalate.admin.confirm_password', true);
         $user = $this->makeUser('deeplink@escalate.test', 'Admin');
         $user->forceFill(['role' => 'admin'])->save();
 

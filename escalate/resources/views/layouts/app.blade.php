@@ -35,6 +35,17 @@
     </a>
     <div class="grow"></div>
 
+    {{-- The only way into the admin area used to be typing the URL: the admin
+         nav only renders once you are already inside it. Labelled rather than
+         another glyph, because the bar already has two of those and a third
+         would not be findable.
+
+         Rendered only for an admin — a link an ordinary user could see would
+         undo the 404 that hides the admin area from everybody else. --}}
+    @if (auth()->user()?->isAdmin())
+        <a class="btn btn-quiet btn-sm" href="{{ route('admin.dashboard') }}">Admin</a>
+    @endif
+
     <button type="button" class="btn btn-icon" data-install hidden
             title="Install Escalate on this device">
         @include('partials.icon', ['name' => 'download', 'size' => 19])
@@ -54,6 +65,25 @@
         <span class="sr-only">Switch theme</span>
     </button>
 </header>
+
+{{-- The install nudge.
+
+     The topbar button alone only ever appears when `beforeinstallprompt`
+     fires, which is Chrome and Android. iOS Safari never fires it, so on an
+     iPhone there was no way to discover the app is installable at all — and for
+     a beta handed round by DM that is most of the audience.
+
+     Shown once, dismissible, and never in an already-installed window. The
+     wording is filled in by app.js because it differs by platform: Android gets
+     a button that opens the real prompt, iOS gets the only instruction that
+     works there. --}}
+<div class="install-tip" data-install-tip hidden role="status" aria-live="polite">
+    <p class="install-tip-text" data-install-tip-text></p>
+    <div class="install-tip-actions">
+        <button type="button" class="btn btn-sm" data-install-tip-go hidden>Add it</button>
+        <button type="button" class="btn btn-quiet btn-sm" data-install-tip-close>Not now</button>
+    </div>
+</div>
 
 @auth
     @php

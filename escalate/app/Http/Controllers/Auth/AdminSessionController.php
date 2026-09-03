@@ -20,6 +20,11 @@ use Illuminate\View\View;
  * an `admin.verified` flag on the session. EnsureAdmin requires that flag and
  * expires it after two hours.
  *
+ * All of that is behind `escalate.admin.confirm_password`, which is off by
+ * default. With it off this controller is a pass-through: both actions send an
+ * admin on to the dashboard rather than 404ing a bookmark or showing a form
+ * that confirms nothing.
+ *
  * Why bother, when the role check alone would "work": it shrinks the window in
  * which a stolen or borrowed session can reach the admin area to the length of
  * one deliberate re-authentication. An admin who leaves a laptop open on the
@@ -33,9 +38,18 @@ class AdminSessionController extends Controller
     public function create(Request $request): View|RedirectResponse
     {
         // Never confirm that an admin area exists to someone who is not an
-        // admin. A stranger and an ordinary user both get the same 404.
+        // admin. A stranger and an ordinary user both get the same 404. This
+        // check comes first and is not affected by the setting below.
         if (! $request->user()?->isAdmin()) {
             abort(404);
+        }
+
+        // With the door switched off there is nothing to confirm, and showing
+        // the form anyway would be the exact thing that was reported: a
+        // password screen in front of somebody who never signed out. A
+        // bookmark to this URL should just go in.
+        if (! config('escalate.admin.confirm_password')) {
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         return view('admin.login');
@@ -47,6 +61,12 @@ class AdminSessionController extends Controller
 
         if (! $user?->isAdmin()) {
             abort(404);
+        }
+
+        // Posting to a door that is switched off is not an error worth showing
+        // anybody — it is a stale form or a stale tab. Let them in.
+        if (! config('escalate.admin.confirm_password')) {
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         $key = 'admin-login|'.$user->id;

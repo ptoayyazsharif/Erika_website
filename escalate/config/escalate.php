@@ -370,6 +370,24 @@ return [
         'outreach' => env('COPY_OUTREACH', 'I’ve been quietly 🤫 developing a new AI personal-growth app called Escalate, and we’re now in private beta testing. It turns your goals into personalized stories you can read and listen to, while helping you reflect on your progress and wins. I haven’t publicly announced it yet, 🤐 but I’m inviting a small group of people to test it. Want in?'),
     ],
 
+    /*
+    | The admin door.
+    |
+    | On, an admin who is already signed in must re-enter their password at
+    | /admin/login before the admin area opens, and again after two hours of
+    | admin-area idleness. That is what stops a borrowed or unlocked session
+    | reaching the admin panel: leaving a laptop open on Today is then not the
+    | same as leaving the admin panel open.
+    |
+    | Off by default, because it was reported as confusing — the screen says
+    | "Confirm it's you" and reads like having been signed out. With a couple of
+    | administrators on their own devices that is a reasonable trade, and this
+    | is one checkbox away from being put back.
+    */
+    'admin' => [
+        'confirm_password' => (bool) env('ADMIN_CONFIRM_PASSWORD', false),
+    ],
+
     'beta' => [
         // Registration requires an unclaimed invite code. Turn off to open
         // signup to anyone who finds the URL.
