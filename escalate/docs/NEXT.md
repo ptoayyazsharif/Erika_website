@@ -1,20 +1,33 @@
 # Where things stand, and what to do next
 
-Written at `0014262`, deployed and live. This is the handover: read it first,
-then [`LAUNCH-PLAN.md`](LAUNCH-PLAN.md) if you need the reasoning behind a
-decision rather than the state of it.
+Written at `c7401a9` plus the announcement notifications on top of it. This is
+the handover: read it first, then [`LAUNCH-PLAN.md`](LAUNCH-PLAN.md) if you need
+the reasoning behind a decision rather than the state of it.
 
 ---
 
 ## Live right now
 
-- `escalate.cloud` serves `0014262`. 343 tests passing.
+- 420 tests passing.
 - Public pages are **Ivory** — warm ivory ground, aubergine text. Body text
   measures 14.37:1, muted 5.34:1, on a 390×844 phone.
 - Erika's doorway E is the mark, everywhere: public pages, signed-in topbar,
   every admin page, and the admin door.
 - Invite-only is **on**. Email verification is **off**.
 - Stripe is in **test** mode.
+- **Admin → Testers** shows where each invited person actually got to
+  (invited → opened → signed up → wrote → active), with a Revoke that frees the
+  invite, waitlists the application and optionally emails them.
+- **Every email is worded from Admin → Settings → Emails**, including Laravel's
+  own password reset and verification. Structural parts — the invite code, the
+  buttons, the links — deliberately stay in the Blade files.
+- **Admin → Announcements** reaches everybody three ways, chosen per message: a
+  dismissible banner in the app, an email with a working unsubscribe, and a
+  notification on their phone. Each send is its own deliberate press and each is
+  guarded against a double press.
+- **A daily reminder by web push**, hourly by the scheduler so each device gets
+  it at the chosen hour in its own timezone. `schedule:work` runs in the
+  container beside the queue worker.
 
 ---
 
@@ -102,6 +115,16 @@ because her own export always beats a recolour.
   It is the proof the fix worked.
 - **Stripe is in test mode.** Live keys and the webhook still to be set up before
   anybody can actually pay.
+- **Confirm one real push notification on a real phone.** The PHP side, the
+  selection rules and the service worker are all tested; delivery to a device
+  needs a real push service and a real phone, which this sandbox has neither of.
+  Until somebody has seen one arrive, treat push as untested in the way that
+  matters. On iPhone it only works for an app installed to the home screen —
+  Safari does not deliver push to a browser tab, at any iOS version.
+- **VAPID keys must be set in Coolify.** `VAPID_PUBLIC_KEY` and
+  `VAPID_PRIVATE_KEY`. Without them push is inert and says so in the admin panel
+  rather than failing quietly. The private half is a credential and is not in the
+  repo, the same rule as the Coolify token.
 
 ---
 
@@ -147,7 +170,38 @@ alpha and bounds, recolour, then render a sheet and *look at it*. Note that a
 
 ---
 
-## What shipped in the last session, briefly
+## What shipped since, briefly
+
+`c4732ee` **Stage A** — the scheduler (`schedule:work` in supervisord, nothing
+recurring was possible before it), Admin → Testers, revoke, and suspend surfaced
+on the users list where it was findable.
+
+`c2af4f0` **Stage B** — every email editable from the admin panel. The finding:
+`Markdown::parse()` does **not** escape HTML. `html_input => 'escape'` appears in
+that file but on a branch the default path never takes, and a `<script>` an admin
+typed reached a rendered email. `App\Support\SafeMarkdown` is the fix and the
+place that reasoning now lives.
+
+`9a2591d` **Stage C** — announcements, in the app and by email, with a signed
+unsubscribe that works from a signed-out browser. Transactional mail deliberately
+ignores that opt-out.
+
+`c7401a9` **Stage D** — web push. `minishlink/web-push` v11 needs no `gmp`, so
+the Dockerfile did not change. Per-device timezone, dead subscriptions pruned on
+404/410. **Still unproven on a real phone** — see below.
+
+Announcement notifications — the third destination on Admin → Announcements. The
+notification carries the announcement's real title and first line or two, which
+is the same lock-screen privacy rule as the daily reminder applied to different
+content: an announcement is admin-authored and sent to everybody, so there is
+nothing left for a passer-by to learn. Each announcement carries its own
+notification tag so a second one sits beside the first; the daily reminder keeps
+one fixed tag so three unread nudges never stack.
+`tests/browser/push-notifications.mjs` asserts both halves in a real worker.
+
+---
+
+## What shipped in the session before that, briefly
 
 `855d54b` Ivory and Aubergine palettes, `escalate.brand`, the iridescent
 gradient spent on exactly two things. Three incidental fixes fell out of it:

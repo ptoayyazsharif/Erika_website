@@ -326,6 +326,8 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         Route::post('/announcements', [AdminAnnouncements::class, 'store'])->name('announcements.store');
         Route::post('/announcements/{announcement}/send', [AdminAnnouncements::class, 'send'])
             ->middleware('throttle:20,10')->name('announcements.send');
+        Route::post('/announcements/{announcement}/push', [AdminAnnouncements::class, 'push'])
+            ->middleware('throttle:20,10')->name('announcements.push');
         Route::delete('/announcements/{announcement}', [AdminAnnouncements::class, 'destroy'])
             ->name('announcements.destroy');
 

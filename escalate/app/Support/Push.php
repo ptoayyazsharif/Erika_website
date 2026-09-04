@@ -42,10 +42,22 @@ class Push
      * alone. Deleting on a transient fault would silently unsubscribe somebody
      * because a vendor had a bad minute.
      *
+     * The tag decides what a second notification does to the first on the lock
+     * screen. The daily reminder keeps one tag on purpose — a second nudge
+     * replaces the first rather than stacking three days of unread ones — but
+     * an announcement must not swallow the announcement before it, so each one
+     * passes its own.
+     *
      * @param  iterable<PushSubscription>  $subscriptions
      * @return array{sent: int, pruned: int, failed: int}
      */
-    public static function send(iterable $subscriptions, string $title, string $body, string $url): array
+    public static function send(
+        iterable $subscriptions,
+        string $title,
+        string $body,
+        string $url,
+        string $tag = 'escalate-reminder',
+    ): array
     {
         if (! self::configured()) {
             return ['sent' => 0, 'pruned' => 0, 'failed' => 0];
@@ -61,6 +73,7 @@ class Push
             'title' => $title,
             'body'  => $body,
             'url'   => $url,
+            'tag'   => $tag,
         ], JSON_THROW_ON_ERROR);
 
         $byEndpoint = [];

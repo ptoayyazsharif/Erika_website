@@ -5,8 +5,9 @@
     <p class="eyebrow">Admin</p>
     <h1>Announcements</h1>
     <p class="lede">
-        Something to tell everybody — in the app, by email, or both. Write it
-        once and choose where it goes.
+        Something to tell everybody — a banner in the app, an email, a
+        notification on their phone, or all three. Write it once and choose
+        where it goes.
     </p>
 </div>
 
@@ -42,7 +43,7 @@
             </span>
         </label>
 
-        <label class="option {{ old('send_email') ? 'is-on' : '' }}" style="margin-bottom:var(--s-5)">
+        <label class="option {{ old('send_email') ? 'is-on' : '' }}">
             <input type="checkbox" name="send_email" value="1" @checked(old('send_email'))>
             <span class="tick" aria-hidden="true"></span>
             <span class="option-body">
@@ -51,6 +52,30 @@
                     Ticking this does not send it. You press Send afterwards, once,
                     and it goes to the {{ $audience }}
                     {{ Str::plural('person', $audience) }} who have not opted out.
+                </small>
+            </span>
+        </label>
+
+        <label class="option {{ old('send_push') ? 'is-on' : '' }}" style="margin-bottom:var(--s-5)">
+            <input type="checkbox" name="send_push" value="1" @checked(old('send_push'))>
+            <span class="tick" aria-hidden="true"></span>
+            <span class="option-body">
+                <span class="option-label">Send it as a notification</span>
+                <small>
+                    @if (! $pushPossible)
+                        Notifications are not set up on this server yet, so this
+                        will not send anything.
+                    @elseif ($devices === 0)
+                        Nobody has switched notifications on yet, so there is no
+                        device to send to. Testers turn them on in My World, on a
+                        phone with the app installed.
+                    @else
+                        The same as email: ticking it does not send. You press
+                        Send afterwards, once, and it reaches the {{ $devices }}
+                        {{ Str::plural('device', $devices) }} with notifications
+                        switched on. The title and the first line or two show on
+                        the lock screen.
+                    @endif
                 </small>
             </span>
         </label>
@@ -78,7 +103,12 @@
                 @if ($announcement->wasEmailed())
                     <span class="pill pill-manifested">emailed</span>
                 @elseif ($announcement->send_email)
-                    <span class="pill pill-unfolding">not sent yet</span>
+                    <span class="pill pill-unfolding">not emailed yet</span>
+                @endif
+                @if ($announcement->wasPushed())
+                    <span class="pill pill-manifested">notified</span>
+                @elseif ($announcement->send_push)
+                    <span class="pill pill-unfolding">not notified yet</span>
                 @endif
             </div>
         </div>
@@ -94,6 +124,16 @@
                     @csrf
                     <button class="btn btn-quiet btn-sm" type="submit" data-busy="Queueing…">
                         Send it by email
+                    </button>
+                </form>
+            @endunless
+
+            @unless ($announcement->wasPushed())
+                <form method="POST" action="{{ route('admin.announcements.push', $announcement) }}"
+                      data-confirm="Send this as a notification to every device with them switched on? This cannot be taken back.">
+                    @csrf
+                    <button class="btn btn-quiet btn-sm" type="submit" data-busy="Queueing…">
+                        Send as a notification
                     </button>
                 </form>
             @endunless

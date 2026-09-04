@@ -155,6 +155,12 @@ async function keepOnly(cache, request) {
    nothing private: a notification lands on a lock screen, which anybody near
    the phone can read.
 
+   The one thing that does arrive with real words in it is an announcement,
+   and that is the same rule rather than an exception to it: an announcement is
+   written by an administrator and sent to every user, so it is already known
+   to everybody and there is nothing left for a passer-by to learn. See
+   App\Models\Announcement::notificationBody().
+
    Every field is defaulted. A push with no payload, or a malformed one, still
    shows something rather than throwing inside the worker — where the error is
    invisible and the notification simply never appears.
@@ -173,9 +179,13 @@ self.addEventListener('push', event => {
       body: data.body || 'A few minutes for today?',
       icon: '/icons/icon-192.png',
       badge: '/icons/icon-192.png',
-      // One tag, so a second reminder replaces the first instead of stacking
-      // three days of unread nudges on a lock screen.
-      tag: 'escalate-reminder',
+      // The tag decides what this does to a notification already on the lock
+      // screen: same tag replaces, different tag sits beside it. The daily
+      // reminder sends one fixed tag on purpose, so three unread nudges never
+      // stack up. An announcement sends its own, because news must not
+      // silently replace the news before it. Older payloads carry no tag at
+      // all, so the reminder's is the fallback.
+      tag: data.tag || 'escalate-reminder',
       data: { url: data.url || '/today' },
     })
   );
