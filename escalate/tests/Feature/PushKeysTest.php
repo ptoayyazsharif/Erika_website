@@ -135,31 +135,60 @@ class PushKeysTest extends TestCase
         $this->assertStringNotContainsString($private, (string) $raw);
     }
 
-    /* ── the cost of a second press ──────────────────────────────────────── */
+    /* ── it can only be pressed once ─────────────────────────────────────── */
 
     /**
+     * The assertion the removed button is replaced by.
+     *
      * Every device is bound to the public key it subscribed with, and the push
      * service rejects a send signed by any other pair — with a 403, which is
-     * NOT one of the codes App\Support\Push prunes on. So the rows have to go
-     * here, or they sit in the table for ever, uncontactable and counted.
+     * NOT one of the codes App\Support\Push prunes on. So a second pair
+     * silently unreaches the whole beta at once.
+     *
+     * The screen no longer offers that, and this asserts the route refuses it
+     * too: hiding a button is not removing a hazard, and a bookmark or a double
+     * submit still arrives here.
      */
-    public function test_a_new_pair_forgets_every_device_and_says_how_many(): void
+    public function test_a_second_press_is_refused_and_changes_nothing(): void
     {
         $this->withoutKeys();
         $admin = $this->admin();
 
-        // First press: nothing exists yet, so nothing is thrown away.
         $this->actingAs($admin)->post(route('admin.settings.push-keys'));
         Settings::apply();
 
+        $public = (string) config('escalate.push.public_key');
         $this->subscribe($admin, 'https://fcm.googleapis.com/wp/phone');
         $this->subscribe($admin, 'https://fcm.googleapis.com/wp/laptop');
 
         $this->actingAs($admin)
             ->post(route('admin.settings.push-keys'))
-            ->assertSessionHas('status', fn ($s) => str_contains($s, '2 devices'));
+            ->assertSessionHasErrors('push');
 
-        $this->assertDatabaseCount('push_subscriptions', 0);
+        // The pair is untouched and the devices are still reachable.
+        $this->assertSame($public, Setting::query()->where('key', 'escalate.push.public_key')->first()?->value);
+        $this->assertDatabaseCount('push_subscriptions', 2);
+    }
+
+    /** And the screen does not offer it, which is the half people see. */
+    public function test_the_screen_offers_the_button_only_before_there_are_keys(): void
+    {
+        $this->withoutKeys();
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get(route('admin.settings.section', ['section' => 'reminders']))
+            ->assertOk()
+            ->assertSee('Generate the keys');
+
+        $this->actingAs($admin)->post(route('admin.settings.push-keys'));
+        Settings::apply();
+
+        $this->actingAs($admin)
+            ->get(route('admin.settings.section', ['section' => 'reminders']))
+            ->assertOk()
+            ->assertDontSee('Generate the keys')
+            ->assertDontSee('Generate a new pair');
     }
 
     /** A first press has nothing to forget and must not claim otherwise. */
@@ -191,6 +220,38 @@ class PushKeysTest extends TestCase
             ->assertSessionHas('status', fn ($s) => str_contains($s, '1 device'));
 
         $this->assertDatabaseCount('push_subscriptions', 0);
+    }
+
+    /* ── the counts on the screen ────────────────────────────────────────── */
+
+    /**
+     * Three devices belonging to one person read as both numbers.
+     *
+     * "3" alone is true and misleading in a beta of twenty-five: it reads as
+     * three testers, when it is one person with a phone, a laptop and a tablet.
+     */
+    public function test_devices_and_people_are_both_reported(): void
+    {
+        $this->withoutKeys();
+        $admin = $this->admin();
+        $this->actingAs($admin)->post(route('admin.settings.push-keys'));
+        Settings::apply();
+
+        foreach (['phone', 'laptop', 'tablet'] as $device) {
+            $this->subscribe($admin, "https://fcm.googleapis.com/wp/{$device}");
+        }
+
+        $this->actingAs($admin)
+            ->get(route('admin.settings.section', ['section' => 'reminders']))
+            ->assertOk()
+            ->assertSee('3 devices')
+            ->assertSee('1 person');
+
+        $this->actingAs($admin)
+            ->get(route('admin.announcements'))
+            ->assertOk()
+            ->assertSee('3 devices', false)
+            ->assertSee('1 person', false);
     }
 
     /* ── saving the page must not half-break the pair ────────────────────── */

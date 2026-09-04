@@ -87,8 +87,24 @@
 @if ($section === 'reminders')
 @php
     $pushReady = \App\Support\Push::configured();
-    $pushDevices = $pushReady ? \App\Models\PushSubscription::count() : 0;
+    $pushDevices = $pushReady ? \App\Models\PushSubscription::query()->reachable()->count() : 0;
+    $pushPeople = $pushReady
+        ? \App\Models\PushSubscription::query()->reachable()->distinct()->count('user_id')
+        : 0;
 @endphp
+
+{{-- There is deliberately no button here once the keys exist.
+
+     Generating a second pair invalidates every device at once — each one
+     subscribed with the current public key and the push service rejects
+     anything signed by another. That is a real need roughly never, and a
+     destructive control on a settings page is a control that eventually gets
+     pressed. Rotating a leaked key is still possible: paste a pair into the two
+     fields below, or use the reset links under the form. Two deliberate steps
+     that each say what they do, instead of one button.
+
+     SettingsController::pushKeys() refuses when keys already exist, so the URL
+     is closed too. Hiding a button is not the same as removing the hazard. --}}
 <div class="card" data-enter>
     <div class="row-between wrap" style="gap:var(--s-3);align-items:flex-start">
         <div>
@@ -98,16 +114,18 @@
 
             @if ($pushReady)
                 <p class="small muted" style="margin:0">
-                    Notifications can be sent, and
-                    {{ $pushDevices === 0 ? 'no device has' : $pushDevices.' '.Str::plural('device', $pushDevices).' have' }}
-                    switched them on. You do not need to press this again.
+                    Notifications can be sent. @if ($pushDevices === 0)
+                        Nobody has switched them on yet — testers do that in My World, on a
+                        phone with the app installed.
+                    @else
+                        {{ $pushDevices }} {{ Str::plural('device', $pushDevices) }}, belonging
+                        to {{ $pushPeople }} {{ Str::plural('person', $pushPeople) }},
+                        {{ $pushDevices === 1 ? 'has' : 'have' }} them switched on.
+                    @endif
                 </p>
                 <p class="small faint" style="margin:var(--s-2) 0 0">
-                    <strong>Generating a new pair switches every device off.</strong> Each one
-                    subscribed with the current key and stops being reachable the moment it
-                    changes. They come back on their own the next time each person opens the
-                    app — nobody is asked for permission again — but until they do,
-                    notifications reach nobody. Only do this if a key has leaked.
+                    This is done. There is nothing to press again, and nothing here that a
+                    deploy can undo — the keys live in the database on the persistent volume.
                 </p>
             @else
                 <p class="small muted" style="margin:0">
@@ -118,13 +136,12 @@
             @endif
         </div>
 
-        <form method="POST" action="{{ route('admin.settings.push-keys') }}" data-once
-              @if ($pushReady) data-confirm="Generate a new pair? Every device with notifications on stops receiving them until each person next opens the app." @endif>
-            @csrf
-            <button class="btn {{ $pushReady ? 'btn-ghost' : '' }}" type="submit" data-busy="Generating…">
-                {{ $pushReady ? 'Generate a new pair' : 'Generate the keys' }}
-            </button>
-        </form>
+        @unless ($pushReady)
+            <form method="POST" action="{{ route('admin.settings.push-keys') }}" data-once>
+                @csrf
+                <button class="btn" type="submit" data-busy="Generating…">Generate the keys</button>
+            </form>
+        @endunless
     </div>
 </div>
 @endif

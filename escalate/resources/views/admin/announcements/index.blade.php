@@ -71,10 +71,11 @@
                         phone with the app installed.
                     @else
                         The same as email: ticking it does not send. You press
-                        Send afterwards, once, and it reaches the {{ $devices }}
-                        {{ Str::plural('device', $devices) }} with notifications
-                        switched on. The title and the first line or two show on
-                        the lock screen.
+                        Send afterwards, once, and it reaches
+                        <strong>{{ $devices }} {{ Str::plural('device', $devices) }}</strong>
+                        — {{ $pushPeople }} {{ Str::plural('person', $pushPeople) }}, since
+                        somebody with a phone and a laptop counts twice. The title and the
+                        first line or two show on the lock screen.
                     @endif
                 </small>
             </span>

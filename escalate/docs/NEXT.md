@@ -8,7 +8,9 @@ the reasoning behind a decision rather than the state of it.
 
 ## Live right now
 
-- 431 tests passing.
+- 433 tests passing. `bash tests/push/real-send.sh` sends a real, signed,
+  encrypted notification to a stand-in push service and checks what arrived —
+  the one part of push nothing else exercises.
 - Public pages are **Ivory** — warm ivory ground, aubergine text. Body text
   measures 14.37:1, muted 5.34:1, on a 390×844 phone.
 - Erika's doorway E is the mark, everywhere: public pages, signed-in topbar,
@@ -125,11 +127,8 @@ because her own export always beats a recolour.
   need a keypair to sign with and there is nothing to set up beyond that button:
   the pair is minted in the app and stored encrypted, so no environment variable
   and no deploy. `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` still work as a
-  fallback for a server configured the old way, but nothing needs them now.
-  **Generating a second pair invalidates every device** — they repair themselves
-  on the next page load, because `public/js/app.js` re-subscribes when the key it
-  is handed no longer matches the one the browser holds — so it is not a button
-  to press out of curiosity.
+  fallback for a server configured the old way, but nothing needs them now. Once
+  the keys exist the button disappears and the route refuses — see below.
 
 ---
 
@@ -144,6 +143,33 @@ plausible hostname. Two specifics:
 - Coolify tracks `claude/escalate-app-bugs-l73sgw`. Pushing anywhere else does
   not reach production, and a redeploy will happily rebuild the same old commit
   and look successful.
+
+**A deploy does not touch the keys or anybody's notifications.** Asked, and
+worth having the answer written down:
+
+- The database is SQLite at `/var/www/html/storage/database/escalate.sqlite`, and
+  `docker/coolify-setup.sh` mounts `/var/www/html/storage` as a **persistent
+  volume**. A deploy replaces the container; the volume is not touched. The
+  settings rows holding the notification keys, and every `push_subscriptions`
+  row, are inside that file — along with every account and everything anybody has
+  written.
+- `docker/entrypoint.sh` runs `migrate --force` on boot and nothing that drops or
+  truncates.
+- The one thing that *would* destroy them is **changing `APP_KEY`**, because
+  settings values are encrypted with it. The entrypoint refuses to start without
+  one and deliberately never generates one; its own comment says why.
+
+So deploy freely. Erika presses Generate once, ever.
+
+**There is deliberately no “regenerate keys” button.** A second pair invalidates
+every device at once — each subscribed under the current public key, and the push
+service answers 403, which is not a code `Push` prunes on. So the screen offers
+it only when no keys exist, and `SettingsController::pushKeys()` refuses when
+they do, because hiding a button is not removing a hazard. Rotating a genuinely
+leaked key is still possible and deliberately slower: paste a pair into the two
+fields on that page, or drop the override with the reset link and press Generate
+again. `public/js/app.js` re-subscribes a device whose key no longer matches, on
+the next page it opens, which is what makes a hand rotation survivable.
 
 **A stored setting beats the config default.** `Settings::apply()` overlays
 database rows onto config at boot. Changing a default in `config/escalate.php`
@@ -196,7 +222,7 @@ the Dockerfile did not change. Per-device timezone, dead subscriptions pruned on
 404/410. **Still unproven on a real phone** — see below.
 
 Notification keys moved out of the server environment and into Settings →
-Reminders, with a button that mints a pair. Better held there than in a
+Reminders, with a one-time button that mints a pair. Better held there than in a
 container's environment, which is plaintext to anything that can read it, while
 the settings table encrypts its values. The half that makes this safe is in
 `public/js/app.js`: a device whose key no longer matches re-subscribes silently

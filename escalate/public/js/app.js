@@ -346,17 +346,18 @@
    * Re-subscribe a device whose server keys have changed under it.
    *
    * A subscription is bound to the public key it was created with, and the
-   * push service rejects anything signed by a different pair. So the moment an
-   * administrator generates a new pair — which they can now do from Settings →
-   * Reminders — every phone in the beta is silently unreachable, and stays
-   * unreachable for ever: initPush() only ever offers itself where permission
+   * push service rejects anything signed by a different pair. So if the keys on
+   * the server ever change, every phone in the beta goes silently unreachable
+   * and stays that way for ever: initPush() only offers itself where permission
    * is still undecided, and permission was granted long ago.
    *
-   * This is the other half of that button. Permission is already granted, so
+   * There is no button that changes the keys any more — that was removed, and
+   * the route refuses. But an administrator can still paste a new pair into
+   * Settings → Reminders if one ever leaks, and this is what makes that
+   * survivable rather than terminal. Permission is already granted, so
    * subscribe() shows nobody anything: it swaps the dead subscription for a
    * live one and tells the server, quietly, on the next page somebody opens.
-   * Without it, "generate a new pair" would be a button that breaks
-   * notifications permanently and looks like it worked.
+   * It also puts back a row lost for any other reason.
    *
    * Deliberately does nothing when the browser will not say which key an
    * existing subscription carries. Unsubscribing and resubscribing blindly on

@@ -34,11 +34,13 @@ class AnnouncementController extends Controller
                 ->orWhereDoesntHave('profile')
                 ->count(),
 
-            // Devices, not people: one person with a phone and a laptop is two.
-            // Shown so an announcement is not sent as a notification into an
-            // audience of nobody, which is what a beta where nobody installed
-            // the app looks like.
+            // Both numbers, because either alone misleads. Devices is what
+            // actually gets sent to; people is the number Erika is asking about
+            // when she asks whether this reached the beta. One person with a
+            // phone, a laptop and a tablet is three devices and one tester, and
+            // "3" on its own reads as three testers.
             'devices'       => PushSubscription::query()->reachable()->count(),
+            'pushPeople'    => PushSubscription::query()->reachable()->distinct()->count('user_id'),
             'pushPossible'  => Push::configured(),
         ]);
     }
@@ -141,6 +143,7 @@ class AnnouncementController extends Controller
         }
 
         $devices = PushSubscription::query()->reachable()->count();
+        $people = PushSubscription::query()->reachable()->distinct()->count('user_id');
 
         if ($devices === 0) {
             return back()->withErrors(['announcement' =>
@@ -152,7 +155,9 @@ class AnnouncementController extends Controller
         SendAnnouncementPush::dispatch($announcement);
 
         return back()->with('status',
-            "Queued for {$devices} ".str('device')->plural($devices).'. Anybody who switched notifications off was skipped.');
+            "Queued for {$devices} ".str('device')->plural($devices)
+            ." — {$people} ".str('person')->plural($people)
+            .'. Anybody who switched notifications off was skipped.');
     }
 
     public function destroy(Announcement $announcement): RedirectResponse

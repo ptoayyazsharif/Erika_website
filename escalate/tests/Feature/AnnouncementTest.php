@@ -358,7 +358,8 @@ class AnnouncementTest extends TestCase
 
         $this->actingAs($this->admin())
             ->post(route('admin.announcements.push', $this->announce()))
-            ->assertSessionHas('status', fn ($status) => str_contains($status, '1 device'));
+            ->assertSessionHas('status', fn ($status) => str_contains($status, '1 device')
+                && str_contains($status, '1 person'));
     }
 
     public function test_the_switch_off_and_a_suspension_are_both_honoured(): void

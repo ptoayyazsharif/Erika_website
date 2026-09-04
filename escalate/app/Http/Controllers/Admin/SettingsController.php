@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PushSubscription;
 use App\Support\EmailTemplates;
+use App\Support\Push;
 use App\Support\Settings;
 use App\Support\StripeCheck;
 use Illuminate\Http\RedirectResponse;
@@ -222,23 +223,35 @@ class SettingsController extends Controller
      * held better here than in a container's environment, where it sits in
      * plaintext for anything that can read /proc.
      *
-     * ── Why this deletes every subscription ─────────────────────────────────
+     * ── Once, and only once ─────────────────────────────────────────────────
+     *
+     * This refuses when keys already exist, and that refusal is the feature.
      *
      * A device subscribes with the *public* key baked in and the push service
-     * checks every later send against it. Change the pair and every existing
-     * subscription is dead — and dead in the one way App\Support\Push does not
-     * prune, because the service answers 403 rather than 404 or 410. Leaving
-     * the rows would mean a Testers screen showing devices that can never be
-     * reached again, and a send that reports failures for ever.
+     * rejects anything signed by a different pair — with a 403, which is not
+     * one of the codes App\Support\Push prunes on. So minting a second pair
+     * silently unreaches every phone in the beta at once. That is a real need
+     * roughly never, and a destructive control that sits on a settings page is
+     * a control that eventually gets pressed by somebody exploring.
      *
-     * So they go, and the number that went is reported rather than hidden. The
-     * browsers heal themselves on the next page load — public/js/app.js
-     * re-subscribes when the key it is handed no longer matches the one the
-     * device holds — so nobody is asked for permission a second time. That
-     * pairing is the whole reason this is safe to press.
+     * There is no button for it any more. Closing the route as well matters
+     * because a hidden button is not a removed hazard: a bookmark, a back
+     * button or a double submit would still reach this.
+     *
+     * Rotating a genuinely leaked key is still possible and deliberately
+     * slower: paste a pair into the two fields on the form, or drop the
+     * override with the reset link and press this again. Both say what they are
+     * doing on the way past.
      */
     public function pushKeys(Request $request): RedirectResponse
     {
+        if (Push::configured()) {
+            return back()->withErrors(['push' =>
+                'Notification keys are already set up, and replacing them would switch off '
+                .'every device at once. If a key has leaked, paste a new pair into the two '
+                .'fields below instead.']);
+        }
+
         try {
             $keys = VAPID::createVapidKeys();
         } catch (\Throwable $e) {
@@ -249,17 +262,17 @@ class SettingsController extends Controller
         Settings::put('escalate.push.public_key', $keys['publicKey'], $request->user());
         Settings::put('escalate.push.private_key', $keys['privateKey'], $request->user());
 
-        // Unconditionally, not "if keys existed before". The new public key is
-        // random, so it differs from whatever every stored device subscribed
-        // under — which makes every row dead whatever the previous state was.
-        // Keeping any of them would leave uncontactable devices being counted
-        // on the Announcements screen as an audience.
+        // Any row that exists at this point subscribed under some earlier key —
+        // there was no usable pair a moment ago, or this would have refused
+        // above — so it is already dead. Clearing it keeps the Announcements
+        // screen from counting uncontactable devices as an audience. Normally
+        // there are none, and then nothing is said about it.
         $forgotten = PushSubscription::query()->delete();
 
         return back()->with('status', $forgotten > 0
-            ? "New keys saved. The {$forgotten} ".str('device')->plural($forgotten)
-                .' subscribed to the old ones were forgotten — they re-subscribe on their own '
-                .'the next time each person opens the app, without being asked again.'
+            ? "Keys saved. The {$forgotten} ".str('device')->plural($forgotten)
+                .' left over from an earlier pair were forgotten — they re-subscribe on their '
+                .'own the next time each person opens the app, without being asked again.'
             : 'Keys saved. Notifications can be sent from now on.');
     }
 
