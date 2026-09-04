@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ApplicationController as AdminApplications;
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncements;
 use App\Http\Controllers\Admin\TesterController as AdminTesters;
 use App\Http\Controllers\AnnouncementController as PublicAnnouncements;
+use App\Http\Controllers\PushController;
 use App\Http\Controllers\Admin\BetaController as AdminBeta;
 use App\Http\Controllers\Admin\FeedbackController as AdminFeedback;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
@@ -263,6 +264,12 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
 
     Route::post('/announcements/{announcement}/dismiss', [PublicAnnouncements::class, 'dismiss'])
         ->name('announcements.dismiss');
+
+    /* Web push: a device signing up for reminders, or standing down. */
+    Route::post('/push/subscribe', [PushController::class, 'store'])
+        ->middleware('throttle:20,10')->name('push.store');
+    Route::post('/push/unsubscribe', [PushController::class, 'destroy'])->name('push.destroy');
+    Route::post('/push/preference', [PushController::class, 'preference'])->name('push.preference');
 
     /* admin door — reachable only by an admin, invisible to everyone else */
     Route::get('/admin/login', [AdminSessionController::class, 'create'])->name('admin.login');

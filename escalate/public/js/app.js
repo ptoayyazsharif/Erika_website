@@ -213,6 +213,119 @@
     });
   }
 
+  /* ── the daily reminder ────────────────────────────────────────────────── */
+
+  /*
+   * Asking to send notifications.
+   *
+   * Deliberately not on load. A permission prompt fired at somebody who just
+   * arrived gets refused, and a browser refusal is close to permanent — most
+   * people never find the setting to undo it. So the card is shown, and the
+   * real prompt only opens when they press Yes. One press of theirs for one
+   * prompt of ours.
+   *
+   * Shown only where it could work: a service worker, a PushManager, and a
+   * permission still undecided. On an installed iPhone PWA all three are true;
+   * in an iPhone browser tab PushManager is absent, so nothing is offered
+   * rather than a button that silently does nothing.
+   */
+  function initPush() {
+    const card = $('[data-push-prompt]');
+    if (!card) return;
+
+    const KEY = 'escalate.push-prompt';
+    const supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+
+    const remember = (value) => {
+      try {
+        localStorage.setItem(KEY, value);
+      } catch {
+        // Private mode. It offers once more next time, which is the gentler
+        // of the two failures.
+      }
+    };
+
+    let dismissed = false;
+    try {
+      dismissed = localStorage.getItem(KEY) === 'no';
+    } catch { /* see above */ }
+
+    if (!supported || dismissed || Notification.permission !== 'default') return;
+
+    card.hidden = false;
+
+    $('[data-push-no]')?.addEventListener('click', () => {
+      card.hidden = true;
+      remember('no');
+    });
+
+    $('[data-push-yes]')?.addEventListener('click', async () => {
+      card.hidden = true;
+
+      try {
+        if (await Notification.requestPermission() !== 'granted') {
+          remember('no');
+          return;
+        }
+
+        const registration = await navigator.serviceWorker.ready;
+
+        const subscription = await registration.pushManager.subscribe({
+          // Required by every browser: a push that cannot show a notification
+          // is not allowed, which suits an app that only ever sends visible
+          // ones anyway.
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(card.dataset.pushKey),
+        });
+
+        const json = subscription.toJSON();
+
+        const response = await fetch(card.dataset.pushUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]')?.content || '',
+          },
+          body: JSON.stringify({
+            endpoint: subscription.endpoint,
+            p256dh: json.keys && json.keys.p256dh,
+            auth: json.keys && json.keys.auth,
+            // The device knows where it is; the server does not. This is what
+            // lets the reminder arrive at nine in the morning wherever
+            // somebody actually is.
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          }),
+        });
+
+        toast(response.ok ? 'Reminders on.' : 'Could not turn reminders on.');
+        remember(response.ok ? 'yes' : 'no');
+      } catch {
+        // A refusal, a browser that changed its mind, an offline moment. None
+        // of it is worth an error in front of somebody who only wanted a
+        // reminder.
+        toast('Could not turn reminders on.');
+      }
+    });
+  }
+
+  /*
+   * The VAPID key is base64url; subscribe() wants raw bytes. Standard
+   * conversion — the padding and the two character swaps are the whole of it,
+   * and getting either wrong fails inside the browser with an opaque error.
+   */
+  function urlBase64ToUint8Array(base64) {
+    const padded = (base64 + '='.repeat((4 - (base64.length % 4)) % 4))
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+
+    const raw = atob(padded);
+    const output = new Uint8Array(raw.length);
+
+    for (let i = 0; i < raw.length; i++) output[i] = raw.charCodeAt(i);
+
+    return output;
+  }
+
   /* ── textareas that grow ───────────────────────────────────────────────── */
 
   function initAutogrow() {
@@ -515,6 +628,7 @@
     initMotion();
     initCounters();
     initPasswordReveal();
+    initPush();
     initAutogrow();
     initOptions();
     initCircle();

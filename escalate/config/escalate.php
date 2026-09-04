@@ -399,6 +399,33 @@ return [
     | the Blade files, so no edit can send a selection email with no code in it
     | or a password reset with no link. See App\Support\EmailTemplates.
     */
+    /*
+    | The daily reminder, by web push.
+    |
+    | The keys are a VAPID pair. The private half is a credential and lives in
+    | the environment, never here — the same rule as every other secret in this
+    | file. Without them the feature is inert and the admin panel says so
+    | rather than failing quietly.
+    |
+    | On iPhone, push reaches only a PWA installed on the home screen. Safari
+    | does not deliver to a browser tab at any iOS version, so a tester who
+    | never installed gets nothing and nothing looks broken. That is the
+    | limitation to remember before concluding push is not working.
+    */
+    'push' => [
+        'enabled'     => (bool) env('PUSH_ENABLED', true),
+        'public_key'  => env('VAPID_PUBLIC_KEY'),
+        'private_key' => env('VAPID_PRIVATE_KEY'),
+
+        // Local hour, per device. 9 is late enough not to be an alarm and
+        // early enough to still be today.
+        'hour' => (int) env('PUSH_HOUR', 9),
+
+        // Never anything private: this lands on a lock screen. See App\Support\Push.
+        'title' => env('PUSH_TITLE', 'Escalate'),
+        'body'  => env('PUSH_BODY', 'A few minutes for today?'),
+    ],
+
     'emails' => [
         'applied' => [
             'subject' => env('EMAIL_APPLIED_SUBJECT', 'Your Escalate application'),

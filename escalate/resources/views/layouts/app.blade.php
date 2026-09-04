@@ -128,6 +128,7 @@
 <main class="shell" id="main">
 @auth
     @include('partials.announcement-banner')
+    @include('partials.push-prompt')
 @endauth
 
 {{-- The install nudge.

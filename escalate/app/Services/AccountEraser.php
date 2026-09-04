@@ -127,6 +127,7 @@ class AccountEraser
                 // is interface state nobody would recognise as their data, and
                 // padding an export with it buries what matters.
                 'announcement_emails' => (bool) $profile->announcement_emails,
+                'daily_reminders'     => (bool) $profile->push_reminders,
             ] : null,
 
             // details() rather than ->note. `note` is the retired single-detail

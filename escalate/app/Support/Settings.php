@@ -79,6 +79,11 @@ class Settings
                 'blurb' => 'Stripe keys, and whether billing is switched on at all.',
                 'groups' => ['Billing', 'Stripe — mode', 'Stripe — test keys', 'Stripe — live keys'],
             ],
+            'reminders' => [
+                'label' => 'Reminders',
+                'blurb' => 'The daily nudge, and what it says on a lock screen.',
+                'groups' => ['The daily reminder'],
+            ],
             'emails' => [
                 'label' => 'Emails',
                 'blurb' => 'What every email the app sends actually says.',
@@ -227,6 +232,13 @@ class Settings
              * source of truth; clearing a field here restores Erika's original
              * wording rather than emptying the page.
              */
+            'The daily reminder' => [
+                'escalate.push.enabled' => ['type' => 'bool', 'label' => 'Send a daily reminder', 'help' => 'Only reaches people who agreed to notifications. On an iPhone it also needs the app installed to the home screen — Safari does not deliver push to a browser tab.'],
+                'escalate.push.hour'    => ['type' => 'int', 'label' => 'What hour, their time', 'help' => '0–23. Each device reports its own timezone, so everybody gets it at this hour where they are.'],
+                'escalate.push.title'   => ['type' => 'string', 'label' => 'Title'],
+                'escalate.push.body'    => ['type' => 'string', 'label' => 'Message', 'help' => 'This appears on a lock screen, where anybody nearby can read it. Never put anything private here — no desire titles, no story text, no names.'],
+            ],
+
             ...self::emailGroups(),
 
             'How it looks' => [

@@ -253,6 +253,31 @@
     </div>
 </form>
 
+{{-- Reminders. Its own form, outside the one above: a <form> cannot nest, and
+     this posts somewhere else. Shown whether or not the browser has been asked
+     yet, so somebody who said no once has a way back that does not involve
+     finding their browser's notification settings — which most people cannot
+     undo. --}}
+@if (config('escalate.push.enabled') && \App\Support\Push::configured())
+<div class="card" data-enter>
+    <h3 style="margin-bottom:var(--s-2)">A daily reminder</h3>
+    <p class="small muted" style="margin:0 0 var(--s-4)">
+        One notification a day, around {{ (int) config('escalate.push.hour') }} your time.
+        It never says what you are working on — a notification can be read by
+        anybody near your phone, so it only ever says that today is here.
+    </p>
+
+    <form method="POST" action="{{ route('push.preference') }}">
+        @csrf
+        <input type="hidden" name="push_reminders" value="{{ ($profile->push_reminders ?? true) ? '0' : '1' }}">
+        <button class="btn btn-quiet btn-sm" type="submit">
+            {{ ($profile->push_reminders ?? true) ? 'Turn reminders off' : 'Turn reminders on' }}
+        </button>
+    </form>
+</div>
+@endif
+
+
 <div class="row wrap" style="margin-top:var(--s-7);gap:var(--s-4)">
     <form method="POST" action="{{ route('logout') }}" data-logout>
         @csrf

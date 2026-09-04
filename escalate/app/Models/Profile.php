@@ -38,6 +38,7 @@ class Profile extends Model
             // that request should not be able to opt somebody back in to
             // email. The unsubscribe route sets it explicitly.
             'announcement_emails' => 'boolean',
+            'push_reminders'      => 'boolean',
             'consented_at'   => 'datetime',
             'affirmations_generated_at' => 'datetime',
         ];
