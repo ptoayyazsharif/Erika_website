@@ -233,6 +233,22 @@ class Settings
              * wording rather than emptying the page.
              */
             'The daily reminder' => [
+                /*
+                 * The keypair notifications are signed with.
+                 *
+                 * The public half is not a secret by construction: every
+                 * browser that subscribes is handed it, so it is shown here in
+                 * full — being able to read it is how you tell two servers
+                 * apart. The private half is a credential and is never rendered
+                 * back, like every other secret on these pages.
+                 *
+                 * Both are settable by hand for a server whose keys were minted
+                 * elsewhere, but the button above the form is the normal way in:
+                 * a VAPID pair is not something anybody can type.
+                 */
+                'escalate.push.public_key'  => ['type' => 'string', 'keep_when_blank' => true, 'label' => 'Notification public key', 'help' => 'Handed to every browser that agrees to notifications, so it is not a secret. Use the button above rather than typing one.'],
+                'escalate.push.private_key' => ['type' => 'secret', 'label' => 'Notification private key', 'help' => 'The half that signs. Stored encrypted and never shown again.'],
+
                 'escalate.push.enabled' => ['type' => 'bool', 'label' => 'Send a daily reminder', 'help' => 'Only reaches people who agreed to notifications. On an iPhone it also needs the app installed to the home screen — Safari does not deliver push to a browser tab.'],
                 'escalate.push.hour'    => ['type' => 'int', 'label' => 'What hour, their time', 'help' => '0–23. Each device reports its own timezone, so everybody gets it at this hour where they are.'],
                 'escalate.push.title'   => ['type' => 'string', 'label' => 'Title'],

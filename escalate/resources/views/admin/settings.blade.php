@@ -82,6 +82,53 @@
 </div>
 @endif
 
+{{-- Outside the settings form on purpose: a <form> cannot nest inside another
+     one, and this is its own submission. --}}
+@if ($section === 'reminders')
+@php
+    $pushReady = \App\Support\Push::configured();
+    $pushDevices = $pushReady ? \App\Models\PushSubscription::count() : 0;
+@endphp
+<div class="card" data-enter>
+    <div class="row-between wrap" style="gap:var(--s-3);align-items:flex-start">
+        <div>
+            <h3 style="margin:0 0 var(--s-2)">
+                {{ $pushReady ? 'Notifications are set up' : 'Notifications are not set up yet' }}
+            </h3>
+
+            @if ($pushReady)
+                <p class="small muted" style="margin:0">
+                    Notifications can be sent, and
+                    {{ $pushDevices === 0 ? 'no device has' : $pushDevices.' '.Str::plural('device', $pushDevices).' have' }}
+                    switched them on. You do not need to press this again.
+                </p>
+                <p class="small faint" style="margin:var(--s-2) 0 0">
+                    <strong>Generating a new pair switches every device off.</strong> Each one
+                    subscribed with the current key and stops being reachable the moment it
+                    changes. They come back on their own the next time each person opens the
+                    app — nobody is asked for permission again — but until they do,
+                    notifications reach nobody. Only do this if a key has leaked.
+                </p>
+            @else
+                <p class="small muted" style="margin:0">
+                    Notifications need a keypair to sign with. Press this once and it is done —
+                    the pair is generated here and stored encrypted, so there is nothing to
+                    copy anywhere and nothing to deploy.
+                </p>
+            @endif
+        </div>
+
+        <form method="POST" action="{{ route('admin.settings.push-keys') }}" data-once
+              @if ($pushReady) data-confirm="Generate a new pair? Every device with notifications on stops receiving them until each person next opens the app." @endif>
+            @csrf
+            <button class="btn {{ $pushReady ? 'btn-ghost' : '' }}" type="submit" data-busy="Generating…">
+                {{ $pushReady ? 'Generate a new pair' : 'Generate the keys' }}
+            </button>
+        </form>
+    </div>
+</div>
+@endif
+
 {{-- Previews. Outside the settings form on purpose: a <form> cannot nest
      inside another one, and each preview is its own submission. --}}
 @if ($section === 'emails')
@@ -181,6 +228,8 @@
                         <div class="row small faint" style="gap:var(--s-3);margin-top:4px">
                             @if ($meta['type'] === 'secret')
                                 <span>{{ $shown['set'] ? 'Set — leave blank to keep it.' : 'Not set.' }}</span>
+                            @elseif ($meta['keep_when_blank'] ?? false)
+                                <span>{{ $shown['set'] ? 'Leave blank to keep it.' : 'Not set.' }}</span>
                             @endif
                             @if (\App\Support\Settings::isOverridden($key))
                                 <span>Overridden here.</span>

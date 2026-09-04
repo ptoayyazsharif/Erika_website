@@ -8,7 +8,7 @@ the reasoning behind a decision rather than the state of it.
 
 ## Live right now
 
-- 420 tests passing.
+- 431 tests passing.
 - Public pages are **Ivory** — warm ivory ground, aubergine text. Body text
   measures 14.37:1, muted 5.34:1, on a 390×844 phone.
 - Erika's doorway E is the mark, everywhere: public pages, signed-in topbar,
@@ -121,10 +121,15 @@ because her own export always beats a recolour.
   Until somebody has seen one arrive, treat push as untested in the way that
   matters. On iPhone it only works for an app installed to the home screen —
   Safari does not deliver push to a browser tab, at any iOS version.
-- **VAPID keys must be set in Coolify.** `VAPID_PUBLIC_KEY` and
-  `VAPID_PRIVATE_KEY`. Without them push is inert and says so in the admin panel
-  rather than failing quietly. The private half is a credential and is not in the
-  repo, the same rule as the Coolify token.
+- **Press “Generate the keys” once, under Settings → Reminders.** Notifications
+  need a keypair to sign with and there is nothing to set up beyond that button:
+  the pair is minted in the app and stored encrypted, so no environment variable
+  and no deploy. `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` still work as a
+  fallback for a server configured the old way, but nothing needs them now.
+  **Generating a second pair invalidates every device** — they repair themselves
+  on the next page load, because `public/js/app.js` re-subscribes when the key it
+  is handed no longer matches the one the browser holds — so it is not a button
+  to press out of curiosity.
 
 ---
 
@@ -189,6 +194,15 @@ ignores that opt-out.
 `c7401a9` **Stage D** — web push. `minishlink/web-push` v11 needs no `gmp`, so
 the Dockerfile did not change. Per-device timezone, dead subscriptions pruned on
 404/410. **Still unproven on a real phone** — see below.
+
+Notification keys moved out of the server environment and into Settings →
+Reminders, with a button that mints a pair. Better held there than in a
+container's environment, which is plaintext to anything that can read it, while
+the settings table encrypts its values. The half that makes this safe is in
+`public/js/app.js`: a device whose key no longer matches re-subscribes silently
+on the next page load, so changing the pair is recoverable rather than a
+permanent, invisible break. `tests/browser/push-rekey.mjs` asserts that decision
+in all five states.
 
 Announcement notifications — the third destination on Admin → Announcements. The
 notification carries the announcement's real title and first line or two, which

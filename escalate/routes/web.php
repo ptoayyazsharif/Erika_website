@@ -307,6 +307,11 @@ Route::middleware(['auth', 'not-suspended'])->group(function () {
         Route::post('/settings/mail-test', [AdminSettings::class, 'testMail'])
             ->middleware('throttle:6,10')->name('settings.mail');
 
+        // Throttled hard: every press invalidates every device's subscription,
+        // so this is not a button anybody should be able to lean on.
+        Route::post('/settings/push-keys', [AdminSettings::class, 'pushKeys'])
+            ->middleware('throttle:6,10')->name('settings.push-keys');
+
         Route::get('/users', [AdminUsers::class, 'index'])->name('users');
         Route::get('/users/{user}', [AdminUsers::class, 'show'])->name('users.show');
         Route::patch('/users/{user}/plan', [AdminUsers::class, 'plan'])->name('users.plan');

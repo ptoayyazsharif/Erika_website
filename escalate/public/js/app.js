@@ -250,6 +250,11 @@
       dismissed = localStorage.getItem(KEY) === 'no';
     } catch { /* see above */ }
 
+    // Before the early return: a device that already said yes never reaches the
+    // card again, and it is exactly the device that needs repairing after a key
+    // change.
+    reconcilePush(card);
+
     if (!supported || dismissed || Notification.permission !== 'default') return;
 
     card.hidden = false;
@@ -278,27 +283,10 @@
           applicationServerKey: urlBase64ToUint8Array(card.dataset.pushKey),
         });
 
-        const json = subscription.toJSON();
+        const ok = await tellServer(card, subscription);
 
-        const response = await fetch(card.dataset.pushUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]')?.content || '',
-          },
-          body: JSON.stringify({
-            endpoint: subscription.endpoint,
-            p256dh: json.keys && json.keys.p256dh,
-            auth: json.keys && json.keys.auth,
-            // The device knows where it is; the server does not. This is what
-            // lets the reminder arrive at nine in the morning wherever
-            // somebody actually is.
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          }),
-        });
-
-        toast(response.ok ? 'Reminders on.' : 'Could not turn reminders on.');
-        remember(response.ok ? 'yes' : 'no');
+        toast(ok ? 'Reminders on.' : 'Could not turn reminders on.');
+        remember(ok ? 'yes' : 'no');
       } catch {
         // A refusal, a browser that changed its mind, an offline moment. None
         // of it is worth an error in front of somebody who only wanted a
@@ -324,6 +312,96 @@
     for (let i = 0; i < raw.length; i++) output[i] = raw.charCodeAt(i);
 
     return output;
+  }
+
+  /* Hand one subscription to the server. Returns whether it was accepted. */
+  async function tellServer(card, subscription) {
+    const json = subscription.toJSON();
+
+    try {
+      const response = await fetch(card.dataset.pushUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]')?.content || '',
+        },
+        body: JSON.stringify({
+          endpoint: subscription.endpoint,
+          p256dh: json.keys && json.keys.p256dh,
+          auth: json.keys && json.keys.auth,
+          // The device knows where it is; the server does not. This is what
+          // lets the reminder arrive at nine in the morning wherever somebody
+          // actually is.
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        }),
+      });
+
+      return response.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  /*
+   * Re-subscribe a device whose server keys have changed under it.
+   *
+   * A subscription is bound to the public key it was created with, and the
+   * push service rejects anything signed by a different pair. So the moment an
+   * administrator generates a new pair — which they can now do from Settings →
+   * Reminders — every phone in the beta is silently unreachable, and stays
+   * unreachable for ever: initPush() only ever offers itself where permission
+   * is still undecided, and permission was granted long ago.
+   *
+   * This is the other half of that button. Permission is already granted, so
+   * subscribe() shows nobody anything: it swaps the dead subscription for a
+   * live one and tells the server, quietly, on the next page somebody opens.
+   * Without it, "generate a new pair" would be a button that breaks
+   * notifications permanently and looks like it worked.
+   *
+   * Deliberately does nothing when the browser will not say which key an
+   * existing subscription carries. Unsubscribing and resubscribing blindly on
+   * every page load would churn the table and re-register the same device for
+   * ever; a device that cannot be checked keeps what it has.
+   */
+  async function reconcilePush(card) {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    if (!card.dataset.pushKey) return;
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const wanted = urlBase64ToUint8Array(card.dataset.pushKey);
+      const existing = await registration.pushManager.getSubscription();
+
+      if (existing) {
+        const held = existing.options && existing.options.applicationServerKey;
+        if (!held) return;
+        if (sameKey(held, wanted)) return;
+
+        await existing.unsubscribe();
+      }
+
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: wanted,
+      });
+
+      await tellServer(card, subscription);
+    } catch {
+      // A repair that fails is exactly as bad as the state it found, and the
+      // person did not ask for it. Nothing is said.
+    }
+  }
+
+  function sameKey(held, wanted) {
+    const a = new Uint8Array(held);
+    if (a.length !== wanted.length) return false;
+
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== wanted[i]) return false;
+    }
+
+    return true;
   }
 
   /* ── textareas that grow ───────────────────────────────────────────────── */

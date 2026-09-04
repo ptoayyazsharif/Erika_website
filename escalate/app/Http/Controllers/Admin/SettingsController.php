@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PushSubscription;
 use App\Support\EmailTemplates;
 use App\Support\Settings;
 use App\Support\StripeCheck;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Minishlink\WebPush\VAPID;
 
 /**
  * The settings screen.
@@ -92,7 +94,14 @@ class SettingsController extends Controller
             // never renders the current value, so an untouched secret field is
             // always empty — treating that as a deletion would wipe the API key
             // of anyone who saved this page to change a quota.
-            if ($meta['type'] === 'secret' && $value === '') {
+            //
+            // `keep_when_blank` extends the same protection to a field that is
+            // shown but is half of a pair. Blanking the public half of the
+            // notification keypair while the private half survived would leave
+            // push looking configured and reaching nobody, from one empty box.
+            // Clearing either is what the reset link below the form is for,
+            // where it says what it is doing.
+            if ($value === '' && ($meta['type'] === 'secret' || ($meta['keep_when_blank'] ?? false))) {
                 continue;
             }
 
@@ -200,6 +209,58 @@ class SettingsController extends Controller
 
         return back()->with('status',
             "Preview of “{$key}” sent to {$to}. Codes and buttons are stand-ins — the real email fills them in.");
+    }
+
+    /**
+     * Mint a VAPID keypair, here, rather than asking somebody to run a CLI.
+     *
+     * A VAPID pair is a P-256 keypair. It cannot be typed, it cannot be
+     * guessed, and the only reason these keys lived in the server environment
+     * before was that there was nowhere else to put them — which meant a
+     * deploy, and me, every time. They are ordinary settings: the private half
+     * is marked secret and the settings table encrypts its values, so it is
+     * held better here than in a container's environment, where it sits in
+     * plaintext for anything that can read /proc.
+     *
+     * ── Why this deletes every subscription ─────────────────────────────────
+     *
+     * A device subscribes with the *public* key baked in and the push service
+     * checks every later send against it. Change the pair and every existing
+     * subscription is dead — and dead in the one way App\Support\Push does not
+     * prune, because the service answers 403 rather than 404 or 410. Leaving
+     * the rows would mean a Testers screen showing devices that can never be
+     * reached again, and a send that reports failures for ever.
+     *
+     * So they go, and the number that went is reported rather than hidden. The
+     * browsers heal themselves on the next page load — public/js/app.js
+     * re-subscribes when the key it is handed no longer matches the one the
+     * device holds — so nobody is asked for permission a second time. That
+     * pairing is the whole reason this is safe to press.
+     */
+    public function pushKeys(Request $request): RedirectResponse
+    {
+        try {
+            $keys = VAPID::createVapidKeys();
+        } catch (\Throwable $e) {
+            return back()->withErrors(['push' =>
+                'Could not generate a pair: '.\Illuminate\Support\Str::limit($e->getMessage(), 200)]);
+        }
+
+        Settings::put('escalate.push.public_key', $keys['publicKey'], $request->user());
+        Settings::put('escalate.push.private_key', $keys['privateKey'], $request->user());
+
+        // Unconditionally, not "if keys existed before". The new public key is
+        // random, so it differs from whatever every stored device subscribed
+        // under — which makes every row dead whatever the previous state was.
+        // Keeping any of them would leave uncontactable devices being counted
+        // on the Announcements screen as an audience.
+        $forgotten = PushSubscription::query()->delete();
+
+        return back()->with('status', $forgotten > 0
+            ? "New keys saved. The {$forgotten} ".str('device')->plural($forgotten)
+                .' subscribed to the old ones were forgotten — they re-subscribe on their own '
+                .'the next time each person opens the app, without being asked again.'
+            : 'Keys saved. Notifications can be sent from now on.');
     }
 
     public function testMail(Request $request): RedirectResponse
