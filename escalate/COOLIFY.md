@@ -312,8 +312,13 @@ production. One container carrying SMTP, IMAP, Roundcube webmail and an admin
 UI. It exists so the domain owns a real mailbox — somewhere to sign up to
 services from, and to keep what arrives, without renting that from anyone.
 
-Admin UI: <https://mail-nn5prfsrcz7k8qsd8bhbphgt.2.25.93.114.sslip.io>
-First visit lands on `/admin/install/server`, which creates the first mailbox.
+Webmail: <https://mail.escalate.cloud/webmail/>
+Admin UI: <https://mail.escalate.cloud/admin/>
+
+The old `mail-nn5prfsrcz7k8qsd8bhbphgt.2.25.93.114.sslip.io` still answers, with
+its own certificate, so nothing that bookmarked it breaks. Prefer the real name.
+A first visit to a fresh install lands on `/admin/install/server`, which creates
+the first mailbox.
 
 **HTTPS, and use it.** Plain HTTP now redirects. That was not true until
 `2026-09-11` — see the section below on what it looked like when it was not, and
@@ -327,21 +332,36 @@ port-25 blocks that stop VPS hosts sending do not affect what arrives.
 MX → `10 escalate.cloud.`, so other mail servers already deliver to this host.
 Nothing was listening before; now something is.
 
-Two things are still open, and both need a human:
+One thing is still open and needs a human:
 
-- **`mail.escalate.cloud` does not resolve** (NXDOMAIN). Add an A record to
-  `2.25.93.114` at Hostinger, then set the domain on the service in the Coolify
-  UI — the API has no field for a sub-service's FQDN, only `name`,
-  `description`, `connect_to_docker_network` and `docker_compose_raw`, and
-  re-parsing the compose does not overwrite an FQDN that was already assigned.
-
-  **Correction, `2026-09-11`:** this file used to claim the `SERVICE_FQDN_MAIL*`
-  env vars were already set to `mail.escalate.cloud`. They are not, and never
-  were — they hold the sslip.io host. Checked against the live API rather than
-  the note. The sslip.io URL above is the way in, and it works.
 - **Inbound port 25 is unverified.** The Claude Code sandbox egresses on 80 and
   443 only, so it cannot open an SMTP connection to prove it. From a laptop:
   `nc -vz escalate.cloud 25`, or just send the new mailbox a message.
+
+### Setting a service's domain from the API, which this file said was impossible
+
+It is not, and the field is not the one you would guess. `fqdn` is rejected
+outright — `{"fqdn":["This field is not allowed."]}` — which is presumably how
+the earlier note concluded there was no way in. The writable field is **`url`**,
+on the service's *application*, which has its own uuid:
+
+```sh
+# the application uuid, not the service uuid
+curl -sS "$COOLIFY/services/<service-uuid>/applications" -H "Authorization: Bearer $TOKEN"
+
+curl -sS -X PATCH "$COOLIFY/services/<service-uuid>/applications/<app-uuid>" \
+     -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+     -d '{"url":"https://mail.escalate.cloud,https://other-host.example"}'
+```
+
+Comma-separated for more than one hostname, each with its scheme. **Then restart
+the service** — the PATCH only stores it; see the section below for why that
+matters.
+
+`SERVICE_FQDN_MAIL*` in the service's env vars is a separate thing and does not
+need editing; it holds whatever hostname the compose was first parsed with.
+`mail.escalate.cloud` got its A record on `2026-09-11` and was switched over the
+same day.
 
 ### `no available server` on the webmail is a missing route, not an outage
 
@@ -368,7 +388,8 @@ been placed. Certificates were working fine on that Traefik the whole time;
 `escalate.cloud` has had a real one throughout.
 
 **The fix was a service restart**, which makes Coolify regenerate the labels
-from the stored FQDN:
+from the stored FQDN. The same restart is what publishes any domain change made
+through the API above:
 
 ```sh
 curl -X POST "$COOLIFY/services/nn5prfsrcz7k8qsd8bhbphgt/restart" \

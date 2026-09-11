@@ -109,8 +109,13 @@ because her own export always beats a recolour.
   app uses, but her own export from the brand sheet would be better. Dropping it
   in as `public/brand/mark-aubergine.png` is a one-file swap — nothing else
   changes, because the palette points at the filename.
-- **DNS `A` record for `mail.escalate.cloud`**, and confirm inbound port 25 is
-  open, before self-hosted mail can receive.
+- **Confirm inbound port 25 is open**, before self-hosted mail can receive. This
+  sandbox egresses on 80 and 443 only, so it cannot open an SMTP connection to
+  prove it. From a laptop: `nc -vz escalate.cloud 25`, or just send
+  `admin@escalate.cloud` a message and look for it at
+  <https://mail.escalate.cloud/webmail/>. (The `A` record for
+  `mail.escalate.cloud` was added on `2026-09-11` and the webmail has a real
+  certificate — that half is done.)
 - **Regenerate the ranch reading** on the live app. The fix for readings naming
   people who do not exist shipped in `284525c`; that specific reading is still
   the ruined one, and `stories.regenerate` on the reading screen replaces it.
