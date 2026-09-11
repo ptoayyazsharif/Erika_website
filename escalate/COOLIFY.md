@@ -312,8 +312,13 @@ production. One container carrying SMTP, IMAP, Roundcube webmail and an admin
 UI. It exists so the domain owns a real mailbox — somewhere to sign up to
 services from, and to keep what arrives, without renting that from anyone.
 
-Admin UI: <http://mail-nn5prfsrcz7k8qsd8bhbphgt.2.25.93.114.sslip.io>
+Admin UI: <https://mail-nn5prfsrcz7k8qsd8bhbphgt.2.25.93.114.sslip.io>
 First visit lands on `/admin/install/server`, which creates the first mailbox.
+
+**HTTPS, and use it.** Plain HTTP now redirects. That was not true until
+`2026-09-11` — see the section below on what it looked like when it was not, and
+why a mailbox password should be treated as having been sent in the clear before
+that date.
 
 Receiving is the easy half of mail. No reputation is involved, and the outbound
 port-25 blocks that stop VPS hosts sending do not affect what arrives.
@@ -329,12 +334,55 @@ Two things are still open, and both need a human:
   UI — the API has no field for a sub-service's FQDN, only `name`,
   `description`, `connect_to_docker_network` and `docker_compose_raw`, and
   re-parsing the compose does not overwrite an FQDN that was already assigned.
-  The `SERVICE_FQDN_MAIL*` env vars on the service are already set to the
-  intended hostname. Until then the sslip.io URL above is the way in, and it
-  works today.
+
+  **Correction, `2026-09-11`:** this file used to claim the `SERVICE_FQDN_MAIL*`
+  env vars were already set to `mail.escalate.cloud`. They are not, and never
+  were — they hold the sslip.io host. Checked against the live API rather than
+  the note. The sslip.io URL above is the way in, and it works.
 - **Inbound port 25 is unverified.** The Claude Code sandbox egresses on 80 and
   443 only, so it cannot open an SMTP connection to prove it. From a laptop:
   `nc -vz escalate.cloud 25`, or just send the new mailbox a message.
+
+### `no available server` on the webmail is a missing route, not an outage
+
+Worth knowing by sight, because it reads like the mail server is down and it is
+not — and because it showed up on a phone while a desktop was happily using the
+same box.
+
+The symptom: `https://…/webmail/` answers **503** with the body
+`no available server`, behind a certificate whose subject is
+`CN=TRAEFIK DEFAULT CERT`. Meanwhile plain `http://` serves the login page.
+
+That pair means exactly one thing: **Traefik has no router for that hostname on
+443**, so the request falls through to its built-in self-signed fallback. The
+container is fine — `curl` the same host on 80 and it answers 200.
+
+Why a phone sees it and a laptop does not: Chrome on Android tries HTTPS on its
+own before falling back, so the phone knocks on 443 and the laptop, following a
+typed `http://` link, never does.
+
+**What had happened.** Coolify's stored FQDN for the service already said
+`https://…`, but the running container was still carrying routing labels from an
+earlier generation — HTTP only, no TLS router, and so no ACME order had ever
+been placed. Certificates were working fine on that Traefik the whole time;
+`escalate.cloud` has had a real one throughout.
+
+**The fix was a service restart**, which makes Coolify regenerate the labels
+from the stored FQDN:
+
+```sh
+curl -X POST "$COOLIFY/services/nn5prfsrcz7k8qsd8bhbphgt/restart" \
+     -H "Authorization: Bearer $TOKEN"
+```
+
+A Let's Encrypt certificate was issued within seconds of the container coming
+back, HTTP began redirecting to HTTPS, and the `www.` variant started answering
+too. Mail data was untouched — it is in the named volume, not the container.
+
+The general lesson, which applies to the app as much as to mail: **a stored FQDN
+in Coolify is not a live route.** The labels are written at deploy time. Change
+an address without redeploying and the panel will show you a setting that
+nothing is honouring.
 
 ### The ports are published to the host, not routed by Traefik
 
