@@ -22,6 +22,7 @@ what is next, and what is waiting on a human. Read it before planning anything.
 | Configuring the host | [`escalate/DEPLOY.md`](escalate/DEPLOY.md) |
 | History and reasoning | [`escalate/docs/LAUNCH-PLAN.md`](escalate/docs/LAUNCH-PLAN.md) |
 | Privacy and terms copy | [`escalate/docs/LEGAL-PACK.md`](escalate/docs/LEGAL-PACK.md) |
+| **How it speaks** | [`escalate/docs/VOICE.md`](escalate/docs/VOICE.md) — read it before writing any string a user sees |
 
 `CHANGELOG.md` and `README.md` inside `escalate/` are Laravel's own, untouched.
 Nothing about this project is in them.
@@ -54,6 +55,14 @@ Break these and something quietly stops being true:
 - **CSP is `script-src 'self'`.** No inline event handlers, no CDN scripts.
   Admin-typed copy reaches public pages, so render it with `{{ }}`, never
   `{!! !!}`.
+- **One voice, and it is written down.** [`docs/VOICE.md`](escalate/docs/VOICE.md)
+  is the source of truth for every string a user reads — plain and warm, never
+  mystical, poetic, preachy or corporate. `App\Support\Voice` holds the
+  fragments the three writers share; they were duplicated once and two copies
+  silently went wrong. `tests/Feature/VoiceTest.php` is what stops it drifting
+  back. Two rules are easy to get wrong: the cliché ban **lifts** for whichever
+  belief language a person chose, and the app never tells anybody what an event
+  in their life meant.
 
 ## Testing
 

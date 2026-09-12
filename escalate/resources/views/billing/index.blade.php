@@ -6,7 +6,8 @@
     <h1>{{ $current === 'free' ? 'You are on the free plan.' : 'Thank you.' }}</h1>
     <p class="lede">
         {{ $current === 'free'
-            ? 'Enough to see whether this is for you. A full plan is more of the same thing, not a different app — every feature is already open to you.'
+            ? 'Enough to see if you like it. A full plan is more of the same thing, not a
+            different app — every feature is already open to you.'
             : 'Everything is open. Change or cancel whenever you like; nothing here locks you in.' }}
     </p>
 </div>
@@ -15,9 +16,8 @@
     <div class="notice notice-warn" role="status" data-enter>
         @include('partials.icon', ['name' => 'info', 'size' => 18])
         <div>
-            Billing is switched off on this installation, so everyone has the
-            full daily allowance and nothing can be bought. This page is here so
-            you can see what it will look like.
+            Billing is switched off here, so everybody gets the full daily allowance and
+            nothing can be bought. This page shows what it will look like later.
         </div>
     </div>
 @endif
@@ -162,9 +162,8 @@
         @include('partials.icon', ['name' => 'info', 'size' => 34])
         <h3>No plans are configured</h3>
         <p>
-            A plan needs a Stripe price id before it can be offered. Set
-            <code>STRIPE_PRICE_MONTHLY</code> and <code>STRIPE_PRICE_YEARLY</code>,
-            and they appear here.
+            Plans are not set up on this installation yet. When they are, they
+            appear here.
         </p>
     </div>
 @endforelse

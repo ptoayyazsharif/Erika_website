@@ -5,8 +5,8 @@
     <p class="eyebrow">Seven days in</p>
     <h1>{{ $existing ? 'Thank you — you can change this.' : 'Tell us the truth.' }}</h1>
     <p class="lede">
-        Four questions. The first is the one that matters; the rest are optional
-        and worth more than the first if you answer them honestly.
+        Four questions. The first one is the one we really need; the other three are optional,
+        and honest answers to them help just as much.
     </p>
 </div>
 
@@ -31,7 +31,7 @@
     </div>
 
     @foreach ([
-        ['who_for', '2. What type of person do you think would benefit most from Escalate?', 'In your own words — not a market, a person.'],
+        ['who_for', '2. What type of person do you think would benefit most from Escalate?', 'In your own words — describe a person, not a market.'],
         ['benefit', '3. What is the main benefit you get from it?', 'The one you would mention first if a friend asked.'],
         ['improve', '4. How can we improve it for you?', 'Be blunt. This is the answer we can act on.'],
     ] as [$field, $question, $hint])

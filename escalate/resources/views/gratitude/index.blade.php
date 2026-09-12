@@ -4,7 +4,7 @@
 <div class="page-head" data-enter-hero>
     <p class="eyebrow">Gratitude</p>
     <h1>What was good.</h1>
-    <p class="lede">A line a day is enough. The point is the noticing, not the writing.</p>
+    <p class="lede">A line a day is plenty. Noticing it matters more than writing it well.</p>
 </div>
 
 {{-- ── streak ───────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@
         <textarea class="textarea" id="body" name="body" required minlength="2" maxlength="2000"
                   data-autogrow data-counter="g-count" style="min-height:96px"
                   aria-describedby="g-count"
-                  placeholder="Small and specific beats large and vague. The coffee was good. She called back.">{{ old('body') }}</textarea>
+                  placeholder="Small and specific works best. The coffee was good. She called back.">{{ old('body') }}</textarea>
         <div class="counter" id="g-count"></div>
     </div>
 

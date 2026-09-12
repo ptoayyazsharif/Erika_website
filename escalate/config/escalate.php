@@ -82,11 +82,11 @@ return [
     | fall back to it when a stored key no longer resolves.
     */
     'voices' => [
-        'still'       => ['id' => env('VOICE_STILL', 'SAz9YHcvj6GT2YYXdXww'),    'label' => 'Still',       'note' => 'Relaxed and unplaceable. Reads like someone sitting beside you.'],
+        'still'       => ['id' => env('VOICE_STILL', 'SAz9YHcvj6GT2YYXdXww'),    'label' => 'Still',       'note' => 'Relaxed and easy to listen to. Like someone sitting next to you.'],
         'warm'        => ['id' => env('VOICE_WARM', 'pFZP5JQG7iQjIQuC4Bku'),     'label' => 'Warm',        'note' => 'Velvety, British. Closer and rounder — good for gratitude.'],
-        'grounded'    => ['id' => env('VOICE_GROUNDED', 'nPczCjzI2devNBz1zQrb'), 'label' => 'Grounded',    'note' => 'Deep and resonant. No performance in it.'],
+        'grounded'    => ['id' => env('VOICE_GROUNDED', 'nPczCjzI2devNBz1zQrb'), 'label' => 'Grounded',    'note' => 'Deep and steady. Nothing performed about it.'],
         'storyteller' => ['id' => env('VOICE_STORYTELLER', 'JBFqnCBsd6RMkjVDRZzb'), 'label' => 'Storyteller', 'note' => 'Warm and captivating. Built for reading aloud.'],
-        'reassuring'  => ['id' => env('VOICE_REASSURING', 'EXAVITQu4vr4xnSDxMaL'), 'label' => 'Reassuring',  'note' => 'Mature and steady. Certain without pushing.'],
+        'reassuring'  => ['id' => env('VOICE_REASSURING', 'EXAVITQu4vr4xnSDxMaL'), 'label' => 'Reassuring',  'note' => 'Calm and confident, without pushing.'],
 
         /*
          * Erika's own voice.
@@ -119,9 +119,9 @@ return [
     | targets behind each choice.
     */
     'lengths' => [
-        'short'  => ['label' => 'Short',  'words' => [220, 300], 'note' => 'Two minutes. A single scene.'],
+        'short'  => ['label' => 'Short',  'words' => [220, 300], 'note' => 'About two minutes to read. One scene.'],
         'medium' => ['label' => 'Medium', 'words' => [400, 550], 'note' => 'Three to four minutes. A morning.'],
-        'long'   => ['label' => 'Long',   'words' => [700, 900], 'note' => 'Six minutes. A whole day, with room in it.'],
+        'long'   => ['label' => 'Long',   'words' => [700, 900], 'note' => 'About six minutes. A whole day.'],
     ],
 
     /*
@@ -129,15 +129,15 @@ return [
     | 'terminal' marks the ones that unlock a Rewind.
     */
     'statuses' => [
-        'desired'        => ['label' => 'Desired',        'terminal' => false, 'note' => 'Named, and waiting.'],
-        'unfolding'      => ['label' => 'Unfolding',      'terminal' => false, 'note' => 'Something has started moving.'],
-        'manifested'     => ['label' => 'Manifested',     'terminal' => true,  'note' => 'It arrived.'],
-        'answered'       => ['label' => 'Answered Prayer','terminal' => true,  'note' => 'It arrived, and you know who to thank.'],
+        'desired'        => ['label' => 'Desired',        'terminal' => false, 'note' => 'Named, not started yet.'],
+        'unfolding'      => ['label' => 'Unfolding',      'terminal' => false, 'note' => 'In progress.'],
+        'manifested'     => ['label' => 'Manifested',     'terminal' => true,  'note' => 'You got it.'],
+        'answered'       => ['label' => 'Answered Prayer','terminal' => true,  'note' => 'You got it, and you know who to thank.'],
         'achieved'       => ['label' => 'Achieved',       'terminal' => true,  'note' => 'You built it.'],
-        'redirected'     => ['label' => 'Redirected',     'terminal' => true,  'note' => 'Something else came instead, and it was right.'],
-        'evolved'        => ['label' => 'Evolved',        'terminal' => true,  'note' => 'What you wanted changed shape.'],
-        'released'       => ['label' => 'Released',       'terminal' => true,  'note' => 'You set it down on purpose.'],
-        'paused'         => ['label' => 'Paused',         'terminal' => false, 'note' => 'Not now. Not never.'],
+        'redirected'     => ['label' => 'Redirected',     'terminal' => true,  'note' => 'Something else happened instead.'],
+        'evolved'        => ['label' => 'Evolved',        'terminal' => true,  'note' => 'What you wanted changed.'],
+        'released'       => ['label' => 'Released',       'terminal' => true,  'note' => 'You decided to let it go.'],
+        'paused'         => ['label' => 'Paused',         'terminal' => false, 'note' => 'On hold for now.'],
     ],
 
     /*
@@ -157,7 +157,7 @@ return [
         'midnight' => [
             'counterpart' => 'parchment',
             'label'  => 'Midnight',
-            'note'   => 'Ink navy and sage. The default, and the quietest.',
+            'note'   => 'Ink navy and sage. The quietest one.',
             'scheme' => 'dark',
             'chrome' => '#101521',
             'swatch' => ['#101521', '#7FA898', '#BFA173'],
@@ -165,7 +165,7 @@ return [
         'ember' => [
             'counterpart' => 'linen',
             'label'  => 'Ember',
-            'note'   => 'Near-black and brass. Candlelit rather than lit.',
+            'note'   => 'Near-black and brass. Dim and warm.',
             'scheme' => 'dark',
             'chrome' => '#16110D',
             'swatch' => ['#16110D', '#C79A5C', '#B9705A'],
@@ -173,7 +173,7 @@ return [
         'tide' => [
             'counterpart' => 'parchment',
             'label'  => 'Tide',
-            'note'   => 'Deep water and pale aqua. Cool and awake.',
+            'note'   => 'Deep blue and pale aqua. Cool and crisp.',
             'scheme' => 'dark',
             'chrome' => '#0B1A1F',
             'swatch' => ['#0B1A1F', '#7FB8BE', '#C4A98A'],
@@ -205,7 +205,7 @@ return [
         'aubergine' => [
             'counterpart' => 'ivory',
             'label'  => 'Aubergine',
-            'note'   => 'Deep aubergine and iris. For listening in the dark.',
+            'note'   => 'Deep aubergine and iris. Good for listening at night.',
             'scheme' => 'dark',
             'chrome' => '#241D2B',
             'swatch' => ['#241D2B', '#8B6FE8', '#C7A86B'],
@@ -213,7 +213,7 @@ return [
         'amethyst' => [
             'counterpart' => 'wisteria',
             'label'  => 'Amethyst',
-            'note'   => 'Deep aubergine and soft violet. Purple with the volume down.',
+            'note'   => 'Deep aubergine and soft violet. A quiet purple.',
             'scheme' => 'dark',
             'chrome' => '#171326',
             'swatch' => ['#171326', '#A996D9', '#C6A98F'],
@@ -237,7 +237,7 @@ return [
         'wisteria' => [
             'counterpart' => 'amethyst',
             'label'  => 'Wisteria',
-            'note'   => 'Lilac paper and plum ink. Amethyst in daylight.',
+            'note'   => 'Lilac and plum. The light version of Amethyst.',
             'scheme' => 'light',
             'chrome' => '#F3F0F7',
             'swatch' => ['#F3F0F7', '#6B549C', '#8A7A62'],
@@ -329,7 +329,7 @@ return [
     | still untrusted by the time it reaches a public page.
     */
     'copy' => [
-        'intro' => env('COPY_INTRO', 'A private AI-powered personal growth experience that turns your goals into personalized stories you can read and listen to—while helping you reflect on your progress, gratitude and wins along the way.'),
+        'intro' => env('COPY_INTRO', 'Escalate takes something you want and writes it back to you as a short story — an ordinary day in the life where you already have it, which you can read or listen to. It also keeps your progress, your gratitude and what actually came true, all in one place.'),
 
         'not_launched' => env('COPY_NOT_LAUNCHED', 'Escalate hasn’t been publicly launched yet. We’re inviting a small group of founding testers to experience it first and help shape what it becomes.'),
 
@@ -367,7 +367,7 @@ return [
         | It lives here so there is one canonical copy of it, and it is shown on
         | Admin → Invites, which is where somebody already is when they need it.
         */
-        'outreach' => env('COPY_OUTREACH', 'I’ve been quietly 🤫 developing a new AI personal-growth app called Escalate, and we’re now in private beta testing. It turns your goals into personalized stories you can read and listen to, while helping you reflect on your progress and wins. I haven’t publicly announced it yet, 🤐 but I’m inviting a small group of people to test it. Want in?'),
+        'outreach' => env('COPY_OUTREACH', 'I’ve been building an app called Escalate, and we’ve just opened a small private beta. It takes something you want and writes it back to you as a short story you can read or listen to — the ordinary version of a day once you have it. It also keeps your progress and what you’re grateful for in one place. It isn’t public yet, and I’m inviting a handful of people to try it first. Want in?'),
     ],
 
     /*
@@ -423,41 +423,41 @@ return [
 
         // Never anything private: this lands on a lock screen. See App\Support\Push.
         'title' => env('PUSH_TITLE', 'Escalate'),
-        'body'  => env('PUSH_BODY', 'A few minutes for today?'),
+        'body'  => env('PUSH_BODY', 'Got a few minutes for today?'),
     ],
 
     'emails' => [
         'applied' => [
-            'subject' => env('EMAIL_APPLIED_SUBJECT', 'Your Escalate application'),
-            'body' => "# Thank you.\n\n"
-                ."Your application to the Escalate private beta is in. We read every one.\n\n"
-                ."We are keeping the first group small on purpose — the point is candid feedback "
-                ."from people who will actually use it, not a big number. You will hear from us "
-                ."by email either way.\n\n"
-                .'Nothing else is needed from you for now.',
+            'subject' => env('EMAIL_APPLIED_SUBJECT', 'We’ve got your Escalate application'),
+            'body' => "# Thanks — we’ve got it.\n\n"
+                ."Your application for the Escalate private beta is in, and we read every one.\n\n"
+                ."We’re keeping this first group small on purpose. We’d rather have honest "
+                ."feedback from a few people who’ll really use it than a long list of names. "
+                ."Either way, you’ll hear from us by email.\n\n"
+                .'Nothing else to do for now.',
         ],
 
         'selected' => [
-            'subject' => env('EMAIL_SELECTED_SUBJECT', 'You’re in — your Escalate invite'),
+            'subject' => env('EMAIL_SELECTED_SUBJECT', 'You’re in — here’s your Escalate invite'),
             'body' => "# You’re in.\n\n"
-                ."{{ name }} — you have a seat in the Escalate private beta.\n\n"
-                ."Your invite code is below. The button fills it in for you; if you would rather "
-                ."type it, the code goes in the last field on the sign-up form.\n\n"
-                ."**What we would like from you:** use it at least four times over the next seven "
-                ."days, and then tell us the truth about it. Not what is nice about it — what is "
-                .'missing, what is confusing, and what you would not miss.',
+                ."{{ name }} — you’ve got a spot in the Escalate private beta.\n\n"
+                ."Your invite code is below. The button fills it in for you, or you can type it "
+                ."into the last field on the sign-up form.\n\n"
+                ."**What we’d like from you:** use it at least four times over the next seven "
+                ."days, then tell us honestly what you think. Especially what’s missing, what’s "
+                .'confusing, and what you wouldn’t miss.',
         ],
 
         'revoked' => [
-            'subject' => env('EMAIL_REVOKED_SUBJECT', 'Your Escalate invite has been released'),
-            'body' => "# Your invite has been released\n\n"
-                ."{{ name }} — your Escalate invite went unused, so we have passed the seat to "
-                ."somebody else waiting for one.\n\n"
-                ."Nothing has gone wrong and there is nothing you need to do. The private beta is "
-                ."small on purpose, and we would rather a seat sat with somebody ready to use it "
-                ."this week than sat idle.\n\n"
-                ."**You are still on the list.** If you would like a code when the next group "
-                .'opens, you do not need to apply again — we already have your answers.',
+            'subject' => env('EMAIL_REVOKED_SUBJECT', 'Your Escalate invite — and how to get another'),
+            'body' => "# We’ve passed your invite on\n\n"
+                ."{{ name }} — your invite went unused, so we gave the spot to someone else who "
+                ."was waiting for one.\n\n"
+                ."Nothing went wrong, and there’s nothing you need to do. The beta is small on "
+                ."purpose, so we try to keep the spots with people who are ready to use them "
+                ."that week.\n\n"
+                ."**You’re still on the list.** If you’d like a code when the next group opens, "
+                .'you don’t need to apply again — we still have your answers.',
         ],
 
         'admin_application' => [
@@ -469,16 +469,16 @@ return [
         'password_reset' => [
             'subject' => env('EMAIL_PASSWORD_RESET_SUBJECT', 'Reset your Escalate password'),
             'body' => "# Reset your password\n\n"
-                ."Somebody asked to reset the password on this address. Use the button below.\n\n"
+                ."Someone asked to reset the password for this address. Use the button below.\n\n"
                 ."The link expires in {{ minutes }} minutes.\n\n"
-                .'If it was not you, nothing has happened and you can ignore this.',
+                .'If that wasn’t you, nothing has changed and you can ignore this.',
         ],
 
         'verify_email' => [
             'subject' => env('EMAIL_VERIFY_SUBJECT', 'Confirm your email for Escalate'),
-            'body' => "# One tap and you are set\n\n"
+            'body' => "# One tap and you’re set\n\n"
                 ."Confirm this address with the button below.\n\n"
-                .'If you did not create an Escalate account, you can ignore this.',
+                .'If you didn’t create an Escalate account, you can ignore this.',
         ],
     ],
 
@@ -588,7 +588,7 @@ return [
     'plans' => [
         'free' => [
             'label'  => 'Free',
-            'blurb'  => 'Enough to see whether this is for you.',
+            'blurb'  => 'Enough to see if you like it.',
             'price'  => null,
             'display' => 'Free',
             'interval' => null,
@@ -606,7 +606,7 @@ return [
 
         'yearly' => [
             'label'  => 'Escalate, yearly',
-            'blurb'  => 'The same, with two months back.',
+            'blurb'  => 'The same plan, with two months free.',
             'price'  => env('STRIPE_PRICE_YEARLY'),
             'display' => env('STRIPE_PRICE_YEARLY_LABEL', '$120 / year'),
             'interval' => 'year',

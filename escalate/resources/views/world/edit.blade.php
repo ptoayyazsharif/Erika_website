@@ -5,8 +5,8 @@
     <p class="eyebrow">My World</p>
     <h1>{{ $profile->onboarded ? 'The things worth knowing about you.' : 'Before anything is written.' }}</h1>
     <p class="lede">
-        Every reading is built from what is on this page. The more specific you
-        are, the less it sounds like it could be about anyone.
+        Every reading is built from what’s on this page. The more specific you are, the more it
+        sounds like your life and nobody else’s.
     </p>
 </div>
 
@@ -33,7 +33,8 @@
 
         <div class="field">
             <label for="life_context">Where are you right now?</label>
-            <span class="hint">Not where you want to be — where you actually are. This is what the contrast in a reading is measured against.</span>
+            <span class="hint">Not where you want to be — where you actually are. A reading measures the change
+            against this.</span>
             <textarea class="textarea" id="life_context" name="life_context" maxlength="1200"
                       data-autogrow data-counter="ctx-count"
                       placeholder="Two years into building something, still checking the balance more often than I&rsquo;d like to admit.">{{ old('life_context', $profile->life_context) }}</textarea>
@@ -42,7 +43,7 @@
 
         <div class="field" style="margin-bottom:0">
             <label for="anchor">A place or object that grounds you</label>
-            <span class="hint">Somewhere the readings can return to. A kitchen at six in the morning, a particular chair, the walk to the corner.</span>
+            <span class="hint">Somewhere a reading can come back to. A kitchen at six in the morning, a particular chair, the walk to the corner.</span>
             <input class="input" id="anchor" name="anchor" type="text" maxlength="200"
                    value="{{ old('anchor', $profile->anchor) }}"
                    placeholder="the back step, before anyone else is up">
@@ -52,7 +53,7 @@
     <div class="card" data-enter>
         <h3 style="margin-bottom:var(--s-2)">What matters most</h3>
         <p class="small muted" style="margin-bottom:var(--s-5)">
-            Write up to six, in your own words. These shape what a reading notices.
+            Up to six, in your own words. These shape what a reading pays attention to.
         </p>
 
         @php $values = old('values', $profile->values ?? []); @endphp
@@ -74,7 +75,8 @@
     <div class="card" data-enter>
         <h3 style="margin-bottom:var(--s-2)">My Circle</h3>
         <p class="small muted" style="margin-bottom:var(--s-5)">
-            The people who belong in your stories. Names are used exactly as written, and only where they fit.
+            The people who belong in your stories. Names are used exactly as you write them,
+            and only where they fit.
         </p>
 
         @php
@@ -180,7 +182,7 @@
         <h3 style="margin-bottom:var(--s-5)">How it should sound</h3>
 
         <div class="field">
-            <span class="label">The voice that reads to you</span>
+            <span class="label">The voice that reads your stories</span>
             <div class="options">
                 @foreach (config('escalate.voices') as $key => $voice)
                     <label class="option {{ old('voice', $profile->voice) === $key ? 'is-on' : '' }}">
@@ -197,7 +199,7 @@
 
         <div class="field">
             <span class="label">Faith language</span>
-            <span class="hint">This decides the vocabulary a reading is allowed to use. Secular is the default.</span>
+            <span class="hint">This decides what kind of language your readings can use. Secular is the default.</span>
             <div class="options">
                 @foreach (config('escalate.faith_languages') as $key => $label)
                     <label class="option {{ old('faith_language', $profile->faith_language ?? 'none') === $key ? 'is-on' : '' }}">
@@ -212,7 +214,7 @@
         <div class="field">
             <label class="label" for="story_style">Storytelling style</label>
             <select class="select" id="story_style" name="story_style">
-                @foreach (['cinematic' => 'Cinematic — a scene, in real time', 'letter' => 'A letter — telling one trusted person', 'meditative' => 'Meditative — an inventory of what is true', 'documentary' => 'Documentary — what a camera would see'] as $key => $label)
+                @foreach (['cinematic' => 'Cinematic — a scene, in real time', 'letter' => 'A letter — telling one trusted person', 'meditative' => 'Meditative — a slow list of what is true right now', 'documentary' => 'Documentary — what a camera would see'] as $key => $label)
                     <option value="{{ $key }}" @selected(old('story_style', $profile->story_style) === $key)>{{ $label }}</option>
                 @endforeach
             </select>
@@ -221,7 +223,7 @@
         <div class="field">
             <label class="label" for="tone">Tone</label>
             <select class="select" id="tone" name="tone">
-                @foreach (['grounded' => 'Grounded — plain and unhurried', 'tender' => 'Tender — warm and close', 'assured' => 'Assured — quietly certain', 'reverent' => 'Reverent — slow, a little formal', 'playful' => 'Playful — dry humour in the details'] as $key => $label)
+                @foreach (['grounded' => 'Grounded — plain and unhurried', 'tender' => 'Tender — warm and close', 'assured' => 'Assured — quietly certain', 'reverent' => 'Reverent — slower and a little more formal', 'playful' => 'Playful — dry humour in the details'] as $key => $label)
                     <option value="{{ $key }}" @selected(old('tone', $profile->tone) === $key)>{{ $label }}</option>
                 @endforeach
             </select>
@@ -263,8 +265,8 @@
     <h3 style="margin-bottom:var(--s-2)">A daily reminder</h3>
     <p class="small muted" style="margin:0 0 var(--s-4)">
         One notification a day, around {{ (int) config('escalate.push.hour') }} your time.
-        It never says what you are working on — a notification can be read by
-        anybody near your phone, so it only ever says that today is here.
+        It never says what you are working on. Anybody near your phone can read a
+        notification, so it is only ever a nudge to open the app.
     </p>
 
     <form method="POST" action="{{ route('push.preference') }}">

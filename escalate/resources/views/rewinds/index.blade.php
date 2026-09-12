@@ -5,8 +5,8 @@
     <p class="eyebrow">My Rewinds</p>
     <h1>Looking back</h1>
     <p class="lede">
-        When something has finished moving, you write down what actually happened.
-        Your words — the app only puts them in order afterwards.
+        When something is finished, you write down what actually happened. Your words — Escalate
+        just puts them in order.
     </p>
 </div>
 
@@ -56,9 +56,8 @@
             @include('partials.icon', ['name' => 'rewind', 'size' => 34])
             <h3>Nothing to look back at yet</h3>
             <p>
-                A Rewind opens once a desire has finished moving — when it arrived,
-                changed shape, or you set it down. Mark one as complete and it will
-                appear here.
+                A Rewind opens once a desire is finished — you got it, it changed, or you let it
+                go. Mark one as finished and it shows up here.
             </p>
             <a class="btn btn-ghost" href="{{ route('desires.index') }}">Go to your desires</a>
         </div>

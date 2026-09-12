@@ -140,6 +140,6 @@ class CopyTest extends TestCase
         $this->get(route('admin.invites'))
             ->assertOk()
             ->assertSee('The message to send')
-            ->assertSee('private beta testing');
+            ->assertSee('private beta');
     }
 }

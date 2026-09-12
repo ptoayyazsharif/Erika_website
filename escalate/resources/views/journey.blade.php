@@ -17,7 +17,7 @@
 @if ($stats['desires'] === 0)
     <div class="empty" data-enter>
         @include('partials.icon', ['name' => 'journey', 'size' => 34])
-        <h3>Your journey starts with one thing</h3>
+        <h3>It starts with one thing</h3>
         <p>Every desire you name, every reading, every day you note something you are grateful for, appears here in the order it happened.</p>
         <a class="btn" href="{{ route('desires.create') }}">
             @include('partials.icon', ['name' => 'plus', 'size' => 16]) Name your first desire

@@ -3,7 +3,7 @@
 @section('content')
 <div class="page-head" data-enter-hero>
     <p class="eyebrow">Your account</p>
-    <h1>It’s yours to take, or to end.</h1>
+    <h1>Take a copy, or delete everything.</h1>
     <p class="lede">Both of these need your password again — an unlocked phone left on a table should not be able to do either.</p>
 </div>
 

@@ -77,7 +77,7 @@ class WriteAffirmations implements ShouldBeUnique, ShouldQueue
     public function failed(?Throwable $e): void
     {
         $this->markFailed(
-            'The cards could not be drawn just now. Nothing was charged — try again in a moment.',
+            'We couldn’t write the cards just now. Nothing was charged — try again in a moment.',
         );
 
         report($e);

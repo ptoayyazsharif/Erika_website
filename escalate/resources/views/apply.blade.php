@@ -1,7 +1,7 @@
 @extends('layouts.auth', ['title' => 'Request access'])
 
 @section('heading', 'Request private access.')
-@section('sub', 'Founding testers. Shaping what this becomes.')
+@section('sub', 'Founding testers, helping shape what this becomes.')
 
 @section('form')
 <p class="small muted" style="margin-bottom:var(--s-5)">
@@ -32,7 +32,7 @@
         <input class="input" id="email" name="email" type="email" maxlength="255" required
                value="{{ old('email') }}" autocomplete="email"
                @error('email') aria-invalid="true" @enderror>
-        <span class="hint">This is where the invite goes, if you are selected.</span>
+        <span class="hint">This is where we send your invite if you are selected.</span>
         @error('email')<span class="error">{{ $message }}</span>@enderror
     </div>
 
@@ -69,7 +69,7 @@
 </form>
 
 <p class="small faint center" style="margin-top:var(--s-5)">
-    Spots are limited. We’ll be in touch by email either way.
+    Spots are limited. We will be in touch by email either way.
 </p>
 
 <p class="small muted center" style="margin-top:var(--s-4)">

@@ -228,7 +228,7 @@ class GenerationTest extends TestCase
         $story->refresh();
         $this->assertSame('failed', $story->state);
         $this->assertStringNotContainsString('overloaded_error', $story->failure_reason);
-        $this->assertStringContainsString('could not be written', $story->failure_reason);
+        $this->assertStringContainsString('write the reading', $story->failure_reason);
 
         // A refused call is recorded but must not eat the user's daily quota.
         $this->assertDatabaseHas('ai_events', ['kind' => 'story', 'ok' => false, 'error_code' => 'overloaded_error']);

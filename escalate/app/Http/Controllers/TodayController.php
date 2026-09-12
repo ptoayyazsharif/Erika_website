@@ -64,7 +64,7 @@ class TodayController extends Controller
         $hour = (int) now()->format('G');
 
         return match (true) {
-            $hour < 5  => 'Still up',
+            $hour < 5  => 'Up late',
             $hour < 12 => 'Good morning',
             $hour < 18 => 'Good afternoon',
             default    => 'Good evening',

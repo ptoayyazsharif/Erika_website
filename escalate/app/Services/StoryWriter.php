@@ -6,6 +6,7 @@ use App\Models\Desire;
 use App\Models\Story;
 use App\Models\User;
 use App\Services\Ai\Anthropic;
+use App\Support\Voice;
 use Illuminate\Support\Str;
 
 /**
@@ -167,9 +168,13 @@ class StoryWriter
         $style = $this->styleRule($desire?->tone ?: $profile->tone, $profile->story_style);
         $naming = $this->namingRule($this->peopleFor($user, $desire));
 
+        $cliche = Voice::clicheRule();
+        $vivid  = Voice::vividRule();
+
         return <<<PROMPT
-        You write manifestation readings: short pieces of prose that describe an
-        ordinary moment inside a life the reader has already arrived at.
+        You write readings: short pieces of prose that put the reader inside an
+        ordinary moment in the life they are working toward, written as though
+        they are already living it.
 
         NON-NEGOTIABLE RULES
 
@@ -188,24 +193,29 @@ class StoryWriter
            allowed. It is only there so you know how to address them. Writing it
            drags the whole piece into third person, which breaks rule 2.
         5. Include one contrast beat, and place it near the middle: name a
-           small, specific thing they used to do out of scarcity or fear, and
-           then show them not doing it. Not as triumph — as something that
+           small, specific thing they used to do when money or time was tight,
+           and then show them not doing it. Not as triumph — as something that
            simply did not occur to them today. This is the most important
            sentence in the piece.
         6. Undersell the ending. No crescendo, no lesson, no "and that is how
            I learned". End on something ordinary and physical: a cup set down,
-           a door, the light moving. The calm is the point.
-        7. {$faith}
+           a door, the light moving. Calm, not climax.
+        7. Believable, not perfect. Something can still be slightly annoying,
+           slightly unfinished, four minutes late. A day with no friction in it
+           reads as a brochure, and nobody recognises themselves in a brochure.
+        8. {$faith}
 
         VOICE
 
         {$style}
 
+        {$vivid}
+
         Write about texture, not achievement. Logistics are more convincing
         than adjectives: a key on a ring, mail being held, someone remembering
-        to feed the dog. Avoid the word "manifest" and its relatives entirely.
-        Avoid "abundance", "vibration", "alignment", "journey", "grateful for
-        this beautiful". Never use an exclamation mark.
+        to feed the dog.
+
+        {$cliche}
 
         OUTPUT
 
@@ -365,16 +375,9 @@ class StoryWriter
 
     private function faithRule(?string $key): string
     {
-        // Null is possible on a profile written before faith_language had a
-        // model-level default; treat it as the secular default, which is also
-        // the least presumptuous thing to send to a model.
-        return match ($key ?? 'none') {
-            'universe' => 'Spiritual register: the universe, energy, timing, alignment of circumstance. Never a personal deity.',
-            'god'      => 'Spiritual register: God, prayer, blessing, thanksgiving. Reverent and plain, never preachy.',
-            'spirit'   => 'Spiritual register: spirit, ancestors, guidance, being watched over. Warm rather than mystical.',
-            'higher'   => 'Spiritual register: a higher power, left unnamed. Gesture at it once at most.',
-            default    => 'No spiritual or religious vocabulary at all. Nothing is granted, guided or aligned — things simply are as they are.',
-        };
+        // One copy, in App\Support\Voice, read by all three writers. It used to
+        // be three copies and two of them were wrong — see that class.
+        return Voice::faithRule($key);
     }
 
     private function styleRule(string $tone, string $style): string

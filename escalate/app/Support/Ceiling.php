@@ -100,8 +100,8 @@ class Ceiling
      */
     public static function message(): string
     {
-        return 'Escalate has reached its limit for today across everyone using it. '
-            .'That is a safety valve on our side while the app is in testing, not '
-            .'anything you did. Try again tomorrow.';
+        return 'Escalate has hit its daily limit across everyone using it. '
+            .'That is a cap on our side while the app is being tested — nothing '
+            .'you did. Try again tomorrow.';
     }
 }

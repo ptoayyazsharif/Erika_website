@@ -13,7 +13,7 @@
 <div class="page-head" data-enter-hero>
     <p class="eyebrow">{{ $d ? 'Edit' : 'New' }}</p>
     <h1>{{ $d ? 'Change what this is.' : 'What do you want?' }}</h1>
-    <p class="lede">Write it as though it were already the case. Specific beats poetic.</p>
+    <p class="lede">Write it as though it is already true. Specific works better than poetic.</p>
 </div>
 
 <form method="POST" action="{{ $d ? route('desires.update', $d) : route('desires.store') }}" data-once>
@@ -30,7 +30,8 @@
 
         <div class="field">
             <label for="description">In your own words</label>
-            <span class="hint">What does an ordinary Tuesday look like once this is true? Names, streets, numbers, smells.</span>
+            <span class="hint">What does an ordinary Tuesday look like once this is true? Names, streets,
+            numbers, what you can smell.</span>
             <textarea class="textarea" id="description" name="description" maxlength="2000"
                       data-autogrow data-counter="desc-count">{{ old('description', $d?->description) }}</textarea>
             <div class="counter" id="desc-count"></div>
@@ -38,7 +39,7 @@
 
         <div class="field" style="margin-bottom:0">
             <label for="why_it_matters">Why does it matter?</label>
-            <span class="hint">The real reason, not the presentable one.</span>
+            <span class="hint">The real reason, not the tidy one.</span>
             <textarea class="textarea" id="why_it_matters" name="why_it_matters" maxlength="1200"
                       data-autogrow style="min-height:96px">{{ old('why_it_matters', $d?->why_it_matters) }}</textarea>
         </div>
@@ -104,7 +105,7 @@
 
         <div class="field" style="margin-bottom:0">
             <label for="non_negotiables">Anything non-negotiable?</label>
-            <span class="hint">Something that has to be true, or the version you don’t want.</span>
+            <span class="hint">Something that has to be true, or a version of this you do not want.</span>
             <input class="input" id="non_negotiables" name="non_negotiables" type="text" maxlength="600"
                    value="{{ old('non_negotiables', $d?->non_negotiables) }}"
                    placeholder="Not at the cost of the mornings with Maya">
@@ -120,7 +121,8 @@
             <span class="tick" aria-hidden="true"></span>
             <span class="option-body">
                 <span class="option-label">Open to something better</span>
-                <small>The reading may let one detail arrive differently — and better — than you pictured.</small>
+                <small>The reading can let one detail turn out differently, and better, than you
+                pictured.</small>
             </span>
         </label>
 

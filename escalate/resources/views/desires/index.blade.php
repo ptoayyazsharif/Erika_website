@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="page-head" data-enter-hero>
-    <p class="eyebrow">Manifestation Archive</p>
+    <p class="eyebrow">Your desires</p>
     <h1>Desires</h1>
-    <p class="lede">Everything you have named, and where each one stands.</p>
+    <p class="lede">Everything you’ve named, and where each one is up to.</p>
 </div>
 
 <div class="row wrap" style="margin-bottom:var(--s-5)">
@@ -45,7 +45,7 @@
     <div class="empty" data-enter>
         @include('partials.icon', ['name' => 'compass', 'size' => 34])
         <h3>Nothing named yet</h3>
-        <p>A desire is the seed of a reading. Name one plainly — the specifics matter more than the wording.</p>
+        <p>A desire is what a reading gets written from. Say it plainly — the specifics matter more than the wording.</p>
         <a class="btn" href="{{ route('desires.create') }}">Name your first desire</a>
     </div>
 @endforelse

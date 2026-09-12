@@ -70,7 +70,7 @@ class WriteRewind implements ShouldBeUnique, ShouldQueue
     public function failed(?Throwable $e): void
     {
         $this->markFailed(
-            'The Rewind could not be written just now. Your answers are saved — try again in a moment.',
+            'We couldn’t write the Rewind just now. Your answers are saved — try again in a moment.',
         );
 
         report($e);

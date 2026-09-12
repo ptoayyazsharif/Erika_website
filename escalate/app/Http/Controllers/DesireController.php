@@ -91,7 +91,7 @@ class DesireController extends Controller
 
         return redirect()
             ->route('desires.show', $desire)
-            ->with('status', 'Named. Now it can be written.');
+            ->with('status', 'Named. You can write a reading for it now.');
     }
 
     public function show(Request $request, Desire $desire): View

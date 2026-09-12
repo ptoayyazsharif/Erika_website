@@ -84,7 +84,7 @@ class RewindController extends Controller
 
         return redirect()
             ->route('rewinds.show', $rewind)
-            ->with('status', 'Saved. Nothing here is final — you can keep adding to it.');
+            ->with('status', 'Saved. You can keep adding to it whenever you like.');
     }
 
     public function show(Request $request, Rewind $rewind): View
@@ -106,7 +106,7 @@ class RewindController extends Controller
         // inventing. Asking anyway would spend a generation to produce a page
         // of hedging.
         if ($rewind->answered() === []) {
-            return back()->with('status', 'Answer at least one question first — the Rewind is written from your words, not instead of them.');
+            return back()->with('status', 'Answer at least one question first — a Rewind is written from your words, not instead of them.');
         }
 
         if ($rewind->isPending()) {

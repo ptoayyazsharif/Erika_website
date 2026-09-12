@@ -91,7 +91,7 @@ class PasswordResetController extends Controller
             // anyone can generate an invalid token.
             return back()
                 ->withInput($request->only('email'))
-                ->withErrors(['email' => 'That reset link has expired or already been used. Ask for a new one.']);
+                ->withErrors(['email' => 'That reset link has expired or has already been used. Ask for a new one.']);
         }
 
         // Sign every other session out. Laravel's logoutOtherDevices needs the
@@ -99,6 +99,6 @@ class PasswordResetController extends Controller
         Auth::logoutOtherDevices($request->string('password'));
 
         return redirect()->route('login')
-            ->with('status', 'Your password is changed. Everything you had written is still there.');
+            ->with('status', 'Your password is changed. Everything you wrote is still there.');
     }
 }

@@ -23,7 +23,7 @@
                     {{-- "9ish" reads as "gish" in this serif at small sizes;
                          looked at in a browser, not guessed. --}}
                     One notification a day, around {{ (int) config('escalate.push.hour') }} o'clock your time.
-                    It never says what you are working on — just that today is here.
+                    It never says what you are working on — just a nudge to open the app.
                 </p>
             </div>
 

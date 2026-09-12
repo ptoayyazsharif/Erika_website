@@ -121,14 +121,14 @@ class ElevenLabs
             // account with 363,000 spare is a far more common cause. Saying
             // "the account is out of credits" sends whoever reads this to the
             // wrong screen, so name both possibilities.
-            'quota_exceeded' => 'Narration has no credits left — either the account is empty or this API key has its own credit cap. The words are still here to read.',
+            'quota_exceeded' => 'Audio isn’t available right now. The words are still here to read, and we have been told about it.',
             'missing_permissions', 'unauthorized', 'authentication_error', 'invalid_api_key' =>
-                'Narration is not set up correctly on this account. The words are still here to read.',
+                'Audio isn’t set up properly on this account. The words are still here to read.',
             'too_many_requests', 'rate_limit_exceeded' =>
-                'The narration service is busy. Try again in a minute — the words are here in the meantime.',
+                'The audio service is busy. Try again in a minute — the words are here in the meantime.',
             'invalid_uid', 'voice_not_found' =>
-                'That voice is no longer available. Choose another in My World.',
-            default => 'The narration could not be recorded just now. The words are still here to read.',
+                'That voice isn’t available any more. Pick another one in My World.',
+            default => 'We couldn’t record the audio just now. The words are still here to read.',
         };
     }
 

@@ -175,8 +175,8 @@ class BillingController extends Controller
         report($e);
 
         return redirect()->route('billing.index')->withErrors(['billing' =>
-            'Stripe could not be reached just now, so nothing has changed and '
-            .'your card has not been charged. Please try again in a minute.']);
+            'We could not reach Stripe just now, so nothing changed and your '
+            .'card was not charged. Try again in a minute.']);
     }
 
     /** Call off a scheduled downgrade and stay on the current plan. */
@@ -212,7 +212,7 @@ class BillingController extends Controller
 
         if (! $user->hasStripeId()) {
             return redirect()->route('billing.index')
-                ->with('status', 'There is nothing to manage yet — you are on the free plan.');
+                ->with('status', 'There’s nothing to manage yet — you’re on the free plan.');
         }
 
         try {

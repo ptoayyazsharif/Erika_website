@@ -112,20 +112,20 @@ class Quota
     {
         if (Plan::upgradeWouldHelp($user, $kind)) {
             return match ($kind) {
-                'story'     => 'That is the free plan’s reading for today. There is more on a full plan — or come back tomorrow, which costs nothing.',
-                'narration' => 'That is the free plan’s narration for today. The words are still here to read, and there is more on a full plan.',
-                'rewind'    => 'That is the free plan’s rewind for today. Your answers are saved either way.',
-                'affirmation' => 'That is the free plan’s cards for today. There are more on a full plan — and today’s are still here to read.',
-                default     => 'That is the free plan’s limit for today.',
+                'story'     => 'That’s your reading for today on the free plan. A full plan gets you more, or come back tomorrow — that’s free.',
+                'narration' => 'That’s your audio for today on the free plan. The words are still here to read, and a full plan gets you more.',
+                'rewind'    => 'That’s your Rewind for today on the free plan. Your answers are saved either way.',
+                'affirmation' => 'That’s your cards for today on the free plan. Today’s are still here to read, and a full plan gets you more.',
+                default     => 'That’s your limit for today on the free plan.',
             };
         }
 
         return match ($kind) {
-            'story'     => 'You have used today’s readings. More tomorrow — a reading is worth returning to more than it is worth replacing.',
-            'narration' => 'You have used today’s narrations. The words are still here to read.',
-            'rewind'    => 'You have used today’s rewinds.',
-            'affirmation' => 'You have drawn today’s cards. They are still here to read, and there are new ones tomorrow.',
-            default     => 'You have reached today’s limit for this.',
+            'story'     => 'You’ve used today’s readings. There are more tomorrow, and the ones you have are still here.',
+            'narration' => 'You’ve used today’s audio. The words are still here to read.',
+            'rewind'    => 'You’ve used today’s Rewinds.',
+            'affirmation' => 'You’ve written today’s cards. They’re still here to read, and there are new ones tomorrow.',
+            default     => 'You’ve reached today’s limit for this.',
         };
     }
 }

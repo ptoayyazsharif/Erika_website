@@ -115,7 +115,8 @@
     <div class="card card-raised" style="margin-top:var(--s-5)" data-enter>
         <p class="eyebrow">Rewind</p>
         <h3 style="margin-bottom:var(--s-2)">{{ $desire->rewind ? 'You have written a Rewind for this.' : 'Look back at it.' }}</h3>
-        <p class="small muted">A Rewind walks you through what actually happened — the turning points, the redirections, who was part of it — and keeps it.</p>
+        <p class="small muted">A Rewind is where you write down what actually happened — the turning points, what
+        changed, who was part of it — and keep it.</p>
         {{-- Straight to this desire's own Rewind. It used to point at the
              index, which was the shared placeholder — so finishing the thing
              the whole app is about and pressing the one button offered landed

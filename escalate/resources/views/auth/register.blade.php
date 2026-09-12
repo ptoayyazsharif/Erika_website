@@ -1,7 +1,7 @@
 @extends('layouts.auth', ['title' => 'Create an account'])
 
 @section('heading', 'Begin.')
-@section('sub', 'Fifteen minutes from now you will have your first reading in your own voice.')
+@section('sub', 'In about fifteen minutes you will have your first story, written from your life.')
 
 @section('form')
 <form method="POST" action="{{ route('register.store') }}" class="card" data-once>
@@ -10,7 +10,8 @@
     @if (config('escalate.beta.invite_only'))
         <div class="field">
             <label for="invite">Invite code</label>
-            <span class="hint">Escalate is invite-only while it is being tested. The code came with your invitation — dashes and capitals are optional.</span>
+            <span class="hint">Escalate is invite-only while it is being tested. Your code came with your
+            invitation — dashes and capitals do not matter.</span>
             <input class="input" id="invite" name="invite" type="text" required
                    autocomplete="off" autocapitalize="characters" spellcheck="false"
                    maxlength="32" value="{{ old('invite', $invite) }}"
@@ -37,7 +38,7 @@
 
     <div class="field">
         <label for="password">Password</label>
-        <span class="hint">At least twelve characters, with letters and numbers. This is the only thing standing between your journal and anyone else.</span>
+        <span class="hint">At least twelve characters, with letters and numbers. This is the only thing standing between your journal and anybody else.</span>
         <div class="field-reveal">
             <input class="input" id="password" name="password" type="password"
                    autocomplete="new-password" required

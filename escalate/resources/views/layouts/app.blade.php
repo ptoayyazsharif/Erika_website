@@ -161,7 +161,7 @@
             @include('partials.icon', ['name' => 'alert', 'size' => 18])
             <div>
                 <strong>Confirm your email to start writing.</strong>
-                Everything else works — this only opens the readings and the voice.
+                Everything else works — this is what opens the writing and the audio.
                 <a href="{{ route('verification.notice') }}">Send the link again &rarr;</a>
             </div>
         </div>

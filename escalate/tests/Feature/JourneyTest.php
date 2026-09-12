@@ -23,7 +23,7 @@ class JourneyTest extends TestCase
 
         $this->actingAs($user)->get(route('journey'))
             ->assertOk()
-            ->assertSee('Your journey starts with one thing')
+            ->assertSee('It starts with one thing')
             ->assertSee(route('desires.create'));
     }
 

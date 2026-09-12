@@ -26,9 +26,9 @@
         // everything to be thankful for — hit a validation error after pressing
         // Save, with no warning while writing it.
         $questions = [
-            ['What happened?', 'what_happened', 'Start wherever it starts.', 6, 4000],
+            ['What happened?', 'what_happened', 'Start anywhere.', 6, 4000],
             ['What were the turning points?', 'turning_points', 'The moments it changed direction.', 4, 4000],
-            ['Did it arrive as something else?', 'redirections', 'If what came was not what you asked for.', 4, 4000],
+            ['Did it turn out differently?', 'redirections', 'If what happened wasn’t what you set out for.', 4, 4000],
             ['Who was part of it?', 'people', 'Names, as you would say them.', 3, 2000],
             ['What did you learn?', 'lessons', 'Only if you did. It is fine if not.', 4, 4000],
             ['What are you grateful for?', 'gratitude', 'Anything, however small.', 3, 2000],

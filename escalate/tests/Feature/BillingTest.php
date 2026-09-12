@@ -192,7 +192,7 @@ class BillingTest extends TestCase
 
         $this->assertFalse(Plan::upgradeWouldHelp($user, 'story'));
         $this->assertStringNotContainsString('free plan', Quota::message($user, 'story'));
-        $this->assertStringContainsString('More tomorrow', Quota::message($user, 'story'));
+        $this->assertStringContainsString('There are more tomorrow', Quota::message($user, 'story'));
     }
 
     /* ── routes ──────────────────────────────────────────────────────────── */
@@ -344,7 +344,7 @@ class BillingTest extends TestCase
 
         // And it says the thing that actually matters to them.
         $this->assertStringContainsString(
-            'has not been charged',
+            'was not charged',
             session('errors')->first('billing'),
         );
     }

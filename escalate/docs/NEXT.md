@@ -8,7 +8,7 @@ the reasoning behind a decision rather than the state of it.
 
 ## Live right now
 
-- 433 tests passing. `bash tests/push/real-send.sh` sends a real, signed,
+- 439 tests passing. `bash tests/push/real-send.sh` sends a real, signed,
   encrypted notification to a stand-in push service and checks what arrived —
   the one part of push nothing else exercises.
 - Public pages are **Ivory** — warm ivory ground, aubergine text. Body text
@@ -30,6 +30,13 @@ the reasoning behind a decision rather than the state of it.
 - **A daily reminder by web push**, hourly by the scheduler so each device gets
   it at the chosen hour in its own timezone. `schedule:work` runs in the
   container beside the queue worker.
+
+---
+
+- **One voice, written down.** [`VOICE.md`](VOICE.md) is Erika's guide and the
+  source of truth for every string a user reads. `App\Support\Voice` holds the
+  fragments the three writers share, and `tests/Feature/VoiceTest.php` keeps it
+  from drifting back.
 
 ---
 

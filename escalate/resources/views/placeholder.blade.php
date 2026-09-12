@@ -4,7 +4,7 @@
 <div class="page-head" data-enter-hero>
     <p class="eyebrow">Escalate</p>
     <h1>{{ $heading }}</h1>
-    <p class="lede">This section is next on the build. The navigation, the shell and the security around it are already in place.</p>
+    <p class="lede">This part of the app is not finished yet. Everything else works.</p>
 </div>
 
 <div class="empty" data-enter>

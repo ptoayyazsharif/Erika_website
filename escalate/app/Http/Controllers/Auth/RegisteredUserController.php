@@ -144,7 +144,7 @@ class RegisteredUserController extends Controller
         $request->session()->regenerate();
 
         return redirect()->route('world.edit')
-            ->with('status', 'Welcome. Let’s set up your world.');
+            ->with('status', 'Welcome. Let’s set up My World.');
     }
 
     private function inviteRequired(): bool

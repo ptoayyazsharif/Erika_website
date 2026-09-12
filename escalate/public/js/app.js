@@ -61,7 +61,7 @@
       // The theme is already applied on screen; only the saving failed. Say so
       // rather than reverting, which would be more confusing than a stale
       // preference.
-      toast('Looks right, but the preference could not be saved.');
+      toast('That worked, but we couldn’t save it as your preference.');
       return null;
     }
   }
@@ -285,13 +285,13 @@
 
         const ok = await tellServer(card, subscription);
 
-        toast(ok ? 'Reminders on.' : 'Could not turn reminders on.');
+        toast(ok ? 'Reminders on.' : 'We couldn’t turn reminders on.');
         remember(ok ? 'yes' : 'no');
       } catch {
         // A refusal, a browser that changed its mind, an offline moment. None
         // of it is worth an error in front of somebody who only wanted a
         // reminder.
-        toast('Could not turn reminders on.');
+        toast('We couldn’t turn reminders on.');
       }
     });
   }
@@ -621,7 +621,7 @@
       e.preventDefault();
       prompt = e;
       if (btn) btn.hidden = false;
-      showTip('Keep Escalate on your home screen — it opens like an app.', true);
+      showTip('Add Escalate to your home screen — it opens like an app.', true);
     });
 
     if (isIos) {

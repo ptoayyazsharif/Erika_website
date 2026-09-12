@@ -143,7 +143,7 @@ class NarrateStory implements ShouldBeUnique, ShouldQueue
         $this->narration->markFailed(
             $e instanceof NarrationFailed
                 ? $e->getMessage()
-                : 'The narration could not be recorded just now. The words are still here to read.',
+                : 'We couldn’t record the audio just now. The words are still here to read.',
         );
 
         report($e);

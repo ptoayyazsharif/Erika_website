@@ -26,12 +26,12 @@
 
     <p class="lede">
         @if ($totals['desires'] === 0)
-            Name something you want. Escalate writes it back to you as an ordinary
-            moment inside the life where you already have it.
+            Name something you want. Escalate writes it back to you as an ordinary day in the
+            life where you already have it.
         @elseif ($awaiting)
-            One of your desires is still waiting to be written.
+            One of your desires doesn’t have a reading yet.
         @else
-            Everything you have named has been written. Add another when you are ready.
+            Every desire you’ve named has a reading. Add another whenever you like.
         @endif
     </p>
 </div>
@@ -46,7 +46,7 @@
     <div class="empty" data-enter>
         @include('partials.icon', ['name' => 'compass', 'size' => 34])
         <h3>Start with one thing</h3>
-        <p>A house, a number, a Tuesday morning that goes differently. Specific beats grand.</p>
+        <p>A house, a number, a Tuesday morning that goes differently. The more specific, the better.</p>
         <a class="btn" href="{{ route('desires.create') }}">
             @include('partials.icon', ['name' => 'plus', 'size' => 16]) Name your first desire
         </a>
@@ -55,7 +55,7 @@
     <a class="card" href="{{ route('desires.show', $awaiting) }}" data-enter>
         <p class="eyebrow">Ready to be written</p>
         <h3 style="margin-bottom:var(--s-2)">{{ $awaiting->title }}</h3>
-        <p class="small muted" style="margin:0">Open it and ask for your reading.</p>
+        <p class="small muted" style="margin:0">Open it and write the reading.</p>
     </a>
 @elseif ($latestStory)
     <a class="card" href="{{ route('stories.show', $latestStory) }}" data-enter>

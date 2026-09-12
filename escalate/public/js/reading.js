@@ -30,14 +30,16 @@
     failed:  $('[data-phase="failed"]'),
   };
 
+  /* These rotate while a reading is being written. They say what is actually
+     happening, in order, rather than performing — the app talking about itself
+     in the first person ("Listening for the names you gave me…") was the most
+     florid copy in the product and read as a little uncanny. See docs/VOICE.md. */
   const WAITING_LINES = [
-    'Listening for the names you gave me…',
-    'Finding the ordinary morning inside it…',
-    'Setting the table, pouring the coffee…',
-    'Putting the numbers where you can see them…',
+    'Reading what you wrote…',
+    'Picking out your names, places and numbers…',
+    'Building the scene…',
     'Writing it in present tense…',
-    'Looking for the thing you used to do…',
-    'Almost. This part shouldn’t be rushed…',
+    'Nearly there…',
   ];
 
   /* ── waiting theatre ───────────────────────────────────────────────────── */
@@ -92,7 +94,7 @@
 
   async function poll() {
     if (++polls > 90) {
-      toast('This is taking longer than it should. Reload to check again.', 8000);
+      toast('This is taking longer than usual. Reload the page to check again.', 8000);
       return;
     }
 
@@ -171,7 +173,7 @@
       note.dataset.narrateError = '';
       block.prepend(note);
     }
-    note.textContent = reason || 'The narration could not be recorded.';
+    note.textContent = reason || 'We couldn’t record the audio.';
 
     const form = block.querySelector('form');
     if (form) form.hidden = false;
@@ -251,7 +253,7 @@
     audio.addEventListener('ended', paintPlaying);
 
     audio.addEventListener('error', () => {
-      toast('The narration would not load. Reload the page to try again.', 6000);
+      toast('The audio didn’t load. Reload the page to try again.', 6000);
     });
 
     let counted = false;
@@ -270,7 +272,7 @@
 
     playBtn?.addEventListener('click', () => {
       if (audio.paused) {
-        audio.play().catch(() => toast('Tap once more to start the voice.'));
+        audio.play().catch(() => toast('Tap once more to start playing.'));
       } else {
         audio.pause();
       }
@@ -281,7 +283,7 @@
       loopBtn.setAttribute('aria-pressed', String(on));
       loopBtn.classList.toggle('is-on', on);
       audio.loop = on;
-      toast(on ? 'Looping until you stop it.' : 'Loop off.');
+      toast(on ? 'Looping until you turn it off.' : 'Loop off.');
     });
 
     // Sleep timer. Fades out over the last eight seconds rather than cutting,

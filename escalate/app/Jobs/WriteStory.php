@@ -96,7 +96,7 @@ class WriteStory implements ShouldBeUnique, ShouldQueue
     {
         // The user sees this, so it must be plain and free of stack detail.
         $this->story->markFailed(
-            'The reading could not be written just now. Nothing was charged — try again in a moment.',
+            'We couldn’t write the reading just now. Nothing was charged — try again in a moment.',
         );
 
         report($e);

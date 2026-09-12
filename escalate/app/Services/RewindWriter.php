@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Rewind;
 use App\Services\Ai\Anthropic;
+use App\Models\User;
+use App\Support\Voice;
 
 /**
  * Writes the retrospective for a Rewind.
@@ -25,7 +27,7 @@ class RewindWriter
     public function write(Rewind $rewind): void
     {
         $text = $this->anthropic->write(
-            $this->system(),
+            $this->system($rewind->user),
             $this->user($rewind),
             $rewind->user,
             'rewind',
@@ -38,9 +40,23 @@ class RewindWriter
         ])->save();
     }
 
-    private function system(): string
+    /**
+     * Takes the user now, where it used to take nothing at all.
+     *
+     * A Rewind is personalised content, and the guide says to respect the
+     * belief preference when generating it — but this was the one writer that
+     * never received it. Somebody who chose a register got it in their readings
+     * and their cards, and not in the piece written about their own history.
+     * See App\Support\Voice.
+     */
+    private function system(User $user): string
     {
-        return <<<'PROMPT'
+        $faith   = Voice::faithRule($user->world()->faith_language);
+        $cliche  = Voice::clicheRule();
+        $vivid   = Voice::vividRule();
+        $meaning = Voice::meaningRule();
+
+        return <<<PROMPT
         You write Rewinds: short retrospectives about something that has already
         happened in a person's life, assembled from notes they wrote themselves.
 
@@ -64,14 +80,17 @@ class RewindWriter
         6. Name the people they named, exactly as written, and only those.
         7. No moral, no lesson, no "and that is when I realised". If they wrote
            down what they learned, state it as plainly as they did and stop.
+        8. {$meaning}
+        9. {$faith}
 
         VOICE
 
         Plain and unhurried. Short declarative sentences. This is someone
         telling a friend what happened, not a memoir.
 
-        Avoid "journey", "manifest" and its relatives, "abundance", "alignment",
-        "grateful for this beautiful". Never use an exclamation mark.
+        {$vivid}
+
+        {$cliche}
 
         Output only the piece.
         PROMPT;

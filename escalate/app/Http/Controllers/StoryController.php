@@ -163,7 +163,7 @@ class StoryController extends Controller
         $this->mine($request, $story);
 
         if ($story->regenerations >= config('escalate.quotas.regenerations_per_story')) {
-            return back()->with('status', 'This reading has been rewritten as many times as it can be. Start a new one if it still is not right.');
+            return back()->with('status', 'You’ve rewritten this reading as many times as you can. Start a new one if it still isn’t right.');
         }
 
         if (! Quota::allows($request->user(), 'story')) {
@@ -217,7 +217,7 @@ class StoryController extends Controller
         $story->narrations()->get()->each->delete();
 
         return redirect()->route('stories.show', $story)
-            ->with('status', 'Saved. The narration was cleared — it read the old words.');
+            ->with('status', 'Saved. The audio was cleared, because it read the old words.');
     }
 
     public function favourite(Request $request, Story $story): RedirectResponse

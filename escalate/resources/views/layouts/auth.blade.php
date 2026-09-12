@@ -37,8 +37,8 @@
         {{-- Desktop only. On a phone the form should be the first thing under
              the thumb, so this sits in the column the form does not use. --}}
         <p class="auth-aside small muted">
-            A private journal. You name what you want, and it comes back to you
-            written as an ordinary moment inside the life where you already have it.
+            A private journal. Name something you want, and Escalate writes it back to you as an
+            ordinary day in the life where you already have it.
         </p>
     </div>
 

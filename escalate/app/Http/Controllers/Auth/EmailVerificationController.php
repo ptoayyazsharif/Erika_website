@@ -53,7 +53,7 @@ class EmailVerificationController extends Controller
         $request->fulfill();
 
         return redirect()->route('today')
-            ->with('status', 'Confirmed. Everything is open to you now.');
+            ->with('status', 'Confirmed. Everything is open now.');
     }
 
     /** Send it again. Throttled at the route, because it sends mail. */
@@ -65,6 +65,6 @@ class EmailVerificationController extends Controller
 
         $request->user()->sendEmailVerificationNotification();
 
-        return back()->with('status', 'Sent. Check your spam folder too — it often lands there.');
+        return back()->with('status', 'Sent. Check your spam folder too — it often ends up there.');
     }
 }

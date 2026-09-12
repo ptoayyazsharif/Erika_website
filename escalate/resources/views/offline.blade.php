@@ -6,9 +6,9 @@
 @section('form')
 <div class="card">
     <p class="small muted" style="margin-bottom:var(--s-5)">
-        Cache Storage sits in plaintext on the device and survives signing out.
-        A private journal does not belong there, so nothing you have written
-        was ever copied into it.
+        Anything an app stores on your device sits there unencrypted and survives signing
+        out. A private journal does not belong there, so nothing you have written was ever
+        copied onto it.
     </p>
     <a class="btn btn-full" href="{{ route('today') }}">Try again</a>
 </div>

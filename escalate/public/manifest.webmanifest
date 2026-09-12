@@ -1,7 +1,7 @@
 {
   "name": "Escalate",
   "short_name": "Escalate",
-  "description": "A private sanctuary for the life you are writing into being. Manifestation stories, daily affirmations, gratitude, and a living record of what came true.",
+  "description": "Turns what you want into short, personal stories you can read or listen to. Keeps your affirmations, your gratitude and a record of what came true.",
   "id": "/?source=pwa",
   "start_url": "/today?source=pwa",
   "scope": "/",
@@ -24,7 +24,7 @@
     {
       "name": "Today",
       "short_name": "Today",
-      "description": "Your affirmation cards and what is unfolding",
+      "description": "Your cards for today, and what you are working on",
       "url": "/today?source=shortcut",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
@@ -38,7 +38,7 @@
     {
       "name": "Name a desire",
       "short_name": "New desire",
-      "description": "Begin a new manifestation",
+      "description": "Name something you want",
       "url": "/desires/create?source=shortcut",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }

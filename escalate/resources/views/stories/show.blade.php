@@ -14,8 +14,8 @@
     <section data-phase="waiting" @if (! $story->isPending()) hidden @endif
              style="min-height:60vh;display:grid;place-items:center;text-align:center">
         <div>
-            <p class="eyebrow">Reading your intentions</p>
-            <h2 class="serif" data-waiting-line style="margin-bottom:var(--s-6);max-width:24ch">Listening for the names you gave me…</h2>
+            <p class="eyebrow">Writing your reading</p>
+            <h2 class="serif" data-waiting-line style="margin-bottom:var(--s-6);max-width:24ch">Reading what you wrote…</h2>
             <div class="progress" style="max-width:14rem;margin:0 auto"><i data-waiting-bar></i></div>
         </div>
     </section>
@@ -100,7 +100,7 @@
             @if ($narration?->isPending())
                 <p class="small muted row" data-narrate-pending style="gap:var(--s-2)">
                     @include('partials.icon', ['name' => 'timer', 'size' => 16])
-                    <span>The voice is being recorded…</span>
+                    <span>Recording the audio…</span>
                 </p>
             @elseif ($narration?->state === 'failed')
                 <div class="notice notice-warn">
@@ -130,7 +130,7 @@
                 <button class="btn btn-ghost btn-full" type="submit" data-busy="Recording…"
                         @if ($remaining['narration'] < 1) aria-disabled="true" disabled @endif>
                     @include('partials.icon', ['name' => 'play', 'size' => 16])
-                    Hear it read aloud
+                    Listen to it
                 </button>
             </form>
             <p class="small faint center" style="margin-top:var(--s-3)"

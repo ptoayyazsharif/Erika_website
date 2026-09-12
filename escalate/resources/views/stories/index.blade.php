@@ -4,7 +4,7 @@
 <div class="page-head" data-enter-hero>
     <p class="eyebrow">My Stories</p>
     <h1>Everything written for you.</h1>
-    <p class="lede">Readings are meant to be returned to. The ones you keep coming back to are the ones that are working.</p>
+    <p class="lede">Readings are worth coming back to. Save the ones you want to find again.</p>
 </div>
 
 @forelse ($stories as $story)
@@ -40,7 +40,7 @@
     <div class="empty" data-enter>
         @include('partials.icon', ['name' => 'book', 'size' => 34])
         <h3>Nothing written yet</h3>
-        <p>Name a desire and the first reading follows in about twenty seconds.</p>
+        <p>Name a desire and your first reading takes about twenty seconds.</p>
         <a class="btn" href="{{ route('desires.create') }}">Name a desire</a>
     </div>
 @endforelse

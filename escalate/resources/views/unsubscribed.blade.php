@@ -2,7 +2,7 @@
 
 @section('heading', ($resubscribed ?? false) ? 'You are back on the list.' : 'That is done.')
 @section('sub', ($resubscribed ?? false)
-    ? 'You will hear from us when there is something worth saying.'
+    ? 'We will email you when there is something worth saying.'
     : 'No more announcement emails.')
 
 @section('form')

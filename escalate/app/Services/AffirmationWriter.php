@@ -7,6 +7,7 @@ use App\Models\AffirmationSet;
 use App\Models\Desire;
 use App\Models\User;
 use App\Services\Ai\Anthropic;
+use App\Support\Voice;
 use RuntimeException;
 
 /**
@@ -109,6 +110,7 @@ class AffirmationWriter
         $profile = $user->world();
         $faith = $this->faithRule($profile->faith_language);
         $naming = $this->namingRule($named);
+        $cliche = Voice::clicheRule();
         $cards = self::CARDS;
 
         return <<<PROMPT
@@ -132,11 +134,12 @@ class AffirmationWriter
         5. The BACK line is evidence, not encouragement. It points at something
            real they told you: a thing they already do, already have, already
            decided. Never "you can do this". Never a compliment.
-        6. Plain language. No exclamation marks, no "abundance", no "manifest",
-           no "vibration", no "journey", no capitalised Universe unless their
-           own words below use that register.
-        7. {$naming}
-        8. {$faith}
+        6. Plain language, the way a friend talks. Everyday words and
+           contractions. Never a complicated phrase where a simple one says the
+           same thing, and never the register of a motivational speaker.
+        7. {$cliche}
+        8. {$naming}
+        9. {$faith}
 
         OUTPUT
 
@@ -244,14 +247,22 @@ class AffirmationWriter
             .'relationship, never by a name you chose.';
     }
 
-    /** Shared with StoryWriter's rule, so both speak in the same register. */
+    /**
+     * The register they asked for.
+     *
+     * This used to be a copy of StoryWriter's match with the 'spirit' and
+     * 'higher' arms missing, under a docblock claiming the two were shared.
+     * They were not: anybody who chose "Spirit, ancestors, guidance" or "A
+     * higher power, unnamed" fell through to the secular default and got
+     * secular cards alongside readings in the register they had asked for.
+     * Nobody could see it, because nobody reads two prompts side by side.
+     *
+     * It is now genuinely shared, and VoiceTest walks every language through
+     * every writer so a third copy cannot quietly reappear.
+     */
     private function faithRule(?string $key): string
     {
-        return match ($key ?? 'none') {
-            'universe' => 'Spiritual register: the universe, energy, timing, alignment of circumstance. Never a personal deity.',
-            'god'      => 'Spiritual register: God, prayer, blessing, thanksgiving. Reverent and plain, never preachy.',
-            default    => 'No spiritual or religious language at all. Keep it ordinary and concrete.',
-        };
+        return Voice::faithRule($key);
     }
 
     /* ── parsing ─────────────────────────────────────────────────────────── */

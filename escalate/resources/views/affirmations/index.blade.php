@@ -5,8 +5,8 @@
     <p class="eyebrow">Today</p>
     <h1>Your cards.</h1>
     <p class="lede">
-        Five sentences drawn from what you are actually working toward. Turn one
-        over to see what it stands on.
+        Five sentences, written from what you’re actually working on. Turn a card over to see
+        why it’s there.
     </p>
 </div>
 
@@ -19,7 +19,7 @@
                 <summary>
                     <span class="serif affirm-front">{{ $card->body }}</span>
                     @if ($card->back)
-                        <span class="small faint affirm-hint">What this stands on &rarr;</span>
+                        <span class="small faint affirm-hint">Why it’s here &rarr;</span>
                     @endif
                 </summary>
 
@@ -50,8 +50,8 @@
          data-cards-poll="{{ route('affirmations.state') }}">
         <p class="eyebrow">Drawing</p>
         <p style="margin:var(--s-3) 0 0">
-            Your cards are being written. This takes a few seconds — the page
-            will fill in on its own, and refreshing is safe.
+            Your cards are being written. It takes a few seconds — the page updates on its own,
+            and refreshing is fine.
         </p>
     </div>
 
@@ -71,9 +71,8 @@
         <p class="eyebrow">Not drawn yet</p>
         <p style="margin:var(--s-3) 0 var(--s-5)">
             @if ($remaining > 0)
-                Draw today's cards. They come from your desires and your world,
-                so the more you have written there, the less they sound like
-                anybody else's.
+                Write today’s cards. They come from your desires and My World, so the more you
+                have there, the more they sound like you.
             @else
                 {{ \App\Support\Quota::message(auth()->user(), 'affirmation') }}
             @endif

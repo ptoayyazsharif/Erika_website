@@ -7,8 +7,8 @@
 <div class="card">
     <p class="small muted" style="margin-bottom:var(--s-5)">
         You can still look around, fill in My World and name a desire without
-        this. Confirming is what opens the writing and the voice — those cost
-        real money to produce, so they wait until we know the address is yours.
+        this. Confirming is what opens the writing and the audio. Those cost real money to
+        produce, so they wait until we know the address is yours.
     </p>
 
     <form method="POST" action="{{ route('verification.send') }}" data-once>
