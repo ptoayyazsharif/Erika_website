@@ -134,6 +134,9 @@ return [
                 ['r' => 'A1', 'f' => 'assets/photos/11/a1-skyline-white-suit.jpg', 'label' => 'Skyline behind Erika, white suit', 'note' => 'small original', 'pos' => '67 33'],
                 ['r' => 'A2', 'f' => 'assets/photos/11/a2-skyline-office-window.jpg', 'label' => 'Skyline through the office window', 'note' => '', 'pos' => '63 21'],
                 ['r' => 'A3', 'f' => 'assets/photos/11/a3-childrens-healthcare.jpg', 'label' => 'Children\'s Healthcare of Atlanta', 'note' => '', 'pos' => '26 36'],
+                ['r' => 'A4', 'f' => 'assets/photos/11/a4-lawrenceville-courthouse.jpg', 'label' => 'Gwinnett Historic Courthouse, Lawrenceville square', 'note' => 'stock - Thomas K / Pexels', 'pos' => '50 30'],
+                ['r' => 'A5', 'f' => 'assets/photos/11/a5-atlanta-skyline-sunset.jpg', 'label' => 'Midtown Atlanta skyline at sunset', 'note' => 'stock - Connor Scott McManus / Pexels', 'pos' => '50 45'],
+                ['r' => 'A6', 'f' => 'assets/photos/11/a6-golf-cart-path.jpg', 'label' => 'Golf cart on a neighbourhood path', 'note' => 'stock - Brixiv / Pexels', 'pos' => '50 50'],
             ],
         ],
         '12' => [
@@ -145,6 +148,7 @@ return [
                 ['r' => 'A4', 'f' => 'assets/photos/12/a4-helicopter-tarmac.jpg', 'label' => 'On the tarmac with the pilot', 'note' => '', 'pos' => '44 44'],
                 ['r' => 'A5', 'f' => 'assets/photos/12/a5-in-flight-headset.jpg', 'label' => 'In flight, headset on', 'note' => '', 'pos' => '58 39'],
                 ['r' => 'A6', 'f' => 'assets/photos/12/a6-aircraft-cabin.jpg', 'label' => 'Private aircraft cabin', 'note' => '', 'pos' => '59 41'],
+                ['r' => 'A7', 'f' => 'assets/photos/12/a7-executive-suv-chauffeur.jpg', 'label' => 'Chauffeur beside a black executive SUV', 'note' => 'stock - Lee Salem / Pexels', 'pos' => '55 50'],
             ],
         ],
         '13' => [
@@ -188,6 +192,19 @@ return [
                 ['r' => 'A14', 'f' => 'assets/photos/15/c14-guides-resources-shelf.jpg', 'label' => 'Guides & resources, three covers', 'note' => 'designed artwork', 'pos' => ''],
                 ['r' => 'A15', 'f' => 'assets/photos/15/c15-digital-products-shelf.jpg', 'label' => 'Digital products, three covers', 'note' => 'designed artwork', 'pos' => ''],
                 ['r' => 'A16', 'f' => 'assets/photos/15/c16-digital-products-banner.jpg', 'label' => 'Digital products wide banner', 'note' => 'designed artwork', 'pos' => ''],
+            ],
+        ],
+        '16' => [
+            'title' => 'Homes & property',
+            'photos' => [
+                ['r' => 'A1', 'f' => 'assets/photos/16/a1-luxury-home-dusk.jpg', 'label' => 'Modern luxury home lit at dusk', 'note' => 'stock - Sharath G. / Pexels', 'pos' => '50 50'],
+                ['r' => 'A2', 'f' => 'assets/photos/16/a2-new-build-home.jpg', 'label' => 'New-build home, manicured lawn', 'note' => 'stock - Curtis Adams / Pexels', 'pos' => '55 50'],
+                ['r' => 'A3', 'f' => 'assets/photos/16/a3-brick-townhomes.jpg', 'label' => 'Brick townhomes with garages', 'note' => 'stock - Curtis Adams / Pexels', 'pos' => '50 50'],
+                ['r' => 'A4', 'f' => 'assets/photos/16/a4-luxury-home-exterior.jpg', 'label' => 'Luxury listing exterior, tall crop', 'note' => 'stock - Sharath G. / Pexels', 'pos' => '50 50'],
+                ['r' => 'A5', 'f' => 'assets/photos/16/a5-staged-living-room.jpg', 'label' => 'Staged living room, bright', 'note' => 'stock - Curtis Adams / Pexels', 'pos' => '50 50'],
+                ['r' => 'A6', 'f' => 'assets/photos/16/a6-luxury-kitchen.jpg', 'label' => 'Luxury kitchen with island', 'note' => 'stock - Max Vakhtbovych / Pexels', 'pos' => '50 50'],
+                ['r' => 'A7', 'f' => 'assets/photos/16/a7-atlanta-skyline-dusk.jpg', 'label' => 'Atlanta skyline at dusk, wide', 'note' => 'stock - Connor Scott McManus / Pexels', 'pos' => '50 45'],
+                ['r' => 'A8', 'f' => 'assets/photos/16/a8-golf-cart-path-wide.jpg', 'label' => 'Golf cart path, wide', 'note' => 'stock - Brixiv / Pexels', 'pos' => '50 50'],
             ],
         ],
     ],
