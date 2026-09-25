@@ -392,7 +392,7 @@ html,body{max-width:100%;overflow-x:clip}
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
-<div class="topbar"><span class="mkt" onclick="go('loc-atlanta')">Atlanta Metro</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-gwinnett')">Gwinnett County</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-gwinnett')">Lawrenceville</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-fayette')">Peachtree City / Fayette</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('Sandy Springs / Roswell / Alpharetta local page — coming soon (mockup)')">Sandy Springs / Roswell / Alpharetta</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('East Cobb / Marietta local page — coming soon (mockup)')">East Cobb / Marietta</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('Brookhaven / Decatur / Tucker local page — coming soon (mockup)')">Brookhaven / Decatur / Tucker</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="alert('McDonough / Henry local page — coming soon (mockup)')">McDonough / Henry</span>  ·  <b><?= cms_e('global.phone') ?></b></div>
+<div class="topbar"><span class="mkt" onclick="go('loc-atlanta')">Atlanta Metro</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-gwinnett')">Gwinnett County</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-gwinnett')">Lawrenceville</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-fayette')">Peachtree City / Fayette</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-northfulton')">Sandy Springs / Roswell / Alpharetta</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-cobb')">East Cobb / Marietta</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-dekalb')">Brookhaven / Decatur / Tucker</span><span aria-hidden="true" class="sep">·</span><span class="mkt" onclick="go('loc-henry')">McDonough / Henry</span>  ·  <b><?= cms_e('global.phone') ?></b></div>
 <nav>
 <div class="nav-inner">
 <a class="brand" href="/" data-nav="home" onclick="return _nav(event,'home')">Erika<span>K</span>Page</a>
@@ -1634,6 +1634,130 @@ html,body{max-width:100%;overflow-x:clip}
 </div>
 </section>
 </div>
+<!-- ==================== LOCATION: SANDY SPRINGS / ROSWELL / ALPHARETTA /sandy-springs-roswell-alpharetta ==================== -->
+<div class="page" id="page-loc-northfulton">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('loc-northfulton.locations-sandy-springs-rosw.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('loc-northfulton.locations-sandy-springs-rosw.heading1') ?></h1>
+<p><?= cms_rich('loc-northfulton.locations-sandy-springs-rosw.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-northfulton.locations-sandy-springs-rosw.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Roswell Mill — Historic Covered Bridge"><?= cms_img('loc-northfulton.locations-sandy-springs-rosw.img-roswell-mill-bridge', false, 'media') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('loc-northfulton.selling-in-north-fulton.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('loc-northfulton.selling-in-north-fulton.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('loc-northfulton.selling-in-north-fulton.p1') ?></p>
+<p class="eyebrow" style="margin-top:30px"><?= cms_e('loc-northfulton.selling-in-north-fulton.eyebrow2') ?></p>
+<p style="max-width:480px;margin-top:10px"><?= cms_rich('loc-northfulton.selling-in-north-fulton.p2') ?></p>
+</div>
+<div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('loc-northfulton.selling-in-north-fulton.tst1-quote') ?></blockquote><div class="who"><?= cms_e('loc-northfulton.selling-in-north-fulton.tst1-who') ?></div></div>
+<div class="faq" style="margin-top:34px;max-width:none">
+<details open=""><summary><?= cms_e('loc-northfulton.selling-in-north-fulton.faq1-q') ?></summary><p><?= cms_rich('loc-northfulton.selling-in-north-fulton.faq1-a') ?></p></details>
+<details><summary><?= cms_e('loc-northfulton.selling-in-north-fulton.faq2-q') ?></summary><p><?= cms_rich('loc-northfulton.selling-in-north-fulton.faq2-a') ?></p></details>
+<details><summary><?= cms_e('loc-northfulton.selling-in-north-fulton.faq3-q') ?></summary><p><?= cms_rich('loc-northfulton.selling-in-north-fulton.faq3-a') ?></p></details>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== LOCATION: EAST COBB / MARIETTA /east-cobb-marietta ==================== -->
+<div class="page" id="page-loc-cobb">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('loc-cobb.locations-east-cobb-mariett.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('loc-cobb.locations-east-cobb-mariett.heading1') ?></h1>
+<p><?= cms_rich('loc-cobb.locations-east-cobb-mariett.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-cobb.locations-east-cobb-mariett.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="East Cobb / Marietta — Area Photo"><?= cms_img('loc-cobb.locations-east-cobb-mariett.img-east-cobb-marietta-area', false, 'media') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('loc-cobb.selling-in-east-cobb-mariet.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('loc-cobb.selling-in-east-cobb-mariet.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('loc-cobb.selling-in-east-cobb-mariet.p1') ?></p>
+<p class="eyebrow" style="margin-top:30px"><?= cms_e('loc-cobb.selling-in-east-cobb-mariet.eyebrow2') ?></p>
+<p style="max-width:480px;margin-top:10px"><?= cms_rich('loc-cobb.selling-in-east-cobb-mariet.p2') ?></p>
+</div>
+<div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('loc-cobb.selling-in-east-cobb-mariet.tst1-quote') ?></blockquote><div class="who"><?= cms_e('loc-cobb.selling-in-east-cobb-mariet.tst1-who') ?></div></div>
+<div class="faq" style="margin-top:34px;max-width:none">
+<details open=""><summary><?= cms_e('loc-cobb.selling-in-east-cobb-mariet.faq1-q') ?></summary><p><?= cms_rich('loc-cobb.selling-in-east-cobb-mariet.faq1-a') ?></p></details>
+<details><summary><?= cms_e('loc-cobb.selling-in-east-cobb-mariet.faq2-q') ?></summary><p><?= cms_rich('loc-cobb.selling-in-east-cobb-mariet.faq2-a') ?></p></details>
+<details><summary><?= cms_e('loc-cobb.selling-in-east-cobb-mariet.faq3-q') ?></summary><p><?= cms_rich('loc-cobb.selling-in-east-cobb-mariet.faq3-a') ?></p></details>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== LOCATION: BROOKHAVEN / DECATUR / TUCKER /brookhaven-decatur-tucker ==================== -->
+<div class="page" id="page-loc-dekalb">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('loc-dekalb.locations-brookhaven-decat.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('loc-dekalb.locations-brookhaven-decat.heading1') ?></h1>
+<p><?= cms_rich('loc-dekalb.locations-brookhaven-decat.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-dekalb.locations-brookhaven-decat.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Decatur — Downtown Aerial"><?= cms_img('loc-dekalb.locations-brookhaven-decat.img-decatur-downtown-aerial', false, 'media') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('loc-dekalb.selling-in-brookhaven-deca.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('loc-dekalb.selling-in-brookhaven-deca.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('loc-dekalb.selling-in-brookhaven-deca.p1') ?></p>
+<p class="eyebrow" style="margin-top:30px"><?= cms_e('loc-dekalb.selling-in-brookhaven-deca.eyebrow2') ?></p>
+<p style="max-width:480px;margin-top:10px"><?= cms_rich('loc-dekalb.selling-in-brookhaven-deca.p2') ?></p>
+</div>
+<div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('loc-dekalb.selling-in-brookhaven-deca.tst1-quote') ?></blockquote><div class="who"><?= cms_e('loc-dekalb.selling-in-brookhaven-deca.tst1-who') ?></div></div>
+<div class="faq" style="margin-top:34px;max-width:none">
+<details open=""><summary><?= cms_e('loc-dekalb.selling-in-brookhaven-deca.faq1-q') ?></summary><p><?= cms_rich('loc-dekalb.selling-in-brookhaven-deca.faq1-a') ?></p></details>
+<details><summary><?= cms_e('loc-dekalb.selling-in-brookhaven-deca.faq2-q') ?></summary><p><?= cms_rich('loc-dekalb.selling-in-brookhaven-deca.faq2-a') ?></p></details>
+<details><summary><?= cms_e('loc-dekalb.selling-in-brookhaven-deca.faq3-q') ?></summary><p><?= cms_rich('loc-dekalb.selling-in-brookhaven-deca.faq3-a') ?></p></details>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- ==================== LOCATION: MCDONOUGH / HENRY /mcdonough-henry ==================== -->
+<div class="page" id="page-loc-henry">
+<header class="page-hero">
+<div class="wrap hero2"><div>
+<p class="eyebrow on-dark"><?= cms_e('loc-henry.locations-mcdonough-henry.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('loc-henry.locations-mcdonough-henry.heading1') ?></h1>
+<p><?= cms_rich('loc-henry.locations-mcdonough-henry.p1') ?></p>
+<div style="margin-top:30px"><a class="btn btn-gold" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('loc-henry.locations-mcdonough-henry.btn1') ?></a></div>
+</div><div class="ph hero-media" data-label="Henry County — Neighbourhood Aerial"><?= cms_img('loc-henry.locations-mcdonough-henry.img-henry-neighbourhood-aeri', false, 'media') ?></div></div>
+</header>
+<section>
+<div class="wrap two-col">
+<div>
+<p class="eyebrow"><?= cms_e('loc-henry.selling-in-mcdonough-henry.eyebrow1') ?></p>
+<h2 style="font-size:clamp(26px,3vw,36px);margin-top:10px"><?= cms_e('loc-henry.selling-in-mcdonough-henry.heading1') ?></h2>
+<div class="rule"></div>
+<p style="max-width:480px"><?= cms_rich('loc-henry.selling-in-mcdonough-henry.p1') ?></p>
+<p class="eyebrow" style="margin-top:30px"><?= cms_e('loc-henry.selling-in-mcdonough-henry.eyebrow2') ?></p>
+<p style="max-width:480px;margin-top:10px"><?= cms_rich('loc-henry.selling-in-mcdonough-henry.p2') ?></p>
+</div>
+<div>
+<div class="tst"><div aria-label="Rated 5 out of 5 stars" class="stars" role="img"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 5.11 5.52.44a.56.56 0 0 1 .32.99l-4.2 3.6 1.28 5.38a.56.56 0 0 1-.84.61L12 16.73l-4.73 2.9a.56.56 0 0 1-.84-.61l1.28-5.38-4.2-3.6a.56.56 0 0 1 .32-.99l5.52-.44z"></path></svg></div><blockquote><?= cms_e('loc-henry.selling-in-mcdonough-henry.tst1-quote') ?></blockquote><div class="who"><?= cms_e('loc-henry.selling-in-mcdonough-henry.tst1-who') ?></div></div>
+<div class="faq" style="margin-top:34px;max-width:none">
+<details open=""><summary><?= cms_e('loc-henry.selling-in-mcdonough-henry.faq1-q') ?></summary><p><?= cms_rich('loc-henry.selling-in-mcdonough-henry.faq1-a') ?></p></details>
+<details><summary><?= cms_e('loc-henry.selling-in-mcdonough-henry.faq2-q') ?></summary><p><?= cms_rich('loc-henry.selling-in-mcdonough-henry.faq2-a') ?></p></details>
+<details><summary><?= cms_e('loc-henry.selling-in-mcdonough-henry.faq3-q') ?></summary><p><?= cms_rich('loc-henry.selling-in-mcdonough-henry.faq3-a') ?></p></details>
+</div>
+</div>
+</div>
+</section>
+</div>
 <!-- ==================== CONTACT /contact ==================== -->
 <div class="page" id="page-contact">
 <header class="page-hero">
@@ -1730,7 +1854,7 @@ html,body{max-width:100%;overflow-x:clip}
 </div>
 <div>
 <h4>Local Expertise</h4>
-<ul><li><a href="/atlanta-metro" data-nav="loc-atlanta" onclick="return _nav(event,'loc-atlanta')">Atlanta Metro</a></li><li><a href="/gwinnett-lawrenceville" data-nav="loc-gwinnett" onclick="return _nav(event,'loc-gwinnett')">Gwinnett County / Lawrenceville</a></li><li><a href="/fayette-peachtree-city" data-nav="loc-fayette" onclick="return _nav(event,'loc-fayette')">Peachtree City / Fayette</a></li><li><a onclick="alert('Local page coming soon (mockup)')">Sandy Springs / Roswell / Alpharetta</a></li><li><a onclick="alert('Local page coming soon (mockup)')">East Cobb / Marietta</a></li><li><a onclick="alert('Local page coming soon (mockup)')">Brookhaven / Decatur / Tucker</a></li><li><a onclick="alert('Local page coming soon (mockup)')">McDonough / Henry</a></li><li><a href="/lifestyle" data-nav="lifestyle" onclick="return _nav(event,'lifestyle')">Lifestyle &amp; Magazine</a></li><li><a href="/media" data-nav="media" onclick="return _nav(event,'media')">Media &amp; Press</a></li><li><a href="/collaborations" data-nav="collaborations" onclick="return _nav(event,'collaborations')">Collaborations</a></li></ul>
+<ul><li><a href="/atlanta-metro" data-nav="loc-atlanta" onclick="return _nav(event,'loc-atlanta')">Atlanta Metro</a></li><li><a href="/gwinnett-lawrenceville" data-nav="loc-gwinnett" onclick="return _nav(event,'loc-gwinnett')">Gwinnett County / Lawrenceville</a></li><li><a href="/fayette-peachtree-city" data-nav="loc-fayette" onclick="return _nav(event,'loc-fayette')">Peachtree City / Fayette</a></li><li><a href="/sandy-springs-roswell-alpharetta" data-nav="loc-northfulton" onclick="return _nav(event,'loc-northfulton')">Sandy Springs / Roswell / Alpharetta</a></li><li><a href="/east-cobb-marietta" data-nav="loc-cobb" onclick="return _nav(event,'loc-cobb')">East Cobb / Marietta</a></li><li><a href="/brookhaven-decatur-tucker" data-nav="loc-dekalb" onclick="return _nav(event,'loc-dekalb')">Brookhaven / Decatur / Tucker</a></li><li><a href="/mcdonough-henry" data-nav="loc-henry" onclick="return _nav(event,'loc-henry')">McDonough / Henry</a></li><li><a href="/lifestyle" data-nav="lifestyle" onclick="return _nav(event,'lifestyle')">Lifestyle &amp; Magazine</a></li><li><a href="/media" data-nav="media" onclick="return _nav(event,'media')">Media &amp; Press</a></li><li><a href="/collaborations" data-nav="collaborations" onclick="return _nav(event,'collaborations')">Collaborations</a></li></ul>
 </div>
 <div>
 <h4>Follow</h4>

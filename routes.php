@@ -30,6 +30,10 @@ const ROUTES = [
     'atlanta-metro'                 => 'loc-atlanta',
     'gwinnett-lawrenceville'        => 'loc-gwinnett',
     'fayette-peachtree-city'        => 'loc-fayette',
+    'sandy-springs-roswell-alpharetta'=> 'loc-northfulton',
+    'east-cobb-marietta'            => 'loc-cobb',
+    'brookhaven-decatur-tucker'     => 'loc-dekalb',
+    'mcdonough-henry'               => 'loc-henry',
     'gallery'                       => 'gallery',
     'contact'                       => 'contact',
 ];
