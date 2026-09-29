@@ -12,6 +12,11 @@ $current = id_for_path($reqPath);
    matched by shape and looked up in the stored list. The article body is then
    rendered for this request only, instead of every article being inlined into
    the one document and shipped to every visitor forever. */
+$blogShorts = [];
+foreach (blog_posts() as $bp) {
+    if ($bp['short'] !== '') $blogShorts[$bp['short']] = $bp['slug'];
+}
+
 $post = null;
 $postSlug = blog_slug_for_path($reqPath);
 if ($current === '' && $postSlug !== '') {
@@ -22,6 +27,21 @@ if ($current === '' && $postSlug !== '') {
 /* Anything else unrecognised is genuinely missing. Serving the home page with a
    200 (what used to happen) invites search engines to index every typo as a
    copy of the front page. */
+/* A short link from a video ("erikakpage.com/closing-costs-101") redirects to
+   the article rather than serving a second copy of it, so there is exactly one
+   URL for search engines and the link in a caption stays sayable. */
+if ($current === '' && $postSlug === '') {
+    $short = trim(parse_url($reqPath, PHP_URL_PATH) ?? '', '/');
+    if ($short !== '' && strpos($short, '/') === false) {
+        foreach ($blogShorts as $sh => $slug) {
+            if ($sh === strtolower($short)) {
+                header('Location: ' . post_path($slug) . '#guide', true, 301);
+                exit;
+            }
+        }
+    }
+}
+
 $notFound = false;
 if ($current === '') {
     $notFound = trim(parse_url($reqPath, PHP_URL_PATH) ?? '', '/') !== '';
@@ -350,6 +370,30 @@ img{max-width:100%;height:auto;display:block}
 .art-cover figcaption,.art-fig figcaption{font-size:12px;color:rgba(92,75,71,.85);margin-top:8px;line-height:1.5}
 .art-cover figcaption a,.art-fig figcaption a{border-bottom:1px solid var(--line)}
 .art-cover figcaption a:hover,.art-fig figcaption a:hover{border-color:var(--gold)}
+.offer{scroll-margin-top:96px;margin:4px 0 10px;display:grid;grid-template-columns:168px 1fr;gap:26px;align-items:start;
+  background:linear-gradient(135deg,#fff 0%,var(--cream-2) 140%);border:1px solid var(--line);
+  border-top:3px solid var(--gold);padding:26px 28px;box-shadow:var(--shadow-m)}
+.offer-pic{border:1px solid var(--line);box-shadow:var(--shadow-s);overflow:hidden;background:#fff}
+.offer-pic img{width:100%;height:auto;display:block}
+.offer h2{font-size:clamp(21px,2.4vw,27px);margin-top:10px}
+.offer-sub{font-size:15px;margin-top:10px;max-width:460px}
+.offer-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.offer-meta span{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--gold-deep);border:1px solid var(--line);background:#fff;padding:5px 11px}
+.offer-form{margin-top:18px}
+.offer-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.offer-fields label{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--ink);margin-bottom:6px}
+.offer-fields input{width:100%;padding:13px 14px;border:1px solid var(--line);background:#fff;
+  font-family:'Archivo';font-size:15px;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+.offer-fields input:focus{outline:none;border-color:var(--merlot-deep);box-shadow:0 0 0 3px rgba(176,94,81,.15)}
+.offer-fine{font-size:12px;color:rgba(92,75,71,.85);margin-top:12px}
+.offer-done{font-size:15px;color:var(--merlot-ink);font-weight:600;margin:14px 0 16px}
+@media(max-width:620px){
+  .offer{grid-template-columns:1fr;gap:18px;padding:22px}
+  .offer-pic{width:132px}
+  .offer-fields{grid-template-columns:1fr}
+}
 .listen{margin:30px 0 8px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--gold);padding:20px 22px}
 .listen .hd{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .listen h2{font-size:17px;font-family:'Fraunces',serif}
@@ -2182,6 +2226,32 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 </header>
 <section style="padding-top:44px">
 <div class="wrap art-wrap">
+<?php if ($post['guide'] !== ''): ?>
+<div class="offer" id="guide">
+  <div class="offer-pic"><?= media_tag('assets/photos/17/a4-closing-costs-guide-cover.jpg', 'The Closing Costs 101 guide', true, 'card') ?></div>
+  <div class="offer-body">
+    <p class="eyebrow">Free download</p>
+    <h2>Get the Closing Costs 101 guide</h2>
+    <p class="offer-sub">The whole thing as a printable PDF &mdash; the four buckets, the Georgia numbers,
+      and a worksheet to fill in with your own figures before you talk to a lender.</p>
+    <p class="offer-meta"><span>8 pages</span><span>PDF</span><span>Includes a worksheet</span></p>
+<?php if (isset($_GET['sent'])): ?>
+    <p class="offer-done">Thank you &mdash; it&rsquo;s yours. Erika will be in touch about your numbers.</p>
+    <a class="btn btn-primary" href="<?= esc(asset_url($post['guide'])) ?>" download>Download the guide (PDF)</a>
+<?php else: ?>
+    <form method="post" action="/submit.php" class="offer-form"><input type="hidden" name="_form" value="Closing Costs 101 Request"><input type="hidden" name="_page" value="blog"><input type="hidden" name="_post" value="<?= esc($post['slug']) ?>"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
+      <div class="offer-fields">
+        <label>Your name<input name="f_your_name" autocomplete="name" required></label>
+        <label>Email<input type="email" name="f_email" autocomplete="email" required></label>
+      </div>
+      <button type="submit" class="btn btn-primary">Send me the guide</button>
+      <p class="offer-fine">No spam. Erika will follow up once about your numbers, and that&rsquo;s it.</p>
+    </form>
+<?php endif; ?>
+  </div>
+</div>
+<?php endif; ?>
+
 <?php if ($post['cover'] !== ''): ?>
 <figure class="art-cover">
 <div class="ph" data-label="Article cover"><?= media_tag($post['cover'], $post['cover_alt'], true, 'article') ?></div>
@@ -2474,7 +2544,7 @@ $banner = '';
 if (isset($_GET['sent'])) {
     $banner = '<div class="formflash ok" role="status">Thank you — your message has been sent. Erika&rsquo;s team will be in touch shortly.'
             . ($post && $post['guide'] !== ''
-                ? ' <a href="#art-cta" style="text-decoration:underline">Your guide is ready below &darr;</a>'
+                ? ' <a href="#guide" style="text-decoration:underline">Your guide is ready below &darr;</a>'
                 : '')
             . '</div>';
 } elseif (isset($_GET['senterr'])) {

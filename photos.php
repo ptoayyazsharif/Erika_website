@@ -213,6 +213,7 @@ return [
                 ['r' => 'A1', 'f' => 'assets/photos/17/a1-closing-table-signing.jpg', 'label' => 'Signing at the closing table', 'note' => 'stock - Kampus Production / Pexels', 'pos' => '50 50'],
                 ['r' => 'A2', 'f' => 'assets/photos/17/a2-suburban-home-for-sale.jpg', 'label' => 'Suburban home with a for-sale sign', 'note' => 'stock - paulbr75 / Pixabay', 'pos' => '50 50'],
                 ['r' => 'A3', 'f' => 'assets/photos/17/a3-loan-estimate-paperwork.jpg', 'label' => 'Loan paperwork on a table', 'note' => 'stock - RDNE Stock project / Pexels', 'pos' => '50 50'],
+                ['r' => 'A4', 'f' => 'assets/photos/17/a4-closing-costs-guide-cover.jpg', 'label' => 'Closing Costs 101 guide — cover', 'note' => 'rendered from the guide', 'pos' => '50 20'],
             ],
         ],
     ],

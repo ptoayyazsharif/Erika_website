@@ -630,6 +630,9 @@ function blog_clean(array $p): ?array {
         // A downloadable companion (PDF). Validated the same way as the other
         // paths: it must be a file that lives with the site.
         'guide'        => gallery_safe_src((string) ($p['guide'] ?? '')),
+        // A short, sayable path that redirects here — so a video can say
+        // "go to erikakpage.com/closing-costs-101" rather than reading out a slug.
+        'short'        => blog_slugify((string) ($p['short'] ?? '')),
         'audio_secs'   => max(0, (int) ($p['audio_secs'] ?? 0)),
         // A browser submits a textarea with CRLF line endings; normalising them
         // keeps a saved body byte-identical to the same text written in a file.

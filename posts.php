@@ -40,6 +40,7 @@ return [
         'cover_credit'   => 'Photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
         'audio'          => 'assets/audio/closing-costs-in-georgia-explained.mp3',
         'guide'          => 'assets/guides/closing-costs-101.pdf',
+        'short'          => 'closing-costs-101',
         'audio_secs'     => 667,
         'published'      => true,
         'faq' => [
