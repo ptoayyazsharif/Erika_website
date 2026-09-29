@@ -2208,9 +2208,21 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 </div>
 <?php endif; ?>
 
-<div class="art-cta">
+<div class="art-cta" id="art-cta">
+<?php if ($post['guide'] !== '' && isset($_GET['sent'])): ?>
+<p class="eyebrow" style="margin-bottom:10px">Your guide is ready</p>
+<h2>Here it is &mdash; Closing Costs 101.</h2>
+<p>Thank you. Erika will be in touch about your numbers; in the meantime, the guide is yours.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+<a class="btn btn-primary" href="<?= esc(asset_url($post['guide'])) ?>" download>Download the guide (PDF)</a>
+<a class="btn btn-outline" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('blog.article-cta.btn2') ?></a>
+</div>
+<?php else: ?>
 <h2><?= cms_e('blog.article-cta.heading1') ?></h2>
 <p><?= cms_rich('blog.article-cta.p1') ?></p>
+<?php if ($post['guide'] !== ''): ?>
+<p style="margin-top:-8px;font-size:14px;color:var(--merlot-ink)"><strong>You&rsquo;ll get the Closing Costs 101 guide</strong> &mdash; the whole thing as a printable PDF, with a worksheet for your own numbers.</p>
+<?php endif; ?>
 <form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Closing Costs 101 Request"><input type="hidden" name="_page" value="blog"><input type="hidden" name="_post" value="<?= esc($post['slug']) ?>"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
 <div class="fld-row">
 <div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
@@ -2222,6 +2234,7 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 <a class="btn btn-outline" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('blog.article-cta.btn2') ?></a>
 </div>
 </form>
+<?php endif; ?>
 </div>
 
 <?php if ($post['tags']): ?>
@@ -2459,7 +2472,11 @@ $html = str_replace('<div class="page" id="page-' . $current . '">',
 // Success / error banner after a form submission (submit.php redirects here with ?sent / ?senterr).
 $banner = '';
 if (isset($_GET['sent'])) {
-    $banner = '<div class="formflash ok" role="status">Thank you — your message has been sent. Erika&rsquo;s team will be in touch shortly.</div>';
+    $banner = '<div class="formflash ok" role="status">Thank you — your message has been sent. Erika&rsquo;s team will be in touch shortly.'
+            . ($post && $post['guide'] !== ''
+                ? ' <a href="#art-cta" style="text-decoration:underline">Your guide is ready below &darr;</a>'
+                : '')
+            . '</div>';
 } elseif (isset($_GET['senterr'])) {
     $msg = $_GET['senterr'] === 'config'
         ? 'Sorry — the site&rsquo;s email isn&rsquo;t set up yet, so this form could not be sent. Please call 678-404-1562.'

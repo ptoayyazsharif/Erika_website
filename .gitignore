@@ -3,3 +3,4 @@ cms.sqlite
 uploads/*
 !uploads/.htaccess
 .gstack/
+tools/guides/.fontcache/

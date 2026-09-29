@@ -627,6 +627,9 @@ function blog_clean(array $p): ?array {
         'cover_alt'    => trim((string) ($p['cover_alt'] ?? '')),
         'cover_credit' => strip_bad(trim((string) ($p['cover_credit'] ?? ''))),
         'audio'        => gallery_safe_src((string) ($p['audio'] ?? '')),
+        // A downloadable companion (PDF). Validated the same way as the other
+        // paths: it must be a file that lives with the site.
+        'guide'        => gallery_safe_src((string) ($p['guide'] ?? '')),
         'audio_secs'   => max(0, (int) ($p['audio_secs'] ?? 0)),
         // A browser submits a textarea with CRLF line endings; normalising them
         // keeps a saved body byte-identical to the same text written in a file.

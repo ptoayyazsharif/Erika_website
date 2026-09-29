@@ -62,6 +62,26 @@ Three things are worth knowing before editing the code:
   responsive `srcset`, lazy loading and intrinsic sizing as every other picture on
   the site; a hand-written `<img>` would get none of it.
 
+**Downloadable guides.** A post can carry a `guide` — a PDF offered after the
+reader fills in the form under the article, so the lead still reaches the inbox
+and Lofty. The PDF is built from HTML rather than hand-made, which keeps it
+editable and consistent with the site:
+
+```
+node tools/build-guide.mjs            # tools/guides/<name>.html -> assets/guides/<name>.pdf
+```
+
+Two things about that build are worth knowing before touching it. Chromium's
+print path only sees fonts through **fontconfig** — web fonts that load fine on
+screen are silently dropped from the PDF and replaced with a system serif. And
+the brand fonts ship from Google as *variable* fonts, which collapse to a single
+instance once installed, so weights 400 and 700 come out identical. The script
+therefore cuts real static weight files out of the variable originals with
+fontTools and instals those. It also refuses to write the PDF unless every check
+passes: correct page geometry, no system-font fallback (checked per character,
+because grepping the file for a font name gives a false positive), no clipped
+content, and the expected text on every page.
+
 Each article carries its own `<title>`, meta description, canonical link, Open Graph
 and Twitter tags, and `BlogPosting` structured data — including an `AudioObject` for
 the narration, so the audio version is machine-readable. `sitemap.php` picks up new

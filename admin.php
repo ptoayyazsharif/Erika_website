@@ -228,6 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_blog'])) {
         $old   = $slug !== '' ? ($before[array_search($slug, array_column($before, 'slug'), true)] ?? null) : null;
         $cover = $upload('bp_cover', $i, (string) ($row['cover'] ?? ''));
         $audio = $upload('bp_audio', $i, (string) ($row['audio'] ?? ''));
+        $guide = $upload('bp_guide', $i, (string) ($row['guide'] ?? ''));
         $secs  = (int) ($row['audio_secs'] ?? 0);
         // A freshly uploaded narration gets measured rather than typed in.
         if ($audio !== '' && ($secs <= 0 || $audio !== (string) ($row['audio'] ?? ''))) {
@@ -250,6 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_blog'])) {
             'cover_credit' => (string) ($row['cover_credit'] ?? ''),
             'audio'        => $audio,
             'audio_secs'   => $secs,
+            'guide'        => $guide,
             'body'         => (string) ($row['body'] ?? ''),
             'faq'          => blog_faq_from_text((string) ($row['faq'] ?? '')),
             'published'    => !empty($row['published']),
@@ -268,7 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_blog'])) {
             'author' => 'Erika K. Page',
             'cat' => (string) ($_POST['bp_new']['cat'] ?? ''), 'tags' => [],
             'cover' => '', 'cover_alt' => '', 'cover_credit' => '',
-            'audio' => '', 'audio_secs' => 0,
+            'audio' => '', 'audio_secs' => 0, 'guide' => '',
             'body' => '<p>Write the article here.</p>', 'faq' => [],
             'published' => false,
         ];
@@ -613,6 +615,7 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
             <input type="hidden" name="bp[<?= $i ?>][cover]" value="<?= esc($bp['cover']) ?>">
             <input type="hidden" name="bp[<?= $i ?>][audio]" value="<?= esc($bp['audio']) ?>">
             <input type="hidden" name="bp[<?= $i ?>][audio_secs]" value="<?= (int) $bp['audio_secs'] ?>">
+            <input type="hidden" name="bp[<?= $i ?>][guide]" value="<?= esc($bp['guide']) ?>">
 
             <div class="fld">
               <label>Headline <small style="text-transform:none;letter-spacing:0;font-weight:400">— the big title on the page</small></label>
@@ -655,6 +658,15 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
                   &nbsp;·&nbsp; <a href="<?= esc(asset_url($bp['audio'])) ?>" target="_blank">listen</a></p>
               <?php endif; ?>
               <input type="file" name="bp_audio[<?= $i ?>]" accept=".mp3,.m4a">
+            </div>
+
+            <div class="fld">
+              <label>Downloadable guide <small style="text-transform:none;letter-spacing:0;font-weight:400">&mdash; a PDF readers get after filling in the form under the article. Leave empty and no download is offered.</small></label>
+              <?php if ($bp['guide'] !== ''): ?>
+                <p class="hint" style="margin:0 0 8px"><?= esc($bp['guide']) ?>
+                  &nbsp;&middot;&nbsp; <a href="<?= esc(asset_url($bp['guide'])) ?>" target="_blank">open it</a></p>
+              <?php endif; ?>
+              <input type="file" name="bp_guide[<?= $i ?>]" accept=".pdf">
             </div>
 
             <div class="fld">

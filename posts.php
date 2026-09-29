@@ -39,6 +39,7 @@ return [
         'cover_alt'      => 'Two people signing closing documents at a table',
         'cover_credit'   => 'Photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
         'audio'          => 'assets/audio/closing-costs-in-georgia-explained.mp3',
+        'guide'          => 'assets/guides/closing-costs-101.pdf',
         'audio_secs'     => 667,
         'published'      => true,
         'faq' => [
