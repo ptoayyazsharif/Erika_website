@@ -76,7 +76,7 @@ button:hover{background:#9C4A3E}
 $pages = manifest();
 $pageIds = array_keys($pages);
 $cur = $_GET['page'] ?? 'home';
-if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty', 'gallery-photos'], true)) $cur = 'home';
+if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty', 'gallery-photos', 'blog-posts'], true)) $cur = 'home';
 
 /* ---------- change password ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_password'])) {
@@ -193,6 +193,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_gallery'])) {
     $cur = 'gallery-photos';
 }
 
+/* ---------- save the blog posts ---------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_blog'])) {
+    csrf_check();
+
+    /* Everything on this screen is one list, so the existing rows are rebuilt
+       from the form and the new post (if there is one) is appended. Removing a
+       row also records its slug, because a post that shipped in posts.php would
+       otherwise reappear on the next load. */
+    $posts   = [];
+    $removed = blog_removed();
+    $before  = blog_posts(true);
+
+    $upload = function (string $field, int $i, string $fallback) use (&$err) {
+        if (!isset($_FILES[$field]['name'][$i]) || $_FILES[$field]['error'][$i] === UPLOAD_ERR_NO_FILE) return $fallback;
+        [$path, $uerr] = handle_upload([
+            'name'     => $_FILES[$field]['name'][$i],
+            'tmp_name' => $_FILES[$field]['tmp_name'][$i],
+            'error'    => $_FILES[$field]['error'][$i],
+            'size'     => $_FILES[$field]['size'][$i],
+        ]);
+        if ($uerr) { $err = $_FILES[$field]['name'][$i] . ': ' . $uerr; return $fallback; }
+        return $path ?: $fallback;
+    };
+
+    foreach (($_POST['bp'] ?? []) as $i => $row) {
+        if (!is_array($row)) continue;
+        $i = (int) $i;
+        $slug = blog_slugify((string) ($row['slug'] ?? ''));
+        if (!empty($row['rm'])) {
+            if ($slug !== '') $removed[] = $slug;
+            continue;
+        }
+        $old   = $slug !== '' ? ($before[array_search($slug, array_column($before, 'slug'), true)] ?? null) : null;
+        $cover = $upload('bp_cover', $i, (string) ($row['cover'] ?? ''));
+        $audio = $upload('bp_audio', $i, (string) ($row['audio'] ?? ''));
+        $secs  = (int) ($row['audio_secs'] ?? 0);
+        // A freshly uploaded narration gets measured rather than typed in.
+        if ($audio !== '' && ($secs <= 0 || $audio !== (string) ($row['audio'] ?? ''))) {
+            $m = mp3_duration($audio);
+            if ($m > 0) $secs = $m;
+        }
+        $posts[] = [
+            'slug'         => $slug,
+            'title'        => (string) ($row['title'] ?? ''),
+            'seo_title'    => (string) ($row['seo_title'] ?? ''),
+            'seo_desc'     => (string) ($row['seo_desc'] ?? ''),
+            'excerpt'      => (string) ($row['excerpt'] ?? ''),
+            'date'         => (string) ($row['date'] ?? ''),
+            'updated'      => date('Y-m-d'),
+            'author'       => (string) ($row['author'] ?? 'Erika K. Page'),
+            'cat'          => (string) ($row['cat'] ?? ''),
+            'tags'         => array_map('trim', array_filter(explode(',', (string) ($row['tags'] ?? '')), fn($t) => trim($t) !== '')),
+            'cover'        => $cover,
+            'cover_alt'    => (string) ($row['cover_alt'] ?? ''),
+            'cover_credit' => (string) ($row['cover_credit'] ?? ''),
+            'audio'        => $audio,
+            'audio_secs'   => $secs,
+            'body'         => (string) ($row['body'] ?? ''),
+            'faq'          => blog_faq_from_text((string) ($row['faq'] ?? '')),
+            'published'    => !empty($row['published']),
+        ];
+    }
+
+    $newTitle = trim((string) ($_POST['bp_new']['title'] ?? ''));
+    $added = false;
+    if ($newTitle !== '') {
+        $slug = blog_slugify((string) ($_POST['bp_new']['slug'] ?? '')) ?: blog_slugify($newTitle);
+        // A new post starts as a draft: nothing goes public until it is written.
+        $posts[] = [
+            'slug' => $slug, 'title' => $newTitle,
+            'seo_title' => '', 'seo_desc' => '', 'excerpt' => '',
+            'date' => date('Y-m-d'), 'updated' => date('Y-m-d'),
+            'author' => 'Erika K. Page',
+            'cat' => (string) ($_POST['bp_new']['cat'] ?? ''), 'tags' => [],
+            'cover' => '', 'cover_alt' => '', 'cover_credit' => '',
+            'audio' => '', 'audio_secs' => 0,
+            'body' => '<p>Write the article here.</p>', 'faq' => [],
+            'published' => false,
+        ];
+        $removed = array_values(array_diff($removed, [$slug]));
+        $added = true;
+    }
+
+    if (!$err) {
+        blog_removed_save($removed);
+        blog_posts_save($posts);
+        $live = count(array_filter($posts, fn($x) => $x['published']));
+        $flash = 'Blog saved — ' . count($posts) . ' post' . (count($posts) === 1 ? '' : 's')
+               . ", $live published" . ($added ? ', 1 just added as a draft' : '') . '.';
+    }
+    $cur = 'blog-posts';
+}
+
 /* ---------- save content ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     csrf_check();
@@ -274,7 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     }
 }
 
-$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : ($cur === 'gallery-photos' ? 'Gallery photos' : $pages[$cur]['title'])));
+$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : ($cur === 'gallery-photos' ? 'Gallery photos' : ($cur === 'blog-posts' ? 'Blog posts' : $pages[$cur]['title']))));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -366,6 +459,7 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
       <a href="admin.php?page=<?= esc($pid) ?>" class="<?= $pid === $cur ? 'on' : '' ?>"><?= esc($p['title']) ?></a>
     <?php endforeach; ?>
     <a href="admin.php?page=gallery-photos" class="<?= $cur === 'gallery-photos' ? 'on' : '' ?>">Gallery photos</a>
+    <a href="admin.php?page=blog-posts" class="<?= $cur === 'blog-posts' ? 'on' : '' ?>">Blog posts</a>
     <div class="grp">Account</div>
     <a href="admin.php?page=email" class="<?= $cur === 'email' ? 'on' : '' ?>">Email / Forms</a>
     <a href="admin.php?page=lofty" class="<?= $cur === 'lofty' ? 'on' : '' ?>">CRM / Lofty</a>
@@ -476,6 +570,136 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
         </table>
       </div>
       <?php endif; ?>
+
+    <?php elseif ($cur === 'blog-posts'): ?>
+      <h1>Blog posts</h1>
+      <p class="hint">Every article on <b>/blog</b>. Add as many as you like — there is no limit and no
+        developer needed. A new post is saved as a <b>draft</b>: tick <b>Published</b> when it is ready
+        and it appears on the site and in the sitemap.</p>
+      <p class="hint" style="margin-top:-10px">The article text is HTML. Use <code>&lt;p&gt;</code> for
+        paragraphs, <code>&lt;h2&gt;</code> for headings, <code>&lt;ul&gt;&lt;li&gt;</code> for lists,
+        <code>&lt;strong&gt;</code> to emphasise and <code>&lt;a href="/buy"&gt;</code> to link. For a
+        picture inside the article, upload it in the Gallery photos screen (or drop it in
+        <code>assets/photos</code>) and write
+        <code>[[img:assets/photos/17/name.jpg|what it shows|Photo by …]]</code> on its own line.</p>
+
+      <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+        <?php $bposts = blog_posts(true); ?>
+
+        <div class="sec" style="padding:16px">
+          <div class="lib-head">Start a new post<small>saved as a draft, then fill it in below</small></div>
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px">
+            <input type="text" name="bp_new[title]" placeholder="Working title" style="flex:1;min-width:260px">
+            <label style="font-size:13px">Category
+              <select name="bp_new[cat]">
+                <option value="">— none —</option>
+                <?php foreach (BLOG_CATS as $cid => $clabel): ?>
+                  <option value="<?= esc($cid) ?>"><?= esc($clabel) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <?php foreach ($bposts as $i => $bp): ?>
+        <details class="sec" <?= $i === 0 ? 'open' : '' ?> style="margin-top:14px">
+          <summary>
+            <?= esc($bp['title'] !== '' ? $bp['title'] : $bp['slug']) ?>
+            <small><?= esc($bp['date']) ?> · <?= $bp['published'] ? 'published' : 'draft' ?><?= $bp['audio'] !== '' ? ' · audio' : '' ?></small>
+          </summary>
+          <div class="fields">
+            <input type="hidden" name="bp[<?= $i ?>][slug]" value="<?= esc($bp['slug']) ?>">
+            <input type="hidden" name="bp[<?= $i ?>][cover]" value="<?= esc($bp['cover']) ?>">
+            <input type="hidden" name="bp[<?= $i ?>][audio]" value="<?= esc($bp['audio']) ?>">
+            <input type="hidden" name="bp[<?= $i ?>][audio_secs]" value="<?= (int) $bp['audio_secs'] ?>">
+
+            <div class="fld">
+              <label>Headline <small style="text-transform:none;letter-spacing:0;font-weight:400">— the big title on the page</small></label>
+              <input type="text" name="bp[<?= $i ?>][title]" value="<?= esc($bp['title']) ?>">
+            </div>
+            <div class="fld">
+              <label>Web address</label>
+              <p class="hint" style="margin:0">/blog/<b><?= esc($bp['slug']) ?></b> &nbsp;·&nbsp; <a href="/blog/<?= esc($bp['slug']) ?>" target="_blank">open it</a>
+              <?= $bp['published'] ? '' : ' (draft — only visible here)' ?></p>
+            </div>
+            <div class="fld">
+              <label>Short summary <small style="text-transform:none;letter-spacing:0;font-weight:400">— shown on the blog list and under the headline</small></label>
+              <input type="text" name="bp[<?= $i ?>][excerpt]" value="<?= esc($bp['excerpt']) ?>">
+            </div>
+            <div class="fld">
+              <label>The article</label>
+              <textarea name="bp[<?= $i ?>][body]" rows="22" style="width:100%;padding:12px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6"><?= esc($bp['body']) ?></textarea>
+            </div>
+            <div class="fld">
+              <label>Questions &amp; answers <small style="text-transform:none;letter-spacing:0;font-weight:400">— question on the first line, answer under it, blank line between each. These also help the article show up as an answer in Google.</small></label>
+              <textarea name="bp[<?= $i ?>][faq]" rows="8" style="width:100%;padding:12px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3;font-size:13.5px;line-height:1.6"><?= esc(blog_faq_to_text($bp['faq'])) ?></textarea>
+            </div>
+
+            <div class="fld">
+              <label>Cover picture</label>
+              <div class="imgrow">
+                <?php if ($bp['cover'] !== ''): ?><img class="thumb" src="<?= esc(asset_url($bp['cover'])) ?>" alt="" loading="lazy"><?php endif; ?>
+                <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:240px">
+                  <input type="file" name="bp_cover[<?= $i ?>]" accept=".jpg,.jpeg,.png,.webp">
+                  <input type="text" name="bp[<?= $i ?>][cover_alt]" value="<?= esc($bp['cover_alt']) ?>" placeholder="What the picture shows (read out to blind visitors, and to Google)">
+                  <input type="text" name="bp[<?= $i ?>][cover_credit]" value="<?= esc($bp['cover_credit']) ?>" placeholder="Photo credit, if the picture needs one">
+                </div>
+              </div>
+            </div>
+
+            <div class="fld">
+              <label>Narration <small style="text-transform:none;letter-spacing:0;font-weight:400">— an MP3 of the article being read. Upload your own recording here and it replaces whatever is there.</small></label>
+              <?php if ($bp['audio'] !== ''): ?>
+                <p class="hint" style="margin:0 0 8px"><?= esc($bp['audio']) ?> · <?= esc(clock_duration($bp['audio_secs'])) ?>
+                  &nbsp;·&nbsp; <a href="<?= esc(asset_url($bp['audio'])) ?>" target="_blank">listen</a></p>
+              <?php endif; ?>
+              <input type="file" name="bp_audio[<?= $i ?>]" accept=".mp3,.m4a">
+            </div>
+
+            <div class="fld">
+              <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+                <label style="font-size:12.5px">Date
+                  <input type="date" name="bp[<?= $i ?>][date]" value="<?= esc($bp['date']) ?>">
+                </label>
+                <label style="font-size:12.5px">Category
+                  <select name="bp[<?= $i ?>][cat]">
+                    <option value="">— none —</option>
+                    <?php foreach (BLOG_CATS as $cid => $clabel): ?>
+                      <option value="<?= esc($cid) ?>"<?= $bp['cat'] === $cid ? ' selected' : '' ?>><?= esc($clabel) ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </label>
+                <label class="rm"><input type="checkbox" name="bp[<?= $i ?>][published]" value="1"<?= $bp['published'] ? ' checked' : '' ?>> published</label>
+                <label class="rm"><input type="checkbox" name="bp[<?= $i ?>][rm]" value="1"> remove this post</label>
+              </div>
+            </div>
+            <div class="fld">
+              <label>Tags <small style="text-transform:none;letter-spacing:0;font-weight:400">— separated by commas</small></label>
+              <input type="text" name="bp[<?= $i ?>][tags]" value="<?= esc(implode(', ', $bp['tags'])) ?>">
+            </div>
+            <div class="fld">
+              <label>Google title <small style="text-transform:none;letter-spacing:0;font-weight:400">— what shows in search results. Leave blank to use the headline.</small></label>
+              <input type="text" name="bp[<?= $i ?>][seo_title]" value="<?= esc($bp['seo_title']) ?>">
+            </div>
+            <div class="fld">
+              <label>Google description <small style="text-transform:none;letter-spacing:0;font-weight:400">— the grey text under the search result, around 155 characters. Leave blank to use the summary.</small></label>
+              <input type="text" name="bp[<?= $i ?>][seo_desc]" value="<?= esc($bp['seo_desc']) ?>">
+            </div>
+            <div class="fld">
+              <label>By</label>
+              <input type="text" name="bp[<?= $i ?>][author]" value="<?= esc($bp['author']) ?>">
+            </div>
+          </div>
+        </details>
+        <?php endforeach; ?>
+
+        <div class="savebar" style="margin-top:18px">
+          <button name="do_blog" value="1">Save blog</button>
+          <span><?= count($bposts) ?> post<?= count($bposts) === 1 ? '' : 's' ?>,
+            <?= count(array_filter($bposts, fn($x) => $x['published'])) ?> published</span>
+        </div>
+      </form>
 
     <?php elseif ($cur === 'gallery-photos'): ?>
       <h1>Gallery photos</h1>

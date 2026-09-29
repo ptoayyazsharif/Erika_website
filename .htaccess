@@ -9,6 +9,11 @@ Options -MultiViews
   RewriteEngine On
   RewriteBase /
 
+  # The sitemap is generated (it has to list the blog posts), but search engines
+  # ask for /sitemap.xml — so that name is mapped to the script. This has to come
+  # before the pass-through below.
+  RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
   # Serve real files and directories directly (uploads, assets, admin.php, submit.php, setup.php, etc.)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
@@ -22,10 +27,14 @@ Options -MultiViews
 # Older Apache builds have no mapping for it and would send the wrong content type.
 <IfModule mod_mime.c>
   AddType image/webp .webp
+  # Article narrations. Some hosts serve an unknown type as a download instead of
+  # handing it to the player.
+  AddType audio/mpeg .mp3
+  AddType audio/mp4 .m4a
 </IfModule>
 
 # The whole site is one document (every page inlined, shown one at a time), so the
-# HTML is large — around 220 KB raw and under 45 KB compressed. Compressing it is
+# HTML is large — around 260 KB raw and under 50 KB compressed. Compressing it is
 # the single biggest saving on a phone connection.
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml \
@@ -39,6 +48,7 @@ Options -MultiViews
 # Long-lived caching for the shipped photos — their filenames never change in place.
 <IfModule mod_expires.c>
   ExpiresActive On
+  ExpiresByType audio/mpeg "access plus 1 month"
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
   ExpiresByType image/png  "access plus 1 year"

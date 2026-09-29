@@ -2,28 +2,105 @@
 require __DIR__ . '/cms.php';
 require __DIR__ . '/routes.php';
 
+$reqPath = $_SERVER['REQUEST_URI'] ?? '/';
+
 // Which page does this URL ask for? (clean slug -> internal id)
-$current = id_for_path($_SERVER['REQUEST_URI'] ?? '/');
-if ($current === '') $current = 'home';
+$current = id_for_path($reqPath);
+
+/* An article is the one page whose URL is not in ROUTES — there is an unknown
+   number of posts and they are stored rather than coded, so /blog/<slug> is
+   matched by shape and looked up in the stored list. The article body is then
+   rendered for this request only, instead of every article being inlined into
+   the one document and shipped to every visitor forever. */
+$post = null;
+$postSlug = blog_slug_for_path($reqPath);
+if ($current === '' && $postSlug !== '') {
+    $post = blog_post($postSlug);
+    if ($post) $current = 'post';
+}
+
+/* Anything else unrecognised is genuinely missing. Serving the home page with a
+   200 (what used to happen) invites search engines to index every typo as a
+   copy of the front page. */
+$notFound = false;
+if ($current === '') {
+    $notFound = trim(parse_url($reqPath, PHP_URL_PATH) ?? '', '/') !== '';
+    $current = $notFound ? '404' : 'home';
+}
+if ($notFound) http_response_code(404);
 
 // id -> path map for the client router, and the reverse for popstate
 $PATHS = [];
 foreach (ROUTES as $path => $id) $PATHS[$id] = '/' . $path;
+if ($post) $PATHS['post'] = post_path($post['slug']);
 
-// per-page browser title
+$blogPosts = blog_posts();
+
+/* Per-page title and description. The description used to be one global string
+   repeated on all 27 pages, which tells a search engine nothing about any of
+   them. Keys missing from here fall back to the global pair. */
 $siteTitle = cms('global.meta-title');
-$pageNames = [
-  'home' => '', 'about' => 'About', 'sell' => 'Sell', 'homevalue' => 'Home Value Strategy',
-  'buy' => 'Buy', 'speaking' => 'Speaking', 'collaborations' => 'Collaborations',
-  'lifestyle' => 'Lifestyle & Magazine', 'media' => 'Media & Press', 'testimonials' => 'Testimonials',
-  'resources' => 'Resources', 'products' => 'Digital Products', 'explains' => 'Erika Explains',
-  'mentorship' => 'Mentorship', 'investing' => 'Investing', 'pm' => 'Property Management',
-  'transportation' => 'Transportation & Logistics', 'living' => 'Escaluxe Living',
-  'loc-atlanta' => 'Atlanta Metro', 'loc-gwinnett' => 'Gwinnett / Lawrenceville',
-  'loc-fayette' => 'Fayette / Peachtree City', 'gallery' => 'Gallery', 'contact' => 'Contact',
+$siteDesc  = cms('global.meta-desc');
+$pageMeta = [
+  'home'    => ['', ''],
+  'about'   => ['About', 'Erika K. Page — 24+ years in Metro Atlanta real estate, founder of Escaluxe Global, speaker and mentor. Her background, her markets and how she works.'],
+  'sell'    => ['Sell', 'Selling a home in Metro Atlanta: pricing strategy, preparation, photography and negotiation, handled by an agent with 24+ years in this market.'],
+  'homevalue' => ['Home Value Strategy', 'A real valuation of your Metro Atlanta home — the twelve factors Erika Page checks before pricing, not an automated estimate.'],
+  'buy'     => ['Buy', 'Buying in Metro Atlanta with representation that explains the numbers first: financing, offer strategy, inspections and the closing table.'],
+  'speaking' => ['Speaking', 'Book Erika Page to speak on real estate as wealth, reinvention, personal branding and moving from agent to authority.'],
+  'collaborations' => ['Collaborations', 'Brand partnerships and co-created content with Erika Page — video, editorial and social work across real estate, wealth and lifestyle.'],
+  'lifestyle' => ['Lifestyle & Magazine', 'The Erika Page Experience — Atlanta lifestyle, design and the places worth your weekend, from a 24+ year local.'],
+  'media'   => ['Media & Press', 'Press kit, interview topics and booking for Erika Page — featured host on The American Dream TV, Atlanta.'],
+  'testimonials' => ['Testimonials', 'What Metro Atlanta buyers, sellers and agents say about working with Erika Page.'],
+  'resources' => ['Resources', 'Guides, explainers and tools for Metro Atlanta sellers, buyers, investors and agents — free and plainly written.'],
+  'products' => ['Digital Products', 'Checklists, guides and templates from Erika Page for buyers, sellers and real estate professionals.'],
+  'explains' => ['Erika Explains', 'Erika Explains — short, clear answers to the real estate questions people actually ask, from contracts to closing costs.'],
+  'mentorship' => ['Mentorship', 'Agent mentorship with Erika Page: building an actual business instead of just holding a license.'],
+  'investing' => ['Investing', 'Capital & Acquisitions with Escaluxe Global — investor transactions, off-market deals and value-add strategy in Metro Atlanta.'],
+  'pm'      => ['Property Management', 'Professional property management in Metro Atlanta — systems that make rent show up instead of chasing it.'],
+  'transportation' => ['Transportation & Logistics', 'Escaluxe Transportation & Logistics — executive transport, airport transfers, moving and specialty courier work.'],
+  'living'  => ['Escaluxe Living', 'Escaluxe Living — luxury body care, home fragrance and living essentials.'],
+  'blog'    => ['Blog', 'Real estate, explained. Written guides from Erika Page on buying, selling and investing in Metro Atlanta — every article also available to listen to.'],
+  'loc-atlanta' => ['Atlanta Metro', 'Metro Atlanta real estate with Erika Page — 24+ years across Fulton, Gwinnett, Cobb, DeKalb, Fayette and Henry counties.'],
+  'loc-gwinnett' => ['Gwinnett / Lawrenceville', 'Buying and selling in Gwinnett County and Lawrenceville — schools, commutes, pricing and what actually moves.'],
+  'loc-fayette' => ['Fayette / Peachtree City', 'Peachtree City and Fayette County homes — golf cart paths, schools and the resale demand behind them.'],
+  'loc-northfulton' => ['Sandy Springs / Roswell / Alpharetta', 'North Fulton real estate — Sandy Springs, Roswell and Alpharetta, where schools and corporate relocation set the market.'],
+  'loc-cobb' => ['East Cobb / Marietta', 'East Cobb and Marietta homes — school districts, established neighborhoods and how presentation sets the price.'],
+  'loc-dekalb' => ['Brookhaven / Decatur / Tucker', 'Brookhaven, Decatur and Tucker — in-town DeKalb living, walkability and the streets that hold their value.'],
+  'loc-henry' => ['McDonough / Henry', 'McDonough and Henry County — new construction, real affordability and a straight run up I-75.'],
+  'gallery' => ['Gallery', 'Listings, closings, stage work and Atlanta — the Erika Page photo gallery.'],
+  'contact' => ['Contact', 'Talk to Erika Page — Metro Atlanta real estate, speaking enquiries and media requests.'],
+  '404'     => ['Page not found', 'That page does not exist. Find what you were looking for from the menu, or get in touch.'],
 ];
-$pt = $pageNames[$current] ?? '';
+
+$pt = $pageMeta[$current][0] ?? '';
 $docTitle = ($pt && $current !== 'home') ? ($pt . ' · Erika Page') : $siteTitle;
+$docDesc  = $pageMeta[$current][1] ?? '';
+if ($docDesc === '') $docDesc = $siteDesc;
+$canonPath = $PATHS[$current] ?? '/';
+$ogImage   = 'assets/photos/01/a1-red-blazer-black.jpg';
+$ogType    = 'website';
+
+if ($post) {
+    $docTitle  = ($post['seo_title'] !== '' ? $post['seo_title'] : $post['title']) . ' · Erika Page';
+    $docDesc   = $post['seo_desc'] !== '' ? $post['seo_desc'] : $post['excerpt'];
+    $canonPath = post_path($post['slug']);
+    $ogType    = 'article';
+    if ($post['cover'] !== '') $ogImage = $post['cover'];
+}
+$canonUrl = abs_url($canonPath);
+
+/* The client router changes pages without a reload, so it has to change the
+   title, the description and the canonical link too — none of which it did. */
+$META = [];
+foreach ($pageMeta as $id => [$t, $d]) {
+    $META[$id] = [
+        't' => ($t && $id !== 'home') ? $t . ' · Erika Page' : $siteTitle,
+        'd' => $d !== '' ? $d : $siteDesc,
+        'u' => abs_url($PATHS[$id] ?? '/'),
+    ];
+}
+if ($post) $META['post'] = ['t' => $docTitle, 'd' => $docDesc, 'u' => $canonUrl];
 
 ob_start();
 ?>
@@ -34,8 +111,155 @@ ob_start();
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title><?= esc($docTitle) ?></title>
-<meta content="<?= cms_e('global.meta-desc') ?>" name="description"/>
+<meta content="<?= esc($docDesc) ?>" name="description"/>
 <meta content="#453230" name="theme-color"/>
+<link href="<?= esc($canonUrl) ?>" rel="canonical"/>
+<?php if ($notFound): ?><meta content="noindex, follow" name="robots"/><?php else: ?><meta content="index, follow, max-image-preview:large" name="robots"/><?php endif; ?>
+<meta content="Erika K. Page" name="author"/>
+<meta content="<?= esc($ogType) ?>" property="og:type"/>
+<meta content="Erika Page" property="og:site_name"/>
+<meta content="<?= esc($docTitle) ?>" property="og:title"/>
+<meta content="<?= esc($docDesc) ?>" property="og:description"/>
+<meta content="<?= esc($canonUrl) ?>" property="og:url"/>
+<meta content="<?= esc(abs_url('/' . $ogImage)) ?>" property="og:image"/>
+<meta content="<?= esc($post ? $post['cover_alt'] : 'Erika K. Page, Metro Atlanta real estate') ?>" property="og:image:alt"/>
+<meta content="en_US" property="og:locale"/>
+<?php if ($post): ?>
+<meta content="<?= esc($post['date']) ?>" property="article:published_time"/>
+<meta content="<?= esc($post['updated']) ?>" property="article:modified_time"/>
+<meta content="<?= esc($post['author']) ?>" property="article:author"/>
+<meta content="<?= esc(BLOG_CATS[$post['cat']] ?? 'Real Estate') ?>" property="article:section"/>
+<?php foreach ($post['tags'] as $tg): ?><meta content="<?= esc($tg) ?>" property="article:tag"/>
+<?php endforeach; ?>
+<?php endif; ?>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="<?= esc($docTitle) ?>" name="twitter:title"/>
+<meta content="<?= esc($docDesc) ?>" name="twitter:description"/>
+<meta content="<?= esc(abs_url('/' . $ogImage)) ?>" name="twitter:image"/>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23453230'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='17' font-weight='600' text-anchor='middle' fill='%23C9A15E'%3EE%3C/text%3E%3C/svg%3E" rel="icon" type="image/svg+xml"/>
+<?php
+/* Structured data. The site had none, which meant a search engine had to infer
+   everything — who Erika is, where she works, and what an article on this site
+   even is. Each block is built as a PHP array and encoded, so it cannot go
+   malformed by hand-editing. */
+$ld = [];
+
+$ld[] = [
+    '@context' => 'https://schema.org',
+    '@type'    => 'RealEstateAgent',
+    '@id'      => abs_url('/') . '#erika',
+    'name'     => 'Erika K. Page',
+    'alternateName' => 'Erika Page',
+    'url'      => abs_url('/'),
+    'image'    => abs_url('/assets/photos/01/a1-red-blazer-black.jpg'),
+    'telephone' => cms('global.phone'),
+    'description' => $siteDesc,
+    'jobTitle' => 'Real Estate Agent, Speaker & Founder of Escaluxe Global',
+    'memberOf' => ['@type' => 'Organization', 'name' => 'Axen Realty'],
+    'knowsAbout' => ['Residential real estate', 'Listing strategy', 'Buyer representation',
+                     'Contract negotiation', 'Property management', 'Real estate investing'],
+    'areaServed' => array_map(
+        fn($n) => ['@type' => 'AdministrativeArea', 'name' => $n],
+        ['Metro Atlanta, Georgia', 'Fulton County, Georgia', 'Gwinnett County, Georgia',
+         'Cobb County, Georgia', 'DeKalb County, Georgia', 'Fayette County, Georgia',
+         'Henry County, Georgia']
+    ),
+    'address' => ['@type' => 'PostalAddress', 'addressLocality' => 'Atlanta',
+                  'addressRegion' => 'GA', 'addressCountry' => 'US'],
+];
+
+if ($current === 'blog' || $post) {
+    $ld[] = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => array_values(array_filter([
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => abs_url('/')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Blog', 'item' => abs_url('/blog')],
+            $post ? ['@type' => 'ListItem', 'position' => 3, 'name' => $post['title'], 'item' => $canonUrl] : null,
+        ])),
+    ];
+}
+
+if ($current === 'blog') {
+    $ld[] = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Blog',
+        '@id' => abs_url('/blog') . '#blog',
+        'name' => 'Erika Explains — the blog',
+        'description' => $pageMeta['blog'][1],
+        'url' => abs_url('/blog'),
+        'inLanguage' => 'en-US',
+        'author' => ['@id' => abs_url('/') . '#erika'],
+        'blogPost' => array_map(fn($bp) => [
+            '@type' => 'BlogPosting',
+            'headline' => $bp['title'],
+            'url' => abs_url(post_path($bp['slug'])),
+            'datePublished' => $bp['date'],
+        ], $blogPosts),
+    ];
+}
+
+if ($post) {
+    $bodyHtml = blog_body_html($post['body']);
+    $article = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BlogPosting',
+        '@id' => $canonUrl . '#article',
+        'headline' => $post['title'],
+        'description' => $docDesc,
+        'url' => $canonUrl,
+        'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => $canonUrl],
+        'datePublished' => $post['date'],
+        'dateModified' => $post['updated'],
+        'inLanguage' => 'en-US',
+        'author' => ['@id' => abs_url('/') . '#erika'],
+        'publisher' => ['@id' => abs_url('/') . '#erika'],
+        'wordCount' => str_word_count(strip_tags($bodyHtml)),
+        'timeRequired' => 'PT' . blog_reading_time($post['body']) . 'M',
+        'articleSection' => BLOG_CATS[$post['cat']] ?? 'Real Estate',
+        'keywords' => implode(', ', $post['tags']),
+        'isPartOf' => ['@id' => abs_url('/blog') . '#blog'],
+    ];
+    if ($post['cover'] !== '') {
+        $cv = img_variants($post['cover']);
+        $article['image'] = array_filter([
+            '@type' => 'ImageObject',
+            'url' => abs_url('/' . $post['cover']),
+            'width' => $cv['w'] ?: null,
+            'height' => $cv['h'] ?: null,
+        ]);
+    }
+    if ($post['audio'] !== '') {
+        $article['audio'] = array_filter([
+            '@type' => 'AudioObject',
+            'name' => 'Listen to “' . $post['title'] . '”',
+            'contentUrl' => abs_url('/' . $post['audio']),
+            'encodingFormat' => 'audio/mpeg',
+            'duration' => iso_duration($post['audio_secs']) ?: null,
+            'description' => 'AI narration of the written article.',
+        ]);
+    }
+    $ld[] = $article;
+
+    if ($post['faq']) {
+        $ld[] = [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => array_map(fn($f) => [
+                '@type' => 'Question',
+                'name' => html_entity_decode(strip_tags($f['q']), ENT_QUOTES, 'UTF-8'),
+                'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f['a']],
+            ], $post['faq']),
+        ];
+    }
+}
+
+foreach ($ld as $block) {
+    echo '<script type="application/ld+json">'
+       . json_encode($block, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE)
+       . "</script>\n";
+}
+?>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&amp;family=Archivo:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
@@ -99,6 +323,64 @@ img{max-width:100%;display:block}
    never see a pink box captioned "GUIDE COVER" — the slot simply collapses until a
    picture is set. Every slot is still listed in the admin whether it is filled or not. */
 .ph:not(:has(>img)):not(:has(>video)),.res-card .ph:not(:has(>img)){display:none}
+/* ---------- blog: the post list, the article page and its audio ---------- */
+.post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:28px;margin-top:44px}
+.post-card{display:block;background:#fff;border:1px solid var(--line);overflow:hidden;color:inherit;transition:border-color .25s,transform .3s var(--ease),box-shadow .3s var(--ease)}
+.post-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow-m)}
+.post-card .ph{aspect-ratio:16/10;transition:transform .5s var(--ease)}
+.post-card:hover .ph{transform:scale(1.03)}
+.post-card .body{padding:24px;position:relative;background:#fff;z-index:2}
+.post-card .cat{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold-deep);margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap}
+.post-card .cat span{color:var(--body);font-weight:600;letter-spacing:.1em}
+.post-card h3{font-size:20px;line-height:1.3;font-family:'Fraunces',serif;color:var(--ink)}
+.post-card p{font-size:14px;margin-top:10px}
+.post-card .more{display:inline-block;margin-top:14px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--merlot-ink)}
+.post-empty{margin-top:40px;padding:34px;border:1px dashed var(--line);text-align:center;font-size:15px}
+.crumbs{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--body)}
+.crumbs a{color:var(--merlot-ink);border-bottom:1px solid transparent}
+.crumbs a:hover{border-color:var(--gold)}
+.crumbs span{color:rgba(92,75,71,.6);margin:0 8px}
+.art-wrap{max-width:760px;margin:0 auto}
+.art-meta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold-deep);margin-top:26px}
+.art-meta .dot{width:4px;height:4px;border-radius:50%;background:var(--blush);flex:none}
+.art-meta .who{color:var(--body);letter-spacing:.06em;font-weight:600;text-transform:none;font-size:13.5px}
+.art-lede{font-size:18px;margin-top:18px;color:var(--body);max-width:700px}
+.art-cover{margin-top:34px}
+.art-cover .ph{aspect-ratio:16/10}
+.art-cover figcaption,.art-fig figcaption{font-size:12px;color:rgba(92,75,71,.85);margin-top:8px;line-height:1.5}
+.art-cover figcaption a,.art-fig figcaption a{border-bottom:1px solid var(--line)}
+.art-cover figcaption a:hover,.art-fig figcaption a:hover{border-color:var(--gold)}
+.listen{margin:30px 0 8px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--gold);padding:20px 22px}
+.listen .hd{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.listen h2{font-size:17px;font-family:'Fraunces',serif}
+.listen .len{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold-deep)}
+.listen audio{width:100%;margin-top:14px;display:block}
+.listen .note{font-size:12px;color:rgba(92,75,71,.85);margin-top:10px}
+.art{margin-top:38px}
+.art>p{margin-bottom:20px;font-size:17px}
+.art h2{font-size:clamp(23px,2.6vw,30px);margin:42px 0 14px}
+.art h3{font-size:20px;margin:30px 0 10px}
+.art ul,.art ol{margin:0 0 22px 22px}
+.art li{margin-bottom:12px;font-size:17px}
+.art a{color:var(--merlot-ink);border-bottom:1px solid rgba(176,94,81,.4)}
+.art a:hover{border-color:var(--merlot-deep)}
+.art strong{color:var(--ink);font-weight:600}
+.art blockquote{margin:28px 0;padding:4px 0 4px 22px;border-left:3px solid var(--gold);font-family:'Fraunces',serif;font-size:21px;color:var(--ink);line-height:1.45}
+.art-fig{margin:30px 0}
+.art-fig .ph,.art-fig>img{width:100%}
+.art-fig>img{border:1px solid var(--line)}
+.art-tags{margin-top:38px;display:flex;gap:9px;flex-wrap:wrap}
+.art-tags .tg{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--body);border:1px solid var(--line);padding:6px 13px;background:#fff}
+.art-note{margin-top:26px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:rgba(92,75,71,.9)}
+.art-cta{margin-top:40px;background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);padding:32px}
+.art-cta h2{font-size:22px;margin:0 0 6px}
+.art-cta p{font-size:15px;margin-bottom:20px}
+.nf{text-align:center;max-width:620px;margin:0 auto}
+.nf .big{font-family:'Fraunces',serif;font-size:74px;color:var(--gold);line-height:1}
+@media(max-width:560px){
+  .art>p,.art li{font-size:16px}
+  .art-cta,.listen,.form-card{padding:22px}
+}
 .topbar{background:var(--ink-deep);color:var(--cream);font-size:12.5px;letter-spacing:.06em;padding:10px 16px;text-align:center;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
 .topbar::-webkit-scrollbar{display:none}
 .topbar b{color:var(--gold-soft);font-weight:600}
@@ -408,6 +690,7 @@ html,body{max-width:100%;overflow-x:clip}
 <li class="has-drop"><a data-p="resources" href="/resources" data-nav="resources" onclick="return _nav(event,'resources')">Resources ▾</a>
 <div class="drop"><a href="/resources" data-nav="resources" onclick="return _nav(event,'resources')">All Resources</a><a href="/digital-products" data-nav="products" onclick="return _nav(event,'products')">Digital Products</a><a href="/erika-explains" data-nav="explains" onclick="return _nav(event,'explains')">Erika Explains</a><a href="/mentorship" data-nav="mentorship" onclick="return _nav(event,'mentorship')">Mentorship</a><a href="/investing" data-nav="investing" onclick="return _nav(event,'investing')">Investing / C&amp;A</a><a href="/property-management" data-nav="pm" onclick="return _nav(event,'pm')">Property Management</a><a href="/transportation-logistics" data-nav="transportation" onclick="return _nav(event,'transportation')">Transportation &amp; Logistics</a><a href="/escaluxe-living" data-nav="living" onclick="return _nav(event,'living')">Escaluxe Living</a></div></li>
 <li><a data-p="gallery" href="/gallery" data-nav="gallery" onclick="return _nav(event,'gallery')">Gallery</a></li>
+<li><a data-p="blog" href="/blog" data-nav="blog" onclick="return _nav(event,'blog')">Blog</a></li>
 <li><a data-p="testimonials" href="/testimonials" data-nav="testimonials" onclick="return _nav(event,'testimonials')">Testimonials</a></li>
 <li><a data-p="contact" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')">Contact</a></li>
 <li><a class="nav-cta" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')">Home Value Strategy</a></li>
@@ -438,7 +721,7 @@ html,body{max-width:100%;overflow-x:clip}
 <!-- Any .ph box (this headshot, the page heroes, listing photos...) accepts real media:
            photo: <div class="ph hero-photo"><img src="erika-headshot.jpg" alt="Erika Page"></div>
            video: <div class="ph hero-photo"><video src="intro.mp4" autoplay muted loop playsinline></video></div> -->
-<div class="ph hero-photo" data-label="Erika — Headshot · Photo or Video"><?= cms_img('home.atlanta-metro-established-au.img-erika-headshot-photo-o', true, 'hero') ?></div>
+<div class="ph hero-photo" data-label="Erika — Headshot · Photo or Video"><?= cms_img('home.atlanta-metro-established-au.img-erika-headshot-photo-o', $current === 'home', 'hero') ?></div>
 </div>
 </header>
 <div aria-label="Erika Page career highlights" class="ticker">
@@ -1834,6 +2117,135 @@ html,body{max-width:100%;overflow-x:clip}
 </div>
 </section>
 </div>
+<!-- ==================== BLOG /blog ==================== -->
+<div class="page" id="page-blog">
+<header class="page-hero">
+<div class="wrap">
+<p class="eyebrow"><?= cms_e('blog.blog.eyebrow1') ?></p>
+<h1 style="margin-top:12px"><?= cms_rich('blog.blog.heading1') ?></h1>
+<p><?= cms_rich('blog.blog.p1') ?></p>
+<?php
+/* Only categories that actually have a post get a chip. A filter that leads to
+   an empty grid is worse than no filter — the same rule the gallery follows. */
+$blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPosts)));
+?>
+<?php if (count($blogPosts) > 1 && count(array_filter($blogCats)) > 1): ?>
+<div class="rev-filter">
+<span class="chip on" data-cat="">All</span>
+<?php foreach (BLOG_CATS as $cid => $clabel): if (!in_array($cid, $blogCats, true)) continue; ?>
+<span class="chip" data-cat="<?= esc($cid) ?>"><?= esc($clabel) ?></span>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+</div>
+</header>
+<section>
+<div class="wrap">
+<?php if (!$blogPosts): ?>
+<p class="post-empty">The first article is on its way.</p>
+<?php else: ?>
+<div class="post-grid">
+<?php foreach ($blogPosts as $bi => $bp): ?>
+<a class="post-card" data-cat="<?= esc($bp['cat']) ?>" href="<?= esc(post_path($bp['slug'])) ?>">
+<div class="ph" data-label="Article cover"><?= $bp['cover'] !== '' ? media_tag($bp['cover'], $bp['cover_alt'], $bi === 0 && $current === 'blog', 'card') : '' ?></div>
+<div class="body">
+<div class="cat"><?= esc(BLOG_CATS[$bp['cat']] ?? 'Real Estate') ?><span><?= esc(date('j M Y', strtotime($bp['date']))) ?></span><span><?= blog_reading_time($bp['body']) ?> min read<?= $bp['audio'] !== '' ? ' · Audio' : '' ?></span></div>
+<h3><?= esc($bp['title']) ?></h3>
+<p><?= esc($bp['excerpt']) ?></p>
+<span class="more">Read the article →</span>
+</div>
+</a>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+<p style="text-align:center;margin-top:40px;font-size:14px"><?= cms_rich('blog.blog.p2') ?></p>
+</div>
+</section>
+</div>
+<?php if ($post): ?>
+<!-- ==================== ARTICLE /blog/<slug> ==================== -->
+<div class="page" id="page-post">
+<header class="page-hero">
+<div class="wrap art-wrap">
+<p class="crumbs"><a href="/" data-nav="home" onclick="return _nav(event,'home')">Home</a><span>/</span><a href="/blog" data-nav="blog" onclick="return _nav(event,'blog')">Blog</a></p>
+<div class="art-meta">
+<span><?= esc(BLOG_CATS[$post['cat']] ?? 'Real Estate') ?></span><i class="dot"></i>
+<span><?= esc(date('j F Y', strtotime($post['date']))) ?></span><i class="dot"></i>
+<span><?= blog_reading_time($post['body']) ?> min read</span>
+</div>
+<h1 style="margin-top:14px"><?= esc($post['title']) ?></h1>
+<?php if ($post['excerpt'] !== ''): ?><p class="art-lede"><?= esc($post['excerpt']) ?></p><?php endif; ?>
+<p class="art-meta"><span class="who">By <?= esc($post['author']) ?> · Axen Realty · Founder, Escaluxe Global</span></p>
+</div>
+</header>
+<section style="padding-top:44px">
+<div class="wrap art-wrap">
+<?php if ($post['cover'] !== ''): ?>
+<figure class="art-cover">
+<div class="ph" data-label="Article cover"><?= media_tag($post['cover'], $post['cover_alt'], true, 'article') ?></div>
+<?php if ($post['cover_credit'] !== ''): ?><figcaption><?= $post['cover_credit'] ?></figcaption><?php endif; ?>
+</figure>
+<?php endif; ?>
+
+<?php if ($post['audio'] !== ''): ?>
+<div class="listen">
+<div class="hd"><h2>Listen to this article</h2><?php $cd = clock_duration($post['audio_secs']); if ($cd !== ''): ?><span class="len"><?= esc($cd) ?></span><?php endif; ?></div>
+<?= audio_tag($post['audio'], 'Listen to ' . $post['title']) ?>
+<p class="note">An AI narration of the article above, in Erika&rsquo;s voice. Same words, read aloud.</p>
+</div>
+<?php endif; ?>
+
+<div class="art"><?= blog_body_html($post['body']) ?></div>
+
+<?php if ($post['faq']): ?>
+<h2 style="font-size:clamp(23px,2.6vw,30px);margin:46px 0 4px">Questions I get asked every week</h2>
+<div class="faq" style="max-width:none">
+<?php foreach ($post['faq'] as $f): ?>
+<details><summary><?= esc(html_entity_decode(strip_tags($f['q']), ENT_QUOTES, 'UTF-8')) ?></summary><p><?= $f['a'] ?></p></details>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+<div class="art-cta">
+<h2><?= cms_e('blog.article-cta.heading1') ?></h2>
+<p><?= cms_rich('blog.article-cta.p1') ?></p>
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Closing Costs 101 Request"><input type="hidden" name="_page" value="blog"><input type="hidden" name="_post" value="<?= esc($post['slug']) ?>"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
+<div class="fld-row">
+<div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
+<div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
+</div>
+<div class="fld"><label>What are you planning?</label><textarea name="f_what_are_you_planning" placeholder="Buying, selling, or both — and roughly when." rows="2"></textarea></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<button type="submit" class="btn btn-primary"><?= cms_e('blog.article-cta.btn1') ?></button>
+<a class="btn btn-outline" href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')"><?= cms_e('blog.article-cta.btn2') ?></a>
+</div>
+</form>
+</div>
+
+<?php if ($post['tags']): ?>
+<div class="art-tags"><?php foreach ($post['tags'] as $tg): ?><span class="tg"><?= esc($tg) ?></span><?php endforeach; ?></div>
+<?php endif; ?>
+<p class="art-note">Explanatory only &mdash; not tax advice, not legal advice. Erika K. Page is a licensed Georgia real estate agent with Axen Realty. Market figures are dated and attributed in the article; verify anything you are relying on before you act on it.</p>
+<p style="margin-top:22px"><a class="crumbs" href="/blog" data-nav="blog" onclick="return _nav(event,'blog')">&larr; All articles</a></p>
+</div>
+</section>
+</div>
+<?php endif; ?>
+<!-- ==================== 404 ==================== -->
+<div class="page" id="page-404">
+<header class="page-hero">
+<div class="wrap nf">
+<p class="big">404</p>
+<h1 style="margin-top:6px">That page isn&rsquo;t here.</h1>
+<p>It may have moved, or the address may have a typo in it. Here is the way back.</p>
+<div style="margin-top:30px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+<a class="btn btn-primary" href="/" data-nav="home" onclick="return _nav(event,'home')">Back to the home page</a>
+<a class="btn btn-outline" href="/blog" data-nav="blog" onclick="return _nav(event,'blog')">Read the blog</a>
+<a class="btn btn-outline" href="/contact" data-nav="contact" onclick="return _nav(event,'contact')">Contact Erika</a>
+</div>
+</div>
+</header>
+</div>
 </main>
 <!-- ==================== FOOTER ==================== -->
 <footer>
@@ -1846,7 +2258,7 @@ html,body{max-width:100%;overflow-x:clip}
 </div>
 <div>
 <h4>Quick Links</h4>
-<ul><li><a href="/about" data-nav="about" onclick="return _nav(event,'about')">About</a></li><li><a href="/sell" data-nav="sell" onclick="return _nav(event,'sell')">Sell</a></li><li><a href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')">Home Value</a></li><li><a href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')">Speaking</a></li><li><a href="/testimonials" data-nav="testimonials" onclick="return _nav(event,'testimonials')">Testimonials</a></li><li><a href="/gallery" data-nav="gallery" onclick="return _nav(event,'gallery')">Gallery</a></li><li><a href="/resources" data-nav="resources" onclick="return _nav(event,'resources')">Resources</a></li><li><a href="/contact" data-nav="contact" onclick="return _nav(event,'contact')">Contact</a></li></ul>
+<ul><li><a href="/about" data-nav="about" onclick="return _nav(event,'about')">About</a></li><li><a href="/sell" data-nav="sell" onclick="return _nav(event,'sell')">Sell</a></li><li><a href="/home-value" data-nav="homevalue" onclick="return _nav(event,'homevalue')">Home Value</a></li><li><a href="/speaking" data-nav="speaking" onclick="return _nav(event,'speaking')">Speaking</a></li><li><a href="/testimonials" data-nav="testimonials" onclick="return _nav(event,'testimonials')">Testimonials</a></li><li><a href="/gallery" data-nav="gallery" onclick="return _nav(event,'gallery')">Gallery</a></li><li><a href="/resources" data-nav="resources" onclick="return _nav(event,'resources')">Resources</a></li><li><a href="/contact" data-nav="contact" onclick="return _nav(event,'contact')">Contact</a></li><li><a href="/blog" data-nav="blog" onclick="return _nav(event,'blog')">Blog</a></li></ul>
 </div>
 <div>
 <h4>Ecosystem</h4>
@@ -1880,9 +2292,22 @@ var PATHS=window.__paths||{};                 // id -> "/clean-path"
 var PATH2ID={};for(var k in PATHS){PATH2ID[PATHS[k]]=k;}
 function closeNav(){nl.classList.remove('open');burger.setAttribute('aria-expanded','false');}
 function setNavActive(p){
-  var map={homevalue:'sell',media:'lifestyle',collaborations:'lifestyle',products:'resources',explains:'resources',mentorship:'resources',investing:'resources',pm:'resources',transportation:'resources',living:'resources','loc-atlanta':'home','loc-gwinnett':'home','loc-fayette':'home',about:'home'};
+  var map={homevalue:'sell',media:'lifestyle',collaborations:'lifestyle',products:'resources',explains:'resources',mentorship:'resources',investing:'resources',pm:'resources',transportation:'resources',living:'resources','loc-atlanta':'home','loc-gwinnett':'home','loc-fayette':'home','loc-northfulton':'home','loc-cobb':'home','loc-dekalb':'home','loc-henry':'home',about:'home',post:'blog'};
   var key=map[p]||p;
   document.querySelectorAll('.nav-links a[data-p]').forEach(function(a){a.classList.toggle('active',a.dataset.p===key)});
+}
+/* The document's own title, description and canonical link belong to whichever
+   page is showing. Navigating without a reload used to leave all three pointing
+   at the page the visitor first landed on. */
+var META=window.__meta||{};
+function setMeta(p){
+  var m=META[p];
+  if(!m)return;
+  if(m.t)document.title=m.t;
+  var d=document.querySelector('meta[name="description"]');
+  if(d&&m.d)d.setAttribute('content',m.d);
+  var c=document.querySelector('link[rel="canonical"]');
+  if(c&&m.u)c.setAttribute('href',m.u);
 }
 /* render a page without touching history (used on load + back/forward) */
 function render(p){
@@ -1891,6 +2316,7 @@ function render(p){
   document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active')});
   t.classList.add('active');
   setNavActive(p);
+  setMeta(p);
   closeNav();
   return true;
 }
@@ -1949,12 +2375,13 @@ document.querySelectorAll('.chip').forEach(function(c){
   function activate(){
     c.parentElement.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});
     c.classList.add('on');
-    /* Only the gallery chips carry a category; the ones on other pages stay
-       decorative until those sections have real categories of their own. */
+    /* Only chips that carry a category filter anything — the decorative ones on
+       other pages have no data-cat and are left alone. The gallery and the blog
+       both have real categories, so both are filtered here. */
     var cat=c.getAttribute('data-cat');
     if(cat===null)return;
     var page=c.closest('.page');
-    (page||document).querySelectorAll('.gal .g').forEach(function(g){
+    (page||document).querySelectorAll('.gal .g,.post-grid .post-card').forEach(function(g){
       g.style.display=(cat===''||g.getAttribute('data-cat')===cat)?'':'none';
     });
   }
@@ -1964,7 +2391,7 @@ document.querySelectorAll('.chip').forEach(function(c){
 
 /* ---------- scroll reveal ---------- */
 if(!reduced&&'IntersectionObserver' in window){
-  var sel='.split>*,.center-h,.tst,.eco,.res-card,.step,.prod,.topic,.gal .g,.thumb-strip .g,.form-card,.info-card,.two-col>*,.press-logo,.lead-mag,.faq';
+  var sel='.split>*,.center-h,.tst,.eco,.res-card,.post-card,.step,.prod,.topic,.gal .g,.thumb-strip .g,.form-card,.info-card,.two-col>*,.press-logo,.lead-mag,.faq';
   var els=document.querySelectorAll(sel);
   els.forEach(function(el){
     el.classList.add('reveal');
@@ -2043,7 +2470,8 @@ if ($banner !== '') {
 
 // Router data for the client (real URLs + history) — must load before the router script.
 $inject = '<script>window.__page=' . json_encode($current)
-        . ';window.__paths=' . json_encode($PATHS) . ';</script>';
+        . ';window.__paths=' . json_encode($PATHS)
+        . ';window.__meta=' . json_encode($META, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ';</script>';
 $html = str_replace('</head>', $inject . '</head>', $html);
 
 echo $html;

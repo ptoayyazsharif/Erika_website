@@ -1226,6 +1226,20 @@ return [
       ['k' => 'contact.section-2.btn3', 't' => 'text', 'label' => 'Button: “Partner With Erika”', 'd' => 'Partner With Erika'],
     ]],
   ]],
+  'blog' => ['title' => 'Blog', 'sections' => [
+    ['title' => 'Blog · header', 'fields' => [
+      ['k' => 'blog.blog.eyebrow1', 't' => 'text', 'label' => 'Small label (eyebrow)', 'd' => 'Erika Explains · The Blog'],
+      ['k' => 'blog.blog.heading1', 't' => 'rich', 'label' => 'Heading', 'd' => 'Real estate, <em>explained</em>.'],
+      ['k' => 'blog.blog.p1', 't' => 'rich', 'label' => 'Intro text', 'd' => 'No fluff and no hype — just the things people actually get wrong about buying, selling and owning property in Metro Atlanta. Every article can be read or listened to.'],
+      ['k' => 'blog.blog.p2', 't' => 'rich', 'label' => 'Text under the article list', 'd' => 'More on the way. If there is something you want explained, <a href="/contact">tell Erika</a> and it may well become the next one.'],
+    ]],
+    ['title' => 'Blog · the box at the end of every article', 'fields' => [
+      ['k' => 'blog.article-cta.heading1', 't' => 'text', 'label' => 'Heading', 'd' => 'Let\'s plan your numbers first'],
+      ['k' => 'blog.article-cta.p1', 't' => 'rich', 'label' => 'Text', 'd' => 'Tell Erika what you are planning and she will put real numbers to it — before you fall in love with a house.'],
+      ['k' => 'blog.article-cta.btn1', 't' => 'text', 'label' => 'Button on the form', 'd' => 'Send My Numbers'],
+      ['k' => 'blog.article-cta.btn2', 't' => 'text', 'label' => 'Second button', 'd' => 'Request a Home Value Strategy'],
+    ]],
+  ]],
   'global' => ['title' => 'Global', 'sections' => [
     ['title' => 'Contact details', 'fields' => [
       ['k' => 'global.phone', 't' => 'text', 'label' => 'Phone number (top bar)', 'd' => '678-404-1562'],
@@ -1240,6 +1254,7 @@ return [
     ['title' => 'SEO', 'fields' => [
       ['k' => 'global.meta-title', 't' => 'text', 'label' => 'Browser tab / SEO title', 'd' => 'Erika Page | Atlanta Metro Real Estate Expert, Speaker & Mentor'],
       ['k' => 'global.meta-desc', 't' => 'text', 'label' => 'SEO description', 'd' => 'Erika Page — Atlanta Metro real estate expert with 24+ years of experience, 1,000+ families served and $400M+ in career sales. Seller strategy, buying, speaking, mentorship and more.'],
+      ['k' => 'global.site-url', 't' => 'text', 'label' => 'Site address (used for canonical links, social previews & the sitemap)', 'd' => 'https://erikakpage.com'],
     ]],
   ]],
 ];

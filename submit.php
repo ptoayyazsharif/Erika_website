@@ -8,7 +8,11 @@ require __DIR__ . '/cms.php';
 require __DIR__ . '/routes.php';
 
 function back_to(string $pageId, string $flag): void {
-    $path = path_for($pageId ?: 'home');
+    // A form on an article posts its slug too: article pages are not in ROUTES,
+    // so path_for() would send the visitor to the home page instead of back to
+    // what they were reading.
+    $slug = blog_slug_for_path('/blog/' . ($_POST['_post'] ?? ''));
+    $path = $slug !== '' ? post_path($slug) : path_for($pageId ?: 'home');
     header('Location: ' . $path . '?' . $flag);
     exit;
 }

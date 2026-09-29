@@ -1,0 +1,12 @@
+# erikakpage.com
+User-agent: *
+Allow: /
+
+# The CMS, the installer and the form handler are not content.
+Disallow: /admin.php
+Disallow: /setup.php
+Disallow: /submit.php
+Disallow: /uploads/
+Disallow: /dist/
+
+Sitemap: https://erikakpage.com/sitemap.xml

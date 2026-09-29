@@ -34,6 +34,7 @@ const ROUTES = [
     'east-cobb-marietta'            => 'loc-cobb',
     'brookhaven-decatur-tucker'     => 'loc-dekalb',
     'mcdonough-henry'               => 'loc-henry',
+    'blog'                          => 'blog',
     'gallery'                       => 'gallery',
     'contact'                       => 'contact',
 ];
@@ -50,4 +51,22 @@ function path_for(string $id): string {
 function id_for_path(string $path): string {
     $path = trim(parse_url($path, PHP_URL_PATH) ?? '', '/');
     return ROUTES[$path] ?? '';
+}
+
+/**
+ * A post URL ("/blog/why-closing-costs-vary") -> its slug, or '' when the path
+ * is not a post URL at all.
+ *
+ * Posts are the one part of the site with no entry in ROUTES: there is an
+ * unknown number of them and they are stored rather than coded, so the path is
+ * matched by shape here and the slug is looked up against the stored list.
+ */
+function blog_slug_for_path(string $path): string {
+    $path = trim(parse_url($path, PHP_URL_PATH) ?? '', '/');
+    return preg_match('#^blog/([a-z0-9][a-z0-9\-]*)$#', $path, $m) ? $m[1] : '';
+}
+
+/** slug -> the post's clean path, beginning with "/". */
+function post_path(string $slug): string {
+    return '/blog/' . $slug;
 }

@@ -163,6 +163,44 @@ function esc(string $s): string {
     return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * The site's own origin, with no trailing slash — for canonical links, Open
+ * Graph URLs and the sitemap, all of which have to be absolute.
+ *
+ * Editable in the admin because it changes between the live domain and any
+ * staging copy, and a canonical link pointing at the wrong host is worse than
+ * none at all.
+ */
+function site_url(): string {
+    $u = trim(cms('global.site-url'));
+    if ($u === '') {
+        $host = $_SERVER['HTTP_HOST'] ?? 'erikakpage.com';
+        $scheme = (($_SERVER['HTTPS'] ?? '') === 'on' || ($_SERVER['SERVER_PORT'] ?? '') === '443') ? 'https' : 'http';
+        $u = $scheme . '://' . $host;
+    }
+    return rtrim($u, '/');
+}
+
+/**
+ * A media path as the browser should see it: root-relative.
+ *
+ * Stored paths are site-relative ("assets/photos/01/a1.jpg"), which a browser
+ * resolves against the directory of the current URL. That is the same thing on
+ * every flat page, but an article lives at /blog/<slug>, where the same string
+ * would be looked for in /blog/assets/… and 404. Everything media_tag() and
+ * audio_tag() emit therefore goes through here.
+ */
+function asset_url(string $p): string {
+    $p = trim($p);
+    if ($p === '' || preg_match('#^(?:[a-z][a-z0-9+.-]*:|//|/)#i', $p)) return $p;
+    return '/' . $p;
+}
+
+/** An absolute URL for a path that begins with "/". */
+function abs_url(string $path): string {
+    return site_url() . ($path === '/' ? '/' : $path);
+}
+
 /** Escaped plain-text field. */
 function cms_e(string $k): string {
     return esc(cms($k));
@@ -246,6 +284,7 @@ const SLOT_SIZES = [
     'card'   => ['(max-width:920px) 92vw, 30vw', 800],   // three-up resource & product cards
     'tile'   => ['(max-width:560px) 46vw, (max-width:920px) 31vw, 15vw', 800], // thumbnail strip
     'gal'    => ['(max-width:560px) 46vw, (max-width:920px) 46vw, 30vw', 800], // gallery masonry
+    'article'=> ['(max-width:920px) 92vw, 720px', 1200], // blog cover & body pictures
 ];
 
 /**
@@ -274,7 +313,7 @@ function img_variants(string $path, int $cap = 0): array {
     $set = [];
     foreach (glob(__DIR__ . '/assets/rimg/*/' . $rel . '.webp') as $file) {
         if (preg_match('#/assets/rimg/(\d+)/#', $file, $m)) {
-            $set[(int) $m[1]] = 'assets/rimg/' . $m[1] . '/' . $rel . '.webp';
+            $set[(int) $m[1]] = asset_url('assets/rimg/' . $m[1] . '/' . $rel . '.webp');
         }
     }
     if ($set) {
@@ -366,8 +405,8 @@ function media_tag(string $v, string $alt = '', bool $eager = false, string $slo
         $m = video_meta($v);
         $dimAttr = $m['w'] > 0 ? ' width="' . $m['w'] . '" height="' . $m['h'] . '"' : '';
         $poster  = video_poster($v);
-        $posterAttr = $poster !== '' ? ' poster="' . esc($poster) . '"' : '';
-        return '<video src="' . esc($v) . '"' . $dimAttr . $posterAttr
+        $posterAttr = $poster !== '' ? ' poster="' . esc(asset_url($poster)) . '"' : '';
+        return '<video src="' . esc(asset_url($v)) . '"' . $dimAttr . $posterAttr
             . ' autoplay muted loop playsinline preload="metadata"' . $styleAttr . '></video>';
     }
 
@@ -382,7 +421,7 @@ function media_tag(string $v, string $alt = '', bool $eager = false, string $slo
     $dimAttr = $var['w'] > 0 ? ' width="' . $var['w'] . '" height="' . $var['h'] . '"' : '';
     $loading = $eager ? ' fetchpriority="high" decoding="async"' : ' loading="lazy" decoding="async"';
 
-    return '<img src="' . esc($v) . '"' . $srcAttr . $dimAttr
+    return '<img src="' . esc(asset_url($v)) . '"' . $srcAttr . $dimAttr
         . ' alt="' . esc($alt) . '"' . $loading . $styleAttr . '>';
 }
 
@@ -501,6 +540,290 @@ function gallery_items(): array {
 
 function gallery_items_save(array $items): void {
     set_setting('gallery.items', json_encode(array_values($items), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+}
+
+/* ---------- blog ----------
+ * Posts behave like the gallery rather than like a page: there is no fixed
+ * number of them, so the whole list lives as one JSON value in the content
+ * table and growing it never needs a code change or a migration.
+ *
+ * The one difference from the gallery is that a post can also ship in a file.
+ * posts.php is the default list, exactly as fields.php is the default for page
+ * copy — which means an article can be published by uploading files, with no
+ * database write at all. The two lists are merged by slug: the admin's copy of
+ * a post wins, a post that exists only in the file is appended, and a post
+ * removed in the admin is remembered in 'blog.removed' so it stays removed.
+ */
+
+/** Category id => the label printed on its filter chip and in the meta line. */
+const BLOG_CATS = [
+    'buying'    => 'Buying',
+    'selling'   => 'Selling',
+    'investing' => 'Investing',
+    'market'    => 'Atlanta Market',
+    'lifestyle' => 'Lifestyle',
+];
+
+/** The posts that ship with the site. */
+function blog_seed(): array {
+    static $seed;
+    if ($seed === null) {
+        $file = __DIR__ . '/posts.php';
+        $seed = is_file($file) ? (array) require $file : [];
+    }
+    return $seed;
+}
+
+/** Title -> url-safe slug, for a post created in the admin. */
+function blog_slugify(string $s): string {
+    $s = strtolower(trim(html_entity_decode($s, ENT_QUOTES, 'UTF-8')));
+    $s = preg_replace('/[^a-z0-9]+/', '-', $s);
+    return trim((string) $s, '-');
+}
+
+/**
+ * One post, cleaned up on the way out of storage.
+ *
+ * Everything is re-checked here rather than trusted, because a row may have
+ * come from a form: paths must point at a file that lives with the site, the
+ * category must be a known one, and the date must be a date.
+ */
+function blog_clean(array $p): ?array {
+    $slug = blog_slugify((string) ($p['slug'] ?? ''));
+    if ($slug === '') $slug = blog_slugify((string) ($p['title'] ?? ''));
+    if ($slug === '') return null;
+
+    $date = trim((string) ($p['date'] ?? ''));
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) $date = date('Y-m-d');
+    $updated = trim((string) ($p['updated'] ?? ''));
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $updated)) $updated = $date;
+
+    $faq = [];
+    foreach ((array) ($p['faq'] ?? []) as $row) {
+        if (!is_array($row)) continue;
+        $q = trim((string) ($row['q'] ?? ''));
+        $a = trim((string) ($row['a'] ?? ''));
+        if ($q !== '' && $a !== '') $faq[] = ['q' => $q, 'a' => strip_bad($a)];
+    }
+
+    $tags = [];
+    foreach ((array) ($p['tags'] ?? []) as $t) {
+        $t = trim((string) $t);
+        if ($t !== '') $tags[] = $t;
+    }
+
+    return [
+        'slug'         => $slug,
+        'title'        => trim((string) ($p['title'] ?? $slug)),
+        'seo_title'    => trim((string) ($p['seo_title'] ?? '')),
+        'seo_desc'     => trim((string) ($p['seo_desc'] ?? '')),
+        'excerpt'      => trim((string) ($p['excerpt'] ?? '')),
+        'date'         => $date,
+        'updated'      => $updated,
+        'author'       => trim((string) ($p['author'] ?? 'Erika K. Page')),
+        'cat'          => isset(BLOG_CATS[$p['cat'] ?? '']) ? (string) $p['cat'] : '',
+        'tags'         => $tags,
+        'cover'        => gallery_safe_src((string) ($p['cover'] ?? '')),
+        'cover_alt'    => trim((string) ($p['cover_alt'] ?? '')),
+        'cover_credit' => strip_bad(trim((string) ($p['cover_credit'] ?? ''))),
+        'audio'        => gallery_safe_src((string) ($p['audio'] ?? '')),
+        'audio_secs'   => max(0, (int) ($p['audio_secs'] ?? 0)),
+        // A browser submits a textarea with CRLF line endings; normalising them
+        // keeps a saved body byte-identical to the same text written in a file.
+        'body'         => str_replace("\r\n", "\n", (string) ($p['body'] ?? '')),
+        'faq'          => $faq,
+        'published'    => !empty($p['published']),
+    ];
+}
+
+/** Slugs removed in the admin, so a deleted post does not come back from the file. */
+function blog_removed(): array {
+    $raw = setting('blog.removed', '');
+    $list = $raw === '' ? [] : json_decode($raw, true);
+    return is_array($list) ? array_map('strval', $list) : [];
+}
+
+/**
+ * Every post, newest first.
+ *
+ * @param bool $drafts include posts that are not published yet (the admin does)
+ */
+function blog_posts(bool $drafts = false): array {
+    $out = [];
+
+    $raw = setting('blog.posts', '');
+    if ($raw !== '') {
+        $list = json_decode($raw, true);
+        if (is_array($list)) {
+            foreach ($list as $p) {
+                if (!is_array($p)) continue;
+                $c = blog_clean($p);
+                if ($c) $out[$c['slug']] = $c;
+            }
+        }
+    }
+
+    $removed = blog_removed();
+    foreach (blog_seed() as $p) {
+        if (!is_array($p)) continue;
+        $c = blog_clean($p);
+        if (!$c) continue;
+        if (isset($out[$c['slug']]) || in_array($c['slug'], $removed, true)) continue;
+        $out[$c['slug']] = $c;
+    }
+
+    if (!$drafts) $out = array_filter($out, fn($p) => $p['published']);
+
+    $out = array_values($out);
+    usort($out, fn($a, $b) => [$b['date'], $b['slug']] <=> [$a['date'], $a['slug']]);
+    return $out;
+}
+
+/** One published post by slug, or null. */
+function blog_post(string $slug, bool $drafts = false): ?array {
+    foreach (blog_posts($drafts) as $p) {
+        if ($p['slug'] === $slug) return $p;
+    }
+    return null;
+}
+
+function blog_posts_save(array $posts): void {
+    set_setting('blog.posts', json_encode(array_values($posts), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+}
+
+function blog_removed_save(array $slugs): void {
+    set_setting('blog.removed', json_encode(array_values(array_unique($slugs)), JSON_UNESCAPED_SLASHES));
+}
+
+/**
+ * Article body, ready to print.
+ *
+ * Sanitized like any other stored HTML, then [[img:path|alt|credit]] tokens are
+ * replaced with a real <figure>. Pictures go through media_tag() so a body
+ * picture gets the same responsive ladder, lazy loading and intrinsic size as
+ * every other picture on the site.
+ */
+function blog_body_html(string $body): string {
+    $html = strip_bad($body);
+    return (string) preg_replace_callback(
+        '/\[\[img:([^\|\]]+)(?:\|([^\|\]]*))?(?:\|([^\]]*))?\]\]/',
+        function (array $m): string {
+            $src = gallery_safe_src($m[1]);
+            if ($src === '') return '';
+            $alt    = trim($m[2] ?? '');
+            $credit = trim($m[3] ?? '');
+            $fig  = '<figure class="art-fig">' . media_tag($src, $alt, false, 'article');
+            if ($credit !== '') $fig .= '<figcaption>' . strip_bad($credit) . '</figcaption>';
+            return $fig . '</figure>';
+        },
+        $html
+    );
+}
+
+/**
+ * FAQ list <-> the plain text the admin edits.
+ *
+ * One question per block: the first line is the question, the rest is the
+ * answer, blocks separated by a blank line. Chosen over a grid of paired inputs
+ * because it survives adding and removing questions without renumbering.
+ */
+function blog_faq_to_text(array $faq): string {
+    $out = [];
+    foreach ($faq as $f) $out[] = trim($f['q']) . "\n" . trim($f['a']);
+    return implode("\n\n", $out);
+}
+
+function blog_faq_from_text(string $t): array {
+    $out = [];
+    foreach (preg_split('/\R{2,}/', str_replace("\r\n", "\n", trim($t))) as $blk) {
+        $lines = preg_split('/\R/', trim($blk));
+        $q = trim(array_shift($lines) ?? '');
+        $a = trim(implode(' ', array_map('trim', $lines)));
+        if ($q !== '' && $a !== '') $out[] = ['q' => $q, 'a' => $a];
+    }
+    return $out;
+}
+
+/**
+ * How long an MP3 runs, in seconds, so the player and the page's schema can say
+ * so without anyone typing it in.
+ *
+ * Reads the first frame header for the bitrate and, when the file carries a
+ * Xing/Info header, the exact frame count. A variable-bitrate file without that
+ * header can only be estimated, which is why the admin keeps an editable field.
+ */
+function mp3_duration(string $path): int {
+    $abs = __DIR__ . '/' . ltrim($path, '/');
+    if (!is_file($abs) || !($fh = @fopen($abs, 'rb'))) return 0;
+    $size = filesize($abs);
+    $head = fread($fh, 65536);
+    fclose($fh);
+
+    // Skip an ID3v2 tag if there is one.
+    $off = 0;
+    if (strncmp($head, 'ID3', 3) === 0 && strlen($head) > 10) {
+        $b = array_map('ord', str_split(substr($head, 6, 4)));
+        $off = 10 + (($b[0] & 0x7F) << 21 | ($b[1] & 0x7F) << 14 | ($b[2] & 0x7F) << 7 | ($b[3] & 0x7F));
+    }
+
+    // First frame sync.
+    $pos = strpos($head, "\xFF", $off);
+    while ($pos !== false && $pos + 4 <= strlen($head)) {
+        $h = array_map('ord', str_split(substr($head, $pos, 4)));
+        if (($h[1] & 0xE0) === 0xE0) {
+            static $rates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 0];
+            static $srs   = [44100, 48000, 32000];
+            $bitrate = $rates[($h[2] >> 4) & 0x0F] * 1000;
+            $sr      = $srs[($h[2] >> 2) & 0x03] ?? 0;
+            if ($bitrate > 0 && $sr > 0) {
+                // Xing / Info frame count is exact when present.
+                $tail = substr($head, $pos, 2048);
+                $x = strpos($tail, 'Xing');
+                if ($x === false) $x = strpos($tail, 'Info');
+                if ($x !== false) {
+                    $flags = unpack('N', substr($tail, $x + 4, 4))[1] ?? 0;
+                    if ($flags & 1) {
+                        $frames = unpack('N', substr($tail, $x + 8, 4))[1] ?? 0;
+                        $spf = ($h[1] & 0x18) === 0x18 ? 1152 : 576; // MPEG1 vs MPEG2 layer III
+                        if ($frames > 0) return (int) round($frames * $spf / $sr);
+                    }
+                }
+                return (int) round(max(0, $size - $off) * 8 / $bitrate);
+            }
+        }
+        $pos = strpos($head, "\xFF", $pos + 1);
+    }
+    return 0;
+}
+
+/** Minutes to read, rounded up, from the body's word count. */
+function blog_reading_time(string $html): int {
+    $words = str_word_count(strip_tags(preg_replace('/\[\[img:[^\]]*\]\]/', '', $html)));
+    return max(1, (int) ceil($words / 220));
+}
+
+/** Seconds as an ISO-8601 duration, for the AudioObject in the page's schema. */
+function iso_duration(int $secs): string {
+    if ($secs <= 0) return '';
+    return sprintf('PT%dM%dS', intdiv($secs, 60), $secs % 60);
+}
+
+/** mm:ss, for the label on the audio player. */
+function clock_duration(int $secs): string {
+    return $secs > 0 ? sprintf('%d:%02d', intdiv($secs, 60), $secs % 60) : '';
+}
+
+/**
+ * An audio file as a player.
+ *
+ * Deliberately not part of media_tag(): that is for the site's picture slots,
+ * and an audio path landing in one should stay an obvious mistake rather than
+ * silently rendering something.
+ */
+function audio_tag(string $path, string $label = ''): string {
+    if ($path === '') return '';
+    return '<audio controls preload="metadata" src="' . esc(asset_url($path)) . '"'
+        . ($label !== '' ? ' title="' . esc($label) . '"' : '') . '></audio>';
 }
 
 /* ---------- app settings (SMTP etc.) — stored in the content table ---------- */
@@ -790,16 +1113,21 @@ function handle_upload(array $file): array {
     if ($file['size'] > MAX_UPLOAD_BYTES) return ['', 'File is larger than 300 MB.'];
 
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    // Several of these have more than one MIME type in the wild — an .m4a is an
+    // MP4 container, so finfo may call it audio/mp4, audio/x-m4a or video/mp4 —
+    // so each extension carries the list of types that genuinely belong to it.
     $allowed = [
-        'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png',
-        'webp' => 'image/webp', 'gif' => 'image/gif',
-        'mp4' => 'video/mp4', 'webm' => 'video/webm',
-        'pdf' => 'application/pdf',
+        'jpg'  => ['image/jpeg'], 'jpeg' => ['image/jpeg'], 'png' => ['image/png'],
+        'webp' => ['image/webp'], 'gif'  => ['image/gif'],
+        'mp4'  => ['video/mp4'],  'webm' => ['video/webm'],
+        'pdf'  => ['application/pdf'],
+        'mp3'  => ['audio/mpeg', 'audio/mp3', 'application/octet-stream'],
+        'm4a'  => ['audio/mp4', 'audio/x-m4a', 'video/mp4'],
     ];
-    if (!isset($allowed[$ext])) return ['', 'Only JPG, PNG, WEBP, GIF, MP4, WEBM or PDF files are allowed.'];
+    if (!isset($allowed[$ext])) return ['', 'Only JPG, PNG, WEBP, GIF, MP4, WEBM, MP3, M4A or PDF files are allowed.'];
 
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
-    if ($mime !== $allowed[$ext]) return ['', 'File content does not match its extension.'];
+    if (!in_array($mime, $allowed[$ext], true)) return ['', 'File content does not match its extension.'];
 
     $name = bin2hex(random_bytes(8)) . '.' . $ext;
     $dir = __DIR__ . '/uploads';
@@ -809,7 +1137,7 @@ function handle_upload(array $file): array {
     // Build the scaled-down copies straight away, so a picture uploaded here is
     // as light on a phone as the ones that ship with the site. A failure here is
     // not fatal: cms_img() serves the original when no copies exist.
-    if (!in_array($ext, ['mp4', 'webm', 'pdf'], true)) {
+    if (!in_array($ext, ['mp4', 'webm', 'pdf', 'mp3', 'm4a'], true)) {
         require_once __DIR__ . '/lib/imgvariants.php';
         img_build_variants(__DIR__, 'uploads/' . $name);
     }

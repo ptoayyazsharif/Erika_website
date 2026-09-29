@@ -8,7 +8,7 @@ or video, save. Plain PHP + MySQL — no framework, no plugins, no build step.
 
 | File | Purpose |
 |---|---|
-| `index.php` | The public website (all 23 pages in one file, same design as the static mockup) |
+| `index.php` | The public website (every page in one file, same design as the static mockup; an article is the one page rendered on demand) |
 | `admin.php` | Admin dashboard: pages → sections → fields, WYSIWYG, image/video upload |
 | `setup.php` | One-time installer (creates tables + the admin account, then locks itself) |
 | `cms.php` | Core helpers (~200 lines: DB, content, auth, CSRF, uploads, sanitizing) |
@@ -18,7 +18,11 @@ or video, save. Plain PHP + MySQL — no framework, no plugins, no build step.
 | `lib/phpmailer/` | Self-hosted PHPMailer (SMTP sending for forms) |
 | `photos.php` | Curated photo library: which shots a slot can use, and which one it ships with |
 | `assets/photos/` | The photo files themselves, grouped by kind of slot (`01` hero, `03` stage, …) |
-| `routes.php` | Clean-URL ↔ page map (real per-page URLs) |
+| `routes.php` | Clean-URL ↔ page map (real per-page URLs), plus the `/blog/<slug>` matcher |
+| `posts.php` | Blog articles that ship with the site (the admin's copy overrides them) |
+| `sitemap.php` | The XML sitemap, served at `/sitemap.xml`, built from the routes and the posts |
+| `robots.txt` | Crawler rules and the sitemap address |
+| `assets/audio/` | Article narrations (MP3) |
 | `submit.php` | Public form handler (emails submissions to admin) |
 | `.htaccess` / `.user.ini` | Clean-URL rewriting + raised upload limits |
 | `uploads/` | Uploaded images/videos (PHP execution blocked via .htaccess) |
@@ -29,6 +33,39 @@ Every page has its own shareable URL (`/`, `/sell`, `/home-value`, `/property-ma
 `/escaluxe-living`, …) served by the `.htaccess` front controller, and the browser
 back/forward buttons work correctly. Home is always the root `/`. The `.htaccess`
 rewrite is required — on a host without mod_rewrite, ask support to enable it.
+
+## The blog
+
+`/blog` lists the articles; each one lives at `/blog/<slug>`. Posts are the second
+thing on the site with no fixed number of slots (the gallery was the first), so they
+are stored the same way: one JSON value in the `content` table, edited on its own
+admin screen — **Blog posts** — rather than as manifest fields.
+
+The one addition is that a post can also ship in a file. `posts.php` is the default
+list exactly as `fields.php` is the default for page copy, which means an article can
+be published by uploading files with no database write at all. The two are merged by
+slug in `blog_posts()`: the admin's copy of a post wins, a post that exists only in
+the file is appended, and a post removed in the admin is remembered in `blog.removed`
+so it stays removed.
+
+Three things are worth knowing before editing the code:
+
+- **An article is rendered only when its URL is asked for.** Every other page is
+  inlined into the one document; articles are not, or every visitor would download
+  every article ever written. That is also why links from the blog list are plain
+  `<a href>` with no `onclick`: they are meant to be a full page load.
+- **Article bodies never go through Quill.** `unwrap_quill()` flattens `<p>` blocks
+  into `<br><br>` on save, which would destroy an article the first time anyone
+  opened it. The body is a plain textarea, sanitized with `strip_bad()` only.
+- **Body pictures use a token, not an `<img>` tag.** Writing
+  `[[img:assets/photos/17/name.jpg|alt text|credit]]` gets the file the same
+  responsive `srcset`, lazy loading and intrinsic sizing as every other picture on
+  the site; a hand-written `<img>` would get none of it.
+
+Each article carries its own `<title>`, meta description, canonical link, Open Graph
+and Twitter tags, and `BlogPosting` structured data — including an `AudioObject` for
+the narration, so the audio version is machine-readable. `sitemap.php` picks up new
+posts automatically.
 
 ## Pictures: the photo library
 
