@@ -281,7 +281,7 @@ foreach ($ld as $block) {
 body{font-family:'Archivo',sans-serif;background:var(--cream);color:var(--body);line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
 h1,h2,h3,.serif{font-family:'Fraunces',serif;color:var(--ink);font-weight:500;line-height:1.12;text-wrap:balance}
 a{text-decoration:none;color:inherit}
-img{max-width:100%;display:block}
+img{max-width:100%;height:auto;display:block}
 ::selection{background:var(--blush-soft);color:var(--ink)}
 :focus-visible{outline:2px solid var(--merlot-deep);outline-offset:3px;border-radius:2px}
 .skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--cream);padding:12px 22px;z-index:200;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
@@ -367,7 +367,9 @@ img{max-width:100%;display:block}
 .art strong{color:var(--ink);font-weight:600}
 .art blockquote{margin:28px 0;padding:4px 0 4px 22px;border-left:3px solid var(--gold);font-family:'Fraunces',serif;font-size:21px;color:var(--ink);line-height:1.45}
 .art-fig{margin:30px 0}
-.art-fig .ph,.art-fig>img{width:100%}
+/* fill the text column, keep the picture's own shape — height:auto matters here,
+   because these are the only pictures on the site not inside a cropping .ph box */
+.art-fig .ph,.art-fig>img{width:100%;height:auto}
 .art-fig>img{border:1px solid var(--line)}
 .art-tags{margin-top:38px;display:flex;gap:9px;flex-wrap:wrap}
 .art-tags .tg{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--body);border:1px solid var(--line);padding:6px 13px;background:#fff}
