@@ -223,6 +223,9 @@ if ($product) {
     /* Described as the free downloadable thing it is. It is deliberately not
        marked up with an Offer or a price: nothing here is for sale, and saying
        otherwise in structured data would be a claim the site cannot support. */
+    /* If an article has been written about this guide, point at it. The node it
+       names is real: the article's own BlogPosting publishes that same @id. */
+    $ldPost = post_for_product($product['slug']);
     $ld[] = array_filter([
         '@context' => 'https://schema.org',
         '@type' => 'DigitalDocument',
@@ -239,6 +242,7 @@ if ($product) {
         'about' => PRODUCT_CATS[$product['cat']] ?? null,
         'image' => $product['cover'] !== '' ? abs_url('/' . $product['cover']) : null,
         'numberOfPages' => $product['pages'] ?: null,
+        'subjectOf' => $ldPost ? ['@id' => abs_url(post_path($ldPost['slug'])) . '#article'] : null,
     ]);
     if ($product['faq']) {
         $ld[] = [
@@ -2324,20 +2328,45 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 </header>
 <section style="padding-top:44px">
 <div class="wrap art-wrap">
+<?php
+/* Both the offer card here and the call to action further down describe this
+   article's guide. Everything they show is read from the product the post links
+   to, because it used to be literal text: the cover, the name and "8 pages ·
+   Includes a worksheet" all said Closing Costs 101 no matter which guide the
+   button actually downloaded, so the second article to offer one would have
+   advertised the first article's guide.
+
+   With no product linked - or one that is unpublished, which product_one()
+   returns null for - the article still offers the PDF at `guide`, just without a
+   cover or a page count. It never borrows another guide's name. */
+$gProd  = $post['guide'] !== '' ? product_one($post['product']) : null;
+$gName  = $gProd['title'] ?? '';
+$gCover = $gProd['cover'] ?? '';
+$gAlt   = ($gProd['cover_alt'] ?? '') ?: ($gName !== '' ? $gName : 'The free guide');
+$gSub   = $gProd['text'] ?? '';
+$gPages = (int) ($gProd['pages'] ?? 0);
+/* Named after the guide rather than the page, so every request for the same
+   document lands under one heading in the inbox wherever it was asked for. */
+$gForm  = 'Guide request: ' . ($gName !== '' ? $gName : 'free guide');
+$gLink  = $gProd ? product_path($gProd['slug']) : '';
+?>
 <?php if ($post['guide'] !== ''): ?>
 <div class="offer" id="guide">
-  <div class="offer-pic"><?= media_tag('assets/photos/17/a4-closing-costs-guide-cover.jpg', 'The Closing Costs 101 guide', true, 'card') ?></div>
+<?php if ($gCover !== ''): ?>
+  <div class="offer-pic"><?= media_tag($gCover, $gAlt, true, 'card') ?></div>
+<?php endif; ?>
   <div class="offer-body">
     <p class="eyebrow">Free download</p>
-    <h2>Get the Closing Costs 101 guide</h2>
-    <p class="offer-sub">The whole thing as a printable PDF &mdash; the four buckets, the Georgia numbers,
-      and a worksheet to fill in with your own figures before you talk to a lender.</p>
-    <p class="offer-meta"><span>8 pages</span><span>PDF</span><span>Includes a worksheet</span></p>
+    <h2><?= $gName !== '' ? esc($gName) : 'The free guide' ?></h2>
+<?php if ($gSub !== ''): ?>
+    <p class="offer-sub"><?= esc($gSub) ?></p>
+<?php endif; ?>
+    <p class="offer-meta"><?php if ($gPages): ?><span><?= $gPages ?> pages</span><?php endif; ?><span>PDF</span><span>Free</span></p>
 <?php if (isset($_GET['sent'])): ?>
     <p class="offer-done">Thank you &mdash; it&rsquo;s yours. Erika will be in touch about your numbers.</p>
     <a class="btn btn-primary" href="<?= esc(asset_url($post['guide'])) ?>" download>Download the guide (PDF)</a>
 <?php else: ?>
-    <form method="post" action="/submit.php" class="offer-form"><input type="hidden" name="_form" value="Closing Costs 101 Request"><input type="hidden" name="_page" value="blog"><input type="hidden" name="_post" value="<?= esc($post['slug']) ?>"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
+    <form method="post" action="/submit.php" class="offer-form"><input type="hidden" name="_form" value="<?= esc($gForm) ?>"><input type="hidden" name="_page" value="blog"><input type="hidden" name="_post" value="<?= esc($post['slug']) ?>"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
       <div class="offer-fields">
         <label>Your name<input name="f_your_name" autocomplete="name" required></label>
         <label>Email<input type="email" name="f_email" autocomplete="email" required></label>
@@ -2379,7 +2408,7 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 <div class="art-cta" id="art-cta">
 <?php if ($post['guide'] !== '' && isset($_GET['sent'])): ?>
 <p class="eyebrow" style="margin-bottom:10px">Your guide is ready</p>
-<h2>Here it is &mdash; Closing Costs 101.</h2>
+<h2>Here it is<?= $gName !== '' ? ' &mdash; ' . esc($gName) : '' ?>.</h2>
 <p>Thank you. Erika will be in touch about your numbers; in the meantime, the guide is yours.</p>
 <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px">
 <a class="btn btn-primary" href="<?= esc(asset_url($post['guide'])) ?>" download>Download the guide (PDF)</a>
@@ -2389,9 +2418,9 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 <h2><?= cms_e('blog.article-cta.heading1') ?></h2>
 <p><?= cms_rich('blog.article-cta.p1') ?></p>
 <?php if ($post['guide'] !== ''): ?>
-<p style="margin-top:-8px;font-size:14px;color:var(--merlot-ink)"><strong>You&rsquo;ll get the Closing Costs 101 guide</strong> &mdash; the whole thing as a printable PDF, with a worksheet for your own numbers.</p>
+<p style="margin-top:-8px;font-size:14px;color:var(--merlot-ink)"><strong>You&rsquo;ll get <?= $gName !== '' ? esc($gName) : 'the free guide' ?></strong> &mdash; free<?= $gPages ? ', ' . $gPages . ' pages' : '' ?>, as a printable PDF.</p>
 <?php endif; ?>
-<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="Closing Costs 101 Request"><input type="hidden" name="_page" value="blog"><input type="hidden" name="_post" value="<?= esc($post['slug']) ?>"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
+<form method="post" action="/submit.php" class="cmsform"><input type="hidden" name="_form" value="<?= esc($gForm) ?>"><input type="hidden" name="_page" value="blog"><input type="hidden" name="_post" value="<?= esc($post['slug']) ?>"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
 <div class="fld-row">
 <div class="fld"><label>Your name</label><input name="f_your_name" placeholder="Full name"/></div>
 <div class="fld"><label>Email</label><input type="email" name="f_email" placeholder="you@email.com"/></div>
@@ -2409,7 +2438,7 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 <div class="art-tags"><?php foreach ($post['tags'] as $tg): ?><span class="tg"><?= esc($tg) ?></span><?php endforeach; ?></div>
 <?php endif; ?>
 <p class="art-note">Explanatory only &mdash; not tax advice, not legal advice. Erika K. Page is a licensed Georgia real estate agent with Axen Realty. Market figures are dated and attributed in the article; verify anything you are relying on before you act on it.</p>
-<p style="margin-top:22px"><a class="crumbs" href="/blog" data-nav="blog" onclick="return _nav(event,'blog')">&larr; All articles</a></p>
+<p style="margin-top:22px"><a class="crumbs" href="/blog" data-nav="blog" onclick="return _nav(event,'blog')">&larr; All articles</a><?php if ($gLink !== ''): ?><span class="crumbs" style="margin-left:14px"><a href="<?= esc($gLink) ?>"><?= esc($gName) ?> &rarr;</a></span><?php endif; ?></p>
 </div>
 </section>
 </div>
@@ -2470,6 +2499,31 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 <?php foreach ($product['faq'] as $f): ?>
 <details><summary><?= esc(html_entity_decode(strip_tags($f['q']), ENT_QUOTES, 'UTF-8')) ?></summary><p><?= $f['a'] ?></p></details>
 <?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+<?php
+/* The article this guide belongs to, if one has been written. The join lives on
+   the post, so there is nothing to keep in step here and nothing to render when
+   no article names this guide. The card is the same .post-card the blog index
+   uses - one of them fills the 760px column on its own, because .post-grid is
+   auto-fill rather than a fixed three. */
+$relPost = post_for_product($product['slug']);
+?>
+<?php if ($relPost): ?>
+<h2 style="font-size:clamp(23px,2.6vw,30px);margin:46px 0 4px">Read the article</h2>
+<div class="rule"></div>
+<p style="margin:14px 0 0;font-size:15px">The same ground, written out in full &mdash; free to read, no email needed.</p>
+<div class="post-grid" style="margin-top:22px">
+<a class="post-card" href="<?= esc(post_path($relPost['slug'])) ?>">
+<div class="ph" data-label="Article cover"><?= $relPost['cover'] !== '' ? media_tag($relPost['cover'], $relPost['cover_alt'], false, 'card') : '' ?></div>
+<div class="body">
+<div class="cat"><?= esc(BLOG_CATS[$relPost['cat']] ?? 'Real Estate') ?><span><?= esc(date('j M Y', strtotime($relPost['date']))) ?></span><span><?= blog_reading_time($relPost['body']) ?> min read<?= $relPost['audio'] !== '' ? ' &middot; Audio' : '' ?></span></div>
+<h3><?= esc($relPost['title']) ?></h3>
+<p><?= esc($relPost['excerpt']) ?></p>
+<span class="more">Read the article &rarr;</span>
+</div>
+</a>
 </div>
 <?php endif; ?>
 

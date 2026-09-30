@@ -630,6 +630,13 @@ function blog_clean(array $p): ?array {
         // A downloadable companion (PDF). Validated the same way as the other
         // paths: it must be a file that lives with the site.
         'guide'        => gallery_safe_src((string) ($p['guide'] ?? '')),
+        // The digital product this article's guide is, by slug. One field joins
+        // the two records, which is what stops them describing each other
+        // wrongly: the article's offer card takes its cover, name and page count
+        // from the product, and the product page finds its article by looking for
+        // the post that names it. Left empty, the article simply offers the PDF
+        // at `guide` with no product behind it.
+        'product'      => blog_slugify((string) ($p['product'] ?? '')),
         // A short, sayable path that redirects here — so a video can say
         // "go to erikakpage.com/closing-costs-101" rather than reading out a slug.
         'short'        => blog_slugify((string) ($p['short'] ?? '')),
@@ -953,6 +960,26 @@ function products_all(bool $drafts = false): array {
 function product_one(string $slug, bool $drafts = false): ?array {
     foreach (products_all($drafts) as $p) {
         if ($p['slug'] === $slug) return $p;
+    }
+    return null;
+}
+
+/**
+ * The published article whose guide is this product, or null.
+ *
+ * The join lives on the post (`product`), so this is the reverse direction: it
+ * answers "is there an article about this guide?" for the product page. Reading
+ * it from the same single field is the point — a product cannot end up pointing
+ * at an article that does not point back.
+ *
+ * The first match wins. Two articles naming the same product would be a content
+ * mistake rather than something to render twice, and blog_posts() is newest
+ * first, so the newer one is the one shown.
+ */
+function post_for_product(string $slug): ?array {
+    if ($slug === '') return null;
+    foreach (blog_posts() as $p) {
+        if ($p['product'] === $slug) return $p;
     }
     return null;
 }

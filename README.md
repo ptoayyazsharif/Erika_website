@@ -69,8 +69,17 @@ Three things are worth knowing before editing the code:
 
 **Downloadable guides.** A post can carry a `guide` — a PDF offered after the
 reader fills in the form under the article, so the lead still reaches the inbox
-and Lofty. The PDF is built from HTML rather than hand-made, which keeps it
-editable and consistent with the site:
+and Lofty. It should also carry `product`, the slug of the matching digital
+product, and that one field is what joins the two records: the offer box above
+the article takes its cover, name, description and page count from the product,
+and the product's own page shows a card linking back to the article. Everything
+that box displays used to be literal text naming Closing Costs 101, so the second
+article to offer a guide would have advertised the first one's. One field means
+the two sides cannot disagree; leave it empty and the article still offers the
+PDF, just without a cover or a page count, and never under another guide's name.
+
+The PDF itself is built from HTML rather than hand-made, which keeps it editable
+and consistent with the site:
 
 ```
 node tools/build-guide.mjs            # tools/guides/<name>.html -> assets/guides/<name>.pdf

@@ -253,6 +253,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_blog'])) {
             'audio'        => $audio,
             'audio_secs'   => $secs,
             'guide'        => $guide,
+            // Both of these were missing, and the omission was destructive: the
+            // saved row shadows the posts.php seed, so the first save of this
+            // screen silently blanked `short` and broke the article's short link.
+            'short'        => (string) ($row['short'] ?? ''),
+            'product'      => (string) ($row['product'] ?? ''),
             'body'         => (string) ($row['body'] ?? ''),
             'faq'          => blog_faq_from_text((string) ($row['faq'] ?? '')),
             'published'    => !empty($row['published']),
@@ -272,6 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_blog'])) {
             'cat' => (string) ($_POST['bp_new']['cat'] ?? ''), 'tags' => [],
             'cover' => '', 'cover_alt' => '', 'cover_credit' => '',
             'audio' => '', 'audio_secs' => 0, 'guide' => '',
+            'short' => '', 'product' => '',
             'body' => '<p>Write the article here.</p>', 'faq' => [],
             'published' => false,
         ];
@@ -852,6 +858,21 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
                   &nbsp;&middot;&nbsp; <a href="<?= esc(asset_url($bp['guide'])) ?>" target="_blank">open it</a></p>
               <?php endif; ?>
               <input type="file" name="bp_guide[<?= $i ?>]" accept=".pdf">
+            </div>
+
+            <div class="fld">
+              <label>Which guide is it <small style="text-transform:none;letter-spacing:0;font-weight:400">&mdash; picking the matching digital product makes the download box above the article show that guide&rsquo;s cover, name and page count, and puts a link to this article on the guide&rsquo;s own page.</small></label>
+              <select name="bp[<?= $i ?>][product]">
+                <option value="">&mdash; not one of the guides &mdash;</option>
+                <?php foreach (products_all(true) as $pOpt): ?>
+                  <option value="<?= esc($pOpt['slug']) ?>"<?= $bp['product'] === $pOpt['slug'] ? ' selected' : '' ?>><?= esc($pOpt['title']) ?><?= $pOpt['file'] === '' ? ' (not written yet)' : '' ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+
+            <div class="fld">
+              <label>Short link <small style="text-transform:none;letter-spacing:0;font-weight:400">&mdash; a short address that redirects here, so a video can say &ldquo;go to erikakpage.com/<em>this</em>&rdquo; instead of reading out the full one. Letters, numbers and hyphens.</small></label>
+              <input type="text" name="bp[<?= $i ?>][short]" value="<?= esc($bp['short']) ?>" placeholder="closing-costs-101">
             </div>
 
             <div class="fld">
