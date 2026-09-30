@@ -4,6 +4,7 @@
  * change password. One file, no framework.
  */
 require __DIR__ . '/cms.php';
+require __DIR__ . '/routes.php';   // the product screen links out to real page URLs
 
 if (!installed()) { header('Location: setup.php'); exit; }
 
@@ -76,7 +77,7 @@ button:hover{background:#9C4A3E}
 $pages = manifest();
 $pageIds = array_keys($pages);
 $cur = $_GET['page'] ?? 'home';
-if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty', 'gallery-photos', 'blog-posts'], true)) $cur = 'home';
+if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty', 'gallery-photos', 'blog-posts', 'products-list'], true)) $cur = 'home';
 
 /* ---------- change password ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_password'])) {
@@ -288,6 +289,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_blog'])) {
     $cur = 'blog-posts';
 }
 
+/* ---------- save the digital products ---------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_products'])) {
+    csrf_check();
+
+    $items   = [];
+    $removed = products_removed();
+    $before  = products_all(true);
+
+    $upload = function (string $field, int $i, string $fallback) use (&$err) {
+        if (!isset($_FILES[$field]['name'][$i]) || $_FILES[$field]['error'][$i] === UPLOAD_ERR_NO_FILE) return $fallback;
+        [$path, $uerr] = handle_upload([
+            'name'     => $_FILES[$field]['name'][$i],
+            'tmp_name' => $_FILES[$field]['tmp_name'][$i],
+            'error'    => $_FILES[$field]['error'][$i],
+            'size'     => $_FILES[$field]['size'][$i],
+        ]);
+        if ($uerr) { $err = $_FILES[$field]['name'][$i] . ': ' . $uerr; return $fallback; }
+        return $path ?: $fallback;
+    };
+
+    foreach (($_POST['pi'] ?? []) as $i => $row) {
+        if (!is_array($row)) continue;
+        $i = (int) $i;
+        $slug = blog_slugify((string) ($row['slug'] ?? ''));
+        if (!empty($row['rm'])) {
+            if ($slug !== '') $removed[] = $slug;
+            continue;
+        }
+        $old = null;
+        foreach ($before as $b) if ($b['slug'] === $slug) { $old = $b; break; }
+        $items[] = [
+            'slug'      => $slug,
+            'title'     => (string) ($row['title'] ?? ''),
+            'aud'       => (string) ($row['aud'] ?? ''),
+            'cat'       => (string) ($row['cat'] ?? ''),
+            'prob'      => (string) ($row['prob'] ?? ''),
+            'text'      => (string) ($row['text'] ?? ''),
+            'intro'     => (string) ($row['intro'] ?? ''),
+            'inside'    => array_filter(array_map('trim', preg_split('/\R/', (string) ($row['inside'] ?? '')))),
+            'faq'       => $old['faq'] ?? [],
+            'cover'     => $upload('pi_cover', $i, (string) ($row['cover'] ?? '')),
+            'cover_alt' => (string) ($row['cover_alt'] ?? ''),
+            'file'      => $upload('pi_file', $i, (string) ($row['file'] ?? '')),
+            'pages'     => (int) ($row['pages'] ?? 0),
+            'btn'       => (string) ($row['btn'] ?? ''),
+            'short'     => (string) ($row['short'] ?? ''),
+            'published' => !empty($row['published']),
+        ];
+    }
+
+    $newTitle = trim((string) ($_POST['pi_new']['title'] ?? ''));
+    $added = false;
+    if ($newTitle !== '') {
+        $slug = blog_slugify($newTitle);
+        $items[] = [
+            'slug' => $slug, 'title' => $newTitle,
+            'aud' => '', 'cat' => (string) ($_POST['pi_new']['cat'] ?? ''),
+            'prob' => '', 'text' => '', 'intro' => '', 'inside' => [], 'faq' => [],
+            'cover' => '', 'cover_alt' => '', 'file' => '', 'pages' => 0,
+            'btn' => '', 'short' => '', 'published' => false,
+        ];
+        $removed = array_values(array_diff($removed, [$slug]));
+        $added = true;
+    }
+
+    if (!$err) {
+        products_removed_save($removed);
+        products_save($items);
+        $live = count(products_all());
+        $flash = 'Products saved — ' . count($items) . ' in the list, ' . $live . ' showing on the site'
+               . ($added ? ', 1 just added as a draft' : '') . '.';
+    }
+    $cur = 'products-list';
+}
+
 /* ---------- save content ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     csrf_check();
@@ -369,7 +445,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     }
 }
 
-$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : ($cur === 'gallery-photos' ? 'Gallery photos' : ($cur === 'blog-posts' ? 'Blog posts' : $pages[$cur]['title']))));
+$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : ($cur === 'gallery-photos' ? 'Gallery photos' : ($cur === 'blog-posts' ? 'Blog posts' : ($cur === 'products-list' ? 'Digital products' : $pages[$cur]['title'])))));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -462,6 +538,7 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
     <?php endforeach; ?>
     <a href="admin.php?page=gallery-photos" class="<?= $cur === 'gallery-photos' ? 'on' : '' ?>">Gallery photos</a>
     <a href="admin.php?page=blog-posts" class="<?= $cur === 'blog-posts' ? 'on' : '' ?>">Blog posts</a>
+    <a href="admin.php?page=products-list" class="<?= $cur === 'products-list' ? 'on' : '' ?>">Digital products</a>
     <div class="grp">Account</div>
     <a href="admin.php?page=email" class="<?= $cur === 'email' ? 'on' : '' ?>">Email / Forms</a>
     <a href="admin.php?page=lofty" class="<?= $cur === 'lofty' ? 'on' : '' ?>">CRM / Lofty</a>
@@ -572,6 +649,114 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
         </table>
       </div>
       <?php endif; ?>
+
+    <?php elseif ($cur === 'products-list'): ?>
+      <h1>Digital products</h1>
+      <p class="hint">Every guide on <b>/digital-products</b>. They are free downloads: a visitor
+        gives a name and an email, and the PDF appears. The lead reaches your inbox and Lofty like
+        any other form.</p>
+      <p class="hint" style="margin-top:-10px"><b>A product only appears on the site when it is
+        ticked <i>Showing</i> and has a PDF attached.</b> That is deliberate &mdash; it is what stops
+        the page advertising something nobody can actually get, which is what it used to do.</p>
+
+      <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+        <?php $plist = products_all(true); $plive = products_all(); $liveSlugs = array_column($plive, 'slug'); ?>
+
+        <div class="sec" style="padding:16px">
+          <div class="lib-head">Start a new one<small>saved as a draft until you add the PDF</small></div>
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px">
+            <input type="text" name="pi_new[title]" placeholder="Working title" style="flex:1;min-width:260px">
+            <label style="font-size:13px">Category
+              <select name="pi_new[cat]">
+                <option value="">— none —</option>
+                <?php foreach (PRODUCT_CATS as $cid => $clabel): ?>
+                  <option value="<?= esc($cid) ?>"><?= esc($clabel) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <?php foreach ($plist as $i => $pp): $isLive = in_array($pp['slug'], $liveSlugs, true); ?>
+        <details class="sec" <?= $i === 0 ? 'open' : '' ?> style="margin-top:14px">
+          <summary>
+            <?= esc($pp['title'] ?: $pp['slug']) ?>
+            <small><?= esc(PRODUCT_CATS[$pp['cat']] ?? 'no category') ?> ·
+              <?= $isLive ? 'showing on the site' : ($pp['file'] === '' ? 'draft — no PDF yet' : 'hidden') ?></small>
+          </summary>
+          <div class="fields">
+            <input type="hidden" name="pi[<?= $i ?>][slug]" value="<?= esc($pp['slug']) ?>">
+            <input type="hidden" name="pi[<?= $i ?>][cover]" value="<?= esc($pp['cover']) ?>">
+            <input type="hidden" name="pi[<?= $i ?>][file]" value="<?= esc($pp['file']) ?>">
+
+            <div class="fld"><label>Name</label>
+              <input type="text" name="pi[<?= $i ?>][title]" value="<?= esc($pp['title']) ?>"></div>
+            <div class="fld"><label>Who it&rsquo;s for <small style="text-transform:none;letter-spacing:0;font-weight:400">— the small line above the name on the card</small></label>
+              <input type="text" name="pi[<?= $i ?>][aud]" value="<?= esc($pp['aud']) ?>" placeholder="For Home Sellers"></div>
+            <div class="fld"><label>What it solves <small style="text-transform:none;letter-spacing:0;font-weight:400">— the italic line on the card</small></label>
+              <input type="text" name="pi[<?= $i ?>][prob]" value="<?= esc($pp['prob']) ?>" placeholder="Solves: …"></div>
+            <div class="fld"><label>Short description <small style="text-transform:none;letter-spacing:0;font-weight:400">— on the card and in Google</small></label>
+              <input type="text" name="pi[<?= $i ?>][text]" value="<?= esc($pp['text']) ?>"></div>
+            <div class="fld"><label>Opening line on its own page</label>
+              <input type="text" name="pi[<?= $i ?>][intro]" value="<?= esc($pp['intro']) ?>"></div>
+            <div class="fld"><label>What&rsquo;s inside <small style="text-transform:none;letter-spacing:0;font-weight:400">— one per line</small></label>
+              <textarea name="pi[<?= $i ?>][inside]" rows="7" style="width:100%;padding:12px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3;font-size:13.5px;line-height:1.6"><?= esc(implode("\n", $pp['inside'])) ?></textarea></div>
+
+            <div class="fld">
+              <label>Cover picture</label>
+              <div class="imgrow">
+                <?php if ($pp['cover'] !== ''): ?><img class="thumb" src="<?= esc(asset_url($pp['cover'])) ?>" alt="" loading="lazy"><?php endif; ?>
+                <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:240px">
+                  <input type="file" name="pi_cover[<?= $i ?>]" accept=".jpg,.jpeg,.png,.webp">
+                  <input type="text" name="pi[<?= $i ?>][cover_alt]" value="<?= esc($pp['cover_alt']) ?>" placeholder="What the picture shows">
+                </div>
+              </div>
+            </div>
+
+            <div class="fld">
+              <label>The PDF <small style="text-transform:none;letter-spacing:0;font-weight:400">— what people download. Without this the product stays hidden.</small></label>
+              <?php if ($pp['file'] !== ''): ?>
+                <p class="hint" style="margin:0 0 8px"><?= esc($pp['file']) ?>
+                  &nbsp;&middot;&nbsp; <a href="<?= esc(asset_url($pp['file'])) ?>" target="_blank">open it</a></p>
+              <?php else: ?>
+                <p class="hint" style="margin:0 0 8px;color:#9C4A3E">No PDF yet &mdash; this one is not being shown.</p>
+              <?php endif; ?>
+              <input type="file" name="pi_file[<?= $i ?>]" accept=".pdf">
+            </div>
+
+            <div class="fld">
+              <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+                <label style="font-size:12.5px">Category
+                  <select name="pi[<?= $i ?>][cat]">
+                    <option value="">— none —</option>
+                    <?php foreach (PRODUCT_CATS as $cid => $clabel): ?>
+                      <option value="<?= esc($cid) ?>"<?= $pp['cat'] === $cid ? ' selected' : '' ?>><?= esc($clabel) ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </label>
+                <label style="font-size:12.5px">Pages
+                  <input type="number" name="pi[<?= $i ?>][pages]" value="<?= (int) $pp['pages'] ?>" style="width:74px"></label>
+                <label class="rm"><input type="checkbox" name="pi[<?= $i ?>][published]" value="1"<?= $pp['published'] ? ' checked' : '' ?>> showing</label>
+                <label class="rm"><input type="checkbox" name="pi[<?= $i ?>][rm]" value="1"> remove</label>
+              </div>
+            </div>
+            <div class="fld"><label>Button label</label>
+              <input type="text" name="pi[<?= $i ?>][btn]" value="<?= esc($pp['btn']) ?>"></div>
+            <div class="fld"><label>Short link <small style="text-transform:none;letter-spacing:0;font-weight:400">— erikakpage.com/<b><?= esc($pp['short'] ?: '…') ?></b>, for saying out loud in a video. Leave blank for none.</small></label>
+              <input type="text" name="pi[<?= $i ?>][short]" value="<?= esc($pp['short']) ?>"></div>
+            <?php if ($isLive): ?>
+            <p class="hint" style="margin:0">Live at <a href="<?= esc(product_path($pp['slug'])) ?>" target="_blank">/digital-products/<?= esc($pp['slug']) ?></a></p>
+            <?php endif; ?>
+          </div>
+        </details>
+        <?php endforeach; ?>
+
+        <div class="savebar" style="margin-top:18px">
+          <button name="do_products" value="1">Save products</button>
+          <span><?= count($plist) ?> in the list, <?= count($plive) ?> showing on the site</span>
+        </div>
+      </form>
 
     <?php elseif ($cur === 'blog-posts'): ?>
       <h1>Blog posts</h1>

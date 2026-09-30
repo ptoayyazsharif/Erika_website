@@ -136,8 +136,15 @@ async function render(tmp) {
 
   const pageCount = await page.evaluate(() => document.querySelectorAll('.pg').length);
 
+  /* Each page declares the phrases it must still contain once rendered, as
+     data-must="a | b | c". Keeping the assertions in the document means they
+     travel with it — a second guide cannot silently inherit the first one's
+     checks, which is what happened when this list lived in the script. */
+  const must = await page.evaluate(() => [...document.querySelectorAll('.pg')].map(
+    pg => (pg.dataset.must || '').split('|').map(x => x.trim()).filter(Boolean)));
+
   // Screenshots at exact print size, so the build can be reviewed by eye too.
-  const shotDir = path.join(WORK, 'pages');
+  const shotDir = path.join(WORK, 'pages', NAME);   // per document, so three guides do not overwrite each other
   mkdirSync(shotDir, { recursive: true });
   for (let i = 0; i < pageCount; i++) {
     await page.locator('.pg').nth(i).screenshot({ path: path.join(shotDir, `page-${String(i + 1).padStart(2, '0')}.png`) });
@@ -148,13 +155,14 @@ async function render(tmp) {
 
   if (problems.length) fail(`javascript errors in the source: ${problems.join('; ')}`);
   if (overflow.length) fail(`content is being clipped:\n        ${overflow.join('\n        ')}`);
+  if (!must.some(m => m.length)) fail('no page declares a data-must check — add the phrases each page has to keep');
   ok(`rendered ${pageCount} pages, no content clipped`);
-  return { pageCount, shotDir };
+  return { pageCount, shotDir, must };
 }
 
 /* ---------- 3. verify the PDF itself ---------- */
 
-function verify(tmp, expectPages) {
+function verify(tmp, expectPages, must) {
   const script = `
 import json, sys, collections, pdfplumber
 out = {"pages": [], "fonts": {}}
@@ -190,25 +198,16 @@ print(json.dumps(out))
   if (!brand.length) fail(`no brand fonts in the PDF at all (found: ${names.join(', ') || 'none'})`);
   ok(`fonts: ${brand.map(n => n.replace(/^[A-Z]{6}\+/, '')).join(', ')} — no fallbacks`);
 
-  // Content integrity — every page must carry the words it was written with.
-  const must = [
-    [1, ['Closing Costs 101', 'Axen Realty']],
-    [2, ['not your down payment', 'preventable']],
-    [3, ['four buckets', 'Prepaids are not fees']],
-    [4, ['who pays what', 'negotiable every single time']],
-    [5, ['transfer tax', 'intangible recording tax', '62 months']],
-    [6, ['Earnest money', 'Carfax', "Owner"]],
-    [7, ['Your numbers', 'Estimated cash to close']],
-    [8, ['Axen Realty', 'not tax advice', 'Equal Housing']],
-  ];
-  for (const [n, phrases] of must) {
-    const text = (r.pages[n - 1]?.text || '').replace(/\s+/g, ' ');
+  // Content integrity — every page must carry the words it was written with,
+  // as declared on that page in the source.
+  for (const [i, phrases] of must.entries()) {
+    const text = (r.pages[i]?.text || '').replace(/\s+/g, ' ');
     for (const ph of phrases) {
       if (!text.toLowerCase().includes(ph.toLowerCase()))
-        fail(`page ${n} is missing expected content: "${ph}"`);
+        fail(`page ${i + 1} is missing expected content: "${ph}"`);
     }
   }
-  ok(`content: every page carries its expected text`);
+  ok(`content: every page carries the text it declares`);
 
   const bytes = statSync(tmp).size;
   if (bytes > MAX_BYTES) fail(`PDF is ${(bytes / 1048576).toFixed(1)} MB, over the ${MAX_BYTES / 1048576} MB budget`);
@@ -223,8 +222,8 @@ console.log(`\n  Building ${NAME}\n`);
 buildFonts();
 mkdirSync(path.dirname(OUT), { recursive: true });
 const tmp = OUT + '.tmp';
-const { pageCount, shotDir } = await render(tmp);
-verify(tmp, pageCount);
+const { pageCount, shotDir, must } = await render(tmp);
+verify(tmp, pageCount, must);
 renameSync(tmp, OUT);
 console.log(`\n  -> ${path.relative(ROOT, OUT)}`);
 console.log(`     page images for review: ${path.relative(ROOT, shotDir)}\n`);

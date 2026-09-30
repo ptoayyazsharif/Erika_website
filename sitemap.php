@@ -3,9 +3,12 @@
  * XML sitemap, generated rather than kept by hand.
  *
  * Served at /sitemap.xml by a rewrite in .htaccess, so the URL search engines
- * expect is the URL they get. Every clean route plus every published post is
- * listed, which means adding an article in the admin puts it in the sitemap
- * with no extra step.
+ * expect is the URL they get. Every clean route, every published post and every
+ * published product is listed, which means adding an article or a guide in the
+ * admin puts it in the sitemap with no extra step.
+ *
+ * Only the short links are left out on purpose: they are 301s to a page that is
+ * already here, so listing them would offer search engines two URLs for one page.
  */
 require __DIR__ . '/cms.php';
 require __DIR__ . '/routes.php';
@@ -32,6 +35,18 @@ foreach ($posts as $p) {
         'pri'  => '0.9',
         'freq' => 'monthly',
         'mod'  => $p['updated'],
+    ];
+}
+
+/* products_all() already drops anything unpublished or without a file, so this
+   cannot list a page that 404s. Products carry no edit date, and <lastmod> is
+   optional, so it is simply left off. */
+foreach (products_all() as $pr) {
+    $urls[] = [
+        'loc'  => abs_url(product_path($pr['slug'])),
+        'pri'  => '0.8',
+        'freq' => 'monthly',
+        'mod'  => '',
     ];
 }
 

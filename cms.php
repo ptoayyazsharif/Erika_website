@@ -832,6 +832,139 @@ function audio_tag(string $path, string $label = ''): string {
         . ($label !== '' ? ' title="' . esc($label) . '"' : '') . '></audio>';
 }
 
+/* ---------- digital products ----------
+ * Same shape as the blog: a list rather than a fixed set of fields, shipped in
+ * products.php so a product can go live by uploading files, and overridden by
+ * whatever is saved in the admin.
+ *
+ * A product is only ever advertised when it is published AND has a file behind
+ * it. The page this replaced described six products that did not exist, with
+ * six buttons that opened a mock-up alert — so "nothing is offered unless it is
+ * real" is the rule this list exists to enforce.
+ */
+
+/** Category id => the label on its filter chip. */
+const PRODUCT_CATS = [
+    'seller'   => 'Home Seller',
+    'buyer'    => 'Buyer & Relocation',
+    'agent'    => 'Agent Tools',
+    'wealth'   => 'Wealth / Investing',
+    'mindset'  => 'Mindset / Reinvention',
+    'workshop' => 'Workshops',
+];
+
+/** The products that ship with the site. */
+function product_seed(): array {
+    static $seed;
+    if ($seed === null) {
+        $file = __DIR__ . '/products.php';
+        $seed = is_file($file) ? (array) require $file : [];
+    }
+    return $seed;
+}
+
+function product_clean(array $p): ?array {
+    // Copy is stored as plain text and escaped on output. The seed file may be
+    // written with entities (&rsquo;, &amp;) because it is HTML-ish to read, so
+    // they are decoded here — otherwise the admin shows a human "&rsquo;" to
+    // edit, and a second escape on output turns it into visible mark-up.
+    $t = fn($v) => trim(html_entity_decode((string) $v, ENT_QUOTES, 'UTF-8'));
+
+    $slug = blog_slugify((string) ($p['slug'] ?? ''));
+    if ($slug === '') $slug = blog_slugify((string) ($p['title'] ?? ''));
+    if ($slug === '') return null;
+
+    $inside = [];
+    foreach ((array) ($p['inside'] ?? []) as $i) {
+        $i = $t($i);
+        if ($i !== '') $inside[] = $i;
+    }
+    $faq = [];
+    foreach ((array) ($p['faq'] ?? []) as $row) {
+        if (!is_array($row)) continue;
+        $q = trim((string) ($row['q'] ?? ''));
+        $a = trim((string) ($row['a'] ?? ''));
+        if ($q !== '' && $a !== '') $faq[] = ['q' => $q, 'a' => strip_bad($a)];
+    }
+
+    return [
+        'slug'      => $slug,
+        'title'     => $t($p['title'] ?? $slug),
+        'aud'       => $t($p['aud'] ?? ''),
+        'cat'       => isset(PRODUCT_CATS[$p['cat'] ?? '']) ? (string) $p['cat'] : '',
+        'prob'      => $t($p['prob'] ?? ''),
+        'text'      => $t($p['text'] ?? ''),
+        'intro'     => $t($p['intro'] ?? ''),
+        'inside'    => $inside,
+        'faq'       => $faq,
+        'cover'     => gallery_safe_src((string) ($p['cover'] ?? '')),
+        'cover_alt' => $t($p['cover_alt'] ?? ''),
+        'file'      => gallery_safe_src((string) ($p['file'] ?? '')),
+        'pages'     => max(0, (int) ($p['pages'] ?? 0)),
+        'btn'       => $t($p['btn'] ?? '') ?: 'See what\'s inside',
+        'short'     => blog_slugify((string) ($p['short'] ?? '')),
+        'published' => !empty($p['published']),
+    ];
+}
+
+/** Slugs removed in the admin, so a deleted product does not return from the file. */
+function products_removed(): array {
+    $raw = setting('products.removed', '');
+    $list = $raw === '' ? [] : json_decode($raw, true);
+    return is_array($list) ? array_map('strval', $list) : [];
+}
+
+/**
+ * Every product, in the order they are listed.
+ *
+ * @param bool $drafts include unpublished ones (the admin does; the site does not)
+ */
+function products_all(bool $drafts = false): array {
+    $out = [];
+
+    $raw = setting('products.items', '');
+    if ($raw !== '') {
+        $list = json_decode($raw, true);
+        if (is_array($list)) {
+            foreach ($list as $p) {
+                if (!is_array($p)) continue;
+                $c = product_clean($p);
+                if ($c) $out[$c['slug']] = $c;
+            }
+        }
+    }
+
+    $removed = products_removed();
+    foreach (product_seed() as $p) {
+        if (!is_array($p)) continue;
+        $c = product_clean($p);
+        if (!$c) continue;
+        if (isset($out[$c['slug']]) || in_array($c['slug'], $removed, true)) continue;
+        $out[$c['slug']] = $c;
+    }
+
+    // A published product with no file behind it would be an advertisement for
+    // something nobody can actually get. It stays a draft until the file exists.
+    if (!$drafts) $out = array_filter($out, fn($p) => $p['published'] && $p['file'] !== '');
+
+    return array_values($out);
+}
+
+function product_one(string $slug, bool $drafts = false): ?array {
+    foreach (products_all($drafts) as $p) {
+        if ($p['slug'] === $slug) return $p;
+    }
+    return null;
+}
+
+function products_save(array $items): void {
+    set_setting('products.items', json_encode(array_values($items), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+}
+
+function products_removed_save(array $slugs): void {
+    set_setting('products.removed', json_encode(array_values(array_unique($slugs)), JSON_UNESCAPED_SLASHES));
+}
+
 /* ---------- app settings (SMTP etc.) — stored in the content table ---------- */
 
 function setting(string $k, string $default = ''): string {

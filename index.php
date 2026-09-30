@@ -14,7 +14,12 @@ $current = id_for_path($reqPath);
    the one document and shipped to every visitor forever. */
 $blogShorts = [];
 foreach (blog_posts() as $bp) {
-    if ($bp['short'] !== '') $blogShorts[$bp['short']] = $bp['slug'];
+    if ($bp['short'] !== '') $blogShorts[$bp['short']] = post_path($bp['slug']);
+}
+foreach (products_all() as $pp) {
+    if ($pp['short'] !== '' && !isset($blogShorts[$pp['short']])) {
+        $blogShorts[$pp['short']] = product_path($pp['slug']);
+    }
 }
 
 $post = null;
@@ -22,6 +27,13 @@ $postSlug = blog_slug_for_path($reqPath);
 if ($current === '' && $postSlug !== '') {
     $post = blog_post($postSlug);
     if ($post) $current = 'post';
+}
+
+$product = null;
+$productSlug = product_slug_for_path($reqPath);
+if ($current === '' && $productSlug !== '') {
+    $product = product_one($productSlug);
+    if ($product) $current = 'product';
 }
 
 /* Anything else unrecognised is genuinely missing. Serving the home page with a
@@ -33,9 +45,9 @@ if ($current === '' && $postSlug !== '') {
 if ($current === '' && $postSlug === '') {
     $short = trim(parse_url($reqPath, PHP_URL_PATH) ?? '', '/');
     if ($short !== '' && strpos($short, '/') === false) {
-        foreach ($blogShorts as $sh => $slug) {
+        foreach ($blogShorts as $sh => $dest) {
             if ($sh === strtolower($short)) {
-                header('Location: ' . post_path($slug) . '#guide', true, 301);
+                header('Location: ' . $dest . '#guide', true, 301);
                 exit;
             }
         }
@@ -53,8 +65,10 @@ if ($notFound) http_response_code(404);
 $PATHS = [];
 foreach (ROUTES as $path => $id) $PATHS[$id] = '/' . $path;
 if ($post) $PATHS['post'] = post_path($post['slug']);
+if ($product) $PATHS['product'] = product_path($product['slug']);
 
 $blogPosts = blog_posts();
+$productList = products_all();
 
 /* Per-page title and description. The description used to be one global string
    repeated on all 27 pages, which tells a search engine nothing about any of
@@ -101,6 +115,13 @@ $canonPath = $PATHS[$current] ?? '/';
 $ogImage   = 'assets/photos/01/a1-red-blazer-black.jpg';
 $ogType    = 'website';
 
+if ($product) {
+    $docTitle  = $product['title'] . ' · Free guide · Erika Page';
+    $docDesc   = $product['text'];
+    $canonPath = product_path($product['slug']);
+    if ($product['cover'] !== '') $ogImage = $product['cover'];
+}
+
 if ($post) {
     $docTitle  = ($post['seo_title'] !== '' ? $post['seo_title'] : $post['title']) . ' · Erika Page';
     $docDesc   = $post['seo_desc'] !== '' ? $post['seo_desc'] : $post['excerpt'];
@@ -121,6 +142,7 @@ foreach ($pageMeta as $id => [$t, $d]) {
     ];
 }
 if ($post) $META['post'] = ['t' => $docTitle, 'd' => $docDesc, 'u' => $canonUrl];
+if ($product) $META['product'] = ['t' => $docTitle, 'd' => $docDesc, 'u' => $canonUrl];
 
 ob_start();
 ?>
@@ -187,6 +209,49 @@ $ld[] = [
     'address' => ['@type' => 'PostalAddress', 'addressLocality' => 'Atlanta',
                   'addressRegion' => 'GA', 'addressCountry' => 'US'],
 ];
+
+if ($product) {
+    $ld[] = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => abs_url('/')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Digital Products', 'item' => abs_url('/digital-products')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $product['title'], 'item' => $canonUrl],
+        ],
+    ];
+    /* Described as the free downloadable thing it is. It is deliberately not
+       marked up with an Offer or a price: nothing here is for sale, and saying
+       otherwise in structured data would be a claim the site cannot support. */
+    $ld[] = array_filter([
+        '@context' => 'https://schema.org',
+        '@type' => 'DigitalDocument',
+        '@id' => $canonUrl . '#guide',
+        'name' => $product['title'],
+        'headline' => $product['title'],
+        'description' => $product['text'],
+        'url' => $canonUrl,
+        'inLanguage' => 'en-US',
+        'isAccessibleForFree' => true,
+        'encodingFormat' => 'application/pdf',
+        'author' => ['@id' => abs_url('/') . '#erika'],
+        'publisher' => ['@id' => abs_url('/') . '#erika'],
+        'about' => PRODUCT_CATS[$product['cat']] ?? null,
+        'image' => $product['cover'] !== '' ? abs_url('/' . $product['cover']) : null,
+        'numberOfPages' => $product['pages'] ?: null,
+    ]);
+    if ($product['faq']) {
+        $ld[] = [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => array_map(fn($f) => [
+                '@type' => 'Question',
+                'name' => html_entity_decode(strip_tags($f['q']), ENT_QUOTES, 'UTF-8'),
+                'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f['a']],
+            ], $product['faq']),
+        ];
+    }
+}
 
 if ($current === 'blog' || $post) {
     $ld[] = [
@@ -576,7 +641,7 @@ section{padding:84px 0}
 .page-hero .chip{background:rgba(255,255,255,.55);border-color:rgba(69,50,48,.2);color:var(--ink)}
 .page-hero .chip.on{background:var(--merlot-deep);color:#fff;border-color:var(--merlot-deep)}
 .prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:44px}
-.prod{background:#fff;border:1px solid var(--line);padding:0;display:flex;flex-direction:column;transition:border-color .25s,transform .3s var(--ease),box-shadow .3s var(--ease)}
+.prod{background:#fff;border:1px solid var(--line);padding:0;display:flex;flex-direction:column;color:inherit;transition:border-color .25s,transform .3s var(--ease),box-shadow .3s var(--ease)}
 .prod:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow-m)}
 .prod .ph{aspect-ratio:4/3}
 .prod .body{padding:26px;display:flex;flex-direction:column;flex:1}
@@ -584,7 +649,10 @@ section{padding:84px 0}
 .prod h3{font-size:20px;margin-bottom:6px}
 .prod .prob{font-size:13px;font-style:italic;color:var(--merlot-ink);margin-bottom:10px;font-family:'Fraunces',serif}
 .prod p{font-size:14px;flex:1}
-.prod .btn{margin-top:18px;text-align:center}
+.prod .btn{margin-top:18px;text-align:center;pointer-events:none}
+.prod .ph{overflow:hidden}
+.prod:hover .ph>img{transform:scale(1.03)}
+.prod .ph>img{transition:transform .5s var(--ease)}
 .cats{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
 .cat-pill{padding:8px 18px;background:#fff;border:1px solid var(--line);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
 .dark .cat-pill{background:#fff;border-color:var(--line);color:var(--ink)}
@@ -659,6 +727,14 @@ footer a:hover,footer a:focus-visible{color:var(--gold-soft)}
    page hero — the head-and-shoulders sliver the client flagged. A square keeps
    the shot readable and still balances the text column beside it. */
 .hero-media{aspect-ratio:1/1;box-shadow:var(--shadow-l);width:100%}
+/* Some slots hold designed artwork rather than a photograph — a product cover, a
+   guide jacket — where the words are part of the picture. A photo can be cropped
+   to fit a box; typeset artwork cannot, so these take the artwork's own shape and
+   are never cropped. The decorative inset frame is left off too, because the
+   artwork already carries its own and the two do not line up. */
+.ph.art{aspect-ratio:auto!important;background:none}
+.ph.art>img{position:static;width:100%;height:auto}
+.ph.art::before{display:none}
 /* gallery */
 .gal{columns:3;column-gap:18px;margin-top:44px}
 .gal .g{break-inside:avoid;margin-bottom:18px;position:relative;cursor:pointer;overflow:hidden}
@@ -1521,23 +1597,45 @@ html,body{max-width:100%;overflow-x:clip}
 <p class="eyebrow on-dark"><?= cms_e('products.resources-digital-products.eyebrow1') ?></p>
 <h1 style="margin-top:12px"><?= cms_rich('products.resources-digital-products.heading1') ?></h1>
 <p><?= cms_rich('products.resources-digital-products.p1') ?></p>
+<?php
+/* Only categories that actually have a product get a chip — a filter that leads
+   to an empty grid is worse than no filter. These used to be seven hard-coded
+   labels with no data-cat at all, so clicking one moved the highlight and
+   filtered nothing. */
+$prodCats = array_values(array_unique(array_map(fn($pp) => $pp['cat'], $productList)));
+?>
+<?php if (count($productList) > 1 && count(array_filter($prodCats)) > 1): ?>
 <div class="rev-filter">
-<span class="chip on">All</span><span class="chip">Home Seller</span><span class="chip">Buyer &amp; Relocation</span><span class="chip">Agent Tools</span><span class="chip">Wealth / Investing</span><span class="chip">Mindset / Reinvention</span><span class="chip">Workshops</span>
+<span class="chip on" data-cat="">All</span>
+<?php foreach (PRODUCT_CATS as $cid => $clabel): if (!in_array($cid, $prodCats, true)) continue; ?>
+<span class="chip" data-cat="<?= esc($cid) ?>"><?= esc($clabel) ?></span>
+<?php endforeach; ?>
 </div>
-</div><div class="ph hero-media" data-label="Digital Product Mockups"><?= cms_img('products.resources-digital-products.img-digital-product-mockup', false, 'media') ?></div></div>
+<?php endif; ?>
+</div><div class="ph hero-media art" data-label="Digital Product Mockups"><?= cms_img('products.resources-digital-products.img-digital-product-mockup', false, 'media') ?></div></div>
 </header>
 <section>
 <div class="wrap">
+<?php if (!$productList): ?>
+<p class="post-empty">The first guides are being written. In the meantime, everything on the
+<a href="/blog" data-nav="blog" onclick="return _nav(event,'blog')">blog</a> is free to read.</p>
+<?php else: ?>
 <div class="prod-grid">
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod1-aud') ?></div><h3><?= cms_e('products.section-2.prod1-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod1-prob') ?></div><p><?= cms_e('products.section-2.prod1-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product · fires stan_store_click + UTM (mockup)')"><?= cms_e('products.section-2.prod1-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-2', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod2-aud') ?></div><h3><?= cms_e('products.section-2.prod2-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod2-prob') ?></div><p><?= cms_e('products.section-2.prod2-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod2-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-3', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod3-aud') ?></div><h3><?= cms_e('products.section-2.prod3-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod3-prob') ?></div><p><?= cms_e('products.section-2.prod3-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod3-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-4', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod4-aud') ?></div><h3><?= cms_e('products.section-2.prod4-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod4-prob') ?></div><p><?= cms_e('products.section-2.prod4-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod4-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-5', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod5-aud') ?></div><h3><?= cms_e('products.section-2.prod5-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod5-prob') ?></div><p><?= cms_e('products.section-2.prod5-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan product (mockup)')"><?= cms_e('products.section-2.prod5-btn') ?></a></div></div>
-<div class="prod"><div class="ph" data-label="Product Cover"><?= cms_img('products.section-2.img-product-cover-6', false, 'card') ?></div><div class="body"><div class="aud"><?= cms_e('products.section-2.prod6-aud') ?></div><h3><?= cms_e('products.section-2.prod6-title') ?></h3><div class="prob"><?= cms_e('products.section-2.prod6-prob') ?></div><p><?= cms_e('products.section-2.prod6-text') ?></p><a class="btn btn-gold" onclick="alert('Opens Stan Store (mockup)')"><?= cms_e('products.section-2.prod6-btn') ?></a></div></div>
+<?php foreach ($productList as $i => $pp): ?>
+<a class="prod" data-cat="<?= esc($pp['cat']) ?>" href="<?= esc(product_path($pp['slug'])) ?>">
+<div class="ph art" data-label="Product Cover"><?= $pp['cover'] !== '' ? media_tag($pp['cover'], $pp['cover_alt'], $i === 0 && $current === 'products', 'card') : '' ?></div>
+<div class="body">
+<div class="aud"><?= esc($pp['aud']) ?></div>
+<h3><?= esc($pp['title']) ?></h3>
+<div class="prob"><?= esc($pp['prob']) ?></div>
+<p><?= esc($pp['text']) ?></p>
+<span class="btn btn-gold"><?= esc($pp['btn']) ?></span>
 </div>
+</a>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
 <p style="text-align:center;margin-top:40px;font-size:14px"><?= cms_rich('products.section-2.p1') ?></p>
-</div>
 </section>
 <section class="alt">
 <div class="wrap">
@@ -2316,6 +2414,72 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 </section>
 </div>
 <?php endif; ?>
+<?php if ($product): ?>
+<!-- ==================== PRODUCT /digital-products/<slug> ==================== -->
+<div class="page" id="page-product">
+<header class="page-hero">
+<div class="wrap art-wrap">
+<p class="crumbs"><a href="/" data-nav="home" onclick="return _nav(event,'home')">Home</a><span>/</span><a href="/digital-products" data-nav="products" onclick="return _nav(event,'products')">Digital Products</a></p>
+<div class="art-meta">
+<span><?= esc(PRODUCT_CATS[$product['cat']] ?? 'Guide') ?></span><i class="dot"></i>
+<span>Free</span><?php if ($product['pages']): ?><i class="dot"></i><span><?= (int) $product['pages'] ?> pages</span><?php endif; ?>
+</div>
+<h1 style="margin-top:14px"><?= esc($product['title']) ?></h1>
+<?php if ($product['intro'] !== ''): ?><p class="art-lede"><?= esc($product['intro']) ?></p><?php endif; ?>
+<p class="art-meta"><span class="who">By Erika K. Page &middot; Axen Realty &middot; Founder, Escaluxe Global</span></p>
+</div>
+</header>
+<section style="padding-top:44px">
+<div class="wrap art-wrap">
+
+<div class="offer" id="guide">
+  <div class="offer-pic"><?= $product['cover'] !== '' ? media_tag($product['cover'], $product['cover_alt'], true, 'card') : '' ?></div>
+  <div class="offer-body">
+    <p class="eyebrow">Free download</p>
+    <h2><?= esc($product['title']) ?></h2>
+    <p class="offer-sub"><?= esc($product['text']) ?></p>
+    <p class="offer-meta"><?php if ($product['pages']): ?><span><?= (int) $product['pages'] ?> pages</span><?php endif; ?><span>PDF</span><span>Free</span></p>
+<?php if (isset($_GET['sent'])): ?>
+    <p class="offer-done">Thank you &mdash; it&rsquo;s yours. Erika will be in touch once about your own numbers.</p>
+    <a class="btn btn-primary" href="<?= esc(asset_url($product['file'])) ?>" download>Download the guide (PDF)</a>
+<?php else: ?>
+    <form method="post" action="/submit.php" class="offer-form"><input type="hidden" name="_form" value="Guide request: <?= esc($product['title']) ?>"><input type="hidden" name="_page" value="products"><input type="hidden" name="_product" value="<?= esc($product['slug']) ?>"><input type="hidden" name="_t" value="<?= time() ?>"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this empty</label><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
+      <div class="offer-fields">
+        <label>Your name<input name="f_your_name" autocomplete="name" required></label>
+        <label>Email<input type="email" name="f_email" autocomplete="email" required></label>
+      </div>
+      <button type="submit" class="btn btn-primary">Send me the guide</button>
+      <p class="offer-fine">No spam. Erika will follow up once, and that&rsquo;s it.</p>
+    </form>
+<?php endif; ?>
+  </div>
+</div>
+
+<?php if ($product['inside']): ?>
+<h2 style="font-size:clamp(23px,2.6vw,30px);margin:46px 0 4px">What&rsquo;s inside</h2>
+<div class="rule"></div>
+<ul class="checklist" style="margin-top:8px">
+<?php foreach ($product['inside'] as $line): ?><li><?= esc($line) ?></li>
+<?php endforeach; ?>
+</ul>
+<?php endif; ?>
+
+<?php if ($product['faq']): ?>
+<h2 style="font-size:clamp(23px,2.6vw,30px);margin:46px 0 4px">Questions</h2>
+<div class="faq" style="max-width:none">
+<?php foreach ($product['faq'] as $f): ?>
+<details><summary><?= esc(html_entity_decode(strip_tags($f['q']), ENT_QUOTES, 'UTF-8')) ?></summary><p><?= $f['a'] ?></p></details>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+<p class="art-note">Explanatory only &mdash; not tax advice, not legal advice. Erika K. Page is a
+licensed Georgia real estate agent with Axen Realty. Equal Housing Opportunity.</p>
+<p style="margin-top:22px"><a class="crumbs" href="/digital-products" data-nav="products" onclick="return _nav(event,'products')">&larr; All guides</a></p>
+</div>
+</section>
+</div>
+<?php endif; ?>
 <!-- ==================== 404 ==================== -->
 <div class="page" id="page-404">
 <header class="page-hero">
@@ -2347,7 +2511,7 @@ $blogCats = array_values(array_unique(array_map(fn($bp) => $bp['cat'], $blogPost
 </div>
 <div>
 <h4>Ecosystem</h4>
-<ul><li><a href="/property-management" data-nav="pm" onclick="return _nav(event,'pm')">Property Management</a></li><li><a href="/investing" data-nav="investing" onclick="return _nav(event,'investing')">Capital &amp; Acquisitions</a></li><li><a href="/transportation-logistics" data-nav="transportation" onclick="return _nav(event,'transportation')">Transportation &amp; Logistics</a></li><li><a href="/escaluxe-living" data-nav="living" onclick="return _nav(event,'living')">Escaluxe Living</a></li><li><a onclick="alert('Axen Realty / Lofty (mockup)')">Axen Realty / Lofty</a></li><li><a onclick="alert('stan.store/erikakpage (mockup)')">Stan Store</a></li><li><a href="/erika-explains" data-nav="explains" onclick="return _nav(event,'explains')">Erika Explains</a></li><li><a href="/mentorship" data-nav="mentorship" onclick="return _nav(event,'mentorship')">Mentorship</a></li></ul>
+<ul><li><a href="/property-management" data-nav="pm" onclick="return _nav(event,'pm')">Property Management</a></li><li><a href="/investing" data-nav="investing" onclick="return _nav(event,'investing')">Capital &amp; Acquisitions</a></li><li><a href="/transportation-logistics" data-nav="transportation" onclick="return _nav(event,'transportation')">Transportation &amp; Logistics</a></li><li><a href="/escaluxe-living" data-nav="living" onclick="return _nav(event,'living')">Escaluxe Living</a></li><li><a onclick="alert('Axen Realty / Lofty (mockup)')">Axen Realty / Lofty</a></li><li><a href="/digital-products" data-nav="products" onclick="return _nav(event,'products')">Free Guides</a></li><li><a href="/erika-explains" data-nav="explains" onclick="return _nav(event,'explains')">Erika Explains</a></li><li><a href="/mentorship" data-nav="mentorship" onclick="return _nav(event,'mentorship')">Mentorship</a></li></ul>
 </div>
 <div>
 <h4>Local Expertise</h4>
@@ -2377,7 +2541,7 @@ var PATHS=window.__paths||{};                 // id -> "/clean-path"
 var PATH2ID={};for(var k in PATHS){PATH2ID[PATHS[k]]=k;}
 function closeNav(){nl.classList.remove('open');burger.setAttribute('aria-expanded','false');}
 function setNavActive(p){
-  var map={homevalue:'sell',media:'lifestyle',collaborations:'lifestyle',products:'resources',explains:'resources',mentorship:'resources',investing:'resources',pm:'resources',transportation:'resources',living:'resources','loc-atlanta':'home','loc-gwinnett':'home','loc-fayette':'home','loc-northfulton':'home','loc-cobb':'home','loc-dekalb':'home','loc-henry':'home',about:'home',post:'blog'};
+  var map={homevalue:'sell',media:'lifestyle',collaborations:'lifestyle',products:'resources',explains:'resources',mentorship:'resources',investing:'resources',pm:'resources',transportation:'resources',living:'resources','loc-atlanta':'home','loc-gwinnett':'home','loc-fayette':'home','loc-northfulton':'home','loc-cobb':'home','loc-dekalb':'home','loc-henry':'home',about:'home',post:'blog',product:'resources'};
   var key=map[p]||p;
   document.querySelectorAll('.nav-links a[data-p]').forEach(function(a){a.classList.toggle('active',a.dataset.p===key)});
 }
@@ -2466,7 +2630,7 @@ document.querySelectorAll('.chip').forEach(function(c){
     var cat=c.getAttribute('data-cat');
     if(cat===null)return;
     var page=c.closest('.page');
-    (page||document).querySelectorAll('.gal .g,.post-grid .post-card').forEach(function(g){
+    (page||document).querySelectorAll('.gal .g,.post-grid .post-card,.prod-grid .prod').forEach(function(g){
       g.style.display=(cat===''||g.getAttribute('data-cat')===cat)?'':'none';
     });
   }

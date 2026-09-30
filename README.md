@@ -20,9 +20,14 @@ or video, save. Plain PHP + MySQL — no framework, no plugins, no build step.
 | `assets/photos/` | The photo files themselves, grouped by kind of slot (`01` hero, `03` stage, …) |
 | `routes.php` | Clean-URL ↔ page map (real per-page URLs), plus the `/blog/<slug>` matcher |
 | `posts.php` | Blog articles that ship with the site (the admin's copy overrides them) |
+| `products.php` | Digital products that ship with the site (same arrangement as `posts.php`) |
 | `sitemap.php` | The XML sitemap, served at `/sitemap.xml`, built from the routes and the posts |
 | `robots.txt` | Crawler rules and the sitemap address |
 | `assets/audio/` | Article narrations (MP3) |
+| `assets/guides/` | The finished PDFs |
+| `tools/guides/` | The PDF sources: one HTML file per document, plus the shared `guide.css` |
+| `tools/build-guide.mjs` | Renders and verifies those PDFs |
+| `router.php` | Front controller for `php -S` only, so local development matches the live rewrite |
 | `submit.php` | Public form handler (emails submissions to admin) |
 | `.htaccess` / `.user.ini` | Clean-URL rewriting + raised upload limits |
 | `uploads/` | Uploaded images/videos (PHP execution blocked via .htaccess) |
@@ -71,6 +76,13 @@ editable and consistent with the site:
 node tools/build-guide.mjs            # tools/guides/<name>.html -> assets/guides/<name>.pdf
 ```
 
+Every document is one HTML file in `tools/guides/`, and they all share
+`tools/guides/guide.css` — so the page furniture, type scale and worksheet rules
+are defined once and a new guide starts as content only. Each `<div class="pg">`
+carries a `data-must` attribute naming a phrase that has to survive into that
+page of the finished PDF; the build reads those out of the document rather than
+holding a list of its own, so a new guide brings its own content checks with it.
+
 Two things about that build are worth knowing before touching it. Chromium's
 print path only sees fonts through **fontconfig** — web fonts that load fine on
 screen are silently dropped from the PDF and replaced with a system serif. And
@@ -80,12 +92,36 @@ therefore cuts real static weight files out of the variable originals with
 fontTools and instals those. It also refuses to write the PDF unless every check
 passes: correct page geometry, no system-font fallback (checked per character,
 because grepping the file for a font name gives a false positive), no clipped
-content, and the expected text on every page.
+content, and each page's own `data-must` text.
 
 Each article carries its own `<title>`, meta description, canonical link, Open Graph
 and Twitter tags, and `BlogPosting` structured data — including an `AudioObject` for
 the narration, so the audio version is machine-readable. `sitemap.php` picks up new
 posts automatically.
+
+## Digital products
+
+`/digital-products` lists the guides; each one has its own page at
+`/digital-products/<slug>` and a short link (`/hidden-value`, `/landlord-guide`,
+`/closing-costs-guide`) for saying out loud in a video. They are stored exactly like
+posts: one JSON value in `content`, one admin screen — **Digital products** — and
+`products.php` as the shipped default, merged by slug with the admin's copy winning.
+
+Two rules are enforced in code rather than left to whoever edits the page next:
+
+- **Nothing is advertised unless it exists.** `products_all()` drops any product whose
+  `published` flag is off *or* whose `file` is empty, so a half-written entry cannot go
+  live behind a dead button. The unwritten products sit in `products.php` as drafts,
+  visible in the admin and nowhere else, each with a note on what it still needs.
+- **No prices.** Erika's material states a price for nothing, so a price here would be
+  invented. The guides are free in exchange for an email.
+
+The download is gated the same way the article's guide is: the form posts to
+`submit.php`, the lead reaches the inbox and Lofty, and the download link replaces the
+form on return. A product with no file shows no form and no link at all.
+
+The category chips are generated from `PRODUCT_CATS` and only appear for categories
+that actually have a published product, so a chip can never lead to an empty grid.
 
 ## Pictures: the photo library
 
@@ -178,6 +214,8 @@ That's the whole install. Backups = export the database + copy the `uploads/` fo
   (JPG/PNG/WEBP/GIF, or MP4/WEBM for video slots, max 8 MB).
 - "Remove" on a picture returns the slot to its designed placeholder.
 - One **Save** button per page saves all its sections at once.
+- **Blog posts** and **Digital products** are their own screens, below the page list —
+  they have no fixed number of slots, so they are lists rather than manifest fields.
 - **Settings** → change password.
 
 ## Security (kept simple, done properly)
@@ -193,9 +231,13 @@ logins, installer self-locks after first run.
 ```bash
 # with a local MySQL:
 cp config.php config.local.php   # edit with local credentials (git-ignored)
-php -S localhost:8000
+php -S localhost:8000 router.php
 # then open /setup.php once, and /admin.php to edit
 ```
+
+Pass `router.php` to `php -S` or the clean URLs 404 — the built-in server has no
+mod_rewrite, and `router.php` is the same one-line front controller `.htaccess`
+provides on the host.
 
 `config.local.php` can also set `'driver' => 'sqlite'` for a zero-setup local run.
 

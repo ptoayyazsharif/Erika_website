@@ -70,3 +70,19 @@ function blog_slug_for_path(string $path): string {
 function post_path(string $slug): string {
     return '/blog/' . $slug;
 }
+
+/**
+ * A product URL ("/digital-products/closing-costs-101") -> its slug, or ''.
+ *
+ * Same arrangement as the blog: products are stored rather than coded, so their
+ * paths are matched by shape here and resolved against the stored list.
+ */
+function product_slug_for_path(string $path): string {
+    $path = trim(parse_url($path, PHP_URL_PATH) ?? '', '/');
+    return preg_match('#^digital-products/([a-z0-9][a-z0-9\-]*)$#', $path, $m) ? $m[1] : '';
+}
+
+/** slug -> the product's clean path, beginning with "/". */
+function product_path(string $slug): string {
+    return '/digital-products/' . $slug;
+}

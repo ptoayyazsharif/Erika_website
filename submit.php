@@ -12,7 +12,9 @@ function back_to(string $pageId, string $flag): void {
     // so path_for() would send the visitor to the home page instead of back to
     // what they were reading.
     $slug = blog_slug_for_path('/blog/' . ($_POST['_post'] ?? ''));
-    $path = $slug !== '' ? post_path($slug) : path_for($pageId ?: 'home');
+    $prod = product_slug_for_path('/digital-products/' . ($_POST['_product'] ?? ''));
+    $path = $slug !== '' ? post_path($slug)
+          : ($prod !== '' ? product_path($prod) : path_for($pageId ?: 'home'));
     header('Location: ' . $path . '?' . $flag);
     exit;
 }

@@ -16,147 +16,12 @@
   rather than reflowed, so the build measures each page and fails on overflow.
   Colours are the site's own tokens, lifted from index.php.
 -->
-<style>
-:root{
-  --ink:#453230; --ink-deep:#332423;
-  --cream:#FBF7F3; --cream-2:#F5EBE4;
-  --gold:#C9A15E; --gold-soft:#DCC08C; --gold-deep:#8F6B2E;
-  --merlot:#C67F72; --merlot-deep:#B05E51; --merlot-ink:#9C4A3E;
-  --blush:#D49388; --blush-soft:#EFD3CC;
-  --body:#5C4B47; --line:rgba(69,50,48,.16);
-}
-@page{ size:8.5in 11in; margin:0; }
-*{ margin:0; padding:0; box-sizing:border-box; }
-html,body{ background:#fff; }
-body{
-  font-family:'Archivo', sans-serif; font-weight:400;
-  color:var(--body); font-size:10.5pt; line-height:1.6;
-  -webkit-print-color-adjust:exact; print-color-adjust:exact;
-}
-h1,h2,h3,.serif{ font-family:'Fraunces', serif; color:var(--ink); font-weight:600; line-height:1.12; }
-strong{ font-weight:700; color:var(--ink); }
-em{ font-style:italic; }
-
-/* ---- page frame ---- */
-.pg{ width:8.5in; height:11in; padding:0.78in 0.8in 0.62in; background:var(--cream);
-     position:relative; overflow:hidden; page-break-after:always; }
-.pg:last-child{ page-break-after:auto; }
-.pg-num{ position:absolute; left:0.8in; right:0.8in; bottom:0.42in;
-         display:flex; justify-content:space-between; align-items:baseline;
-         font-size:7.5pt; letter-spacing:.14em; text-transform:uppercase;
-         font-weight:600; color:rgba(92,75,71,.6); }
-.pg-num b{ color:var(--gold-deep); font-weight:700; }
-
-/* ---- shared bits ---- */
-.eyebrow{ font-size:8pt; letter-spacing:.24em; text-transform:uppercase; font-weight:700;
-          color:var(--merlot-ink); display:flex; align-items:center; gap:0.1in; }
-.eyebrow::before{ content:""; width:0.24in; height:1px; background:var(--gold); flex:none; }
-h2.sec{ font-size:22pt; margin:0.1in 0 0.04in; }
-.rule{ width:0.62in; height:2.5px; background:linear-gradient(90deg,var(--gold),var(--blush));
-       margin:0.13in 0 0.2in; }
-p{ margin-bottom:0.13in; max-width:6.6in; }
-.lede{ font-size:12pt; color:var(--ink); line-height:1.5; }
-.note{ font-size:8.5pt; color:rgba(92,75,71,.85); line-height:1.5; }
-
-/* ---- page 1 cover ---- */
-.cover{ padding:0; background:var(--cream); }
-.cover-band{ background:linear-gradient(130deg,var(--merlot-ink) 0%,var(--merlot-deep) 48%,var(--blush) 115%);
-             color:#fff; padding:1.5in 0.8in 1.15in; position:relative; overflow:hidden; }
-.cover-band::after{ content:""; position:absolute; right:-1.2in; top:-1.5in; width:4.2in; height:4.2in;
-                    border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.14),transparent 70%); }
-.cover-band .eyebrow{ color:#fff; opacity:.92; }
-.cover-band .eyebrow::before{ background:var(--gold-soft); }
-.cover-band h1{ color:#fff; font-size:46pt; margin-top:0.22in; line-height:1.02; }
-.cover-band .sub{ font-size:13pt; color:rgba(255,255,255,.93); max-width:5.2in; margin-top:0.18in; line-height:1.45; }
-.cover-body{ padding:0.62in 0.8in 0; }
-.cover-by{ font-size:11pt; color:var(--ink); }
-.cover-by b{ font-family:'Fraunces',serif; font-weight:600; font-size:13pt; display:block; margin-bottom:0.04in; }
-.cover-list{ list-style:none; margin:0.3in 0 0; }
-.cover-list li{ font-size:10.5pt; padding:0.075in 0 0.075in 0.3in; position:relative; border-bottom:1px solid var(--line); }
-.cover-list li:last-child{ border-bottom:none; }
-.cover-list li::before{ content:""; position:absolute; left:0.02in; top:0.155in;
-                        width:0.11in; height:0.11in; background:var(--gold); }
-.cover-foot{ position:absolute; left:0.8in; right:0.8in; bottom:0.55in;
-             border-top:1px solid var(--line); padding-top:0.14in;
-             display:flex; justify-content:space-between; font-size:8.5pt; color:rgba(92,75,71,.8); }
-
-/* ---- cards (the four buckets) ---- */
-.cards{ display:grid; grid-template-columns:1fr 1fr; gap:0.19in; margin-top:0.06in; }
-.card{ background:#fff; border:1px solid var(--line); border-top:3px solid var(--gold); padding:0.24in 0.24in 0.2in; }
-.card h3{ font-size:13pt; margin-bottom:0.02in; }
-.card .k{ font-size:7.5pt; letter-spacing:.2em; text-transform:uppercase; font-weight:700;
-          color:var(--gold-deep); margin-bottom:0.07in; }
-.card p{ font-size:9.5pt; margin:0; line-height:1.5; }
-
-/* ---- callout ---- */
-.callout{ background:#fff; border-left:3px solid var(--merlot-deep); padding:0.2in 0.26in;
-          margin:0.2in 0; }
-.callout p{ margin:0; font-size:10.5pt; }
-.callout .q{ font-family:'Fraunces',serif; font-size:13pt; color:var(--ink); line-height:1.35; font-weight:600; }
-
-/* ---- two columns (who pays what) ---- */
-.cols{ display:grid; grid-template-columns:1fr 1fr; gap:0.26in; margin-top:0.1in; }
-.col h3{ font-size:14pt; margin-bottom:0.02in; }
-.col .pct{ font-family:'Fraunces',serif; font-size:26pt; color:var(--merlot-ink); font-weight:600;
-           line-height:1; margin:0.06in 0 0.02in; }
-.col .pct small{ font-family:'Archivo',sans-serif; font-size:8.5pt; font-weight:600; color:var(--body);
-                 letter-spacing:.1em; text-transform:uppercase; display:block; margin-top:0.06in; }
-.tick{ list-style:none; margin-top:0.12in; }
-.tick li{ font-size:9.5pt; padding:0.05in 0 0.05in 0.22in; position:relative; line-height:1.45; }
-.tick li::before{ content:""; position:absolute; left:0; top:0.11in; width:0.09in; height:0.09in;
-                  border-radius:50%; background:var(--blush); }
-
-/* ---- figures table (Georgia numbers) ---- */
-table.fig{ width:100%; border-collapse:collapse; margin-top:0.12in; background:#fff; }
-table.fig th,table.fig td{ text-align:left; padding:0.12in 0.16in; border-bottom:1px solid var(--line);
-                           font-size:9.5pt; vertical-align:top; }
-table.fig th{ font-size:7.5pt; letter-spacing:.16em; text-transform:uppercase; color:var(--gold-deep);
-              font-weight:700; background:var(--cream-2); }
-table.fig td.n{ font-family:'Fraunces',serif; font-weight:600; color:var(--ink); font-size:11pt; white-space:nowrap; }
-table.fig tr:last-child td{ border-bottom:none; }
-
-/* ---- worked example ---- */
-.example{ background:var(--ink-deep); color:#fff; padding:0.26in 0.3in; margin-top:0.2in; }
-.example h3{ color:#fff; font-size:12pt; margin-bottom:0.1in; }
-.example .row{ display:flex; justify-content:space-between; align-items:baseline;
-               padding:0.07in 0; border-bottom:1px solid rgba(255,255,255,.16); font-size:9.5pt; }
-.example .row:last-child{ border-bottom:none; padding-top:0.12in; }
-.example .row b{ font-family:'Fraunces',serif; font-weight:600; font-size:11.5pt; color:var(--gold-soft); }
-.example .row span{ color:rgba(255,255,255,.88); }
-.example .tot{ border-top:1px solid rgba(255,255,255,.4)!important; margin-top:0.04in; }
-
-/* ---- worksheet ---- */
-.ws{ margin-top:0.1in; }
-.ws-row{ display:flex; align-items:flex-end; gap:0.14in; padding:0.092in 0; border-bottom:1px solid var(--line); }
-.ws-row .lbl{ font-size:9.5pt; color:var(--ink); flex:1; line-height:1.35; }
-.ws-row .lbl small{ display:block; font-size:8pt; color:rgba(92,75,71,.75); }
-.ws-row .box{ width:1.5in; height:0.26in; border:1px solid var(--line); background:#fff; flex:none; }
-.ws-row.total{ border-bottom:none; border-top:2px solid var(--gold); margin-top:0.06in; padding-top:0.14in; }
-.ws-row.total .lbl{ font-family:'Fraunces',serif; font-weight:600; font-size:12pt; color:var(--ink); }
-.ws-row.total .box{ height:0.3in; border-color:var(--gold-deep); }
-.ask{ margin-top:0.2in; }
-.ask li{ list-style:none; font-size:9.5pt; padding:0.07in 0 0.07in 0.26in; position:relative; line-height:1.4; }
-.ask li::before{ content:""; position:absolute; left:0; top:0.09in; width:0.13in; height:0.13in;
-                 border:1.5px solid var(--gold-deep); background:#fff; }
-
-/* ---- closing page ---- */
-.final-band{ background:linear-gradient(130deg,var(--merlot-ink),var(--merlot-deep) 55%,var(--blush));
-             color:#fff; padding:0.5in 0.45in; margin-bottom:0.28in; }
-.final-band h2{ color:#fff; font-size:22pt; max-width:5.4in; }
-.final-band p{ color:rgba(255,255,255,.93); margin:0.14in 0 0; max-width:5.2in; font-size:10.5pt; }
-.contact{ display:grid; grid-template-columns:1fr 1fr; gap:0.26in; margin-top:0.06in; }
-.contact .k{ font-size:7.5pt; letter-spacing:.2em; text-transform:uppercase; font-weight:700;
-             color:var(--gold-deep); margin-bottom:0.05in; }
-.contact .v{ font-size:11pt; color:var(--ink); }
-.legal{ position:absolute; left:0.8in; right:0.8in; bottom:0.5in;
-        border-top:1px solid var(--line); padding-top:0.14in; font-size:8pt;
-        color:rgba(92,75,71,.85); line-height:1.5; }
-</style>
+<link rel="stylesheet" href="guide.css">
 </head>
 <body>
 
 <!-- ===================== 1 · COVER ===================== -->
-<div class="pg cover">
+<div class="pg cover" data-must="Closing Costs 101 | Axen Realty">
   <div class="cover-band">
     <p class="eyebrow">Erika Explains&trade;</p>
     <h1>Closing Costs 101</h1>
@@ -179,7 +44,7 @@ table.fig tr:last-child td{ border-bottom:none; }
 </div>
 
 <!-- ===================== 2 · NOT YOUR DOWN PAYMENT ===================== -->
-<div class="pg">
+<div class="pg" data-must="not your down payment | preventable">
   <p class="eyebrow">Start here</p>
   <h2 class="sec">First: they are not your down payment.</h2>
   <div class="rule"></div>
@@ -219,7 +84,7 @@ table.fig tr:last-child td{ border-bottom:none; }
 </div>
 
 <!-- ===================== 3 · THE FOUR BUCKETS ===================== -->
-<div class="pg">
+<div class="pg" data-must="four buckets | Prepaids are not fees">
   <p class="eyebrow">The anatomy</p>
   <h2 class="sec">The four buckets every fee falls into.</h2>
   <div class="rule"></div>
@@ -270,7 +135,7 @@ table.fig tr:last-child td{ border-bottom:none; }
 </div>
 
 <!-- ===================== 4 · WHO PAYS WHAT ===================== -->
-<div class="pg">
+<div class="pg" data-must="who pays what | negotiable every single time">
   <p class="eyebrow">The split</p>
   <h2 class="sec">So who pays what?</h2>
   <div class="rule"></div>
@@ -321,7 +186,7 @@ table.fig tr:last-child td{ border-bottom:none; }
 </div>
 
 <!-- ===================== 5 · THE GEORGIA NUMBERS ===================== -->
-<div class="pg">
+<div class="pg" data-must="transfer tax | intangible recording tax | 62 months">
   <p class="eyebrow">Georgia specifics</p>
   <h2 class="sec">The two taxes nobody warns you about.</h2>
   <div class="rule"></div>
@@ -367,7 +232,7 @@ table.fig tr:last-child td{ border-bottom:none; }
 </div>
 
 <!-- ===================== 6 · EARNEST MONEY & TITLE ===================== -->
-<div class="pg">
+<div class="pg" data-must="Earnest money | Carfax | Owner">
   <p class="eyebrow">Two things people conflate</p>
   <h2 class="sec">Earnest money, and title insurance.</h2>
   <div class="rule"></div>
@@ -412,7 +277,7 @@ table.fig tr:last-child td{ border-bottom:none; }
 </div>
 
 <!-- ===================== 7 · WORKSHEET ===================== -->
-<div class="pg">
+<div class="pg" data-must="Your numbers | Estimated cash to close">
   <p class="eyebrow">Your turn</p>
   <h2 class="sec">Your numbers.</h2>
   <div class="rule"></div>
@@ -450,7 +315,7 @@ table.fig tr:last-child td{ border-bottom:none; }
 </div>
 
 <!-- ===================== 8 · CLOSE ===================== -->
-<div class="pg">
+<div class="pg" data-must="Axen Realty | not tax advice | Equal Housing">
   <div class="final-band">
     <h2>Let&rsquo;s plan the numbers before you fall in love with a house.</h2>
     <p>Send me what you&rsquo;re planning &mdash; buying, selling, or both, and roughly when &mdash;
