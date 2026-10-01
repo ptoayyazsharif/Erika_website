@@ -1,11 +1,31 @@
 [
   {
     "slug": "owning-vs-investing-in-real-estate",
-    "template": "studio",
+    "template": "bold",
     "eyebrow": "Investing",
     "line": "Owning real estate and investing in it are not the same thing.",
     "sub": "There is a real estate lesson hiding inside every Sam’s Club.",
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/a7-sams-club-logo.jpg"
+  },
+  {
+    "slug": "closing-costs-in-georgia-explained",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "Closing costs in Georgia, explained.",
+    "sub": "It’s not the cost, it’s the surprise — and most surprises are preventable.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/a4-closing-costs-guide-cover.jpg",
+    "refPos": "50% 0%"
+  },
+  {
+    "slug": "know-your-house-before-you-list",
+    "template": "bold",
+    "eyebrow": "Selling",
+    "line": "Nobody should know your house better than you do.",
+    "sub": "Before your house sells, two outsiders are going to tell you about it.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b1-inspector-crawl-space.jpg",
+    "refPos": "28% 50%"
   }
 ]

@@ -108,6 +108,25 @@ and Twitter tags, and `BlogPosting` structured data — including an `AudioObjec
 the narration, so the audio version is machine-readable. `sitemap.php` picks up new
 posts automatically.
 
+## Blog covers
+
+Every article's cover is rendered from one house template, so the blog reads as one
+publication: `tools/covers/blog.js` lays the cover out in the site's own type and
+palette and screenshots it, like `render.js` does for the guide jackets. Each article
+is one entry in `tools/covers/blog.json`:
+
+```
+node tools/covers/blog.js <slug>        # -> assets/photos/17/<slug>-cover.jpg (1600x1000)
+node tools/covers/blog.js <slug> --all --out /some/dir   # all five templates, to compare
+```
+
+The house template is **bold**; four alternates (`studio`, `print`, `editorial`,
+`panel`) remain for comparison. Headlines are fitted to their box rather than sized
+by character count, and a cover is refused — not written — if any picture would be
+shown larger than its real size or any text would overflow. Look at the result at
+full size and at blog-card size anyway: those checks can't see a headline running
+into the portrait. The cover also becomes the article's share image (`og:image`).
+
 ## Digital products
 
 `/digital-products` lists the guides; each one has its own page at

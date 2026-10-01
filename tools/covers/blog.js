@@ -70,7 +70,7 @@ const pink = `background:linear-gradient(180deg,${C.pinkTop} 0%,${C.pinkLow} 100
    does not brand the cover or suggest the company is involved. */
 const subRow = (s, color, fs, opacity = .82, tile = 118) => (!s.sub && !s.ref) ? '' : `
   <div class="fit" style="display:flex;align-items:center;gap:22px;max-height:${tile + 30}px">
-    ${s.ref ? `<div style="flex:none;padding:6px;background:${C.cream};box-shadow:0 8px 22px rgba(69,50,48,.24)"><img class="ref" src="${url(s.ref)}" alt="" style="width:${tile}px;height:${tile}px;object-fit:cover"></div>` : ''}
+    ${s.ref ? `<div style="flex:none;padding:6px;background:${C.cream};box-shadow:0 8px 22px rgba(69,50,48,.24)"><img class="ref" src="${url(s.ref)}" alt="" style="width:${tile}px;height:${tile}px;object-fit:cover;object-position:${s.refPos || '50% 50%'}"></div>` : ''}
     ${s.sub ? `<div class="sub" style="font-size:${fs}px;line-height:1.42;color:${color};opacity:${opacity}">${esc(s.sub)}</div>` : ''}
   </div>`;
 
@@ -99,7 +99,7 @@ const TEMPLATES = {
         <div class="hl fit" data-min="50" data-max="86" style="line-height:1.07;color:${C.ink};margin-top:20px;max-height:340px">${esc(s.line)}</div>
         <div style="display:flex;align-items:flex-end;gap:34px;margin-top:40px">
           <div style="flex:none;padding:12px 12px 16px;background:${C.cream};box-shadow:0 22px 50px rgba(69,50,48,.28);transform:rotate(-3deg)">
-            <img class="ref" src="${url(s.ref)}" alt="" style="width:290px;height:290px;object-fit:cover">
+            <img class="ref" src="${url(s.ref)}" alt="" style="width:290px;height:290px;object-fit:cover;object-position:${s.refPos || '50% 50%'}">
           </div>
           ${s.sub ? `<div class="sub fit" style="font-size:24px;line-height:1.42;color:${C.ink};opacity:.82;max-height:140px;padding-bottom:8px">${esc(s.sub)}</div>` : ''}
         </div>
