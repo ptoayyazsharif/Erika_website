@@ -64,31 +64,44 @@ const portrait = (s, css) => `
 
 const pink = `background:linear-gradient(180deg,${C.pinkTop} 0%,${C.pinkLow} 100%)`;
 
+/* The supporting line, with the article's reference picture beside it. For the
+   Sam's Club article that is the sign from her own video, set next to the
+   sentence that mentions it — small on purpose: it points at the subject, it
+   does not brand the cover or suggest the company is involved. */
+const subRow = (s, color, fs, opacity = .82, tile = 118) => (!s.sub && !s.ref) ? '' : `
+  <div class="fit" style="display:flex;align-items:center;gap:22px;max-height:${tile + 30}px">
+    ${s.ref ? `<div style="flex:none;padding:6px;background:${C.cream};box-shadow:0 8px 22px rgba(69,50,48,.24)"><img class="ref" src="${url(s.ref)}" alt="" style="width:${tile}px;height:${tile}px;object-fit:cover"></div>` : ''}
+    ${s.sub ? `<div class="sub" style="font-size:${fs}px;line-height:1.42;color:${color};opacity:${opacity}">${esc(s.sub)}</div>` : ''}
+  </div>`;
+
 const TEMPLATES = {
 
-  /* 1. Studio — Erika on her own pink, headline beside her. Needs no picture. */
+  /* 1. Studio — Erika on her own pink, headline beside her. */
   studio: s => `
     <div class="c" style="${pink}">
       ${portrait(s, 'position:absolute;right:-30px;top:-30px;height:1260px;width:auto;')}
-      <div class="fit" style="position:absolute;left:96px;top:112px;width:690px;height:776px;display:flex;flex-direction:column">
+      <div class="fit" style="position:absolute;left:96px;top:104px;width:690px;height:800px;display:flex;flex-direction:column">
         <div class="eyebrow" style="font-size:22px;color:${C.ink};opacity:.8">${esc(s.eyebrow)}</div>
-        <div class="hl fit" data-min="60" data-max="104" style="line-height:1.06;color:${C.ink};margin-top:26px;max-height:440px">${esc(s.line)}</div>
-        <div class="rule" style="width:110px;margin:38px 0 26px"></div>
-        ${s.sub ? `<div class="sub fit" style="font-size:27px;line-height:1.45;color:${C.ink};opacity:.82;max-height:120px">${esc(s.sub)}</div>` : ''}
+        <div class="hl fit" data-min="58" data-max="100" style="line-height:1.06;color:${C.ink};margin-top:24px;max-height:410px">${esc(s.line)}</div>
+        <div class="rule" style="width:110px;margin:34px 0 28px"></div>
+        ${subRow(s, C.ink, 25)}
         <div class="mark" style="margin-top:auto;font-size:34px;color:${C.cream}">Erika <span style="color:${C.ink}">Explains</span></div>
       </div>
     </div>`,
 
-  /* 2. Studio + scene — as Studio, with the article's own picture as a framed
-        print beside the headline. */
-  scene: s => `
+  /* 2. Studio + print — as Studio, with the reference picture as a larger framed
+        print under the headline instead of a small tile. */
+  print: s => `
     <div class="c" style="${pink}">
       ${portrait(s, 'position:absolute;right:-60px;top:-20px;height:1200px;width:auto;')}
-      <div class="fit" style="position:absolute;left:88px;top:84px;width:800px;height:840px;display:flex;flex-direction:column">
+      <div class="fit" style="position:absolute;left:88px;top:84px;width:780px;height:840px;display:flex;flex-direction:column">
         <div class="eyebrow" style="font-size:20px;color:${C.ink};opacity:.8">${esc(s.eyebrow)}</div>
         <div class="hl fit" data-min="50" data-max="86" style="line-height:1.07;color:${C.ink};margin-top:20px;max-height:340px">${esc(s.line)}</div>
-        <div style="margin-top:40px;width:560px;padding:14px 14px 18px;background:${C.cream};box-shadow:0 22px 50px rgba(69,50,48,.28);transform:rotate(-2.2deg)">
-          <div style="width:532px;height:333px;overflow:hidden"><img class="scene" src="${url(s.scene)}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:${s.scenePos || '50% 50%'}"></div>
+        <div style="display:flex;align-items:flex-end;gap:34px;margin-top:40px">
+          <div style="flex:none;padding:12px 12px 16px;background:${C.cream};box-shadow:0 22px 50px rgba(69,50,48,.28);transform:rotate(-3deg)">
+            <img class="ref" src="${url(s.ref)}" alt="" style="width:290px;height:290px;object-fit:cover">
+          </div>
+          ${s.sub ? `<div class="sub fit" style="font-size:24px;line-height:1.42;color:${C.ink};opacity:.82;max-height:140px;padding-bottom:8px">${esc(s.sub)}</div>` : ''}
         </div>
         <div class="mark" style="margin-top:auto;font-size:32px;color:${C.cream}">Erika <span style="color:${C.ink}">Explains</span></div>
       </div>
@@ -105,31 +118,25 @@ const TEMPLATES = {
       <div style="position:absolute;right:96px;top:150px;width:520px;height:850px;border-radius:260px 260px 0 0;overflow:hidden;${pink};box-shadow:inset 0 0 0 3px ${C.gold}">
         <img class="portrait" src="${url(s.portrait)}" alt="" style="position:absolute;left:50%;transform:translateX(-50%);top:0;height:1040px;width:auto">
       </div>
-      <div class="fit" style="position:absolute;left:84px;top:178px;width:840px;height:760px;display:flex;flex-direction:column">
-        <div class="hl fit" data-min="64" data-max="126" style="line-height:1.03;color:${C.ink};max-height:600px">${esc(s.line)}</div>
-        <div class="rule" style="width:120px;margin:40px 0 26px"></div>
-        ${s.sub ? `<div class="sub fit" style="font-size:28px;line-height:1.45;color:${C.ink};opacity:.8;max-height:130px">${esc(s.sub)}</div>` : ''}
+      <div class="fit" style="position:absolute;left:84px;top:168px;width:820px;height:780px;display:flex;flex-direction:column">
+        <div class="hl fit" data-min="62" data-max="120" style="line-height:1.03;color:${C.ink};max-height:520px">${esc(s.line)}</div>
+        <div class="rule" style="width:120px;margin:34px 0 28px"></div>
+        ${subRow(s, C.ink, 26, .8)}
       </div>
     </div>`,
 
-  /* 4. Scene + panel — the article's own picture leads; the panel carries the
-        headline and a round portrait, so she is on every cover even when the
-        topic picture is the star. */
+  /* 4. Panel — Erika on the left, a dark panel carrying the headline. */
   panel: s => `
     <div class="c" style="background:${C.ink}">
-      <div style="position:absolute;left:0;top:0;width:1000px;height:1000px;overflow:hidden">
-        <img class="scene" src="${url(s.scene)}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:${s.scenePos || '50% 50%'}">
+      <div style="position:absolute;left:0;top:0;width:1000px;height:1000px;overflow:hidden;${pink}">
+        <img class="portrait" src="${url(s.portrait)}" alt="" style="position:absolute;left:50%;transform:translateX(-50%);top:-10px;height:1500px;width:auto">
       </div>
-      <div class="fit" style="position:absolute;left:1000px;top:0;width:600px;height:1000px;padding:86px 64px 70px;display:flex;flex-direction:column">
+      <div class="fit" style="position:absolute;left:1000px;top:0;width:600px;height:1000px;padding:80px 60px 66px;display:flex;flex-direction:column">
         <div class="eyebrow" style="font-size:19px;color:${C.gold}">${esc(s.eyebrow)}</div>
-        <div class="hl fit" data-min="46" data-max="82" style="line-height:1.08;color:${C.cream};margin-top:24px;max-height:560px">${esc(s.line)}</div>
-        <div class="rule" style="width:96px;margin:34px 0 0"></div>
-        <div style="margin-top:auto;display:flex;align-items:center;gap:24px">
-          <div style="width:150px;height:150px;border-radius:50%;overflow:hidden;border:4px solid ${C.gold};${pink};flex:none">
-            <img class="portrait" src="${url(s.portrait)}" alt="" style="width:100%;height:auto;margin-top:-2px">
-          </div>
-          <div class="mark" style="font-size:38px;line-height:1.05;color:${C.cream}">Erika<br><span style="color:${C.gold}">Explains</span></div>
-        </div>
+        <div class="hl fit" data-min="44" data-max="76" style="line-height:1.08;color:${C.cream};margin-top:22px;max-height:440px">${esc(s.line)}</div>
+        <div class="rule" style="width:96px;margin:30px 0 28px"></div>
+        ${subRow(s, C.cream, 20, .85, 104)}
+        <div class="mark" style="margin-top:auto;font-size:36px;line-height:1.05;color:${C.cream}">Erika <span style="color:${C.gold}">Explains</span></div>
       </div>
     </div>`,
 
@@ -138,10 +145,11 @@ const TEMPLATES = {
   bold: s => `
     <div class="c" style="${pink}">
       ${portrait(s, 'position:absolute;right:-120px;top:-24px;height:1240px;width:auto;')}
-      <div class="fit" style="position:absolute;left:0;top:0;width:900px;height:1000px;background:${C.merlotDeep};padding:96px 80px 80px 90px;display:flex;flex-direction:column">
+      <div class="fit" style="position:absolute;left:0;top:0;width:900px;height:1000px;background:${C.merlotDeep};padding:90px 80px 76px 90px;display:flex;flex-direction:column">
         <div class="eyebrow" style="font-size:21px;color:${C.gold}">${esc(s.eyebrow)}</div>
-        <div class="hl fit" data-min="64" data-max="122" style="line-height:1.04;color:${C.cream};margin-top:28px;max-height:620px">${esc(s.line)}</div>
-        <div class="rule" style="width:110px;margin:40px 0 0"></div>
+        <div class="hl fit" data-min="60" data-max="112" style="line-height:1.04;color:${C.cream};margin-top:26px;max-height:480px">${esc(s.line)}</div>
+        <div class="rule" style="width:110px;margin:34px 0 28px"></div>
+        ${subRow(s, C.cream, 25, .9)}
         <div class="mark" style="margin-top:auto;font-size:36px;color:${C.cream}">Erika <span style="color:${C.gold}">Explains</span></div>
       </div>
     </div>`,
@@ -218,7 +226,7 @@ async function render(browser, spec, template, outFile) {
     const templates = all ? Object.keys(TEMPLATES) : [s.template];
     for (const t of templates) {
       if (!TEMPLATES[t]) { console.error(`unknown template "${t}"`); failed++; continue; }
-      if ((t === 'scene' || t === 'panel') && !s.scene) { console.log(`  skip ${s.slug} / ${t}: needs a scene picture`); continue; }
+      if (t === 'print' && !s.ref) { console.log(`  skip ${s.slug} / ${t}: needs a reference picture (ref)`); continue; }
       const file = path.join(outDir, all ? `${s.slug}--${t}.jpg` : `${s.slug}-cover.jpg`);
       try { await render(browser, s, t, file); console.log(`  ok   ${path.relative(ROOT, file) || file}`); }
       catch (e) { console.error('  FAIL ' + e.message); failed++; }
