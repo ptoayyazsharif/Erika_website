@@ -14,11 +14,13 @@ $current = id_for_path($reqPath);
    the one document and shipped to every visitor forever. */
 $blogShorts = [];
 foreach (blog_posts() as $bp) {
-    if ($bp['short'] !== '') $blogShorts[$bp['short']] = post_path($bp['slug']);
+    // Jump to the download box only when the article has one; an article with
+    // no guide opens at the top instead of at an anchor that is not there.
+    if ($bp['short'] !== '') $blogShorts[$bp['short']] = post_path($bp['slug']) . ($bp['guide'] !== '' ? '#guide' : '');
 }
 foreach (products_all() as $pp) {
     if ($pp['short'] !== '' && !isset($blogShorts[$pp['short']])) {
-        $blogShorts[$pp['short']] = product_path($pp['slug']);
+        $blogShorts[$pp['short']] = product_path($pp['slug']) . '#guide';   // every listed product has a file
     }
 }
 
@@ -47,7 +49,7 @@ if ($current === '' && $postSlug === '') {
     if ($short !== '' && strpos($short, '/') === false) {
         foreach ($blogShorts as $sh => $dest) {
             if ($sh === strtolower($short)) {
-                header('Location: ' . $dest . '#guide', true, 301);
+                header('Location: ' . $dest, true, 301);
                 exit;
             }
         }
@@ -2346,8 +2348,12 @@ $gAlt   = ($gProd['cover_alt'] ?? '') ?: ($gName !== '' ? $gName : 'The free gui
 $gSub   = $gProd['text'] ?? '';
 $gPages = (int) ($gProd['pages'] ?? 0);
 /* Named after the guide rather than the page, so every request for the same
-   document lands under one heading in the inbox wherever it was asked for. */
-$gForm  = 'Guide request: ' . ($gName !== '' ? $gName : 'free guide');
+   document lands under one heading in the inbox wherever it was asked for. An
+   article with no guide is named after itself instead: "Guide request" there
+   would announce a download that does not exist. */
+$gForm  = $post['guide'] !== ''
+        ? 'Guide request: ' . ($gName !== '' ? $gName : 'free guide')
+        : 'Blog enquiry: ' . $post['title'];
 $gLink  = $gProd ? product_path($gProd['slug']) : '';
 ?>
 <?php if ($post['guide'] !== ''): ?>

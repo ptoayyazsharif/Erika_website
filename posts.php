@@ -25,6 +25,123 @@
 return [
 
     [
+        'slug'           => 'know-your-house-before-you-list',
+        'title'          => 'Nobody should know your house better than you do.',
+        'seo_title'      => 'Before You List: Know Your Home Better Than the Buyer',
+        'seo_desc'       => 'Your online estimate has never been inside your house, and the buyer\'s inspector will find what you didn\'t. How sellers get there first, on value and condition.',
+        'excerpt'        => 'Before you list, two outsiders will tell you about your own house: a website and the buyer&rsquo;s inspector. Neither has ever lived there. Here is how to get there first &mdash; on value, and on condition.',
+        'date'           => '2026-10-01',
+        'updated'        => '2026-10-01',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'selling',
+        'tags'           => ['selling a home', 'pre-listing inspection', 'home value', 'Metro Atlanta', 'buyer math'],
+        'cover'          => 'assets/photos/17/b1-inspector-crawl-space.jpg',
+        'cover_alt'      => 'A home inspector checking the crawl space access beside a house',
+        'cover_credit'   => 'Photo by <a href="https://www.pexels.com/@kathleen-austin-kuhn-2152973960" rel="nofollow noopener" target="_blank">Kathleen Austin Kuhn</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/know-your-house-before-you-list.mp3',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'before-you-list',
+        'audio_secs'     => 314,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Is a pre-listing inspection required?',
+                'a' => 'No. It is a choice, not a requirement &mdash; a strategy for finding out about your house before a buyer does, so that pricing and negotiation start from what is true rather than from what somebody else claims.',
+            ],
+            [
+                'q' => 'Will the buyer still get their own inspection?',
+                'a' => 'They may, and that is their right. Your report does not replace theirs. What it does is mean that when theirs comes back, very little in it is news to you &mdash; and nothing in it can be inflated without you knowing what it really costs.',
+            ],
+            [
+                'q' => 'How accurate is my online home estimate?',
+                'a' => 'Accurate enough to get you in the neighborhood, and no further. It has never been inside your house. On a $400,000 home, being off by just five percent is $20,000 &mdash; which is why a website is a starting point, not a price.',
+            ],
+            [
+                'q' => 'What if the inspection finds something I don&rsquo;t want to fix?',
+                'a' => 'Then you price it in, rather than have a buyer discover it and price it in for you. And talk to your agent about disclosure before you decide anything: once you know about a problem, you are expected to treat it as something you know.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Before your house sells, two outsiders are going to tell you about it.</p>
+
+<p>The first is a website, with a number. The second is the buyer&rsquo;s inspector, with a report. Neither of them has ever lived there. Neither knows you replaced the roof, or that the water heater has been making that noise for a year. And by the time the second one speaks, you are under contract and on a deadline.</p>
+
+<p>That is the order most sellers do it in. It is the wrong order.</p>
+
+<p>Let me explain.</p>
+
+<h2>The number on the website</h2>
+
+<p>Every home-value site works the same way. An algorithm looks at nearby sales, beds, baths and market trends, and produces a number.</p>
+
+<p>For what it does, it is genuinely useful. It will get you in the neighborhood. <strong>But it has never been inside your house.</strong> It does not know you redid the kitchen. It does not know the roof is new. Public records cannot see what an appraiser or a good agent can see, because they have never walked through the door.</p>
+
+<p>That matters more than it sounds. On a $400,000 home, being off by just five percent is <strong>$20,000</strong>. That is not a rounding error. That is real money, in one direction or the other &mdash; underpriced and you leave it on the table, overpriced and the house sits while everybody else&rsquo;s sells.</p>
+
+<p>An online estimate is a starting point. It is not a professional valuation, and your biggest asset should not be priced off a website alone.</p>
+
+[[img:assets/photos/17/b3-home-for-sale-sign.jpg|A home for sale sign on a front lawn|Photo by <a href="https://www.pexels.com/@thirdman" rel="nofollow noopener" target="_blank">Thirdman</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>The report you did not ask for</h2>
+
+<p>Here is how it usually goes. The house is listed. A buyer makes an offer, you accept, and then their inspector walks through with a flashlight and a clipboard. A few days later you get a list.</p>
+
+<p>Now you are negotiating repairs you did not know about, at prices you did not set, against a clock you do not control.</p>
+
+<p>That is why we make sure our sellers have their home inspected <em>before</em> it goes on the market. Same inspection, same flashlight, same list &mdash; just in your hands first. And there are four reasons it changes everything.</p>
+
+<h2>1. You find it first</h2>
+
+<p>Maybe the furnace is not heating the way it should. Maybe the AC is not cooling properly. Maybe there is a slow leak at the back of the sink that nobody has noticed because nobody has looked.</p>
+
+<p>We want to know that ahead of time. <strong>We don&rsquo;t want somebody else telling us about our own house.</strong></p>
+
+<p>A problem you find on your own schedule is a problem. The same problem found by the buyer&rsquo;s inspector, mid-contract, is a bargaining chip &mdash; theirs, not yours.</p>
+
+<h2>2. You price it with confidence</h2>
+
+<p>Say the inspector comes through and everything is beautiful. No problems. Then I can confidently price that house at the higher end of the range, because I know it is problem-free and I can show it.</p>
+
+<p>Now say there are a few issues, and the seller decides not to take care of them. That is a perfectly reasonable decision &mdash; but we know it ahead of time, and we price accordingly. The issue is already in the number instead of becoming a surprise discount later.</p>
+
+<p>Either way, the price comes from what is true about the house rather than from a guess.</p>
+
+<h2>3. Freedom from buyer math</h2>
+
+<p>Buyer math is when a buyer says a repair costs significantly more than it really does. Sometimes it is lack of experience &mdash; they genuinely do not know what a water heater costs. Sometimes it is a negotiation strategy. Either way, the number they give you is not the number it costs.</p>
+
+<p>If you already know about the issue, buyer math stops working, because you already have the real number. And in most cases, taking care of it yourself, with your own contractor at your own price, costs less than the credit a buyer would have asked for.</p>
+
+[[img:assets/photos/17/b2-inspection-checklist.jpg|An inspector holding a completed inspection checklist on a clipboard|Photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>4. You get to show your work</h2>
+
+<p>When the report comes back clean &mdash; water heater great, furnace great, AC great, the inspector loving the house &mdash; that is not just good news. It is something to promote.</p>
+
+<p>I let buyers know they can buy that house with confidence. And if there were problems here and there, the seller already took care of them. <strong>Here are the receipts. Here is the report.</strong></p>
+
+<p>That changes the tone of the whole sale. The goal is not just to sell your home. It is to sell it with fewer surprises, stronger negotiating power and more confidence on both sides of the table.</p>
+
+<h2>Now here is the important part</h2>
+
+<p>Once you have inspected, you know what you know.</p>
+
+<p>If the report turns up a real problem, it is no longer something you might not have known about. Before you decide whether to fix it, price it in or leave it, talk to your agent about how disclosure works for your sale &mdash; and where it matters, an attorney. That is not a reason to skip the inspection. Not knowing does not make a problem go away; it only means the buyer finds it first.</p>
+
+<p>And a buyer may still order their own inspection. That is their right, and your report does not replace it. What it does is mean that when theirs comes back, very little in it is news to you.</p>
+
+<h2>Value and condition, before anyone else</h2>
+
+<p>Put the two together and the idea is simple. Before the market tells you what your house is worth, get a professional inside it. Before a buyer&rsquo;s inspector tells you what is wrong with it, find out yourself.</p>
+
+<p>Nobody should know your house better than you do.</p>
+
+<p>So that is knowing your house before you list it, explained.</p>
+HTML,
+    ],
+
+    [
         'slug'           => 'owning-vs-investing-in-real-estate',
         'title'          => 'Owning real estate and investing in it are not the same thing.',
         'seo_title'      => 'Owning Real Estate vs Investing In It',
