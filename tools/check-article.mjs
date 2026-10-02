@@ -82,6 +82,16 @@ async function shapes(page) {
   }));
 }
 
+// A picture the live host answers once with its holding page (or the proxy cuts
+// short) shows as "not loaded" though the file is fine. Before failing, reload the
+// page once and look again; only what is still wrong is reported.
+async function badPictures(page, url, mustSee) {
+  const bad = async () => (await shapes(page)).filter(s => !s.loaded || s.off > 0.03);
+  let b = await bad();
+  if (b.some(s => !s.loaded) && await realPage(page, url, mustSee)) { await loadLazy(page); b = await bad(); }
+  return b;
+}
+
 function curl(url, out = '/dev/null') {
   const a = ['-sS', '--max-time', '120', '-o', out, '-w', '%{http_code} %{redirect_url}', url];
   if (url.startsWith('https:') && fs.existsSync(CA)) a.unshift('--cacert', CA);
@@ -103,7 +113,7 @@ for (const slug of slugs) {
   if (!html) continue;
   await loadLazy(page);
 
-  const bad = (await shapes(page)).filter(s => !s.loaded || s.off > 0.03);
+  const bad = await badPictures(page, `${BASE}/blog/${slug}`, '.art-cover, article');
   report(!bad.length, 'every visible picture loaded and at its own shape', bad.map(b => `${b.src} ${b.loaded ? (b.off * 100).toFixed(1) + '% off' : 'not loaded'}`).join(', '));
 
   const literal = await page.evaluate(() => {
@@ -173,7 +183,7 @@ for (const slug of slugs) {
     report(card.includes(coverStem), '/blog lists it with its cover', base(card));
     const listLit = await page.evaluate(() => [...new Set(document.body.innerText.match(/&(#\d+|[a-z]+);/gi) || [])]);
     report(!listLit.length, '/blog shows no HTML entities as text', listLit.join(' '));
-    const badList = (await shapes(page)).filter(s => !s.loaded || s.off > 0.03);
+    const badList = await badPictures(page, `${BASE}/blog`, `a[href="/blog/${slug}"]`);
     report(!badList.length, '/blog pictures loaded and at their own shape', badList.map(b => b.src).join(', '));
   } else report(false, '/blog lists it');
 

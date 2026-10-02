@@ -194,6 +194,9 @@ check there and a row here.
 - **The host serves an anti-bot holding page ("One moment, please…") at random, with
   HTTP 200.** A 200 proves nothing — not for uploads, pages or redirects. Retry until
   the body is the real one.
+  It can also answer a single picture request that way, so a picture shows as "not
+  loaded" though the file is fine. `check-article.mjs` reloads once before failing one;
+  if a picture still fails, fetch the file and byte-compare it before believing it.
 - The egress proxy sometimes truncates large transfers; retry on a short body, not
   just on an error.
 - Headless Chromium doesn't trust the egress proxy's CA, so it can't open the live
@@ -225,10 +228,8 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 
 ## Open items
 
-- **Cash-is-king article (2 Oct): narration and deploy are waiting for the owner's
-  ElevenLabs key and cPanel token.** It is committed and passes every local check.
-  Still to do: `tools/narrate.py` and STT check, then set `audio` and `audio_secs`; deploy;
-  live check; podcast episode copy.
+- **Rotate the ElevenLabs key and the cPanel API token**: both were pasted into chat on
+  2 Oct 2026. Ask the owner for the new ones next session.
 - **For Erika to review:** the cash-is-king caution ("every contingency you remove is a
   protection you no longer have… never just to win the house"), which is added, not hers.
 - **16 mockup buttons** still call `alert(…)` in `index.php`: Escaluxe Living shop

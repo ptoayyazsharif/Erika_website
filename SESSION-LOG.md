@@ -7,6 +7,29 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-02 (later) — Cash is king narrated, deployed and verified live
+
+**Asked.** The owner supplied the ElevenLabs key and cPanel user and token; finish the article.
+
+**Done**
+- **Narration.** `tools/narrate.py`: 2 chunks, 231 s, 64k mono. The listen-back check covered the opening, 80 s, 106 s, the seam at about 134 s, 160 s and the ending. Every phrase came back as written, including "24 plus years", "seven to ten days", "as is", the contingency list and the closing line. `audio` and `audio_secs` are set on the post.
+- **Deploy.** `tools/deploy.sh`: 12 files, 0 failures, each size-matched on the host. The files were `cms.php` (the entity fix), `posts.php`, `photos.php`, the MP3, the cover, the closing-table photo, and the WebP versions of both pictures.
+- **Live.** `check-article.mjs --all` through the mirror, with `--origin https://erikakpage.com`: ALL PASS for 4 articles.
+  - `/cash-is-king` answers 301.
+  - The live `/blog` page no longer shows `&rsquo;`.
+  - Audio length matches on every article.
+
+**Failed, and what was done**
+- **First live run.** One FAIL: the investing article's hero WebP was "not loaded". Fetching the three files directly showed them on the host and byte-identical; the request had failed once on the way. The rerun passed.
+  - `check-article.mjs` now reloads the page once and looks again before reporting a picture as not loaded. The full live and local runs pass with it.
+
+**Open**
+- Podcast episode: the owner uploads it to RSS.com (copy handed over).
+- The keys were pasted into chat, so rotate the ElevenLabs key and cPanel token.
+- Erika to review the added caution.
+
+---
+
 ## 2026-10-02 — "Cash is king" article; one branch; the self-updating loop
 
 **Asked.** Publish today's article. Use the default branch for everything and merge
@@ -51,8 +74,7 @@ passes, what fails, everything learned, so each new session starts informed.
 - **Stop hook too strict.** On its first real use, the stale-log check counted a rebuilt `dist/` zip as unlogged work. `dist/` is now excluded. The unpushed and not-on-default blocks were verified in the same run.
 - **Stale file.** One check run failed right after `git stash pop` because the dev server served the old `cms.php` for a moment. It passed on rerun. Noted in the environment section.
 
-**Open**
-- Narration, deploy, live check and podcast copy for the cash article: waiting on the ElevenLabs key and cPanel token.
+**Open** (narration and deploy were finished later the same day; see the entry above)
 - Erika to review the added caution.
 
 ---
