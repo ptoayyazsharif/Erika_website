@@ -1,5 +1,15 @@
 [
   {
+    "slug": "cash-is-king-if-you-really-mean-cash",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "Cash is king, if you really mean cash.",
+    "sub": "“I’m paying cash. Can I get a discount?” My answer: what do you mean by cash?",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/a1-closing-table-signing.jpg",
+    "refPos": "60% 40%"
+  },
+  {
     "slug": "owning-vs-investing-in-real-estate",
     "template": "bold",
     "eyebrow": "Investing",

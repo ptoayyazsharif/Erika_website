@@ -269,7 +269,13 @@ provides on the host.
 
 `config.local.php` can also set `'driver' => 'sqlite'` for a zero-setup local run.
 
+Checking articles: `NODE_PATH=/opt/node22/lib/node_modules node tools/check-article.mjs --all`
+(local server by default; `--base`/`--origin` for the live site — see `CLAUDE.md`).
+
 ## Branches
 
-- `claude/lite-cms` — this CMS version
-- `claude/client-website-ux-ra0p3o` — the original static single-file mockup (`index.html`)
+- `claude/client-website-ux-ra0p3o` — **the default branch and the single source of
+  truth**: the live PHP site. (It held the original static mockup until 2 Oct 2026, when
+  the live work was merged into it.) Any other branch is merged back into it.
+- `CLAUDE.md` is the working runbook and `SESSION-LOG.md` the history of what each
+  session did, passed and failed; hooks in `.claude/settings.json` keep both current.

@@ -25,6 +25,101 @@
 return [
 
     [
+        'slug'           => 'cash-is-king-if-you-really-mean-cash',
+        'title'          => 'Cash is king, if you really mean cash.',
+        'seo_title'      => 'Cash Is King in Real Estate — If You Really Mean Cash',
+        'seo_desc'       => 'Paying cash and want a discount? On closing day every offer is cash to the seller. What makes a cash offer worth more, and why contingencies cancel it out.',
+        'excerpt'        => '&ldquo;I&rsquo;m paying cash &mdash; can I get a discount?&rdquo; Yes, you can. If you truly mean cash. Here is what a seller actually gets from a cash offer, and why most of them are not as attractive as the buyer thinks.',
+        'date'           => '2026-10-02',
+        'updated'        => '2026-10-02',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['cash offer', 'contingencies', 'buying a home', 'investors', 'Georgia real estate'],
+        'cover'          => 'assets/photos/17/cash-is-king-if-you-really-mean-cash-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Cash is king, if you really mean cash.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => '',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'cash-is-king',
+        'audio_secs'     => 0,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Can I get a discount for paying cash?',
+                'a' => 'You can ask, and a seller may say yes &mdash; if the offer is truly cash: as-is, without contingencies, and able to close quickly. A cash offer that still needs an appraisal, an inspection and thirty days gives the seller very little they would not get from a buyer with a loan.',
+            ],
+            [
+                'q' => 'How fast can a cash buyer close in Georgia?',
+                'a' => 'In my experience, about seven to ten days, because that is how long it takes for title to clear in Atlanta and across Georgia. A cash buyer who needs thirty days is closing on a financed buyer&rsquo;s timeline.',
+            ],
+            [
+                'q' => 'Should I waive my inspection and appraisal to make my cash offer stronger?',
+                'a' => 'That is the trade a strong cash offer makes, and it moves the risk from the seller to you. Decide it with your agent, knowing what you are giving up &mdash; never just to win the house.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Cash is king. You have heard that before.</p>
+
+<p>And cash <em>is</em> king &mdash; if you really mean cash.</p>
+
+<p>In 24+ years of real estate, I have had this conversation more times than I can count. Somebody is interested in a property. Sometimes it is an investor, sometimes a traditional buyer. And they say: <strong>&ldquo;Well, I&rsquo;m buying with cash, and cash is king. So because I&rsquo;m buying with cash, can I get this discount, that discount, this percentage off?&rdquo;</strong> Usually a significant one.</p>
+
+<p>My answer is always the same. Cash is king, and yes, you can &mdash; if you truly mean cash.</p>
+
+<p>Let me explain.</p>
+
+<h2>On closing day, every offer is cash</h2>
+
+<p>Here is what most buyers miss. Whether you are paying with your own money or with some type of loan, on closing day it is all cash to the seller. The lender&rsquo;s money arrives at the closing table the same as yours would. The seller does not get paid in anything else.</p>
+
+<p>So the cash itself is not what a seller is paying you a discount for. If they are going to take less, they are taking less in exchange for something else &mdash; and that something is <strong>certainty and speed.</strong></p>
+
+[[img:assets/photos/17/a1-closing-table-signing.jpg|A buyer signing paperwork at a closing table|Photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>When cash is nothing fancy</h2>
+
+<p>Many times people say cash, but there are a lot of contingencies attached to the cash.</p>
+
+<p>A contingency is a condition in the contract &mdash; something that has to happen, or not happen, before the buyer is bound to close. The common ones are:</p>
+
+<ul>
+<li><strong>An appraisal contingency.</strong> If the property appraises for less than the price, the buyer can renegotiate or walk away.</li>
+<li><strong>An inspection contingency.</strong> The buyer inspects, and can ask for repairs or credits, or walk away.</li>
+<li><strong>A long closing date.</strong> Thirty days or more, which is the same timeline a buyer with a loan usually needs.</li>
+</ul>
+
+<p>Every one of those is a perfectly normal thing for a buyer to want. But look at it from the seller&rsquo;s side. If you are coming with cash, but you have an appraisal contingency, an inspection contingency and you need thirty days to close &mdash; <strong>there is nothing fancy about that.</strong> There is nothing about that offer that a financed buyer could not also give them.</p>
+
+<p>Yes, it might be cash. But it is not a glowing benefit. And a seller is not going to take a significant discount for something that is not a benefit.</p>
+
+<h2>What &ldquo;really cash&rdquo; sounds like</h2>
+
+<p>Now here is the important part. When somebody really means cash, it sounds like this:</p>
+
+<blockquote><p>&ldquo;Erika, I want to buy your property. Cash. As-is. And I can close in seven to ten days.&rdquo;</p></blockquote>
+
+<p>As-is means the buyer is taking the property in the condition it is in, without coming back for repairs. Seven to ten days, because in my experience that is how long it takes for title to clear in Atlanta and across the state of Georgia. A buyer who can close that fast is not waiting on anything but the title work.</p>
+
+<p>That offer is free of the conditions that make a sale uncertain. That is what cash being king actually means &mdash; and that is the kind of offer a seller may well accept less for.</p>
+
+<h2>Before you give anything up</h2>
+
+<p>One word of caution, because the strong version of a cash offer works by moving risk. Every contingency you remove is a protection you no longer have. If you skip the appraisal, you carry the risk of overpaying. If you buy as-is, whatever is wrong with the property becomes yours to fix.</p>
+
+<p>Sometimes that is exactly the right trade &mdash; investors make it every day, on purpose, with the numbers in front of them. But make it as a decision with your agent, knowing what you are giving up, and never just to win the house.</p>
+
+<h2>It is not only real estate</h2>
+
+<p>That is the conversation in real estate, but it applies to a lot of other things. &ldquo;I want a discount because I&rsquo;m paying cash.&rdquo; Okay. Then make sure you really mean cash &mdash; free of the strings and conditions that take the value out of it.</p>
+
+<p>Cash is king, but only when you really mean cash.</p>
+
+<p>So that is cash is king, explained.</p>
+HTML,
+    ],
+
+    [
         'slug'           => 'know-your-house-before-you-list',
         'title'          => 'Nobody should know your house better than you do.',
         'seo_title'      => 'Before You List: Know Your Home Better Than the Buyer',

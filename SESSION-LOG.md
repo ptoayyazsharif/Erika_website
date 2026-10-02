@@ -1,0 +1,110 @@
+# Session log
+
+Newest first. One entry per session or piece of work: what was asked, what was done,
+what passed, what failed (and how it was fixed), and what is still open. The lessons
+in here are also folded into `CLAUDE.md`, which is the current truth; this file is the
+history behind it. See "The loop" in `CLAUDE.md`.
+
+---
+
+## 2026-10-02 — "Cash is king" article; one branch; the self-updating loop
+
+**Asked.** Publish today's article. Use the default branch for everything and merge
+other branches into it. Keep the repo updated after every change: the routine, what
+passes, what fails, everything learned, so each new session starts informed.
+
+**Done**
+- **Branches.** Merged the default branch (`claude/client-website-ux-ra0p3o`, the old
+  static mockup) into the live branch.
+  - Its two extra commits only touched `index.html`, which the PHP site had replaced, and `index.php` already had both fixes. The deletion was kept and the site is unchanged.
+  - The default branch was then fast-forwarded to the live site. Both branches now point at the same commit, and the default branch is the source of truth.
+- **Article.** *Cash is king, if you really mean cash* (`/blog/cash-is-king-if-you-really-mean-cash`, Buying, short link `/cash-is-king`, no guide).
+  - Sources: her `cash-is-king` transcript (17 Jul 2026, ~320 words), reel `Da_k4xWCG2o` and its caption.
+  - Added a general caution on giving up contingencies, flagged for Erika.
+  - Body picture: the closing-table photo from the library, which no article was using.
+  - Bold cover, with the supporting line from her caption.
+- **Bug fixed site-wide.** `blog_clean()` passed `title`, `excerpt`, `seo_*` and `cover_alt` straight to `esc()`. Every `/blog` card and article intro therefore showed `&rsquo;` and `&mdash;` as literal text, on the live site too. Added `plain_text()` (in `cms.php`) to decode them once.
+- **`tools/check-article.mjs` (new).** The article checks as one command, PASS/FAIL per line:
+  - picture shapes, and the cover on every surface;
+  - the offer box or "Blog enquiry" form;
+  - audio file vs `audio_secs`;
+  - the short-link 301, `/blog` listing and product back-link;
+  - no entities shown as text.
+  Until now these checks were rewritten in temp scripts every session and lost.
+- **The loop.**
+  - This log.
+  - "The loop" and the one-branch rule in `CLAUDE.md`.
+  - `.claude/settings.json` hooks: SessionStart prints branch state, the newest log entry and open items; Stop blocks once on uncommitted, unpushed or unmerged work, or a stale log.
+
+**Passed**
+- `check-article.mjs --all` locally: 4 articles, every check.
+- Entity check proven both ways: it fails on the old `cms.php` (`&rsquo; &mdash;`) and passes on the fixed one.
+- Hooks pipe-tested by hand: clean tree passes; dirty tree, unpushed commits and stale log each block; `stop_hook_active` lets the stop through.
+
+**Failed, and what was done**
+- **Recovering the session's keys after compaction.** The permission checker blocked reading the ElevenLabs, Pexels and cPanel keys from the transcript, and also blocked searching Pexels and Unsplash without a key. Not worked around.
+  - Lesson in `CLAUDE.md`: ask the owner for keys at the start of any session that will narrate, fetch photos or deploy.
+  - The article uses a library photo instead.
+- **First cover draft.** The headline wrapped "— if" to the start of line two, and the supporting line repeated the headline. Changed to a comma and her caption line.
+  - Rule added: no leading dash; the post title matches the cover line.
+- **Checker bug.** It passed two `-o` flags to curl, so the MP3 went to /dev/null and every audio check failed. Fixed.
+- **Stale file.** One check run failed right after `git stash pop` because the dev server served the old `cms.php` for a moment. It passed on rerun. Noted in the environment section.
+
+**Open**
+- Narration, deploy, live check and podcast copy for the cash article: waiting on the ElevenLabs key and cPanel token.
+- Erika to review the added caution.
+
+---
+
+## 2026-10-01 — Selling article; Bold covers; CLAUDE.md and tools
+
+**Done**
+- **Selling article.** Published *Nobody should know your house better than you do* (`/before-you-list`), narrated.
+  - Added a general disclosure note.
+  - Left out her on-camera line suggesting buyers could skip their own inspection.
+- **Cover templates.** Built five, with `tools/covers/blog.js`. The owner chose **Bold** and it became the house template, applied to all three articles.
+  - Portrait: the pink-suit image, labelled AI-generated in the library.
+  - Sam's Club is shown by the sign cut from her video, not a logo file.
+- **Notes and tools.** Wrote `CLAUDE.md`. Committed `narrate.py`, `stt-check.py`, `deploy.sh` and `live-mirror.py`, which until then existed only in a temp folder.
+- **`ceo_erika`.** Wrote the note `memory/business/erikakpage-blog.md`.
+
+**Failed, and what was done**
+- **Owner feedback.** The owner had to ask to see a deployed cover: always show the result.
+- **Old photo.** The owner said not to use the old selfie: don't reuse it.
+- **Cover gates.** The overflow gate failed by 4–7 px on descenders; fixed with padding under the headline. The Studio template headline ran into her hair; the checks can't see that, so look at every cover.
+- **"Blog enquiry" form.** An article with no guide sent "Guide request: free guide". Fixed.
+- **Short link anchor.** Short links added `#guide` to an article with no guide. Fixed.
+
+## 2026-09-30 — Investing article; guides joined to articles; products page
+
+**Done**
+- **Digital Products.** Made the page real: per-guide pages, gated downloads, admin screen, and filter chips that actually filter.
+- **Investing article.** Published *Owning real estate and investing in it are not the same thing* (`/invest`), offering the Hidden-Value Checklist.
+- **One `product` field** now joins each article to its guide.
+- **Sam's Club cover**, cut from a frame of her video.
+
+**Failed, and what was done**
+- **Offer box.** It was hard-coded to Closing Costs 101 in eight places, so the second article advertised the first one's guide. Now driven from the product.
+- **Admin save.** Saving the Blog admin screen blanked `short` and 404'd the short link. Found by a round-trip test and fixed.
+- **TTS mishearing.** It read "not a valuation" as "not evaluation". The sentence was rewritten and regenerated.
+- **Banned word.** "leverage" was caught in a draft.
+- **`mp3_duration()`** was given an absolute path and returned 0; it needs a path relative to the site root.
+- **Host holding page.** The anti-bot page returns HTTP 200; that caused false failures until checks moved to page completeness.
+
+## 2026-09-29 — Blog launch, first article, Closing Costs 101
+
+**Done**
+- **Blog launch.** Blog, SEO layer, and *Closing costs in Georgia, explained*, narrated in her cloned voice.
+- **Closing Costs 101 PDF**, built by `tools/build-guide.mjs`, with the offer box above the fold.
+
+**Failed, and what was done**
+- **Stretched pictures.** Body pictures shipped stretched to 712×1000. The aspect-ratio check was added.
+- **PDF fonts.** They fell back silently. Grepping the PDF for a font name gave a false pass; a per-character font check replaced it.
+
+## Before 2026-09-29
+
+Built in July and August 2026, as listed in `git log`:
+- the static mockup and its client revisions;
+- the PHP+MySQL CMS with its admin;
+- Lofty CRM lead sync;
+- photo placement, the phone layout, real video and the market pages.

@@ -163,6 +163,11 @@ function esc(string $s): string {
     return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 }
 
+/** Text that may carry HTML entities, as plain text (for esc() or JSON). */
+function plain_text(string $s): string {
+    return trim(html_entity_decode($s, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+}
+
 /**
  * The site's own origin, with no trailing slash — for canonical links, Open
  * Graph URLs and the sitemap, all of which have to be absolute.
@@ -614,17 +619,20 @@ function blog_clean(array $p): ?array {
 
     return [
         'slug'         => $slug,
-        'title'        => trim((string) ($p['title'] ?? $slug)),
-        'seo_title'    => trim((string) ($p['seo_title'] ?? '')),
-        'seo_desc'     => trim((string) ($p['seo_desc'] ?? '')),
-        'excerpt'      => trim((string) ($p['excerpt'] ?? '')),
+        // Plain-text fields: printed through esc() and json_encode(), so an
+        // entity written in posts.php (&rsquo;, &mdash;) is decoded here once —
+        // otherwise it shows on the page as the literal text "&rsquo;".
+        'title'        => plain_text((string) ($p['title'] ?? $slug)),
+        'seo_title'    => plain_text((string) ($p['seo_title'] ?? '')),
+        'seo_desc'     => plain_text((string) ($p['seo_desc'] ?? '')),
+        'excerpt'      => plain_text((string) ($p['excerpt'] ?? '')),
         'date'         => $date,
         'updated'      => $updated,
         'author'       => trim((string) ($p['author'] ?? 'Erika K. Page')),
         'cat'          => isset(BLOG_CATS[$p['cat'] ?? '']) ? (string) $p['cat'] : '',
         'tags'         => $tags,
         'cover'        => gallery_safe_src((string) ($p['cover'] ?? '')),
-        'cover_alt'    => trim((string) ($p['cover_alt'] ?? '')),
+        'cover_alt'    => plain_text((string) ($p['cover_alt'] ?? '')),
         'cover_credit' => strip_bad(trim((string) ($p['cover_credit'] ?? ''))),
         'audio'        => gallery_safe_src((string) ($p['audio'] ?? '')),
         // A downloadable companion (PDF). Validated the same way as the other
