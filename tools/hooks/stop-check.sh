@@ -6,7 +6,8 @@
 #   * commits not pushed;
 #   * this branch not contained in the default branch (all work ends up there);
 #   * commits since SESSION-LOG.md last changed that touch more than the notes,
-#     i.e. work happened and the log wasn't updated.
+#     i.e. work happened and the log wasn't updated (a rebuilt dist/ zip alone
+#     doesn't count).
 #
 # Read-only, git only. If the hook already blocked this stop (stop_hook_active),
 # it lets the turn end, so it can never loop — e.g. when a question to the owner
@@ -35,7 +36,7 @@ fi
 
 last=$(git log -1 --format=%H -- SESSION-LOG.md 2>/dev/null)
 if [ -n "$last" ]; then
-  changed=$(git log --format= --name-only "$last..HEAD" -- . ':!SESSION-LOG.md' ':!CLAUDE.md' ':!README.md' 2>/dev/null | sort -u | head -5)
+  changed=$(git log --format= --name-only "$last..HEAD" -- . ':!SESSION-LOG.md' ':!CLAUDE.md' ':!README.md' ':!dist' 2>/dev/null | sort -u | head -5)
   [ -n "$changed" ] && problems+=("commits since SESSION-LOG.md was last updated changed: $(echo $changed) — add a log entry (what was done, what passed, what failed and why) and fold any lesson into CLAUDE.md")
 fi
 
