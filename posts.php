@@ -38,11 +38,11 @@ return [
         'cover'          => 'assets/photos/17/cash-is-king-if-you-really-mean-cash-cover.jpg',
         'cover_alt'      => 'Erika K. Page beside the headline: Cash is king, if you really mean cash.',
         'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
-        'audio'          => '',
+        'audio'          => 'assets/audio/cash-is-king-if-you-really-mean-cash.mp3',
         'guide'          => '',
         'product'        => '',
         'short'          => 'cash-is-king',
-        'audio_secs'     => 0,
+        'audio_secs'     => 231,
         'published'      => true,
         'faq' => [
             [
