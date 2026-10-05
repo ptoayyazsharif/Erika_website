@@ -226,6 +226,7 @@ return [
                 ['r' => 'C2', 'f' => 'assets/photos/17/closing-costs-in-georgia-explained-cover.jpg', 'label' => 'Cover: closing costs in Georgia (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
                 ['r' => 'C3', 'f' => 'assets/photos/17/know-your-house-before-you-list-cover.jpg', 'label' => 'Cover: know your house before you list (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
                 ['r' => 'C4', 'f' => 'assets/photos/17/cash-is-king-if-you-really-mean-cash-cover.jpg', 'label' => 'Cover: cash is king (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
+                ['r' => 'C5', 'f' => 'assets/photos/17/georgia-homestead-exemption-explained-cover.jpg', 'label' => 'Cover: Georgia homestead exemption (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
             ],
         ],
     ],

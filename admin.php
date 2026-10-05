@@ -258,6 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_blog'])) {
             // screen silently blanked `short` and broke the article's short link.
             'short'        => (string) ($row['short'] ?? ''),
             'product'      => (string) ($row['product'] ?? ''),
+            'audio_note'   => (string) ($row['audio_note'] ?? ''),
             'body'         => (string) ($row['body'] ?? ''),
             'faq'          => blog_faq_from_text((string) ($row['faq'] ?? '')),
             'published'    => !empty($row['published']),
@@ -277,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_blog'])) {
             'cat' => (string) ($_POST['bp_new']['cat'] ?? ''), 'tags' => [],
             'cover' => '', 'cover_alt' => '', 'cover_credit' => '',
             'audio' => '', 'audio_secs' => 0, 'guide' => '',
-            'short' => '', 'product' => '',
+            'short' => '', 'product' => '', 'audio_note' => '',
             'body' => '<p>Write the article here.</p>', 'faq' => [],
             'published' => false,
         ];
@@ -873,6 +874,11 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
             <div class="fld">
               <label>Short link <small style="text-transform:none;letter-spacing:0;font-weight:400">&mdash; a short address that redirects here, so a video can say &ldquo;go to erikakpage.com/<em>this</em>&rdquo; instead of reading out the full one. Letters, numbers and hyphens.</small></label>
               <input type="text" name="bp[<?= $i ?>][short]" value="<?= esc($bp['short']) ?>" placeholder="closing-costs-101">
+            </div>
+
+            <div class="fld">
+              <label>Line under the audio player <small style="text-transform:none;letter-spacing:0;font-weight:400">&mdash; leave blank when the audio is this article read aloud. Fill it in when the audio is a podcast episode with its own script, so the page doesn&rsquo;t claim the words are the same.</small></label>
+              <input type="text" name="bp[<?= $i ?>][audio_note]" value="<?= esc($bp['audio_note']) ?>" placeholder="An AI narration of the article above, in Erika’s voice. Same words, read aloud.">
             </div>
 
             <div class="fld">

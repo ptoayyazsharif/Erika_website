@@ -20,6 +20,9 @@
 //   * the short link 301s here           — saving the admin once blanked it and 404'd the link
 //   * the page is complete               — the host's "One moment, please…" page returns 200
 //   * no "&rsquo;" showing as text       — entities in posts.php were escaped twice on /blog and in titles
+//   * the line under the player is true  — it said "same words, read aloud" for every audio,
+//                                          wrong once an episode had its own script
+//   * every source link answers          — a researched article is only as good as its references
 import { createRequire } from 'module';
 import { execFileSync } from 'child_process';
 import fs from 'fs';
@@ -45,6 +48,25 @@ if (!slugs.length) { console.error('usage: node tools/check-article.mjs <slug>�
 
 let fails = 0;
 const report = (ok, what, detail = '') => { if (!ok) fails++; console.log(`  ${ok ? 'PASS' : 'FAIL'}  ${what}${detail ? '  — ' + detail : ''}`); };
+const warn = (what, detail = '') => console.log(`  WARN  ${what}${detail ? '  — ' + detail : ''}`);
+const DEFAULT_NOTE = 'An AI narration of the article above, in Erika’s voice. Same words, read aloud.';
+
+// Outside links in the article body (its references). 2xx/3xx pass; 403 is only a
+// warning — some government sites refuse anything that isn't a browser — and
+// 404, 5xx or no answer fail. Retried, because one failed request proves nothing.
+function sourceLinks(body) {
+  return [...new Set([...body.matchAll(/href="(https?:\/\/[^"]+)"/g)].map(m => m[1].replace(/&amp;/g, '&')))]
+    .filter(u => !/erikakpage\.com|pexels\.com|pixabay\.com/.test(u));
+}
+function linkStatus(u) {
+  let code = '000';
+  for (let i = 0; i < 3 && !/^[23]/.test(code); i++) {
+    const a = ['-sS', '-L', '--max-time', '40', '-A', 'Mozilla/5.0 (link check)', '-o', '/dev/null', '-w', '%{http_code}', u];
+    if (fs.existsSync(CA)) a.unshift('--cacert', CA);
+    try { code = execFileSync('curl', a, { encoding: 'utf8' }).trim(); } catch { code = '000'; }
+  }
+  return code;
+}
 const base = f => path.basename(f || '');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -133,6 +155,7 @@ for (const slug of slugs) {
     offer: !!document.querySelector('.offer'),
     offerName: document.querySelector('.offer h2')?.textContent.trim() || '',
     offerPic: document.querySelector('.offer-pic img')?.currentSrc || '',
+    note: document.querySelector('.listen .note')?.textContent.trim() || '',
   }));
   const coverStem = cover.replace(/\.[a-z]+$/, '');
   report(meta.og.endsWith('/' + post.cover), 'og:image is the cover', meta.og);
@@ -160,6 +183,8 @@ for (const slug of slugs) {
 
   if (post.audio) {
     report(meta.audio.includes(base(post.audio)), 'audio player plays this article', meta.audio);
+    const wantNote = post.audio_note || DEFAULT_NOTE;
+    report(meta.note === wantNote, post.audio_note ? 'line under the player describes the episode (audio_note)' : 'line under the player says it is the article read aloud', meta.note);
     const tmp = path.join(os.tmpdir(), `check-${process.pid}.mp3`);
     const [code] = curl(`${BASE}/${post.audio}`, tmp);
     let secs = 0;
@@ -168,6 +193,17 @@ for (const slug of slugs) {
     report(code === '200' && Math.abs(secs - post.audio_secs) <= 2, 'audio file is there and audio_secs matches it', `http ${code}, file ${secs.toFixed(1)}s, post ${post.audio_secs}s`);
   } else {
     report(true, 'no narration on this post (audio is empty)');
+  }
+
+  const links = sourceLinks(post.body);
+  if (links.length) {
+    const bad = [];
+    for (const u of links) {
+      const c = linkStatus(u);
+      if (c === '403') warn('source link refuses non-browser requests (open it by hand once)', `${c} ${u}`);
+      else if (!/^[23]/.test(c)) bad.push(`${c} ${u}`);
+    }
+    report(!bad.length, `every source link answers (${links.length} checked)`, bad.join(', '));
   }
 
   if (post.short) {

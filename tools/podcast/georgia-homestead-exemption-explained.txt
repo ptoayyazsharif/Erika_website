@@ -1,0 +1,67 @@
+# Erika Explains — podcast episode script
+# Article: /blog/georgia-homestead-exemption-explained
+# Facts: every one is in tools/research/georgia-homestead-exemption-explained.md
+#
+# Lines starting with "#" are not spoken. Blank lines separate paragraphs; the
+# narrator splits only at paragraph breaks. A "voice:" line sets ElevenLabs
+# voice settings for this episode (tools/narrate.py --script reads it).
+#
+# voice: stability=0.38 similarity=0.8 style=0.22 speaker_boost=1
+
+Hey, it's Erika. Welcome back to Erika Explains.
+
+So... a little while ago I made a video about a headline in Gwinnett County. Everybody was saying property taxes were going up. And at the end of that video I said something like, "If you have a homestead exemption, your situation can be very, very different from your neighbor." And then I promised you a whole video on homestead exemptions.
+
+Well, this is me keeping that promise. And honestly? The timing works out, because Georgia just changed the rules. So let me explain.
+
+Let's start simple. What is a homestead exemption? It's a break on your property taxes for the home you actually live in. It takes part of your home's value off the table before your tax is figured out. In Georgia there's a basic statewide one, two thousand dollars off for county and school taxes. And then there are bigger ones if you're sixty-two or older, sixty-five or older, a disabled veteran, or the surviving spouse of a service member. A lot of those come with income limits. And on top of all that, counties and cities have their own.
+
+Which is exactly why two neighbors, in the same house, on the same street, can get two really different tax bills. One of them filed. The other one didn't.
+
+Okay. So who qualifies? There are four things. You have to have owned the home on January first of that tax year. It has to be your legal residence. You have to actually live there. And you can't be claiming a homestead exemption anywhere else... not in Georgia, not in any other state.
+
+That January first date is a bigger deal than people think, and I'll come back to it.
+
+Now, the deadline. Applications are due April first for the current tax year. The Georgia Department of Revenue says you can now also apply up to the end of the forty-five day window you get to appeal your assessment notice. But please... don't plan around the late window. Think of it as a safety net. File by April first.
+
+And you don't file with the state. You file with your county. Fulton, DeKalb, Cobb, Gwinnett, they each have their own application and their own list of what to bring. Usually it's your deed, if the county records haven't caught up yet, your Georgia driver's license, and your car registration showing that address.
+
+Here's the good news, though. You usually only do this once. Once you're approved, most homestead exemptions just renew every year, as long as you keep living there and the ownership doesn't change.
+
+Alright. Now let's talk about what changed.
+
+Back in twenty twenty-four, Georgia passed House Bill five eighty-one. It created what people call the floating homestead exemption. And here's the idea. The county starts with your home's assessed value from a base year. Every year, that number is allowed to grow by inflation, and the state uses the Consumer Price Index for that. Anything your assessed value goes up beyond that? It's exempt. So if the market pushes your home's value up faster than inflation, you're not taxed on the extra.
+
+Sounds great, right? But there was a catch. Local governments were allowed to opt out. And a lot of them did. The Tax Foundation counted about sixty-eight percent of school districts and thirty percent of counties. Right here in Metro Atlanta, the school systems in Fulton, Gwinnett, Cobb and DeKalb all opted out. So did the Gwinnett and Cobb county governments. So depending on where you live, you might have had that cap on part of your bill... and not on the rest of it.
+
+Now here's the important part.
+
+On May eleventh, twenty twenty-six, Governor Kemp signed Senate Bill thirty-three. It's called the HOME Act, the Homeownership Opportunity and Market Equalization Act. And what it does is take the opt-out away. That inflation cap becomes mandatory for every county, every city and every school district. People who've analyzed the law expect it to apply everywhere starting with the twenty twenty-seven tax year. Your county tax office can confirm how it works for your bill.
+
+And this is the piece I really don't want you to miss. The cap isn't automatic for every house. You only get it if you've filed for your homestead exemption. And if you're a new owner, your starting point, that base year, is the assessed value from the year before your exemption is first granted.
+
+So let's make it real. Say you closed on your home any time in twenty twenty-six. That means you own it on January first, twenty twenty-seven. So you file by April first, twenty twenty-seven... and your cap starts from your twenty twenty-six value. If you wait, you start the clock later, from a higher number.
+
+Now, let me be really clear about what this doesn't do, because the headlines won't be.
+
+It caps how fast your home's taxable value can grow. It does not cap your tax bill. Tax rates are still set locally, and the law doesn't cap the total amount of property tax that gets collected. So your bill can still change.
+
+If you add on to your home, like a new room or a pool, that added value goes onto your assessment outside the cap.
+
+And it's tied to you living there. If you move out, or the home stops being your residence, you're expected to let the county know.
+
+There's one more piece. The law lets counties ask voters for a new one-cent local sales tax that goes to homestead relief. But according to the Georgia Municipal Association, that vote can't happen before November of twenty twenty-seven.
+
+So what do you actually do with all this? Three things.
+
+First, look yourself up. Go to your county's tax website and find your property. If it doesn't show a homestead exemption, you're not getting one.
+
+Second, if you bought in twenty twenty-six, put April first, twenty twenty-seven on your calendar right now, and have your deed, your license and your registration ready to go.
+
+And third, if you're turning sixty-two or sixty-five, or you're a veteran, or a surviving spouse, ask your county which extra exemptions you qualify for. They don't apply themselves.
+
+I've put links to every source I used, and to the county tax offices, in the show notes and in the article on my website. And just so you know, this is general information, not tax or legal advice. Your county has the final word on your property.
+
+Your homestead exemption is the reason two identical houses on the same street can have two very different tax bills. Make sure yours is on file.
+
+So that's the homestead exemption, explained. I'm Erika Page. Thanks for listening, and I'll talk to you next time.

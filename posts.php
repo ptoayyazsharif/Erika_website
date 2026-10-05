@@ -25,6 +25,146 @@
 return [
 
     [
+        // Researched, not transcribed: every fact is listed with its source in
+        // tools/research/georgia-homestead-exemption-explained.md, and the audio is
+        // a podcast episode from tools/podcast/<slug>.txt rather than this text read
+        // aloud (hence audio_note).
+        'slug'           => 'georgia-homestead-exemption-explained',
+        'title'          => 'Georgia’s homestead exemption, explained, and why 2027 matters.',
+        'seo_title'      => 'Georgia Homestead Exemption Explained: Deadline, the 2026 HOME Act and 2027',
+        'seo_desc'       => 'Who qualifies for Georgia\'s homestead exemption, the April 1 deadline, and how the 2026 HOME Act makes the inflation cap on home assessments apply everywhere.',
+        'excerpt'        => 'If you own the home you live in and haven&rsquo;t filed for a homestead exemption, you are paying property tax on a break you never claimed. And from 2027, filing does even more: Georgia&rsquo;s new law makes the cap on how fast your home&rsquo;s taxable value can grow apply everywhere.',
+        'date'           => '2026-10-05',
+        'updated'        => '2026-10-05',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['homestead exemption', 'property taxes', 'HOME Act', 'HB 581', 'Georgia real estate', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/georgia-homestead-exemption-explained-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Georgia’s homestead exemption, explained.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/georgia-homestead-exemption-explained.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'homestead',
+        'audio_secs'     => 390,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'When is the Georgia homestead exemption deadline?',
+                'a' => 'April 1 for the current tax year. The Georgia Department of Revenue says you can now also apply up to the end of the 45-day window to appeal your assessment notice &mdash; but don&rsquo;t plan around the late window. File by April 1.',
+            ],
+            [
+                'q' => 'I bought my home in 2026. When do I file?',
+                'a' => 'You have to own and live in the home on January 1 of the tax year. If you closed any time in 2026, you file for the 2027 tax year, by April 1, 2027.',
+            ],
+            [
+                'q' => 'Do I have to file every year?',
+                'a' => 'No. Once approved, most homestead exemptions renew automatically as long as you keep living in the home under the same ownership. If that changes &mdash; you move out, or rent it &mdash; you are expected to tell your county.',
+            ],
+            [
+                'q' => 'Does the HOME Act mean my property taxes can&rsquo;t go up?',
+                'a' => 'No. It limits how fast the taxable value of your homestead can grow, to the rate of inflation. It doesn&rsquo;t cap tax rates or total collections, and improvements you add are counted on top. Your bill can still change.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>If you own the home you live in and you have never filed for a homestead exemption, you are paying property tax on a break you never claimed.</p>
+
+<p>A while back I made a video about a Gwinnett County headline that said property taxes were going up. And I said something I want to come back to: <em>&ldquo;If you have a homestead exemption, or depending on how your property is assessed, your situation can be very, very different from your neighbor.&rdquo;</em> Then I promised you a video on homestead exemptions.</p>
+
+<p>This is that video, in writing This is that &mdash; and the timing is better than I planned, because Georgia just changed the rules. Let me explain.mdash; and it comes at a good moment, because Georgia just changed the rules. Let me explain.</p>
+
+<h2>What a homestead exemption is</h2>
+
+<p>A homestead exemption takes part of your home&rsquo;s value off the table before your property tax is calculated. Georgia has a basic statewide exemption of <a href="https://dor.georgia.gov/property-tax-homestead-exemptions" target="_blank" rel="noopener">$2,000 from county and school taxes</a>, and there are larger ones for homeowners 62 and older, 65 and older, disabled veterans and surviving spouses of service members &mdash; several with income limits.</p>
+
+<p>On top of that, counties and cities offer their own. That is why two neighbors in identical houses can get very different tax bills. One filed. One didn&rsquo;t.</p>
+
+<h2>Who qualifies</h2>
+
+<p>According to the <a href="https://georgia.gov/apply-homestead-exemption" target="_blank" rel="noopener">State of Georgia</a>, four things have to be true:</p>
+
+<ul>
+<li>You owned the home on <strong>January 1</strong> of the tax year.</li>
+<li>It is your legal residence for all purposes.</li>
+<li>You actually live in it.</li>
+<li>You are not claiming a homestead exemption on any other property, in Georgia or in any other state.</li>
+</ul>
+
+<p>That January 1 date matters more than people think. It is the date that decides which year you can file for.</p>
+
+<h2>When and where to file</h2>
+
+<p>Applications are due by <strong>April 1</strong> for the current tax year. The <a href="https://dor.georgia.gov/property-tax-homestead-exemptions" target="_blank" rel="noopener">Department of Revenue</a> says you can now also apply up to the end of the 45-day window to appeal your assessment notice &mdash; but treat that as a safety net, not a plan.</p>
+
+<p>You don&rsquo;t file with the state. You file with your county&rsquo;s tax office, and each county has its own application and its own list of documents. Typically that means your deed if the county records haven&rsquo;t caught up yet, a Georgia driver&rsquo;s license and your vehicle registration showing the address. In Metro Atlanta, start here: <a href="https://fultonassessor.org/exemptions/" target="_blank" rel="noopener">Fulton</a>, <a href="https://dekalbtaxga.gov/property-tax/exemptions/" target="_blank" rel="noopener">DeKalb</a>, <a href="https://www.cobbtax.gov/property/exemptions.php" target="_blank" rel="noopener">Cobb</a> and <a href="https://www.gwinnetttaxcommissioner.com/property-tax/homestead-exemption" target="_blank" rel="noopener">Gwinnett</a>.</p>
+
+<p>And here is the good news: you usually only do this once. Once approved, most homestead exemptions renew automatically every year as long as you keep living in the home under the same ownership.</p>
+
+[[img:assets/photos/17/a2-suburban-home-for-sale.jpg|A suburban home with a for-sale sign in the front yard|Photo by <a href="https://pixabay.com/users/paulbr75-2938186/" rel="nofollow noopener" target="_blank">paulbr75</a> on <a href="https://pixabay.com/" rel="nofollow noopener" target="_blank">Pixabay</a>]]
+
+<h2>The 2024 change: a cap on how fast your value can grow</h2>
+
+<p>In 2024 the state passed HB 581, which created what everyone calls the <strong>floating homestead exemption</strong>. The idea is simple once you see it. The county starts from your home&rsquo;s assessed value in a base year. Each year that base is allowed to grow by inflation &mdash; the Consumer Price Index, according to the <a href="https://dor.georgia.gov/media/35186/download" target="_blank" rel="noopener">Department of Revenue</a> &mdash; and anything your assessed value rises above that is exempt.</p>
+
+<p>In plain terms: if the market pushes your home&rsquo;s value up faster than inflation, the extra doesn&rsquo;t get taxed.</p>
+
+<p>But there was a catch. Local governments were allowed to opt out &mdash; and a lot of them did. The <a href="https://taxfoundation.org/blog/georgia-property-tax-reform/" target="_blank" rel="noopener">Tax Foundation</a> counted 68% of school districts and 30% of counties. Here in Metro Atlanta, the Fulton, Gwinnett, Cobb and DeKalb school systems all opted out, and so did the Gwinnett and Cobb county governments. So depending on where you lived, you may have had the cap on part of your bill and not the rest.</p>
+
+<h2>Now here is the important part: the 2026 HOME Act</h2>
+
+<p>On May 11, 2026, Governor Kemp signed <a href="https://gov.georgia.gov/document/2026-signed-legislation/sb-33/download" target="_blank" rel="noopener">Senate Bill 33</a>, the Homeownership Opportunity and Market Equalization Act &mdash; the HOME Act. As <a href="https://www.wabe.org/georgia-governor-signs-income-property-tax-reduction-laws/" target="_blank" rel="noopener">WABE reported</a>, it prevents local governments and school districts from opting out of that inflation cap. The bill itself says it makes the statewide base-year homestead exemption &ldquo;mandatory for all political subdivisions.&rdquo;</p>
+
+<p>Analyses of the law, such as <a href="https://www.ownwell.com/blog/georgia-home-act-senate-bill-33-property-taxes" target="_blank" rel="noopener">this one from Ownwell</a>, expect it to apply everywhere from the <strong>2027</strong> tax year. Your county tax office can confirm how it applies to your bill.</p>
+
+<p>And this is the part I don&rsquo;t want anybody to miss. The cap is not automatic for every house. Under the law, <strong>you only get it if you have filed for a homestead exemption</strong>. And for a new owner, the starting point &mdash; the base year &mdash; is the assessed value for the year before your exemption is first granted.</p>
+
+<p>So if you closed on a home any time in 2026, you own it on January 1, 2027. File by <strong>April 1, 2027</strong>, and your cap starts from your 2026 value. Wait, and you start the clock later, from a higher number.</p>
+
+<h2>What it doesn&rsquo;t do</h2>
+
+<p>Let&rsquo;s be clear about the limits, because headlines won&rsquo;t be.</p>
+
+<ul>
+<li><strong>It caps the growth of your home&rsquo;s taxable value, not your tax bill.</strong> Tax rates are still set locally, and the law <a href="https://gbpi.org/sine-die-2026-georgia-rejects-property-tax-caps-and-adds-major-investments-for-gbpi-priorities-eight-year-income-tax-package-threatens-outlook/" target="_blank" rel="noopener">does not cap overall property tax collections</a>.</li>
+<li><strong>Improvements count on top.</strong> Add a room or a pool and that added value goes on your assessment outside the cap.</li>
+<li><strong>It is tied to you living there.</strong> If you move out or the home stops being your residence, you are expected to tell the county.</li>
+</ul>
+
+<p>The law also lets counties ask voters for a new 1% local sales tax dedicated to homestead relief. According to the <a href="https://www.gacities.com/articles/the-2026-session-in-review-what-passed-what-didnt-and-what-it-means" target="_blank" rel="noopener">Georgia Municipal Association</a>, that vote can&rsquo;t happen before November 2027.</p>
+
+<h2>What to do this week</h2>
+
+<ul>
+<li><strong>Check that you are filed.</strong> Look up your property on your county&rsquo;s tax site. If it doesn&rsquo;t show a homestead exemption, you&rsquo;re not getting one.</li>
+<li><strong>Bought in 2026?</strong> Put April 1, 2027 on your calendar now and have your deed, license and registration ready.</li>
+<li><strong>Turning 62 or 65, a veteran, or a surviving spouse?</strong> Ask your county which extra exemptions you qualify for. They don&rsquo;t apply themselves.</li>
+</ul>
+
+<p>Your homestead exemption is the reason two identical houses on the same street can carry two very different tax bills. Make sure yours is on file.</p>
+
+<p>So that&rsquo;s the homestead exemption, explained.</p>
+
+<p><em>This article explains how the exemption works; it isn&rsquo;t tax or legal advice. Exemptions and deadlines are set by your county &mdash; confirm the details for your property with your county tax office.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>State of Georgia, <a href="https://georgia.gov/apply-homestead-exemption" target="_blank" rel="noopener">Apply for a Homestead Exemption</a> (updated April 2026).</li>
+<li>Georgia Department of Revenue, <a href="https://dor.georgia.gov/property-tax-homestead-exemptions" target="_blank" rel="noopener">Property Tax Homestead Exemptions</a>.</li>
+<li>Georgia Department of Revenue, <a href="https://dor.georgia.gov/media/35186/download" target="_blank" rel="noopener">Informational Bulletin 2025-01: Overview of Floating Homestead Exemption and the Annual Inflationary Index Rate</a> (January 22, 2025).</li>
+<li>Senate Bill 33 (2026), <a href="https://gov.georgia.gov/document/2026-signed-legislation/sb-33/download" target="_blank" rel="noopener">Homeownership Opportunity and Market Equalization Act of 2026</a>, as signed.</li>
+<li>WABE, <a href="https://www.wabe.org/georgia-governor-signs-income-property-tax-reduction-laws/" target="_blank" rel="noopener">Georgia governor signs income, property tax reduction laws</a> (May 11, 2026).</li>
+<li>Tax Foundation, <a href="https://taxfoundation.org/blog/georgia-property-tax-reform/" target="_blank" rel="noopener">Localities Opt Out of Georgia&rsquo;s New Homestead Tax Exemption</a> (2025).</li>
+<li>Georgia Budget and Policy Institute, <a href="https://gbpi.org/sine-die-2026-georgia-rejects-property-tax-caps-and-adds-major-investments-for-gbpi-priorities-eight-year-income-tax-package-threatens-outlook/" target="_blank" rel="noopener">Sine Die 2026</a>.</li>
+<li>Georgia Municipal Association, <a href="https://www.gacities.com/articles/the-2026-session-in-review-what-passed-what-didnt-and-what-it-means" target="_blank" rel="noopener">The 2026 Session in Review</a> (April 7, 2026).</li>
+<li>Ownwell, <a href="https://www.ownwell.com/blog/georgia-home-act-senate-bill-33-property-taxes" target="_blank" rel="noopener">What Georgia&rsquo;s HOME Act (Senate Bill 33) Means for Your Property Taxes</a>.</li>
+<li>County tax offices: <a href="https://fultonassessor.org/exemptions/" target="_blank" rel="noopener">Fulton</a>, <a href="https://dekalbtaxga.gov/property-tax/exemptions/" target="_blank" rel="noopener">DeKalb</a>, <a href="https://www.cobbtax.gov/property/exemptions.php" target="_blank" rel="noopener">Cobb</a>, <a href="https://www.gwinnetttaxcommissioner.com/property-tax/homestead-exemption" target="_blank" rel="noopener">Gwinnett</a>.</li>
+</ol>
+HTML,
+    ],
+
+    [
         'slug'           => 'cash-is-king-if-you-really-mean-cash',
         'title'          => 'Cash is king, if you really mean cash.',
         'seo_title'      => 'Cash Is King in Real Estate — If You Really Mean Cash',

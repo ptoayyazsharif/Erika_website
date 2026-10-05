@@ -2396,7 +2396,7 @@ $gLink  = $gProd ? product_path($gProd['slug']) : '';
 <div class="listen">
 <div class="hd"><h2>Listen to this article</h2><?php $cd = clock_duration($post['audio_secs']); if ($cd !== ''): ?><span class="len"><?= esc($cd) ?></span><?php endif; ?></div>
 <?= audio_tag($post['audio'], 'Listen to ' . $post['title']) ?>
-<p class="note">An AI narration of the article above, in Erika&rsquo;s voice. Same words, read aloud.</p>
+<p class="note"><?= $post['audio_note'] !== '' ? esc($post['audio_note']) : 'An AI narration of the article above, in Erika&rsquo;s voice. Same words, read aloud.' ?></p>
 </div>
 <?php endif; ?>
 

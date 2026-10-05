@@ -649,6 +649,10 @@ function blog_clean(array $p): ?array {
         // "go to erikakpage.com/closing-costs-101" rather than reading out a slug.
         'short'        => blog_slugify((string) ($p['short'] ?? '')),
         'audio_secs'   => max(0, (int) ($p['audio_secs'] ?? 0)),
+        // What the line under the audio player says. Empty means the default
+        // "same words, read aloud" — true only when the audio is the article
+        // narrated. A podcast episode written as its own script says so here.
+        'audio_note'   => plain_text((string) ($p['audio_note'] ?? '')),
         // A browser submits a textarea with CRLF line endings; normalising them
         // keeps a saved body byte-identical to the same text written in a file.
         'body'         => str_replace("\r\n", "\n", (string) ($p['body'] ?? '')),

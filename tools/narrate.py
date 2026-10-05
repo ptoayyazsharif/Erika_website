@@ -3,6 +3,16 @@
     ELEVENLABS_API_KEY=... python3 tools/narrate.py <slug>
     python3 tools/narrate.py <slug> --dry-run            # show the script and chunk plan only
     python3 tools/narrate.py <slug> --numbered-label Reason   # read "1. Foo" as "Reason 1. Foo"
+    python3 tools/narrate.py <slug> --script tools/podcast/<slug>.txt   # a podcast episode
+
+Two kinds of audio:
+  * the article read aloud (the default) — the page says "Same words, read aloud";
+  * a podcast episode from its own spoken script (--script). Written for the ear —
+    contractions, no headings, nothing read out as a list, sources left to the
+    show notes — so it sounds like someone talking, not a page being read. Set
+    `audio_note` on the post so the page doesn't claim it is the article. The
+    script's "# voice:" line holds the voice settings used, so the next episode
+    can sound the same. See "Research articles and podcast episodes" in CLAUDE.md.
 
 Writes assets/audio/<slug>.mp3 and prints the measured duration to put in the
 post's `audio_secs`. The key comes from the environment and is never committed;
@@ -66,6 +76,26 @@ def script(p, label):
     return title + "\n\n" + b
 
 
+VOICE_DEFAULT = {"stability": 0.45, "similarity_boost": 0.8, "style": 0.0, "use_speaker_boost": True}
+
+
+def read_script(path):
+    """A podcast script: '#' lines are notes, except '# voice: k=v ...' which sets voice settings."""
+    voice, lines = dict(VOICE_DEFAULT), []
+    keys = {"stability": "stability", "similarity": "similarity_boost", "style": "style", "speaker_boost": "use_speaker_boost"}
+    for line in open(path, encoding="utf-8").read().splitlines():
+        if line.lstrip().startswith("#"):
+            m = re.match(r"\s*#\s*voice:\s*(.*)", line)
+            if m:
+                for k, v in re.findall(r"(\w+)=([\d.]+)", m.group(1)):
+                    if k in keys:
+                        voice[keys[k]] = bool(int(float(v))) if k == "speaker_boost" else float(v)
+            continue
+        lines.append(line)
+    text = re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+    return text, voice
+
+
 def chunks(text):
     out, cur = [], ""
     for para in text.split("\n\n"):
@@ -77,14 +107,14 @@ def chunks(text):
     return out
 
 
-def tts(key, text, prev, nxt, out):
+def tts(key, text, prev, nxt, out, voice=VOICE_DEFAULT):
     ca = os.environ.get("CA_BUNDLE", "/root/.ccr/ca-bundle.crt")
     ctx = ssl.create_default_context(cafile=ca if os.path.exists(ca) else None)
     proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({"https": proxy} if proxy else {}),
                                          urllib.request.HTTPSHandler(context=ctx))
     body = {"text": text, "model_id": MODEL,
-            "voice_settings": {"stability": 0.45, "similarity_boost": 0.8, "style": 0.0, "use_speaker_boost": True}}
+            "voice_settings": voice}
     if prev: body["previous_text"] = prev[-600:]
     if nxt:  body["next_text"] = nxt[:600]
     req = urllib.request.Request(
@@ -112,13 +142,17 @@ def main():
     ap.add_argument("slug")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--numbered-label", default="")
+    ap.add_argument("--script", help="narrate this spoken script instead of the article (a podcast episode)")
     ap.add_argument("--out")
     a = ap.parse_args()
 
-    p = post(a.slug)
-    text = script(p, a.numbered_label)
+    if a.script:
+        text, voice = read_script(a.script)
+    else:
+        text, voice = script(post(a.slug), a.numbered_label), dict(VOICE_DEFAULT)
     parts = chunks(text)
-    print(f"{len(text)} characters -> {len(parts)} chunks: {[len(c) for c in parts]}")
+    print(f"{len(text)} characters ({len(text.split())} words) -> {len(parts)} chunks: {[len(c) for c in parts]}")
+    print(f"voice settings: {voice}")
     if a.dry_run:
         print("\n----- script -----\n" + text)
         return
@@ -130,7 +164,7 @@ def main():
         files = []
         for i, c in enumerate(parts):
             f = os.path.join(tmp, f"part{i:02d}.mp3")
-            tts(key, c, parts[i - 1] if i else "", parts[i + 1] if i + 1 < len(parts) else "", f)
+            tts(key, c, parts[i - 1] if i else "", parts[i + 1] if i + 1 < len(parts) else "", f, voice)
             print(f"  part {i}: {len(c)} chars -> {os.path.getsize(f) >> 10} KB")
             files.append(f)
         lst = os.path.join(tmp, "list.txt")
