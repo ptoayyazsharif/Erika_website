@@ -77,6 +77,7 @@ Google AI Studio is still outstanding.
 | `owning-vs-investing-in-real-estate` | Investing | `/invest` | The Hidden-Value Checklist |
 | `know-your-house-before-you-list` | Selling | `/before-you-list` | none (no seller guide yet) |
 | `cash-is-king-if-you-really-mean-cash` | Buying | `/cash-is-king` | none |
+| `georgia-homestead-exemption-explained` | Buying | `/homestead` | none — **researched**, with a Sources section and a podcast-episode audio |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -86,6 +87,16 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
 **Erika Explains** podcast on RSS.com — the owner uploads; see *Podcast* below.
 
 ---
+
+## Two kinds of article — decide first
+
+- **From her recordings** (the first four): the article is her own words, edited; the
+  audio is the article read aloud. Follow *Publishing an article* below.
+- **Researched** (from 5 Oct 2026 — the owner's instruction: "do research, write with
+  real info with references from reputable sources… make the audio sound like a real
+  podcast, someone talking, not a page being narrated"). Follow *Research articles and
+  podcast episodes* below as well as the publishing run. **This is the default for new
+  articles unless the owner asks for one from a recording.**
 
 ## Publishing an article — the whole run
 
@@ -167,6 +178,64 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
    explanatory-only / Axen Realty / Equal Housing close. Episode type Full, not
    explicit.
 
+## Research articles and podcast episodes
+
+The worked example is the homestead article: `tools/research/georgia-homestead-exemption-explained.md`
+and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
+
+1. **Pick a topic that is useful and Georgia-specific**, and if possible one she has
+   touched on camera (the homestead article closed a promise from her reel
+   `Dbs_B2MBThx`). Check `ceo_erika`'s blog note for what's owed and what's used.
+2. **Research, primary sources first:**
+   - official sources first: state agencies (georgia.gov, dor.georgia.gov), the bill as
+     signed (gov.georgia.gov/document/…), county tax or assessor offices;
+   - then reputable reporting and research: WABE, AJC, GPB, Tax Foundation, GBPI, GMA,
+     ACCG;
+   - commercial explainers (Ownwell and the like) only for a point no official source
+     states, and say so in the text ("analyses of the law expect…").
+   Read the source text itself, not a search snippet. **Search results disagreed on
+   SB 33**: one headline read "Georgia rejects property tax caps". Reading the pages
+   showed the broader caps failed and SB 33 passed. Resolve every conflict at the source.
+3. **Write `tools/research/<slug>.md`**: a sources table (number, name, type, URL), then
+   one row per claim — the claim as used, the source number and **the words in the
+   source**. Star (★) anything dated (deadlines, percentages, law). List what you
+   deliberately left out and why. Every fact in the article and the script must be a
+   row here.
+4. **The article** keeps her voice and rules (*Publishing* step 2), links each fact
+   inline to its source (`target="_blank" rel="noopener"`), and ends with a
+   `<h2>Sources</h2>` numbered list. Add the one-line "explains how it works; isn't tax
+   or legal advice; confirm with your county" note before it. **Nothing about Erika she
+   didn't say:** quote her recordings exactly, attribute paraphrase ("I said something
+   like…"), and invent no feelings, client stories or results.
+5. **The podcast script** `tools/podcast/<slug>.txt`, written for the ear:
+   - she talks to one listener — "Hey, it's Erika. Welcome back to Erika Explains." …
+     "So that's X, explained. I'm Erika Page. Thanks for listening, and I'll talk to you
+     next time.";
+   - contractions, short sentences, questions to the listener, an "…" where she would
+     pause; signpost the important part ("Now here's the important part");
+   - no headings, no list read as a list ("Three things. First… Second… And third…"),
+     no URLs or citations read out — "I've put links to every source in the show
+     notes";
+   - numbers and years as spoken words ("April first, twenty twenty-seven", "House Bill
+     five eighty-one", "sixty-eight percent") — the voice gets them right that way;
+   - same facts as the article, nothing new; 6–8 minutes (~1,100 words);
+   - the `# voice:` line keeps the settings: `stability=0.38 similarity=0.8 style=0.22
+     speaker_boost=1` gave a natural, less read-aloud delivery on 5 Oct 2026. Keep it
+     for consistency between episodes.
+6. **Audio**: `ELEVENLABS_API_KEY=… python3 tools/narrate.py <slug> --script
+   tools/podcast/<slug>.txt` (`--dry-run` first), then `stt-check.py` at the opening,
+   every seam, every passage with a date, bill or percentage, and the ending.
+   ElevenLabs' transcriber writes "Erica"; the voice says her name correctly.
+7. **Set `audio_note` on the post** ("A podcast episode on this topic, in Erika's AI
+   voice. The sources are listed at the end of the article."). Without it the page says
+   "Same words, read aloud", which is false for an episode. `check-article.mjs` checks
+   it.
+8. **Podcast description** for a researched episode: the AI line becomes *"Voiced by an
+   AI trained on Erika's own voice. Researched from the sources linked below."* ("The
+   words are hers" is only true for recordings). Then list the sources.
+9. **Flag it for Erika.** A researched article and script are words in her voice that
+   she didn't say. Send the owner a short note for her to read it.
+
 ## Checks, and the bug behind each
 
 `tools/check-article.mjs` runs the article checks in one go and prints PASS/FAIL per
@@ -184,6 +253,9 @@ check there and a row here.
 | Narration duration measured from the file; transcription spot-check | typed durations drift; TTS mishears |
 | PDFs: per-character font check, geometry, clipping, each page's `data-must` text | fonts silently fell back; grepping the PDF for a font name gave a false pass |
 | No HTML entity shows as text on the page, in the title or the share tags | `&rsquo;` was escaped twice on every `/blog` card (fixed 2 Oct 2026) |
+| Every outside link in the article answers (2xx/3xx; 403 = WARN, check by hand) | a researched article is only as good as its references; Fulton's assessor site answers 403 to non-browsers, so it's verified by search instead |
+| The line under the audio player matches the post (`audio_note`, or the "read aloud" default) | it said "same words, read aloud" for any audio; untrue for a podcast episode |
+| Admin round-trip keeps `audio_note` too | proven 5 Oct 2026 on a throwaway copy with a test login (see SESSION-LOG) |
 | Short link answers **301** to the article (with `#guide` only when there is a guide) | a 404 after an admin save; a `#guide` anchor on an article with no guide |
 | **Live**: byte-compare every upload; confirm pages by completeness (`</html>`, >150 KB), not status | see the host's holding page below |
 
@@ -214,6 +286,11 @@ check there and a row here.
   returns 0.
 - Killing helpers: `pkill -f <pattern>` can match your own shell and kill it. Find the
   PID with `ps -eo pid,args | grep …` and `kill` that.
+- Reading PDFs (bills, DOR bulletins): no poppler here, and the system Python's
+  `cryptography` package crashes when `pypdf` is imported. Make a venv in the scratchpad
+  (`python3 -m venv pdfenv && pdfenv/bin/pip install pypdf`) and extract text there.
+  "As passed" bill text mixes struck and new wording without marking it, so quote it
+  carefully and cross-check a summary.
 - PDF rendering only sees fonts installed through fontconfig, and the brand's
   variable fonts must be cut to static weights first — `tools/build-guide.mjs` does
   both; see the README.
@@ -229,7 +306,11 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 ## Open items
 
 - **Rotate the ElevenLabs key and the cPanel API token**: both were pasted into chat on
-  2 Oct 2026. Ask the owner for the new ones next session.
+  2 Oct 2026 and were still active on 5 Oct. Ask the owner for the new ones next session.
+- **For Erika to review:** the homestead article and its podcast script (5 Oct). They
+  are researched, so they're in her voice but not her words. Also re-check its starred
+  facts (★ in the research notes) before 1 April 2027, the filing date it points people
+  to.
 - **For Erika to review:** the cash-is-king caution ("every contingency you remove is a
   protection you no longer have… never just to win the house"), which is added, not hers.
 - **16 mockup buttons** still call `alert(…)` in `index.php`: Escaluxe Living shop

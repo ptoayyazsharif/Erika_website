@@ -7,6 +7,45 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-05 — First researched article, with a podcast-style episode
+
+**Asked.** A new article built from research with references from reputable sources,
+not an old video transcript. Its ElevenLabs audio should sound like a real podcast,
+someone talking rather than a page being narrated. Save the method in the repos for the
+next article.
+
+**Done**
+- **Article.** *Georgia's homestead exemption, explained, and why 2027 matters* (`/blog/georgia-homestead-exemption-explained`, short link `/homestead`, Buying).
+  - Sources: georgia.gov; the Department of Revenue page and its Bulletin 2025-01; SB 33 (the HOME Act) as signed; WABE; Tax Foundation; GBPI; GMA; Ownwell, attributed; the Fulton, DeKalb, Cobb and Gwinnett tax offices.
+  - Inline links, a Sources list at the end, and a not-advice line.
+  - It opens with her own reel `Dbs_B2MBThx`, which promised this video.
+  - Every claim is recorded with the words it rests on in `tools/research/<slug>.md`.
+- **Podcast episode.** A separate spoken script, `tools/podcast/<slug>.txt`, about 1,100 words.
+  - `narrate.py --script` with conversational voice settings kept in the script (stability 0.38, style 0.22).
+  - 390 s, 3 chunks.
+- **`audio_note`.** A new post field, so the page no longer says "same words, read aloud" under an episode. It is carried through `blog_clean`, the admin form, save and new-draft, and the page.
+- **Checker.** New checks: every source link answers (403 is a warning); the line under the player is true.
+- **Deploy.** 10 files, 0 failures, size-matched.
+
+**Passed**
+- **Listen-back.** The transcript at 0–50 s, 131 s (seam), 165, 192, 220, 264 s (seam), 300, 335 s and the ending matches the script word for word. "House Bill five eighty-one", "Senate Bill thirty-three", "May eleventh, twenty twenty-six", "sixty-eight percent" and "April first, twenty twenty-seven" all came through right.
+- **Admin round-trip.** Run on a throwaway copy with a test login: after a real Save, `audio_note` and every `short` survive.
+- **Checks.** `check-article.mjs --all` passes locally and live, for 5 articles.
+
+**Failed, and what was done**
+- **Sources disagreed.** A search snippet ("Georgia rejects property tax caps") contradicted others ("SB 33 signed"). Reading the pages showed broader caps failed and SB 33 passed. The 2027 start isn't in the bill text, so the article attributes it ("analyses of the law expect…") and says to confirm with your county.
+- **PDF tools.** There's no poppler, and `pypdf` crashed on the system `cryptography`. Text was extracted in a scratch venv; the procedure is now in `CLAUDE.md`.
+- **Fulton's link.** The assessor site returns 403 to every non-browser request (curl and WebFetch). It was verified by a domain search instead and is a WARN, not a FAIL, in the checker.
+- **Invented feelings.** The first draft had Erika say "the timing is better than I planned", which she never said. It was rewritten; the rule is in `CLAUDE.md`.
+- **Round-trip script.** It failed twice on selectors: the login button has no `type`, and the blog form's button is `do_blog`, not `do_save`. Fixed in the throwaway script only.
+
+**Open**
+- Erika to read the article and script.
+- The podcast episode upload (copy handed over).
+- Rotate the keys.
+
+---
+
 ## 2026-10-02 (later) — Cash is king narrated, deployed and verified live
 
 **Asked.** The owner supplied the ElevenLabs key and cPanel user and token; finish the article.
