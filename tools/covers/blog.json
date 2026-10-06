@@ -1,5 +1,15 @@
 [
   {
+    "slug": "relocating-to-metro-atlanta",
+    "template": "bold",
+    "eyebrow": "Lifestyle",
+    "line": "Moving to Metro Atlanta? What I wish I’d known first.",
+    "sub": "“Atlanta is not just one city.”",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b4-atlanta-skyline-dusk.jpg",
+    "refPos": "50% 40%"
+  },
+  {
     "slug": "georgia-homestead-exemption-explained",
     "template": "bold",
     "eyebrow": "Buying",

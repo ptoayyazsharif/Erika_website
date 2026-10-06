@@ -25,6 +25,126 @@
 return [
 
     [
+        // Researched around her own video: her four points are hers (quoted from
+        // what-i-wish-i-knew-about-relocating); every other fact is listed with
+        // its source in tools/research/relocating-to-metro-atlanta.md. The audio
+        // is a podcast episode from tools/podcast/<slug>.txt (hence audio_note).
+        'slug'           => 'relocating-to-metro-atlanta',
+        'title'          => 'Moving to Metro Atlanta? What I wish I’d known first.',
+        'seo_title'      => 'Moving to Metro Atlanta: What to Know Before You Relocate',
+        'seo_desc'       => 'Atlanta is 29 counties, not one city. Commutes, school districts, pollen season and the 30-day license and car rules, with the official places to check.',
+        'excerpt'        => 'I moved from Chicago to Atlanta over 27 years ago. Here is what I wish somebody had told me before I headed south &mdash; and the official places to check everything before you pick a neighborhood.',
+        'date'           => '2026-10-06',
+        'updated'        => '2026-10-06',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'lifestyle',
+        'tags'           => ['relocating to Atlanta', 'moving to Georgia', 'Metro Atlanta', 'commute', 'school districts', 'new residents'],
+        'cover'          => 'assets/photos/17/relocating-to-metro-atlanta-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Moving to Metro Atlanta? What I wish I’d known first.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@connorscottmcmanus/" rel="nofollow noopener" target="_blank">Connor Scott McManus</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => '',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'moving-to-atlanta',
+        'audio_secs'     => 0,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'How long do I have to get a Georgia driver&rsquo;s license after I move?',
+                'a' => 'Thirty days from becoming a Georgia resident, according to the Department of Driver Services. If your old license is current, you surrender it and pass a vision exam, and you bring two proofs of your Georgia address from separate sources.',
+            ],
+            [
+                'q' => 'When do I have to register my car in Georgia?',
+                'a' => 'Within 30 days of moving, at your county tag office &mdash; and you need your Georgia license first. New residents pay a one-time title ad valorem tax of 3% of the vehicle&rsquo;s fair market value, according to the Department of Revenue.',
+            ],
+            [
+                'q' => 'How many counties are in Metro Atlanta?',
+                'a' => 'The metro area the federal government measures &mdash; Atlanta-Sandy Springs-Roswell &mdash; is 29 counties. Each has its own government, its own property taxes and, in most cases, its own school district.',
+            ],
+            [
+                'q' => 'When is pollen season in Atlanta?',
+                'a' => 'Spring is the big one &mdash; the trees. Atlanta&rsquo;s official count comes from Atlanta Allergy &amp; Asthma, and for tree pollen anything from 1,500 up is &ldquo;extremely high.&rdquo; The record, 14,801, was set on March 29, 2025.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>I moved from Chicago to Atlanta over 27 years ago. And here is what I wish somebody had told me before I picked up and headed south.</p>
+
+<p>Not the brochure version. The things that actually decide whether you love it here or spend your first year wondering why you came. Let me explain.</p>
+
+<h2>1. Atlanta is not just one city</h2>
+
+<p>When people say &ldquo;Atlanta,&rdquo; they usually mean the whole region. And the region is big. The metro area the federal government measures &mdash; officially Atlanta-Sandy Springs-Roswell &mdash; is <a href="https://www.bls.gov/regions/southeast/news-release/areaemployment_atlanta.htm" target="_blank" rel="noopener">29 counties</a>, each with its own government.</p>
+
+<p>As I put it in my video: it&rsquo;s all Atlanta, it&rsquo;s connected, but it&rsquo;s kind of disconnected. <strong>Your commute, your social life, your schools, your home price, even how often you actually go into the city can depend on the neighborhood or the suburb you choose.</strong></p>
+
+<p>Schools are the clearest example. In most of Metro Atlanta your school district follows the county line &mdash; but some cities run their own: <a href="https://www.atlantapublicschools.us/" target="_blank" rel="noopener">Atlanta Public Schools</a>, <a href="https://www.csdecatur.net/" target="_blank" rel="noopener">City Schools of Decatur</a>, <a href="https://www.marietta-city.org/" target="_blank" rel="noopener">Marietta City Schools</a> and <a href="https://www.bufordcityschools.org/" target="_blank" rel="noopener">Buford City Schools</a>. Two homes a few minutes apart can belong to different districts. Check the address, not the zip code, and look up the school&rsquo;s numbers in the state&rsquo;s own <a href="https://goews.georgia.gov/report-card" target="_blank" rel="noopener">school report cards</a>. And if you have kids, the State of Georgia&rsquo;s advice is to <a href="https://georgia.gov/moving-georgia" target="_blank" rel="noopener">start enrolling as early as possible</a>.</p>
+
+<p>Property taxes work the same way: county by county, with exemptions you have to apply for. I explained that in <a href="/blog/georgia-homestead-exemption-explained">Georgia&rsquo;s homestead exemption, explained</a> &mdash; read it before you buy.</p>
+
+<h2>2. Traffic is real, but distance isn&rsquo;t the only issue</h2>
+
+<p>This is the one people underestimate. <strong>Ten miles can take 15 minutes or an hour.</strong> It depends on which way you&rsquo;re going and when.</p>
+
+<p>On average, a commute in the metro area takes <a href="https://censusreporter.org/profiles/31000US12060-atlanta-sandy-springs-roswell-ga-metro-area/" target="_blank" rel="noopener">32.4 minutes each way</a>, according to the Census Bureau&rsquo;s 2024 survey. But averages hide the real story, which is your route.</p>
+
+<p>Transit helps &mdash; in the right places. MARTA, the region&rsquo;s rail system, serves <a href="https://myfiles.dot.ga.gov/Intermodal/Transit/Profile%20Sheets/MARTA.pdf" target="_blank" rel="noopener">Fulton, DeKalb and Clayton counties</a>. If you&rsquo;re planning to live somewhere else and ride a train, check what actually reaches you first.</p>
+
+<p>So choose your home based on how you actually plan to live. Before you fall in love with a house, drive the route you&rsquo;ll really drive &mdash; on a weekday, at the time you&rsquo;d really leave.</p>
+
+[[img:assets/photos/17/b4-atlanta-skyline-dusk.jpg|The Midtown Atlanta skyline at dusk, seen over rooftops|Photo by <a href="https://www.pexels.com/@connorscottmcmanus/" rel="nofollow noopener" target="_blank">Connor Scott McManus</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>3. The weather is beautiful &mdash; but nobody warned me about the pollen</h2>
+
+<p>Atlanta turns yellow every spring. And if you never had allergies before, you might find you have them after you move here.</p>
+
+<p>Atlanta&rsquo;s official pollen count comes from <a href="https://www.atlantaallergy.com/pollen_counts" target="_blank" rel="noopener">Atlanta Allergy &amp; Asthma</a>, the only counting station in the area certified by the National Allergy Bureau. It measures the grains of pollen in a cubic meter of air over 24 hours, and for tree pollen, anything from 1,500 up is &ldquo;extremely high.&rdquo; On March 29, 2025, the count hit <a href="https://www.atlantanewsfirst.com/2025/03/29/atlanta-shatters-pollen-count-record-rising-far-above-extreme-standards/" target="_blank" rel="noopener">14,801</a> &mdash; a record.</p>
+
+<p>If you&rsquo;re moving with someone who has allergies or asthma, plan for spring before it gets here.</p>
+
+<h2>4. The opportunity is real</h2>
+
+<p>Now here is the important part, and the part I wish I had known most. <strong>Atlanta is an entrepreneurial city.</strong> Atlanta gave me room to grow professionally, build a business, raise my family and create a completely different lifestyle.</p>
+
+<p>So after 27 years, I can honestly say moving here changed my life. But choosing the right area matters.</p>
+
+<h2>Before you move: the first 30 days</h2>
+
+<p>Georgia gives new residents a short clock on a few things. According to the State of Georgia&rsquo;s <a href="https://georgia.gov/moving-georgia" target="_blank" rel="noopener">moving guide</a>:</p>
+
+<ul>
+<li><strong>Your driver&rsquo;s license &mdash; within 30 days.</strong> The <a href="https://dds.georgia.gov/georgia-licenses-ids-and-permits/new-license-id-or-permit/new-georgia-residents-and-out-state/how" target="_blank" rel="noopener">Department of Driver Services</a> says that if your current license is valid, you surrender it and pass a vision exam. Bring two proofs of your Georgia address, from separate sources.</li>
+<li><strong>Your car &mdash; within 30 days, after the license.</strong> You register at your county tag office, and you need the Georgia license first. New residents pay a one-time title tax of <a href="https://dor.georgia.gov/motor-vehicles/vehicle-registration-license-plates/new-georgia" target="_blank" rel="noopener">3% of the vehicle&rsquo;s fair market value</a>, according to the Department of Revenue. Budget for it.</li>
+<li><strong>Voting takes care of itself.</strong> Georgia registers you to vote automatically when you apply for your driver&rsquo;s license.</li>
+<li><strong>Bought a home?</strong> If you own it and live in it on January 1, file your homestead exemption by April 1.</li>
+</ul>
+
+<h2>Choosing the right area</h2>
+
+<p>If you take one thing from this: don&rsquo;t pick &ldquo;Atlanta.&rdquo; Pick the part of Atlanta that fits how you&rsquo;ll actually live &mdash; your commute, your schools, your budget and your goals. Start with the <a href="/atlanta-metro">Metro Atlanta overview</a>, and if you want help figuring out which community fits you, <a href="/contact">tell me about your move</a>.</p>
+
+<p>So that&rsquo;s moving to Metro Atlanta, explained.</p>
+
+<p><em>This article is general information, not legal or tax advice. Rules and deadlines can change &mdash; confirm the details with the agency linked for each one.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Erika K. Page, &ldquo;What I wish I knew about relocating&rdquo; (video), her own account.</li>
+<li>U.S. Bureau of Labor Statistics, <a href="https://www.bls.gov/regions/southeast/news-release/areaemployment_atlanta.htm" target="_blank" rel="noopener">Atlanta area employment, technical note</a> (July 30, 2025) &mdash; the 29 counties.</li>
+<li>U.S. Census Bureau, American Community Survey 2024 1-year, via <a href="https://censusreporter.org/profiles/31000US12060-atlanta-sandy-springs-roswell-ga-metro-area/" target="_blank" rel="noopener">Census Reporter: Atlanta-Sandy Springs-Roswell metro area</a> &mdash; mean travel time to work.</li>
+<li>Georgia Department of Transportation, <a href="https://myfiles.dot.ga.gov/Intermodal/Transit/Profile%20Sheets/MARTA.pdf" target="_blank" rel="noopener">MARTA agency profile</a>.</li>
+<li>School districts: <a href="https://www.atlantapublicschools.us/" target="_blank" rel="noopener">Atlanta Public Schools</a>, <a href="https://www.csdecatur.net/" target="_blank" rel="noopener">City Schools of Decatur</a>, <a href="https://www.marietta-city.org/" target="_blank" rel="noopener">Marietta City Schools</a>, <a href="https://www.bufordcityschools.org/" target="_blank" rel="noopener">Buford City Schools</a>; Governor&rsquo;s Office of Education and Workforce Strategy, <a href="https://goews.georgia.gov/report-card" target="_blank" rel="noopener">Report Card</a>.</li>
+<li>Atlanta Allergy &amp; Asthma, <a href="https://www.atlantaallergy.com/pollen_counts" target="_blank" rel="noopener">Pollen counts</a>.</li>
+<li>Atlanta News First, <a href="https://www.atlantanewsfirst.com/2025/03/29/atlanta-shatters-pollen-count-record-rising-far-above-extreme-standards/" target="_blank" rel="noopener">Atlanta shatters pollen count record</a> (March 29, 2025).</li>
+<li>State of Georgia, <a href="https://georgia.gov/moving-georgia" target="_blank" rel="noopener">Moving to Georgia</a>.</li>
+<li>Georgia Department of Driver Services, <a href="https://dds.georgia.gov/georgia-licenses-ids-and-permits/new-license-id-or-permit/new-georgia-residents-and-out-state/how" target="_blank" rel="noopener">Transfer Out-of-State Driver&rsquo;s License/ID</a>.</li>
+<li>Georgia Department of Revenue, <a href="https://dor.georgia.gov/motor-vehicles/vehicle-registration-license-plates/new-georgia" target="_blank" rel="noopener">New Georgia residents: vehicles</a>.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched, not transcribed: every fact is listed with its source in
         // tools/research/georgia-homestead-exemption-explained.md, and the audio is
         // a podcast episode from tools/podcast/<slug>.txt rather than this text read

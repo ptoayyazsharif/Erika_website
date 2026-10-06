@@ -130,7 +130,15 @@ def tts(key, text, prev, nxt, out, voice=VOICE_DEFAULT):
             open(out, "wb").write(audio)
             return
         except Exception as e:
-            detail = e.read()[:200].decode("utf-8", "replace") if hasattr(e, "read") else ""
+            detail = e.read()[:400].decode("utf-8", "replace") if hasattr(e, "read") else ""
+            # Not worth retrying: the voice itself is unusable. Seen 6 Oct 2026, a day
+            # after it last worked: Erika's professional clone answered
+            # "voice_not_fine_tuned" (its fine-tuned model was gone), which follows a
+            # plan change or a reset of the clone. Only the account owner can fix it in
+            # ElevenLabs. Never substitute another voice or make a new clone of her.
+            if "voice_not_fine_tuned" in detail or "voice_not_found" in detail:
+                sys.exit(f"ElevenLabs can't use voice {VOICE}: {detail}\n"
+                         "Ask the owner to check the ElevenLabs plan and the voice's fine-tuning; don't switch voices.")
             print(f"    attempt {attempt + 1} failed: {e} {detail}")
             if attempt == 3:
                 raise
