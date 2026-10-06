@@ -78,6 +78,7 @@ Google AI Studio is still outstanding.
 | `know-your-house-before-you-list` | Selling | `/before-you-list` | none (no seller guide yet) |
 | `cash-is-king-if-you-really-mean-cash` | Buying | `/cash-is-king` | none |
 | `georgia-homestead-exemption-explained` | Buying | `/homestead` | none — **researched**, with a Sources section and a podcast-episode audio |
+| `relocating-to-metro-atlanta` | Lifestyle | `/moving-to-atlanta` | none — researched around her relocation video; **no audio yet** (see Open items) |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -193,6 +194,12 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
      ACCG;
    - commercial explainers (Ownwell and the like) only for a point no official source
      states, and say so in the text ("analyses of the law expect…").
+   Many official and news sites answer 403 to anything that isn't a browser (BLS,
+   Census Reporter, Fulton's assessor, ARC, the regional transit authority, 11Alive,
+   sos.ga.gov). WebFetch reads some of them (BLS, Census Reporter). If nothing can read
+   a source, leave the fact out — the relocation notes list three facts dropped this
+   way. The Census Bureau's own data API now needs a key; Census Reporter shows the
+   same ACS figures.
    Read the source text itself, not a search snippet. **Search results disagreed on
    SB 33**: one headline read "Georgia rejects property tax caps". Reading the pages
    showed the broader caps failed and SB 33 passed. Resolve every conflict at the source.
@@ -223,7 +230,8 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
      speaker_boost=1` gave a natural, less read-aloud delivery on 5 Oct 2026. Keep it
      for consistency between episodes.
 6. **Audio**: `ELEVENLABS_API_KEY=… python3 tools/narrate.py <slug> --script
-   tools/podcast/<slug>.txt` (`--dry-run` first), then `stt-check.py` at the opening,
+   tools/podcast/<slug>.txt` (`--dry-run` first; a script under ~900 words runs about
+   5 minutes, so aim for ~1,100 words for 6–8), then `stt-check.py` at the opening,
    every seam, every passage with a date, bill or percentage, and the ending.
    ElevenLabs' transcriber writes "Erica"; the voice says her name correctly.
 7. **Set `audio_note` on the post** ("A podcast episode on this topic, in Erika's AI
@@ -304,6 +312,20 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 `blog.posts` setting); if it has, edit there instead.
 
 ## Open items
+
+- **Erika's ElevenLabs voice stopped working on 6 Oct 2026.** It answers
+  `voice_not_fine_tuned` ("is not fine-tuned and cannot be used"). The voice is still
+  listed, but its fine-tuned model is gone. This usually means the plan dropped below
+  the tier that allows professional clones, or the clone was reset. Only the owner can
+  fix it in ElevenLabs. Until then:
+  - the relocation article is live **without audio**. Its script is ready
+    (`tools/podcast/relocating-to-metro-atlanta.txt`). Once the voice works, run
+    `narrate.py --script` and `stt-check.py`, set `audio` and `audio_secs` (its
+    `audio_note` is already set), then redeploy `posts.php` and the MP3;
+  - **never substitute another voice or make a new clone of Erika** without the owner's
+    and her say-so.
+- **For Erika to review:** the relocation article (6 Oct). Her four points are quoted
+  from her video; the rest is researched and in her voice.
 
 - **Rotate the ElevenLabs key and the cPanel API token**: both were pasted into chat on
   2 Oct 2026 and were still active on 5 Oct. Ask the owner for the new ones next session.

@@ -7,6 +7,42 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-06 — Researched article: moving to Metro Atlanta (audio blocked)
+
+**Asked.** "Let's post a new blog today as well!" The owner picked the topic,
+relocating to Metro Atlanta, over the recommended restaurant-lease one.
+
+**Done**
+- **Article.** *Moving to Metro Atlanta? What I wish I'd known first.* (`/blog/relocating-to-metro-atlanta`, short link `/moving-to-atlanta`, Lifestyle).
+  - Built on her video `what-i-wish-i-knew-about-relocating` and reel `DayobmnQJdl`: her four points (not one city, traffic, pollen, opportunity) in her own words.
+  - Researched facts around them, from:
+    - BLS (29-county metro);
+    - Census ACS 2024 via Census Reporter (32.4-minute commute);
+    - GDOT's MARTA profile;
+    - the city school systems and the state report cards;
+    - Atlanta Allergy & Asthma, and Atlanta News First (record 14,801 on 29 Mar 2025);
+    - DDS (licence within 30 days), DOR (car within 30 days, 3% title tax) and georgia.gov (automatic voter registration).
+  - Links to the homestead article, the Metro Atlanta page and contact.
+  - Notes in `tools/research/relocating-to-metro-atlanta.md`; script in `tools/podcast/relocating-to-metro-atlanta.txt`.
+- **Photo.** The library's wide dusk skyline cropped to 1.6 (1440×900, no upscaling) and registered as 17/B4. Bold cover.
+- **Deploy.** 10 files, 0 failures. `check-article.mjs --all`: ALL PASS locally and live, 6 articles.
+
+**Failed, and what was done**
+- **ElevenLabs refused Erika's voice.** It answered "voice_not_fine_tuned" ("is not fine-tuned and cannot be used"), a day after it worked.
+  - The voice is still listed but has no fine-tuned model, and `is_allowed_to_fine_tune` is false. The key can't read the subscription (no `user_read`).
+  - Published without audio, rather than using another voice or making a new clone.
+  - `narrate.py` now stops on that error at once with a plain message instead of retrying 4×.
+- **Facts dropped.** Three couldn't be verified (every source blocked or empty): the statewide count of school districts and city systems, the previous pollen record (reports disagree), and the regional commuter buses. Listed in the research notes.
+- **Invented lines caught in the draft.** "That is why I always say…" (a habit she never stated) and "Cars, porches, sidewalks" (an embellishment) were cut. In the script, "I did a whole episode on homestead" assumed it had been uploaded; reworded to point to her website.
+- **The script came out at 866 words, about 5 minutes,** short of 6–8. Noted in `CLAUDE.md`; aim for ~1,100 words.
+
+**Open**
+- The owner fixes the voice in ElevenLabs, then the episode is recorded and deployed.
+- Erika to review the article.
+- Rotate the keys (still active).
+
+---
+
 ## 2026-10-05 — First researched article, with a podcast-style episode
 
 **Asked.** A new article built from research with references from reputable sources,
