@@ -79,6 +79,7 @@ Google AI Studio is still outstanding.
 | `cash-is-king-if-you-really-mean-cash` | Buying | `/cash-is-king` | none |
 | `georgia-homestead-exemption-explained` | Buying | `/homestead` | none — **researched**, with a Sources section and a podcast-episode audio |
 | `relocating-to-metro-atlanta` | Lifestyle | `/moving-to-atlanta` | none — researched around her relocation video; **no audio yet** (see Open items) |
+| `leasing-a-restaurant-space` | Investing | `/restaurant-space` | none — researched around her nine restaurant-space reels; **no audio yet** |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -196,7 +197,12 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
      states, and say so in the text ("analyses of the law expect…").
    Many official and news sites answer 403 to anything that isn't a browser (BLS,
    Census Reporter, Fulton's assessor, ARC, the regional transit authority, 11Alive,
-   sos.ga.gov). WebFetch reads some of them (BLS, Census Reporter). If nothing can read
+   sos.ga.gov, atlantaga.gov, dph.georgia.gov, and WABE from 7 Oct). Official PDFs
+   often download fine with `curl -A "Mozilla/5.0 …"`: save them to a fresh scratch
+   folder and read them with the venv's pypdf (`python -I`). That route gave the Fulton
+   and GNR health-department documents, the Gwinnett fire CO leaflet and GDOT's TADA
+   guide on 7 Oct. Check each document's date; the Gwinnett leaflet is from 2012, so
+   it's starred and used only as an example. WebFetch reads some of them (BLS, Census Reporter). If nothing can read
    a source, leave the fact out — the relocation notes list three facts dropped this
    way. The Census Bureau's own data API now needs a key; Census Reporter shows the
    same ACS figures.
@@ -225,7 +231,10 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
      notes";
    - numbers and years as spoken words ("April first, twenty twenty-seven", "House Bill
      five eighty-one", "sixty-eight percent") — the voice gets them right that way;
-   - same facts as the article, nothing new; 6–8 minutes (~1,100 words);
+   - same facts as the article, nothing new; 6–8 minutes (~1,100–1,200 words; the
+     restaurant script is 1,218);
+   - audit it against her recordings like the article: small flourishes slip in ("out
+     and in", "No kitchen. Nothing.") that she never said;
    - the `# voice:` line keeps the settings: `stability=0.38 similarity=0.8 style=0.22
      speaker_boost=1` gave a natural, less read-aloud delivery on 5 Oct 2026. Keep it
      for consistency between episodes.
@@ -318,12 +327,16 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   listed, but its fine-tuned model is gone. This usually means the plan dropped below
   the tier that allows professional clones, or the clone was reset. Only the owner can
   fix it in ElevenLabs. Until then:
-  - the relocation article is live **without audio**. Its script is ready
-    (`tools/podcast/relocating-to-metro-atlanta.txt`). Once the voice works, run
+  - the relocation (6 Oct) and restaurant-lease (7 Oct) articles are live **without
+    audio**. Their scripts are ready (`tools/podcast/relocating-to-metro-atlanta.txt`,
+    `tools/podcast/leasing-a-restaurant-space.txt`). Still broken on 7 Oct. Once the voice works, run
     `narrate.py --script` and `stt-check.py`, set `audio` and `audio_secs` (its
     `audio_note` is already set), then redeploy `posts.php` and the MP3;
   - **never substitute another voice or make a new clone of Erika** without the owner's
     and her say-so.
+- **For Erika to review:** the restaurant-lease article (7 Oct). Her lines and her
+  client's story are quoted from her reels; the permits section is researched. Her
+  "$4,000 cheaper" is given as "thousands a month cheaper" (no-prices rule).
 - **For Erika to review:** the relocation article (6 Oct). Her four points are quoted
   from her video; the rest is researched and in her voice.
 

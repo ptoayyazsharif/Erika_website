@@ -7,6 +7,43 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-07 — Researched article: leasing a restaurant space (audio still blocked)
+
+**Asked.** "Write a new blog for today please!" The owner picked the restaurant-lease
+topic, and chose to publish now and add the audio later, because the voice is still down.
+
+**Done**
+- **Article.** *Leasing a restaurant space? Fall in love with the deal, not the space.* (`/blog/leasing-a-restaurant-space`, short link `/restaurant-space`, Investing).
+  - Built on her nine restaurant-space-hunt reels (`DdFheexBDEJ`, `DdIKP_lOOjV`, `DdK91SLt184`, `DdPn3i0M6RP`, `DcoiCRJiiR6`, `DdAY1ocMvyI`, `Dc2ShAQh5mR`, `DdC6wYEsE35`, `DdM6HMcMsW2`).
+  - Her checklist and lines are quoted: zoning, parking, the back door, traffic, neighbors, cheap vs affordable, and the lease terms she negotiates.
+  - The permits section is sourced from:
+    - the Fulton Board of Health brochure (plan review before construction, permits don't transfer, business/liquor/zoning approvals);
+    - the GNR plan-review checklist (grease trap on the plumbing plans);
+    - Atlanta Watershed (grease permit);
+    - the Gwinnett Fire CO leaflet;
+    - GDOT's TADA traffic counts;
+    - the SBA (zoning).
+  - Notes in `tools/research/leasing-a-restaurant-space.md`.
+  - Script (1,218 words) in `tools/podcast/leasing-a-restaurant-space.txt`.
+- **Cover.** Bold, with the signing photo as the reference tile.
+- **Deploy.** 6 files, 0 failures. `check-article.mjs --all`: ALL PASS locally and live, 7 articles.
+
+**Failed, and what was done**
+- **Voice.** Still "voice_not_fine_tuned" this morning and again at recording time. The article is published without audio.
+- **Sites blocked.** atlantaga.gov, dph.georgia.gov and Atlanta's document server refused every request.
+  - Official PDFs from the county sites downloaded fine with a browser user-agent and were read with the venv's pypdf. The method is in `CLAUDE.md`.
+  - The City of Atlanta's certificate-of-occupancy rules couldn't be read, so Gwinnett's is used as the example.
+  - WABE started answering 403 (it was 200 on 5 Oct); it's a WARN only, since that page was read and recorded then.
+- **Embellishments cut.** In the article: "No kitchen. Nothing." and a "posted redevelopment plan right on the corner". In the script: "out and in".
+- **Dated source.** The Gwinnett fire leaflet is from 2012. It's starred and used only as "for example".
+
+**Open**
+- Three episodes wait on the voice (relocation, restaurant; homestead is done).
+- Erika to review the article.
+- Rotate the keys.
+
+---
+
 ## 2026-10-06 — Researched article: moving to Metro Atlanta (audio blocked)
 
 **Asked.** "Let's post a new blog today as well!" The owner picked the topic,
