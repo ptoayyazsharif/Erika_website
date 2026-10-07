@@ -38,7 +38,7 @@ topic, and chose to publish now and add the audio later, because the voice is st
 - **Dated source.** The Gwinnett fire leaflet is from 2012. It's starred and used only as "for example".
 
 **Open**
-- Three episodes wait on the voice (relocation, restaurant; homestead is done).
+- Two episodes wait on the voice: relocation and restaurant (homestead is already recorded).
 - Erika to review the article.
 - Rotate the keys.
 
