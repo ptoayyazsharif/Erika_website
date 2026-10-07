@@ -7,6 +7,45 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-07 (later) — Every article gets its own pictures
+
+**Asked.** "Why are you using the same picture in every blog, it's soooo lazy." The owner
+sent Pexels and Pixabay keys.
+
+**Found.** Four pictures were shared:
+- the closing-table signing photo was the body picture **and** the cover tile on both the cash-is-king and restaurant-lease articles (4 uses);
+- the suburban home for sale was in closing costs and homestead;
+- the loan paperwork was in closing costs and on the homestead tile;
+- the skyline was both the relocation body picture and its tile.
+
+The cause: `CLAUDE.md` step 4 said to reuse "free" library photos, and there was no stock key.
+
+**Done**
+- **Six new Pexels photos**, each looked at on a contact sheet, cropped to 1600×1000 (no upscaling, all from 2400 px originals), credited and registered as 17/B5–B10:
+  - restaurant kitchen with hoods (Maria Orlova) — restaurant body;
+  - empty commercial building with parking (Erik Mclean) — restaurant tile;
+  - keys handover (Alena Darmel) — cash tile;
+  - Southern porch home (Curtis Adams) — homestead body;
+  - US mailbox, flag up (Abstrakt Xxcellence Studios) — homestead tile;
+  - moving boxes (Ivan S) — relocation tile.
+- **Four covers re-rendered and looked at;** their `cover_credit` lines updated.
+- **`check-article.mjs`** has a new blog-wide check: no picture on two articles, and no tile repeating its own body picture.
+- **`tools/stock-search.py`** (new): Pexels search with a numbered contact sheet.
+- **`CLAUDE.md`** step 4 is rewritten; checks-table row added; the new keys added to the rotate list.
+
+**Passed**
+- The new check FAILS on the old `posts.php` and `blog.json` (it lists exactly the repeats above) and PASSES on the new ones.
+- `check-article.mjs --all` passes, 7 articles.
+
+**Failed, and what was done**
+- **Porch photo too large.** It came out at 458 KB; recompressed to 279 KB.
+
+**Open**
+- The audio for two episodes still waits on the voice.
+- Rotate all keys.
+
+---
+
 ## 2026-10-07 — Researched article: leasing a restaurant space (audio still blocked)
 
 **Asked.** "Write a new blog for today please!" The owner picked the restaurant-lease

@@ -6,8 +6,8 @@
     "line": "Leasing a restaurant space? Fall in love with the deal, not the space.",
     "sub": "“Cheap and affordable are not the same thing.”",
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
-    "ref": "assets/photos/17/a1-closing-table-signing.jpg",
-    "refPos": "60% 40%"
+    "ref": "assets/photos/17/b6-commercial-building-parking.jpg",
+    "refPos": "62% 50%"
   },
   {
     "slug": "relocating-to-metro-atlanta",
@@ -16,8 +16,8 @@
     "line": "Moving to Metro Atlanta? What I wish I’d known first.",
     "sub": "“Atlanta is not just one city.”",
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
-    "ref": "assets/photos/17/b4-atlanta-skyline-dusk.jpg",
-    "refPos": "50% 40%"
+    "ref": "assets/photos/17/b10-moving-boxes-living-room.jpg",
+    "refPos": "72% 55%"
   },
   {
     "slug": "georgia-homestead-exemption-explained",
@@ -26,7 +26,8 @@
     "line": "Georgia’s homestead exemption, explained, and why 2027 matters.",
     "sub": "“Your situation can be very, very different from your neighbor.”",
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
-    "ref": "assets/photos/17/a3-loan-estimate-paperwork.jpg"
+    "ref": "assets/photos/17/b9-mailbox-flag-up.jpg",
+    "refPos": "40% 55%"
   },
   {
     "slug": "cash-is-king-if-you-really-mean-cash",
@@ -35,8 +36,8 @@
     "line": "Cash is king, if you really mean cash.",
     "sub": "“I’m paying cash. Can I get a discount?” My answer: what do you mean by cash?",
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
-    "ref": "assets/photos/17/a1-closing-table-signing.jpg",
-    "refPos": "60% 40%"
+    "ref": "assets/photos/17/b7-house-keys-handover.jpg",
+    "refPos": "70% 35%"
   },
   {
     "slug": "owning-vs-investing-in-real-estate",

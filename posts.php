@@ -41,7 +41,7 @@ return [
         'tags'           => ['commercial real estate', 'restaurant space', 'commercial lease', 'zoning', 'small business', 'Metro Atlanta'],
         'cover'          => 'assets/photos/17/leasing-a-restaurant-space-cover.jpg',
         'cover_alt'      => 'Erika K. Page beside the headline: Leasing a restaurant space? Fall in love with the deal, not the space.',
-        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@introspectivedsgn" rel="nofollow noopener" target="_blank">Erik Mclean</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
         'audio'          => '',
         'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
         'guide'          => '',
@@ -98,7 +98,7 @@ return [
 
 <p>Then look at the neighbors. One space we saw was three doors down from a Mexican restaurant, and in the time I waited for my client, I watched people coming in and out. That tells you people already come to that center for food &mdash; and for more than burgers and fries. Look at what is planned nearby, too; at one building in East Point, there was information posted about a redevelopment plan for the area.</p>
 
-[[img:assets/photos/17/a1-closing-table-signing.jpg|Signing paperwork at a table|Photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+[[img:assets/photos/17/b5-restaurant-kitchen-hoods.jpg|A restaurant kitchen with the hoods, shelving and equipment already in place|Photo by <a href="https://www.pexels.com/@orlovamaria" rel="nofollow noopener" target="_blank">Maria Orlova</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
 
 <h2>Cheap and affordable are not the same thing</h2>
 
@@ -171,7 +171,7 @@ HTML,
         'tags'           => ['relocating to Atlanta', 'moving to Georgia', 'Metro Atlanta', 'commute', 'school districts', 'new residents'],
         'cover'          => 'assets/photos/17/relocating-to-metro-atlanta-cover.jpg',
         'cover_alt'      => 'Erika K. Page beside the headline: Moving to Metro Atlanta? What I wish I’d known first.',
-        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@connorscottmcmanus/" rel="nofollow noopener" target="_blank">Connor Scott McManus</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@ivan-s" rel="nofollow noopener" target="_blank">Ivan S</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
         'audio'          => '',
         'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
         'guide'          => '',
@@ -291,7 +291,7 @@ HTML,
         'tags'           => ['homestead exemption', 'property taxes', 'HOME Act', 'HB 581', 'Georgia real estate', 'Metro Atlanta'],
         'cover'          => 'assets/photos/17/georgia-homestead-exemption-explained-cover.jpg',
         'cover_alt'      => 'Erika K. Page beside the headline: Georgia’s homestead exemption, explained.',
-        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@abstrakt-xxcellence-studios-987642" rel="nofollow noopener" target="_blank">Abstrakt Xxcellence Studios</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
         'audio'          => 'assets/audio/georgia-homestead-exemption-explained.mp3',
         'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
         'guide'          => '',
@@ -351,7 +351,7 @@ HTML,
 
 <p>And here is the good news: you usually only do this once. Once approved, most homestead exemptions renew automatically every year as long as you keep living in the home under the same ownership.</p>
 
-[[img:assets/photos/17/a2-suburban-home-for-sale.jpg|A suburban home with a for-sale sign in the front yard|Photo by <a href="https://pixabay.com/users/paulbr75-2938186/" rel="nofollow noopener" target="_blank">paulbr75</a> on <a href="https://pixabay.com/" rel="nofollow noopener" target="_blank">Pixabay</a>]]
+[[img:assets/photos/17/b8-southern-porch-home.jpg|A Southern bungalow with rocking chairs on the front porch|Photo by <a href="https://www.pexels.com/@curtis-adams-1694007" rel="nofollow noopener" target="_blank">Curtis Adams</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
 
 <h2>The 2024 change: a cap on how fast your value can grow</h2>
 
@@ -427,7 +427,7 @@ HTML,
         'tags'           => ['cash offer', 'contingencies', 'buying a home', 'investors', 'Georgia real estate'],
         'cover'          => 'assets/photos/17/cash-is-king-if-you-really-mean-cash-cover.jpg',
         'cover_alt'      => 'Erika K. Page beside the headline: Cash is king, if you really mean cash.',
-        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@a-darmel" rel="nofollow noopener" target="_blank">Alena Darmel</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
         'audio'          => 'assets/audio/cash-is-king-if-you-really-mean-cash.mp3',
         'guide'          => '',
         'product'        => '',

@@ -141,10 +141,15 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
      decoded — keep those plain.
    - A short source makes a short article: explain her points, don't pad them. The
      cash-is-king article (2 Oct) came from ~320 words of hers and runs ~900.
-4. **Pictures** — check the library first: `photos.php` library `17` has credited
-   photos no article uses any more (the closing-table photo was free again after the
-   Bold covers, and now illustrates the cash article). New ones: Pexels/Pixabay, cropped to **1600×1000 (1.6)** like every editorial
-   picture, ~150–260 KB, credited, registered in `photos.php` library `17`, then
+4. **Pictures — every article gets its own.** **Never reuse a picture another article
+   uses**, whether as a body picture or as a cover tile, and don't repeat the article's
+   own body picture as its cover tile. The owner called the old habit "soooo lazy"
+   (7 Oct 2026): one signing photo was on two articles four times, and two more were
+   shared. It happened because this step said to reuse library photos, and there was no
+   Pexels key. `check-article.mjs` now fails on any repeat. Find fresh ones with
+   `PEXELS_KEY=… python3 -I tools/stock-search.py <scratch-dir> "<query>"`, look at
+   the numbered `sheet.jpg`, pick one that fits the topic, crop it to **1600×1000 (1.6)**
+   like every editorial picture, ~150–260 KB, credited, registered in `photos.php` library `17`, then
    `php tools/build-images.php`. Look at every candidate: stock is often recognisably
    foreign (Turkish signage on one rejected shot). Never upscale.
 5. **Cover** — the house template is **Bold**. Add the article to
@@ -273,6 +278,7 @@ check there and a row here.
 | Every outside link in the article answers (2xx/3xx; 403 = WARN, check by hand) | a researched article is only as good as its references; Fulton's assessor site answers 403 to non-browsers, so it's verified by search instead |
 | The line under the audio player matches the post (`audio_note`, or the "read aloud" default) | it said "same words, read aloud" for any audio; untrue for a podcast episode |
 | Admin round-trip keeps `audio_note` too | proven 5 Oct 2026 on a throwaway copy with a test login (see SESSION-LOG) |
+| **No picture on two articles**; no cover tile repeats its own article's body picture (whole blog, every run) | the same signing photo was on two articles four times, and two more were shared — the owner called it lazy (7 Oct 2026) |
 | Short link answers **301** to the article (with `#guide` only when there is a guide) | a 404 after an admin save; a `#guide` anchor on an article with no guide |
 | **Live**: byte-compare every upload; confirm pages by completeness (`</html>`, >150 KB), not status | see the host's holding page below |
 
@@ -340,8 +346,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **For Erika to review:** the relocation article (6 Oct). Her four points are quoted
   from her video; the rest is researched and in her voice.
 
-- **Rotate the ElevenLabs key and the cPanel API token**: both were pasted into chat on
-  2 Oct 2026 and were still active on 5 Oct. Ask the owner for the new ones next session.
+- **Rotate the ElevenLabs key and the cPanel API token** (pasted into chat on 2 Oct
+  2026, still active on 7 Oct), **and the Pexels and Pixabay keys** (pasted 7 Oct). Ask
+  the owner for the new ones next session.
 - **For Erika to review:** the homestead article and its podcast script (5 Oct). They
   are researched, so they're in her voice but not her words. Also re-check its starred
   facts (★ in the research notes) before 1 April 2027, the filing date it points people

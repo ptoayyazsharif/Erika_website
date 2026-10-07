@@ -23,6 +23,8 @@
 //   * the line under the player is true  — it said "same words, read aloud" for every audio,
 //                                          wrong once an episode had its own script
 //   * every source link answers          — a researched article is only as good as its references
+//   * no picture on two articles         — the same signing photo ended up on two articles four
+//                                          times (body and cover tile), and two more were shared
 import { createRequire } from 'module';
 import { execFileSync } from 'child_process';
 import fs from 'fs';
@@ -122,6 +124,31 @@ function curl(url, out = '/dev/null') {
 
 const browser = await pw.chromium.launch({ executablePath: fs.existsSync(CHROME) ? CHROME : undefined });
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+
+// Across the whole blog, whichever slugs were asked for: every picture (a body
+// picture or the small reference tile on a cover) belongs to one article only, and an
+// article's cover tile isn't one of its own body pictures.
+{
+  const posts = php('echo json_encode(array_map(fn($p) => ["slug" => $p["slug"], "body" => $p["body"]], blog_posts()));');
+  const covers = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/covers/blog.json'), 'utf8'));
+  const owners = new Map();
+  const own = (f, who) => { if (!owners.has(f)) owners.set(f, new Set()); owners.get(f).add(who); };
+  const bodyOf = {};
+  for (const p of posts) {
+    bodyOf[p.slug] = [...p.body.matchAll(/\[\[img:([^|\]]+)/g)].map(m => m[1].trim());
+    bodyOf[p.slug].forEach(f => own(f, p.slug));
+  }
+  const selfRepeat = [];
+  for (const c of covers) {
+    if (!c.ref || !bodyOf[c.slug]) continue;
+    own(c.ref, c.slug);
+    if (bodyOf[c.slug].includes(c.ref)) selfRepeat.push(`${c.slug}: ${base(c.ref)}`);
+  }
+  const shared = [...owners].filter(([, who]) => who.size > 1).map(([f, who]) => `${base(f)} → ${[...who].join(', ')}`);
+  console.log('\nwhole blog');
+  report(!shared.length, 'no picture is used by more than one article', shared.join('; '));
+  report(!selfRepeat.length, "no cover tile repeats the article's own body picture", selfRepeat.join('; '));
+}
 
 for (const slug of slugs) {
   const post = php('echo json_encode(blog_post($argv[1], true));', slug);
