@@ -229,6 +229,7 @@ return [
                 ['r' => 'C4', 'f' => 'assets/photos/17/cash-is-king-if-you-really-mean-cash-cover.jpg', 'label' => 'Cover: cash is king (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
                 ['r' => 'C5', 'f' => 'assets/photos/17/georgia-homestead-exemption-explained-cover.jpg', 'label' => 'Cover: Georgia homestead exemption (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
                 ['r' => 'C6', 'f' => 'assets/photos/17/relocating-to-metro-atlanta-cover.jpg', 'label' => 'Cover: moving to Metro Atlanta (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
+                ['r' => 'C7', 'f' => 'assets/photos/17/leasing-a-restaurant-space-cover.jpg', 'label' => 'Cover: leasing a restaurant space (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
             ],
         ],
     ],

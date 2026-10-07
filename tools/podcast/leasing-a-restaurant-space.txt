@@ -1,0 +1,69 @@
+# Erika Explains — podcast episode script
+# Article: /blog/leasing-a-restaurant-space
+# Facts: every one is in tools/research/leasing-a-restaurant-space.md. Her lines and her
+# client's story are from her own restaurant-space-hunt reels; nothing else about her
+# is added. NOT RECORDED YET — the ElevenLabs voice is down (see CLAUDE.md Open items).
+#
+# voice: stability=0.38 similarity=0.8 style=0.22 speaker_boost=1
+
+Hey, it's Erika. Welcome back to Erika Explains.
+
+Today I want to talk to the business owners. Specifically, anybody thinking about opening a restaurant. Because I'm going to tell you the one thing I wish every restaurant owner heard before they signed a lease.
+
+Stop falling in love with the space. Fall in love with the deal.
+
+This summer I've been looking at commercial spaces with a client who's opening a West African and West Indian restaurant. Forest Park. East Point. Clayton County. Out between Conyers and Lithonia. And let me tell you... some of those spaces were beautiful. And some of them were completely wrong for her. And the beautiful ones were not always the right ones.
+
+Because the perfect space can still be the wrong space. So let me explain.
+
+When I walk into a space for a client, I'm not just looking at the walls. I'm checking zoning. Parking. Visibility. The kitchen. And the true monthly occupancy cost. We're not just shopping for a building. We're protecting the business before it ever opens.
+
+Let's start with zoning, because that's where a lot of people get burned.
+
+I've had spaces sent to me that look perfect. They're on a busy frontage. They're in a nice strip mall. And they're just... not zoned for a restaurant. The U.S. Small Business Administration says it plainly: zoning can restrict, or even ban, certain kinds of businesses in an area. And the place to check is your city or county planning office.
+
+Now, can you get a zoning change? Yes, you definitely can. But it takes time. And when you're launching a business, time is money. So check the zoning before you fall for the space.
+
+Next. Parking.
+
+The food can be amazing. But if it's a pain to park, if people are circling the lot, or walking halfway across the property in the rain at night... they're not coming back. Parking affects your customers, your employees, and your delivery drivers. Honestly, it can make or break a business. At one strip mall, there was this little sign that said "additional parking" in the rear. And that sign moved that space right up my list.
+
+Then there's the back door. And I know that sounds funny. But think about it. In a house, nobody sees your back door. In a restaurant? For a lot of your vendors, your back door is the front door. That's where the deliveries come in, the product, the trucks. So walk around back, and see how it actually works, before you sign anything.
+
+Now, traffic. For a restaurant, you want people moving past your door. Traffic counts make a huge difference. And here's something a lot of people don't know. You don't have to guess. Georgia's Department of Transportation puts its traffic counts online, for free. You can type in an address or a road name and see the average daily traffic for that road. I'll put the link in the show notes.
+
+And look at the neighbors. One space we saw was three doors down from a Mexican restaurant. And while I was waiting on my client, I watched a lot of people coming in and out. That tells you people already come to that center for food. And not just burgers and fries. Location tells a story. And look at what's planned nearby, too. At one building in East Point, there was information posted about a redevelopment plan for the area. That changes the picture.
+
+Okay. Here's a lesson my client and I learned together.
+
+The first space we found was ready to go. Kitchen equipment, everything. Then she asked me, "Can you find me something less expensive?" And I did. Thousands of dollars a month cheaper. And then we walked in... and it was completely raw.
+
+So I asked her, how soon do you want to open? She said thirty days. And there is just no time for a build-out in thirty days.
+
+So now I'm looking, on purpose, for spaces that already have the kitchen equipment, the grease trap, the hoods and the electrical in place. Is that going to cost a little more per month? Probably. But sometimes paying more gets you open faster. And making money faster. Cheap and affordable are not the same thing.
+
+Now here's the important part. Because this is what actually decides when you can open your doors.
+
+A restaurant doesn't open when the lease is signed. It opens when the inspectors say so.
+
+First, the health department reviews your plans. In Fulton County, for example, the Board of Health says your plans and equipment specs have to be submitted and approved before construction starts. And you need a food service permit to operate. Every county has an environmental health office that runs this.
+
+Second, and this one surprises people. If the space used to be a restaurant, you don't inherit their permit. Food service permits don't transfer to a new owner or a new location. A change of ownership goes through its own plan review.
+
+Third, the grease trap. In Gwinnett, the health department wants the grease trap drawn right on your plumbing plans for county approval. And inside the City of Atlanta, every food service facility needs a grease permit from the Department of Watershed Management.
+
+Fourth, the building itself has to be cleared to open. In Gwinnett, you need a final inspection and a certificate of occupancy before you can occupy the space or do business there. And a change of use or a new tenant needs permits. Your city or county has its own version of that.
+
+And then there's the rest. Fulton's Board of Health reminds people they'll also need a business license, a liquor license if they're serving alcohol, and zoning approval. Every single one of those takes time. Which is why a space that already went through all that as a restaurant, with the equipment already in place, can be worth paying more for.
+
+Alright. Last thing. The lease itself.
+
+Finding the space is only part of the job. The lease has to support the business. When I negotiate for a client, it's not just the rent. It's the free rent period. The build-out, and the tenant improvement allowance. Renewal options. Signage rights. And who's responsible for the big systems, like the HVAC and the electrical. And ask how the rent is calculated, because depending on the lease type, part of the monthly rent can be based on your sales.
+
+Because a great-looking space with a bad lease? Still a bad deal.
+
+Business owners, I know. We know how to do a whole bunch of stuff. But this is one where you want professional help. A commercial agent on the space and the terms. And an attorney to look over the lease before you sign it. And just so you know, this is general information, not legal advice. Every city and county does it a little differently, so check with yours.
+
+I've put links to every source I used in the show notes and in the article on my website. And if you're looking for restaurant or retail space in Metro Atlanta, reach out through my website.
+
+So that's leasing a restaurant space, explained. I'm Erika Page. Thanks for listening, and I'll talk to you next time.

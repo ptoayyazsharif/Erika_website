@@ -25,6 +25,136 @@
 return [
 
     [
+        // Researched around her nine restaurant-space-hunt reels: her checklist and
+        // lines are quoted; the permits are sourced in
+        // tools/research/leasing-a-restaurant-space.md. Audio pending: the episode
+        // script is tools/podcast/<slug>.txt (audio_note is already set for it).
+        'slug'           => 'leasing-a-restaurant-space',
+        'title'          => 'Leasing a restaurant space? Fall in love with the deal, not the space.',
+        'seo_title'      => 'Leasing a Restaurant Space in Metro Atlanta: What to Check Before You Sign',
+        'seo_desc'       => 'Zoning, parking, the back door, traffic counts, the health plan review and the lease terms to negotiate before you sign for a restaurant space in Metro Atlanta.',
+        'excerpt'        => 'A beautiful space with the wrong zoning, no parking or a raw shell can cost you the business before it opens. Here is what to check before you sign &mdash; from the site itself to the permits that decide when you can open.',
+        'date'           => '2026-10-07',
+        'updated'        => '2026-10-07',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'investing',
+        'tags'           => ['commercial real estate', 'restaurant space', 'commercial lease', 'zoning', 'small business', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/leasing-a-restaurant-space-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Leasing a restaurant space? Fall in love with the deal, not the space.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => '',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'restaurant-space',
+        'audio_secs'     => 0,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Do I need health department approval before I build out a restaurant?',
+                'a' => 'Yes. Fulton County&rsquo;s Board of Health, for example, says plans and equipment specifications must be submitted for review and approval before construction is started &mdash; and a food service permit is required before you operate. Your county&rsquo;s environmental health office runs the process.',
+            ],
+            [
+                'q' => 'If the last tenant was a restaurant, can I use their permit?',
+                'a' => 'No. Food service permits are not transferable to a new owner or a new location, and a change of ownership goes through a plan review of its own. A space that was a restaurant can still save you a lot of build-out &mdash; but the paperwork starts fresh.',
+            ],
+            [
+                'q' => 'How do I check traffic counts for a location?',
+                'a' => 'Georgia DOT publishes them. Its free traffic data tool lets you search by address or road name and shows the Annual Average Daily Traffic for counting stations along the road.',
+            ],
+            [
+                'q' => 'What should I negotiate in a restaurant lease?',
+                'a' => 'More than the rent: the free rent period, build-out, the tenant improvement allowance, renewal options, signage rights, and who is responsible for major systems like HVAC and electrical. Have an attorney review the lease before you sign.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Stop falling in love with the space. Fall in love with the deal.</p>
+
+<p>This summer I&rsquo;ve been looking at commercial spaces with a client who is opening a West African and West Indian restaurant &mdash; Forest Park, East Point, Clayton County, out between Conyers and Lithonia. Some of those spaces were beautiful. Some of them were completely wrong for her. And the beautiful ones were not always the right ones.</p>
+
+<p>Because the perfect space can still be the wrong space. Let me explain.</p>
+
+<h2>Look past the four walls</h2>
+
+<p>When I tour a space for a client, I&rsquo;m checking zoning, parking, visibility, the kitchen infrastructure and the true monthly occupancy cost. We&rsquo;re not just shopping for a building. <strong>We&rsquo;re protecting the business before it ever opens.</strong></p>
+
+<h3>Zoning comes first</h3>
+
+<p>I&rsquo;ve had spaces sent to me on a busy frontage, in a good strip mall &mdash; and they simply weren&rsquo;t zoned for a restaurant. As the <a href="https://www.sba.gov/counseling/launch-your-business/" target="_blank" rel="noopener">U.S. Small Business Administration</a> puts it, zoning ordinances can restrict or entirely ban specific kinds of businesses in an area, and the place to check is your city or county planning office.</p>
+
+<p>Can you get a zone change? You definitely can. But it just takes time, and when you&rsquo;re launching a business, time is money. Check the zoning before you fall for the space.</p>
+
+<h3>Parking can make or break it</h3>
+
+<p>The food can be amazing, but if it&rsquo;s a pain to park, people won&rsquo;t keep coming. Parking affects your customers, your employees and your delivery drivers. At one strip mall, a little sign that said &ldquo;Additional parking&rdquo; in the rear moved that space up my list.</p>
+
+<h3>The back door matters</h3>
+
+<p>In a house, nobody sees your back door. In a restaurant, <strong>for a lot of your vendors, your back door is the front door.</strong> Deliveries, product, trucks, staff &mdash; walk around back and see how it actually works before you sign.</p>
+
+<h3>Traffic and neighbors tell a story</h3>
+
+<p>For a restaurant, you want people moving past your door. Traffic counts make a huge difference, and you don&rsquo;t have to guess: Georgia DOT publishes them in its <a href="https://gdottrafficdata.drakewell.com/publicmultinodemap.asp" target="_blank" rel="noopener">traffic data tool</a>, where you can search by address or road name and see the <a href="https://www.dot.ga.gov/DriveSmart/Data/Documents/TrafficCounts/TrafficCountsApp-Cheatsheet.pdf" target="_blank" rel="noopener">annual average daily traffic</a> for the road.</p>
+
+<p>Then look at the neighbors. One space we saw was three doors down from a Mexican restaurant, and in the time I waited for my client, I watched people coming in and out. That tells you people already come to that center for food &mdash; and for more than burgers and fries. Look at what is planned nearby, too; at one building in East Point, there was information posted about a redevelopment plan for the area.</p>
+
+[[img:assets/photos/17/a1-closing-table-signing.jpg|Signing paperwork at a table|Photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Cheap and affordable are not the same thing</h2>
+
+<p>The first space we found for my client was ready to go &mdash; kitchen equipment and all. Then she asked me to find something less expensive, and I did: thousands of dollars a month cheaper. We walked in, and it was completely raw.</p>
+
+<p>She wanted to open in 30 days. There is no time for a build-out in 30 days. So now I&rsquo;m looking, on purpose, for spaces that already have the kitchen equipment, the grease trap, the hoods and the electrical in place. That may cost more per month &mdash; but sometimes paying more gets you open faster, and making money faster.</p>
+
+<h2>Now here is the important part: the permits decide when you open</h2>
+
+<p>A restaurant doesn&rsquo;t open when the lease is signed. It opens when the inspectors say so.</p>
+
+<ul>
+<li><strong>The health department reviews your plans first.</strong> In Fulton County, for example, the <a href="https://www.fultoncountyga.gov/-/media/Departments/Board-of-Health/Environmental-Health/Restaurant-Inspection/Link-List-Items/Starting-A-Food-Service-Business.pdf" target="_blank" rel="noopener">Board of Health</a> requires plans and equipment specifications to be submitted and approved <em>before construction is started</em>, and you need a food service permit to operate.</li>
+<li><strong>A former restaurant doesn&rsquo;t hand you its permit.</strong> Food service permits are not transferable to a new person or a new location, and a change of ownership gets its own plan review.</li>
+<li><strong>The grease trap is part of it.</strong> In Gwinnett, the <a href="https://gnrhealth.com/wp-content/uploads/2024/08/Food-Service-Plan-Review-Requirements-fillable-3-11-16-JER.pdf" target="_blank" rel="noopener">health department&rsquo;s plan review</a> wants the grease trap drawn on the plumbing plans for county approval. Inside the City of Atlanta, <a href="https://atlantawatershed.org/grease-management-3/" target="_blank" rel="noopener">every food service facility needs a grease permit</a> from the Department of Watershed Management.</li>
+<li><strong>The building has to be cleared to open.</strong> In Gwinnett, a <a href="https://www.gwinnettcounty.com/static/departments/fire_emergency/pdf/obtaining_fire_permit.pdf" target="_blank" rel="noopener">final inspection and certificate of occupancy</a> must be obtained before occupying or conducting business in any commercial building, and permits are required for a change of use or a new tenant. Your city or county has its own version.</li>
+<li><strong>And the rest:</strong> Fulton&rsquo;s Board of Health reminds applicants they also need a business license, a liquor license if they will serve alcohol, and zoning approval &mdash; and to check whether the site is on public sewer or a septic system.</li>
+</ul>
+
+<p>Every one of those takes time. A space that already passed those steps as a restaurant, with the right equipment in place, can be worth paying more for.</p>
+
+<h2>Negotiate the whole deal</h2>
+
+<p>Finding the space is only part of the job. The commercial lease has to support the business. When I negotiate for a client, it&rsquo;s not just the base rent. It&rsquo;s:</p>
+
+<ul>
+<li>the free rent period;</li>
+<li>the build-out and the tenant improvement allowance;</li>
+<li>renewal options;</li>
+<li>signage rights;</li>
+<li>and who is responsible for the major systems, like the HVAC and the electrical.</li>
+</ul>
+
+<p>Ask how the rent is calculated, too &mdash; depending on the lease type, part of the monthly rent can be based on your sales. Because a great-looking space with a bad lease? Still a bad deal.</p>
+
+<p>Business owners know how to do a whole bunch of stuff. This is one where you want professional help &mdash; a commercial agent on the space and the terms, and an attorney on the lease before you sign. If you&rsquo;re looking for restaurant or retail space in Metro Atlanta, <a href="/contact">tell me what you need</a>.</p>
+
+<p>So that&rsquo;s leasing a restaurant space, explained.</p>
+
+<p><em>This article is general information, not legal advice. Permits and requirements differ by city and county &mdash; confirm them with your local planning, building and health departments, and have an attorney review any commercial lease before you sign.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Erika K. Page, restaurant-space-hunt videos and captions (August&ndash;September 2026), her own account.</li>
+<li>U.S. Small Business Administration, <a href="https://www.sba.gov/counseling/launch-your-business/" target="_blank" rel="noopener">Launch your business: pick your business location</a>.</li>
+<li>Fulton County Board of Health, Environmental Health Services, <a href="https://www.fultoncountyga.gov/-/media/Departments/Board-of-Health/Environmental-Health/Restaurant-Inspection/Link-List-Items/Starting-A-Food-Service-Business.pdf" target="_blank" rel="noopener">Basic Requirements for Opening a Food Service Establishment</a>.</li>
+<li>Gwinnett, Newton &amp; Rockdale County Health Departments, <a href="https://gnrhealth.com/wp-content/uploads/2024/08/Food-Service-Plan-Review-Requirements-fillable-3-11-16-JER.pdf" target="_blank" rel="noopener">Food Service Plan Review Requirements</a>.</li>
+<li>City of Atlanta Department of Watershed Management, <a href="https://atlantawatershed.org/grease-management-3/" target="_blank" rel="noopener">Grease Management</a>.</li>
+<li>Gwinnett County Fire and Emergency Services, <a href="https://www.gwinnettcounty.com/static/departments/fire_emergency/pdf/obtaining_fire_permit.pdf" target="_blank" rel="noopener">Obtaining Fire Permits and a Fire Certificate of Occupancy</a>.</li>
+<li>Georgia Department of Transportation, <a href="https://gdottrafficdata.drakewell.com/publicmultinodemap.asp" target="_blank" rel="noopener">Traffic Analysis and Data Application (TADA)</a> and its <a href="https://www.dot.ga.gov/DriveSmart/Data/Documents/TrafficCounts/TrafficCountsApp-Cheatsheet.pdf" target="_blank" rel="noopener">quick reference guide</a> (updated September 2025).</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her own video: her four points are hers (quoted from
         // what-i-wish-i-knew-about-relocating); every other fact is listed with
         // its source in tools/research/relocating-to-metro-atlanta.md. The audio
