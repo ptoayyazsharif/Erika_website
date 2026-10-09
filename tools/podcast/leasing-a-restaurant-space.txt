@@ -2,7 +2,7 @@
 # Article: /blog/leasing-a-restaurant-space
 # Facts: every one is in tools/research/leasing-a-restaurant-space.md. Her lines and her
 # client's story are from her own restaurant-space-hunt reels; nothing else about her
-# is added. NOT RECORDED YET — the ElevenLabs voice is down (see CLAUDE.md Open items).
+# is added. Recorded 9 Oct 2026 (453 s), checked by listen-back.
 #
 # voice: stability=0.38 similarity=0.8 style=0.22 speaker_boost=1
 

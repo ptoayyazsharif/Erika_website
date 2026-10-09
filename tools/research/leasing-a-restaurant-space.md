@@ -1,8 +1,8 @@
 # Research notes: leasing a restaurant space in Metro Atlanta
 
 Article: `/blog/leasing-a-restaurant-space` (short link `/restaurant-space`).
-Podcast script: `tools/podcast/leasing-a-restaurant-space.txt` (not recorded yet; the
-ElevenLabs voice is down).
+Podcast script: `tools/podcast/leasing-a-restaurant-space.txt` (recorded 9 Oct 2026,
+453 s, after the voice came back).
 Researched 7 October 2026. Every fact in the article and the script is listed here with
 the source it rests on and the words in that source. Dated items are starred (★).
 

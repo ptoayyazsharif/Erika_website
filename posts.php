@@ -25,10 +25,140 @@
 return [
 
     [
+        // Researched around her open-house reels (Dbt77Dkuk44, co-hosted with
+        // Evelyn; DbziGayiEgQ, Smyrna, used for one line only). Evelyn's words are
+        // credited to Evelyn. Every other fact is listed with its source in
+        // tools/research/the-open-house-is-a-sales-event.md. The audio is a podcast
+        // episode from tools/podcast/<slug>.txt (hence audio_note).
+        'slug'           => 'the-open-house-is-a-sales-event',
+        'title'          => 'The open house is a sales event.',
+        'seo_title'      => 'The Open House Is a Sales Event: How to Host and Prepare in Metro Atlanta',
+        'seo_desc'       => 'Who really comes to an open house, how a host works the room, what sellers put away first, and why everybody is welcome. An agent explains, with sources.',
+        'excerpt'        => 'Neighbors come to peek and value their own house. Buyers come to picture living there. Everybody&rsquo;s welcome &mdash; but an open house is a sales event, and knowing who&rsquo;s there for the right reason changes how you work the room.',
+        'date'           => '2026-10-09',
+        'updated'        => '2026-10-09',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'selling',
+        'tags'           => ['open house', 'selling a home', 'home showing', 'seller safety', 'fair housing', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/the-open-house-is-a-sales-event-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: The open house is a sales event.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@curtis-adams-1694007" rel="nofollow noopener" target="_blank">Curtis Adams</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/the-open-house-is-a-sales-event.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'open-house',
+        'audio_secs'     => 404,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Who actually comes to an open house?',
+                'a' => 'Buyers, and often neighbors. In a neighborhood people want to be in, many visitors are neighbors stopping by to see the home or to get a sense of what their own house is worth. They are always welcome &mdash; they are just different from motivated buyers, and a good host knows the difference.',
+            ],
+            [
+                'q' => 'What should I put away before an open house?',
+                'a' => 'The National Association of REALTORS&reg; consumer guide says to lock up jewelry, important and sensitive documents, firearms and prescription medications, and to put away anything that reveals personal details: family photos, calendars, mail, computer logins and Wi-Fi passwords.',
+            ],
+            [
+                'q' => 'Can an open house host treat some visitors differently?',
+                'a' => 'No. The federal Fair Housing Act protects people from discrimination when they are buying or renting a home, on the basis of race, color, national origin, religion, sex, familial status and disability. Telling a buyer from a curious neighbor is about why someone came, never about who they are. Everyone gets the same welcome.',
+            ],
+            [
+                'q' => 'How does a host keep an open house safe?',
+                'a' => 'NAR&rsquo;s open-house guidance suggests working with a buddy and checking in with the office, asking for identification, never giving out garage or door codes, limiting the number of people inside, and planning to end the open house with a colleague.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>&ldquo;This is a sales event.&rdquo;</p>
+
+<p>That&rsquo;s how Evelyn summed it up. Evelyn has been a successful realtor for decades, across several states, and she recently joined our company. We co-hosted a mega open house together, and afterward I asked her what stood out the most. What would she pick up?</p>
+
+<p>Her answer: &ldquo;Know who&rsquo;s there for the right reason.&rdquo; And then: &ldquo;We love everybody. Everybody&rsquo;s welcome. But this is a sales event.&rdquo; She said she learned that from me that day. So even an agent with 30 years of experience can learn some new things.</p>
+
+<p>Both halves of what she said matter &mdash; the welcome and the sale. Let me explain.</p>
+
+<h2>Who walks through the door</h2>
+
+<p>In highly desirable neighborhoods, many visitors are simply neighbors stopping by to see the home or estimate the value of their own property. Evelyn put it this way: learn to recognize &ldquo;those people who are just coming to look and peek and value their own house versus coming in to buy the house themselves.&rdquo;</p>
+
+<p>So on any open house day, you&rsquo;ll get two kinds of visitors:</p>
+
+<ul>
+<li><strong>The neighbor</strong>, who wants to see inside and get a feel for what their own house might be worth.</li>
+<li><strong>The buyer</strong>, who came because they might actually live there.</li>
+</ul>
+
+<p>The neighbors are always welcome. But they&rsquo;re different from motivated buyers. <strong>Understanding that difference changes how you work the room</strong>, and it helps you focus your time where it matters most.</p>
+
+[[img:assets/photos/17/b11-agent-welcoming-open-house-visitor.jpg|A real estate agent welcoming a visitor at the front door of a home|Photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Working the room</h2>
+
+<p>A sales event means the house has something to sell, so lead with it. On a tour, I point out the special and unique things about that particular home. As I said at an open house in Smyrna, this might be the exact thing somebody&rsquo;s looking for.</p>
+
+<p>Watch your words, too. On that same tour, I caught myself using the old name for the main bedroom and corrected it right there on camera: &ldquo;big owner&rsquo;s suite. We&rsquo;ve changed the language.&rdquo;</p>
+
+<p>And plan for safety. Evelyn and I hosted that open house together, and that&rsquo;s exactly what the National Association of REALTORS&reg; recommends in its <a href="https://www.nar.realtor/open-houses" target="_blank" rel="noopener">open-house guidance</a>:</p>
+
+<ul>
+<li>work with a buddy, and check in with your office;</li>
+<li>ask for identification;</li>
+<li>don&rsquo;t give out garage or door codes;</li>
+<li>limit the number of people in the house;</li>
+<li>and plan to end the open house with a colleague. NAR notes that the end of an open house is often the most dangerous time for an agent working alone.</li>
+</ul>
+
+<h2>Before the day: the seller&rsquo;s part</h2>
+
+<p>Sellers, your job starts before the first visitor. NAR&rsquo;s <a href="https://www.nar.realtor/the-facts/consumer-guide-home-selling-tips-for-privacy-and-safety" target="_blank" rel="noopener">consumer guide on privacy and safety</a> is plain about it:</p>
+
+<ul>
+<li><strong>Lock up</strong> jewelry, important and sensitive documents, firearms and prescription medications. A small lockbox or safe is worth having with visitors coming and going.</li>
+<li><strong>Put away anything personal</strong> &mdash; family photos, visible calendars, mail, computer logins, Wi-Fi passwords. Even diplomas, awards or books can give away more than you realize.</li>
+<li><strong>Think about photos.</strong> Buyers can wander and take pictures. You can ask your agent to add a &ldquo;No Photography&rdquo; note in the MLS and put up polite signs in the house.</li>
+</ul>
+
+<p>Then get the house ready to be seen. NAR&rsquo;s <a href="https://www.nar.realtor/the-facts/consumer-guide-seller-checklist-15-things-to-do-before-every-showing" target="_blank" rel="noopener">seller checklist</a> includes making the beds and putting things away, clearing the kitchen and bath counters, organizing the refrigerator (buyers will open it), not cooking anything with a strong smell in the hours before, opening the window treatments and turning on <em>all</em> the lights &mdash; and taking your pets with you.</p>
+
+<h2>Now here&rsquo;s the important part: everybody&rsquo;s welcome</h2>
+
+<p>&ldquo;We love everybody. Everybody&rsquo;s welcome.&rdquo; That&rsquo;s more than good manners. It&rsquo;s the law.</p>
+
+<p>The federal <a href="https://www.hud.gov/helping-americans/fair-housing-act-overview" target="_blank" rel="noopener">Fair Housing Act</a> protects people from discrimination when they are renting or buying a home, on the basis of race, color, national origin, religion, sex, familial status and disability. The U.S. Department of Justice notes that it applies to <a href="https://www.justice.gov/crt/fair-housing-act-1" target="_blank" rel="noopener">direct providers of housing, such as landlords and real estate companies</a>.</p>
+
+<p>So <strong>&ldquo;know who&rsquo;s there for the right reason&rdquo; is about <em>why</em> someone came &mdash; never about <em>who</em> they are.</strong> The curious neighbor and the serious buyer both get the same warm welcome at the door. The difference is only in where you spend your time.</p>
+
+<h2>Why it pays to treat it like a sale</h2>
+
+<p>The people on the other side of the deal usually come with professional help. In NAR&rsquo;s <a href="https://www.nar.realtor/press-releases/first-time-home-buyer-share-falls-to-historic-low-of-21-median-age-rises-to-40" target="_blank" rel="noopener">2025 Profile of Home Buyers and Sellers</a>, which covers sales from July 2024 to June 2025, 88% of buyers used an agent or broker, and 91% of sellers used an agent &mdash; equal to the highest share on record.</p>
+
+<p>An open house is one afternoon of that work. Done right, it&rsquo;s organized, it&rsquo;s safe, it&rsquo;s welcoming to everyone &mdash; and it&rsquo;s focused on finding the person who wants to live there.</p>
+
+<p>And if you&rsquo;re the neighbor who stopped by to peek and value your own house? That&rsquo;s fine. You don&rsquo;t have to wait for the next open house on your street &mdash; <a href="/home-value">ask me what your home is worth</a>. If you&rsquo;re getting ready to sell in Metro Atlanta, <a href="/contact">let&rsquo;s talk</a>.</p>
+
+<p>So that&rsquo;s the open house, explained.</p>
+
+<p><em>This article explains how open houses generally work. It isn&rsquo;t legal advice. For a question about fair housing, see HUD&rsquo;s resources or talk to an attorney, and ask your agent about the safety plan for your own open house.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Erika K. Page, open-house videos and captions, her own account; Evelyn&rsquo;s words are hers, as she said them on camera.</li>
+<li>National Association of REALTORS&reg;, <a href="https://www.nar.realtor/open-houses" target="_blank" rel="noopener">Open Houses</a> (marketing and safety resources).</li>
+<li>National Association of REALTORS&reg;, <a href="https://www.nar.realtor/the-facts/consumer-guide-home-selling-tips-for-privacy-and-safety" target="_blank" rel="noopener">Consumer Guide: Home Selling Tips for Privacy and Safety</a>.</li>
+<li>National Association of REALTORS&reg;, <a href="https://www.nar.realtor/the-facts/consumer-guide-seller-checklist-15-things-to-do-before-every-showing" target="_blank" rel="noopener">Consumer Guide: Seller Checklist, 15 Things to Do Before Every Showing</a>.</li>
+<li>U.S. Department of Housing and Urban Development, <a href="https://www.hud.gov/helping-americans/fair-housing-act-overview" target="_blank" rel="noopener">Fair Housing Act overview</a>.</li>
+<li>U.S. Department of Justice, Civil Rights Division, <a href="https://www.justice.gov/crt/fair-housing-act-1" target="_blank" rel="noopener">The Fair Housing Act</a> (updated June 22, 2023).</li>
+<li>National Association of REALTORS&reg;, <a href="https://www.nar.realtor/press-releases/first-time-home-buyer-share-falls-to-historic-low-of-21-median-age-rises-to-40" target="_blank" rel="noopener">2025 Profile of Home Buyers and Sellers, press release</a> (November 4, 2025).</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her nine restaurant-space-hunt reels: her checklist and
         // lines are quoted; the permits are sourced in
-        // tools/research/leasing-a-restaurant-space.md. Audio pending: the episode
-        // script is tools/podcast/<slug>.txt (audio_note is already set for it).
+        // tools/research/leasing-a-restaurant-space.md. The audio is a podcast
+        // episode from tools/podcast/<slug>.txt (hence audio_note), recorded 9 Oct.
         'slug'           => 'leasing-a-restaurant-space',
         'title'          => 'Leasing a restaurant space? Fall in love with the deal, not the space.',
         'seo_title'      => 'Leasing a Restaurant Space in Metro Atlanta: What to Check Before You Sign',
@@ -42,12 +172,12 @@ return [
         'cover'          => 'assets/photos/17/leasing-a-restaurant-space-cover.jpg',
         'cover_alt'      => 'Erika K. Page beside the headline: Leasing a restaurant space? Fall in love with the deal, not the space.',
         'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@introspectivedsgn" rel="nofollow noopener" target="_blank">Erik Mclean</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
-        'audio'          => '',
+        'audio'          => 'assets/audio/leasing-a-restaurant-space.mp3',
         'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
         'guide'          => '',
         'product'        => '',
         'short'          => 'restaurant-space',
-        'audio_secs'     => 0,
+        'audio_secs'     => 453,
         'published'      => true,
         'faq' => [
             [
@@ -172,12 +302,12 @@ HTML,
         'cover'          => 'assets/photos/17/relocating-to-metro-atlanta-cover.jpg',
         'cover_alt'      => 'Erika K. Page beside the headline: Moving to Metro Atlanta? What I wish I’d known first.',
         'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@ivan-s" rel="nofollow noopener" target="_blank">Ivan S</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
-        'audio'          => '',
+        'audio'          => 'assets/audio/relocating-to-metro-atlanta.mp3',
         'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
         'guide'          => '',
         'product'        => '',
         'short'          => 'moving-to-atlanta',
-        'audio_secs'     => 0,
+        'audio_secs'     => 342,
         'published'      => true,
         'faq' => [
             [
