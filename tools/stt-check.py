@@ -2,6 +2,7 @@
 
     ELEVENLABS_API_KEY=... python3 tools/stt-check.py assets/audio/<slug>.mp3
     python3 tools/stt-check.py <file> --at 132 --at 264        # also check around the seams
+    python3 tools/stt-check.py <file> --full                   # the whole episode in one call
 
 Compare what comes back with the article. This is how the narration checks
 caught "not a valuation" being heard as "not evaluation" — two phrases that are
@@ -34,13 +35,17 @@ def main():
     ap.add_argument("--at", type=float, action="append", default=[], help="seconds; checks ~14s either side")
     ap.add_argument("--head", type=float, default=40)
     ap.add_argument("--tail", type=float, default=35)
+    ap.add_argument("--full", action="store_true", help="transcribe the whole file in one call (a whole-episode listen-back)")
     a = ap.parse_args()
     key = os.environ.get("ELEVENLABS_API_KEY") or sys.exit("set ELEVENLABS_API_KEY")
 
     with tempfile.TemporaryDirectory() as tmp:
-        cuts = [("opening", ["-t", str(a.head), "-i", a.mp3])]
-        cuts += [(f"around {t:.0f}s", ["-ss", str(max(0, t - 14)), "-t", "28", "-i", a.mp3]) for t in a.at]
-        cuts += [("ending", ["-sseof", f"-{a.tail}", "-i", a.mp3])]
+        if a.full:
+            cuts = [("whole file", ["-i", a.mp3])]
+        else:
+            cuts = [("opening", ["-t", str(a.head), "-i", a.mp3])] if a.head > 0 else []
+            cuts += [(f"around {t:.0f}s", ["-ss", str(max(0, t - 14)), "-t", "28", "-i", a.mp3]) for t in a.at]
+            cuts += [("ending", ["-sseof", f"-{a.tail}", "-i", a.mp3])] if a.tail > 0 else []
         for name, args in cuts:
             out = os.path.join(tmp, "cut.mp3")
             subprocess.run(["ffmpeg", "-v", "error", "-y", *args, out], check=True)

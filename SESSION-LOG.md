@@ -7,6 +7,64 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-09 — The voice is back: three episodes, and "The open house is a sales event"
+
+**Asked.** "Write a new blog for today and try the podcasts today as well." The owner
+picked the open-house topic.
+
+**Found.** Erika's ElevenLabs voice works again. A read-only check showed it fine-tuned
+on every model, including `eleven_multilingual_v2`. The outage ran 6–7 Oct.
+
+**Done**
+- **Two waiting episodes recorded** from their scripts with the usual podcast voice
+  settings: relocation (342 s) and restaurant lease (453 s). `audio` and `audio_secs`
+  set; their stale "not recorded yet" notes updated.
+- **New researched article** `/blog/the-open-house-is-a-sales-event` (Selling, short
+  link `/open-house`, ~1,030 words, FAQ of 4, Sources).
+  - Built on her reel with Evelyn (`Dbt77Dkuk44`), plus two lines from the Smyrna tour
+    (`DbziGayiEgQ`).
+  - **The transcript has no speaker labels.** Read closely, "Know who's there for the
+    right reason" and "Everybody's welcome. But this is a sales event" are **Evelyn's**
+    words, describing what she learned from Erika ("And she taught me that"). They are
+    credited to Evelyn. The caption is Erika's.
+  - Researched: NAR open-house guidance, NAR's privacy-and-safety guide and seller
+    checklist, HUD and DOJ on the Fair Housing Act, NAR's 2025 Profile (88% of buyers
+    and 91% of sellers used an agent). Notes in
+    `tools/research/the-open-house-is-a-sales-event.md`.
+- **Two new Pexels photos**, looked at on contact sheets, cropped 1600×1000 from 2400 px:
+  - agent welcoming a visitor at the door (RDNE Stock project, B11, body);
+  - staged open-plan living room (Curtis Adams, B12, tile).
+- **Bold cover** (C8); looked at full size and at card size.
+- **Podcast script** (1,072 words) recorded as a 404 s episode.
+
+**Passed**
+- Listen-back of the whole open-house episode: word for word against the script,
+  including the seams, the seven protected classes and the 88% / 91% figures.
+- `check-article.mjs --all`: ALL PASS on 8 articles, locally and live. The three old
+  WARNs are sites that refuse non-browsers.
+- Every upload byte-compared with the live copy (15 files).
+- Key grep: none of the four keys is in the history, the tree or the zip.
+
+**Failed, and what was done**
+- **The "where buyers found their home" figure couldn't be verified.** Search gave
+  52% (NAR) and 46% (a local association's blog). No readable NAR page states either:
+  the press release and the highlights page don't, and the full report is sold. Left
+  out, and the article uses the agent-usage figures the press release does state.
+- **`stt-check.py --head 0` transcribed the whole file (by accident), and `--tail 0`
+  crashed** (ffmpeg rejects `-sseof -0`); 15 windowed calls were made where one would
+  do. Fixed: a new `--full` flag transcribes the whole episode in one call, and a 0 for
+  `--head` or `--tail` now skips that cut.
+- **NAR's *Safe Selling* line** ("very low incidence of violent crime… very high
+  incidence of theft") was only seen quoted second-hand, so it was dropped.
+
+**Open**
+- Erika to review the open-house article and the Evelyn attribution. Evelyn may want to
+  approve being quoted by name.
+- Rotate all keys.
+
+
+---
+
 ## 2026-10-07 (later) — Every article gets its own pictures
 
 **Asked.** "Why are you using the same picture in every blog, it's soooo lazy." The owner

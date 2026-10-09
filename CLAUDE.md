@@ -78,8 +78,9 @@ Google AI Studio is still outstanding.
 | `know-your-house-before-you-list` | Selling | `/before-you-list` | none (no seller guide yet) |
 | `cash-is-king-if-you-really-mean-cash` | Buying | `/cash-is-king` | none |
 | `georgia-homestead-exemption-explained` | Buying | `/homestead` | none — **researched**, with a Sources section and a podcast-episode audio |
-| `relocating-to-metro-atlanta` | Lifestyle | `/moving-to-atlanta` | none — researched around her relocation video; **no audio yet** (see Open items) |
-| `leasing-a-restaurant-space` | Investing | `/restaurant-space` | none — researched around her nine restaurant-space reels; **no audio yet** |
+| `relocating-to-metro-atlanta` | Lifestyle | `/moving-to-atlanta` | none — researched around her relocation video; episode recorded 9 Oct |
+| `leasing-a-restaurant-space` | Investing | `/restaurant-space` | none — researched around her nine restaurant-space reels; episode recorded 9 Oct |
+| `the-open-house-is-a-sales-event` | Selling | `/open-house` | none — researched around her reel with Evelyn (9 Oct); Evelyn's words credited to Evelyn |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -225,6 +226,11 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
    or legal advice; confirm with your county" note before it. **Nothing about Erika she
    didn't say:** quote her recordings exactly, attribute paraphrase ("I said something
    like…"), and invent no feelings, client stories or results.
+   **Check who is speaking.** The reel transcripts have no speaker labels. In
+   `Dbt77Dkuk44` the lines everyone remembers ("this is a sales event", "know who's
+   there for the right reason") are her colleague Evelyn's, saying what she learned from
+   Erika. Read the turns ("what I learned from Erica…", "she taught me that") and credit
+   each line to whoever said it.
 5. **The podcast script** `tools/podcast/<slug>.txt`, written for the ear:
    - she talks to one listener — "Hey, it's Erika. Welcome back to Erika Explains." …
      "So that's X, explained. I'm Erika Page. Thanks for listening, and I'll talk to you
@@ -245,8 +251,10 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
      for consistency between episodes.
 6. **Audio**: `ELEVENLABS_API_KEY=… python3 tools/narrate.py <slug> --script
    tools/podcast/<slug>.txt` (`--dry-run` first; a script under ~900 words runs about
-   5 minutes, so aim for ~1,100 words for 6–8), then `stt-check.py` at the opening,
-   every seam, every passage with a date, bill or percentage, and the ending.
+   5 minutes, so aim for ~1,100 words for 6–8; 1,072 words ran 404 s), then
+   `stt-check.py <mp3> --full` — the whole episode in one call — and read it against the
+   script: every seam, every date, bill or percentage, and the ending. (Windowed `--at`
+   checks are for a single passage you've regenerated.)
    ElevenLabs' transcriber writes "Erica"; the voice says her name correctly.
 7. **Set `audio_note` on the post** ("A podcast episode on this topic, in Erika's AI
    voice. The sources are listed at the end of the article."). Without it the page says
@@ -328,18 +336,15 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 
 ## Open items
 
-- **Erika's ElevenLabs voice stopped working on 6 Oct 2026.** It answers
-  `voice_not_fine_tuned` ("is not fine-tuned and cannot be used"). The voice is still
-  listed, but its fine-tuned model is gone. This usually means the plan dropped below
-  the tier that allows professional clones, or the clone was reset. Only the owner can
-  fix it in ElevenLabs. Until then:
-  - the relocation (6 Oct) and restaurant-lease (7 Oct) articles are live **without
-    audio**. Their scripts are ready (`tools/podcast/relocating-to-metro-atlanta.txt`,
-    `tools/podcast/leasing-a-restaurant-space.txt`). Still broken on 7 Oct. Once the voice works, run
-    `narrate.py --script` and `stt-check.py`, set `audio` and `audio_secs` (its
-    `audio_note` is already set), then redeploy `posts.php` and the MP3;
-  - **never substitute another voice or make a new clone of Erika** without the owner's
-    and her say-so.
+- **For Erika to review:** the open-house article (9 Oct). Her caption and her
+  Smyrna lines are hers; the two headline lines are **Evelyn's**, credited to her —
+  check Evelyn is happy to be quoted by name. The safety, fair-housing and NAR facts are
+  researched.
+- **The voice outage (6–7 Oct) is over** — it worked again on 9 Oct and all eight
+  articles have audio. If `narrate.py` stops on `voice_not_fine_tuned` again: publish
+  without audio (set `audio_note`, leave `audio` empty), tell the owner (only they can
+  fix it in ElevenLabs), and **never substitute another voice or make a new clone of
+  Erika** without the owner's and her say-so.
 - **For Erika to review:** the restaurant-lease article (7 Oct). Her lines and her
   client's story are quoted from her reels; the permits section is researched. Her
   "$4,000 cheaper" is given as "thousands a month cheaper" (no-prices rule).
@@ -347,7 +352,8 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   from her video; the rest is researched and in her voice.
 
 - **Rotate the ElevenLabs key and the cPanel API token** (pasted into chat on 2 Oct
-  2026, still active on 7 Oct), **and the Pexels and Pixabay keys** (pasted 7 Oct). Ask
+  2026, still active on 9 Oct), **and the Pexels and Pixabay keys** (pasted 7 Oct, still
+  active on 9 Oct). Ask
   the owner for the new ones next session.
 - **For Erika to review:** the homestead article and its podcast script (5 Oct). They
   are researched, so they're in her voice but not her words. Also re-check its starred
