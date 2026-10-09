@@ -352,8 +352,8 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   from her video; the rest is researched and in her voice.
 
 - **Rotate the ElevenLabs key and the cPanel API token** (pasted into chat on 2 Oct
-  2026, still active on 9 Oct), **and the Pexels and Pixabay keys** (pasted 7 Oct, still
-  active on 9 Oct). Ask
+  2026, still active on 9 Oct), **and the Pexels and Pixabay keys** (pasted 7 Oct; Pexels
+  still active on 9 Oct). Ask
   the owner for the new ones next session.
 - **For Erika to review:** the homestead article and its podcast script (5 Oct). They
   are researched, so they're in her voice but not her words. Also re-check its starred
