@@ -362,7 +362,9 @@ check there and a row here.
 - Playwright: `NODE_PATH=/opt/node22/lib/node_modules`, or import
   `/opt/node22/lib/node_modules/playwright/index.js`; Chromium is at
   `/opt/pw-browsers/chromium`. Lazy images only load when scrolled into view.
-- Local server: `php -S 127.0.0.1:8000 router.php` (needed for clean URLs). It can
+- Local server: `php -S 127.0.0.1:8000 router.php` (needed for clean URLs). After a
+  container restart it's gone: if *every* article fails "article page is the real,
+  complete page" locally, start the server again before suspecting the code (10 Oct). It can
   serve a just-changed PHP file stale for a second or two; when a check fails right
   after an edit or `git stash pop`, run it again before believing it.
 - `mp3_duration()` takes a path **relative to the site root**; an absolute path

@@ -7,6 +7,60 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-10 — NEXA / Andrew series #1: "Your bank is not your best option for a mortgage"
+
+**Asked.** Publish an article that refers Erika's lender partner Andrew and NEXA ("to get
+some benefits from Nexa"), about twice a month from now on. Keep that in memory, and
+remind the owner every day a blog is published. Mid-task the owner sent Andrew's email
+signature.
+
+**Done**
+- **Research.**
+  - Andrew: Andrew "Drew" Channell, Senior Loan Officer, NMLS #1920676; NEXA company
+    NMLS #1660690. From his signature, and consistent with Missouri licensing records seen
+    in search. NMLS Consumer Access blocks automated requests (Cloudflare 403), so it
+    wasn't read directly.
+  - NEXA: renamed NEXA Lending in October 2025 and now funds about 60% of its loans itself
+    (HousingWire).
+  - CFPB: lender vs broker, how brokers are paid, credit checks while shopping (45 days).
+  - Regulation X §1024.14 and §1024.15, read for the owner.
+- **Article** `/blog/your-bank-is-not-your-best-option-for-a-mortgage` (Buying, short
+  `/lender`, dated 10 Oct, ~850 words, FAQ of 4, Sources).
+  - Built on "Drew's Video" and her "convince a stranger" video, both unused before. Her
+    claims about him are attributed to her video.
+  - The call to action goes through her ("get with me so you can get with Andrew").
+  - Disclosure line with both NMLS numbers.
+- **Two new photos:** couple reviewing loan documents (Ron Lach, B13); "Personal
+  Banking" sign (Erik Mclean, B14). **Bold cover** C9.
+- **Podcast** (824 words, 294 s): the whole-file listen-back matched the script.
+- **Series tracking.**
+  - `tools/series/nexa-andrew.tsv` lists the series articles.
+  - The SessionStart hook prints "This month: N of 2" and a reminder until two are done.
+  - `CLAUDE.md` has a new section, *NEXA / Andrew series*, with the rules and unused
+    topics.
+
+**Passed**
+- `check-article.mjs --all`: ALL PASS on 9 articles, locally and live.
+- 13 uploads byte-identical.
+
+**Failed, and what was done**
+- **Every page failed "real, complete page" locally.** The container had restarted, so
+  the PHP server wasn't running. Restarted it and everything passed. Lesson added to
+  `CLAUDE.md`.
+- **Draft lines she never said were cut:** "I meant every word", "I recommend Andrew
+  because", and "you're never required to use…" (the last stays in the disclaimer only).
+
+**Open, for the owner**
+- **Axen Realty and NEXA share an address**: 5559 Sossaman Rd #101, Mesa (his signature,
+  and Arizona's licence record for AXEN REALTY, LLC). If they share ownership, referrals
+  need an Affiliated Business Arrangement disclosure.
+- **Any "benefit" from NEXA for referrals is a RESPA §8 question.** Clear it with Axen's
+  broker or an attorney first.
+- **Andrew and Erika should read the article.** Should his phone and email go on the site?
+- **One more NEXA / Andrew article is due in October.**
+
+---
+
 ## 2026-10-09 — The voice is back: three episodes, and "The open house is a sales event"
 
 **Asked.** "Write a new blog for today and try the podcasts today as well." The owner
