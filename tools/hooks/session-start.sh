@@ -28,6 +28,18 @@ if [ -f SESSION-LOG.md ]; then
   echo "-- Newest SESSION-LOG.md entry --"
   awk '/^## /{n++} n==1{print} n>1{exit}' SESSION-LOG.md
 fi
+if [ -f tools/series/nexa-andrew.tsv ]; then
+  # Standing order (9 Oct 2026): two NEXA / Andrew articles a month. Remind every session.
+  month="$(date +%Y-%m)"
+  done_n=$(grep -c "^$month" tools/series/nexa-andrew.tsv)
+  last=$(grep -v '^#' tools/series/nexa-andrew.tsv | sort | tail -1 | cut -f1,2)
+  echo
+  echo "-- NEXA / Andrew series (target 2 a month) --"
+  echo "This month ($month): $done_n of 2 published. Last: ${last:-none}."
+  if [ "$done_n" -lt 2 ]; then
+    echo "REMIND THE OWNER in your first reply and when publishing today's blog: $((2 - done_n)) NEXA/Andrew article(s) still due this month. See CLAUDE.md 'NEXA / Andrew series'."
+  fi
+fi
 if [ -f CLAUDE.md ]; then
   echo
   echo "-- Open items (CLAUDE.md) --"

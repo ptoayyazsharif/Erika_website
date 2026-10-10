@@ -25,6 +25,116 @@
 return [
 
     [
+        // Researched around two of her own videos: "Drew's Video" (her lender
+        // partner, quoted) and "convincing a stranger to loan you money". Every
+        // other fact is listed with its source in
+        // tools/research/your-bank-is-not-your-best-option-for-a-mortgage.md.
+        // Part of the twice-a-month NEXA / Andrew series (see CLAUDE.md).
+        'slug'           => 'your-bank-is-not-your-best-option-for-a-mortgage',
+        'title'          => 'Your bank is not your best option for a mortgage.',
+        'seo_title'      => 'Bank vs. Mortgage Broker: Why Your Bank Isn&rsquo;t Your Only Option for a Home Loan',
+        'seo_desc'       => 'A bank offers one menu. A broker can shop many lenders for you. How the two differ, what shopping does to your credit, and why a loan file takes patience.',
+        'excerpt'        => 'When you walk into your bank for a home loan, they can offer you what they have. A mortgage broker goes shopping for you. Here&rsquo;s the difference, what shopping around does to your credit score, and the lender partner I send my clients to.',
+        'date'           => '2026-10-10',
+        'updated'        => '2026-10-10',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['mortgage', 'mortgage broker', 'home loan', 'credit score', 'first-time buyer', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/your-bank-is-not-your-best-option-for-a-mortgage-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Your bank is not your best option for a mortgage.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@introspectivedsgn" rel="nofollow noopener" target="_blank">Erik Mclean</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/your-bank-is-not-your-best-option-for-a-mortgage.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'lender',
+        'audio_secs'     => 294,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'What is the difference between a mortgage lender and a mortgage broker?',
+                'a' => 'According to the Consumer Financial Protection Bureau, a lender is a financial institution that makes direct loans, while a broker does not lend money &mdash; you can use a broker to find different lenders or mortgage loans. Some institutions operate as both, so ask whether a broker is involved in your loan.',
+            ],
+            [
+                'q' => 'Will shopping with more than one lender hurt my credit score?',
+                'a' => 'The CFPB says multiple credit checks from mortgage lenders are recorded on your credit report as a single inquiry, as long as the last check is within 45 days of the first. An inquiry typically has a small negative effect, and shopping around is usually still worth it.',
+            ],
+            [
+                'q' => 'How does a mortgage broker or loan officer get paid?',
+                'a' => 'Usually through a loan-specific fee or commission, paid by you or by the lender. Before you work with one, the CFPB says to make sure you understand their fees and who pays them.',
+            ],
+            [
+                'q' => 'Do I have to use the lender my agent recommends?',
+                'a' => 'No. You are free to choose any lender, and the CFPB&rsquo;s advice is to always shop around for the best loan terms and the lowest interest rates and fees, whether you use a broker or a direct lender.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Your bank is not your best option for a mortgage. Let me say it again. Your bank is not your best option for your mortgage.</p>
+
+<p>That&rsquo;s how I opened a video about my lender partner. Let me explain.</p>
+
+<h2>One menu, or a personal shopper</h2>
+
+<p>When you walk into your bank for a home loan, they can only offer you what they have. One menu, one set of rates &mdash; that&rsquo;s it.</p>
+
+<p>A mortgage broker works differently. <strong>They go shopping for you.</strong> Think of it like your own personal shopper.</p>
+
+<p>The <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-the-difference-between-a-mortgage-lender-and-a-mortgage-broker-en-130/" target="_blank" rel="noopener">Consumer Financial Protection Bureau</a> draws the same line:</p>
+
+<ul>
+<li>a <strong>lender</strong> is a financial institution that makes direct loans;</li>
+<li>a <strong>broker</strong> does not lend money &mdash; you can use a broker to find different lenders or mortgage loans;</li>
+<li>and some financial institutions operate as both, so ask whether a broker is involved in your loan.</li>
+</ul>
+
+<p>Brokers get paid, too. Loan officers and brokers usually earn <a href="https://www.consumerfinance.gov/ask-cfpb/how-does-a-mortgage-loan-officer-or-broker-get-paid-en-132/" target="_blank" rel="noopener">a loan-specific fee or commission</a>, paid either by you or by the lender. Before you work with one, make sure you understand their fees and who pays them.</p>
+
+<h2>My lender partner</h2>
+
+<p>My lender partner &mdash; my go-to guy &mdash; is <strong>Andrew &ldquo;Drew&rdquo; Channell</strong>, a Senior Loan Officer with NEXA (NMLS #1920676). In my video I put it this way: he and his team have access to over 200 banks and wholesale lenders. That means he finds the product that fits your situation. Customized &mdash; not one-size-fits-all.</p>
+
+<p>One thing to know about the company: it now goes by NEXA Lending. Its CEO <a href="https://www.housingwire.com/articles/nexa-mortgage-rebrands-to-nexa-lending-but-its-not-a-pivot-to-retail/" target="_blank" rel="noopener">told HousingWire</a> in October 2025 that NEXA now funds about 60% of its loans itself, as a correspondent lender. That&rsquo;s exactly why the CFPB&rsquo;s advice &mdash; ask whether a broker is involved in your loan &mdash; is a good one, whoever your lender is.</p>
+
+[[img:assets/photos/17/b13-couple-reviewing-loan-documents.jpg|A couple reviewing loan documents together at their kitchen table|Photo by <a href="https://www.pexels.com/@ron-lach" rel="nofollow noopener" target="_blank">Ron Lach</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Your credit score while you shop</h2>
+
+<p>Here&rsquo;s something most people don&rsquo;t know. Andrew won&rsquo;t even run your credit until he knows the numbers make sense. No unnecessary hits to your score while you&rsquo;re trying to buy a home &mdash; and that&rsquo;s the kind of lender you need in your corner.</p>
+
+<p>And when it&rsquo;s time to compare lenders, don&rsquo;t be afraid to shop. The <a href="https://www.consumerfinance.gov/ask-cfpb/what-exactly-happens-when-a-mortgage-lender-checks-my-credit-en-2005/" target="_blank" rel="noopener">CFPB</a> explains that multiple credit checks from mortgage lenders are recorded on your credit report as a single inquiry, as long as the last check is within 45 days of the first. An inquiry typically has a small negative effect, and shopping around is usually still worth it.</p>
+
+<h2>Now here&rsquo;s the important part: give your loan some grace</h2>
+
+<p>When I connect you to my vendors, and especially to financing, and your file is a difficult one, I&rsquo;m going to need you to have some patience. Here&rsquo;s how I want you to think about it.</p>
+
+<p>Me, the lender, the attorney, the appraiser, and sometimes the inspector &mdash; <strong>we have to convince a stranger to loan you hundreds of thousands of dollars.</strong> They don&rsquo;t know you. They barely know us. So don&rsquo;t be frustrated when they ask for documentation and proof. I&rsquo;m willing to bet you couldn&rsquo;t get your brother, your neighbor or your coworker to loan you fifty dollars.</p>
+
+<p>But I&rsquo;m going to work hard, and so are all my vendors, to get that loan to you so you can get the thing you want.</p>
+
+<h2>Shop, compare, then choose</h2>
+
+<p>Whether you use a broker or a direct lender, the CFPB&rsquo;s advice is the same: always shop around for the best loan terms and the lowest interest rates and fees. And about Andrew? I&rsquo;m not telling you what I think. I&rsquo;m telling you what I know.</p>
+
+<p>If you want to talk to my go-to guy, <a href="/contact">get with me so you can get with Andrew</a>. And if you&rsquo;re already a homeowner wondering what your house is worth before your next move, <a href="/home-value">start here</a>.</p>
+
+<p>So that&rsquo;s choosing a mortgage lender, explained.</p>
+
+<p><em>This article explains how mortgage shopping generally works. It isn&rsquo;t a loan offer, a rate quote or financial advice. Erika K. Page is a real estate agent with Axen Realty, not a lender. Andrew &ldquo;Drew&rdquo; Channell is a Senior Loan Officer, NMLS #1920676, with NEXA (company NMLS #1660690). You are free to choose any lender.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Erika K. Page, &ldquo;Drew&rsquo;s Video&rdquo; (June 2026) and her video on convincing a stranger to loan you money, her own words.</li>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-the-difference-between-a-mortgage-lender-and-a-mortgage-broker-en-130/" target="_blank" rel="noopener">What is the difference between a mortgage lender and a mortgage broker?</a> (reviewed December 11, 2024).</li>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/ask-cfpb/how-does-a-mortgage-loan-officer-or-broker-get-paid-en-132/" target="_blank" rel="noopener">How does a mortgage loan officer or broker get paid?</a> (reviewed January 7, 2025).</li>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/ask-cfpb/what-exactly-happens-when-a-mortgage-lender-checks-my-credit-en-2005/" target="_blank" rel="noopener">What exactly happens when a mortgage lender checks my credit?</a> (reviewed August 28, 2026).</li>
+<li>HousingWire, <a href="https://www.housingwire.com/articles/nexa-mortgage-rebrands-to-nexa-lending-but-its-not-a-pivot-to-retail/" target="_blank" rel="noopener">NEXA Mortgage rebrands to NEXA Lending, but it&rsquo;s not a pivot to retail</a> (October 2, 2025).</li>
+<li>Andrew &ldquo;Drew&rdquo; Channell&rsquo;s professional details (title, individual and company NMLS numbers) as supplied from his business signature, October 2026.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her open-house reels (Dbt77Dkuk44, co-hosted with
         // Evelyn; DbziGayiEgQ, Smyrna, used for one line only). Evelyn's words are
         // credited to Evelyn. Every other fact is listed with its source in

@@ -81,6 +81,7 @@ Google AI Studio is still outstanding.
 | `relocating-to-metro-atlanta` | Lifestyle | `/moving-to-atlanta` | none — researched around her relocation video; episode recorded 9 Oct |
 | `leasing-a-restaurant-space` | Investing | `/restaurant-space` | none — researched around her nine restaurant-space reels; episode recorded 9 Oct |
 | `the-open-house-is-a-sales-event` | Selling | `/open-house` | none — researched around her reel with Evelyn (9 Oct); Evelyn's words credited to Evelyn |
+| `your-bank-is-not-your-best-option-for-a-mortgage` | Buying | `/lender` | none — **NEXA / Andrew series #1** (10 Oct): her "Drew's Video" + CFPB |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -266,6 +267,57 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
 9. **Flag it for Erika.** A researched article and script are words in her voice that
    she didn't say. Send the owner a short note for her to read it.
 
+## NEXA / Andrew series — two articles a month (standing order)
+
+The owner's instruction (9 Oct 2026): publish an article that refers Erika's lender
+partner and NEXA **about twice a month**, and **remind the owner every day** a blog is
+published until the month's two are done. The tracker is `tools/series/nexa-andrew.tsv`
+(one row per published article); the SessionStart hook counts this month's rows and
+prints the reminder. **Add the row when you publish one.** Mention the count in your
+first reply of a session and in the summary of every day's blog.
+
+**Who he is** (from his email signature, supplied by the owner 9 Oct 2026): **Andrew
+"Drew" Channell, Senior Loan Officer, NMLS #1920676, NEXA (company NMLS #1660690),
+5559 Sossaman Rd #101, Mesa, AZ**; his Georgia office is in Buford. Erika calls him
+Andrew ("my lender partner", "my go-to guy"); her video about him is "Drew's Video"
+(`ceo_erika/intake/transcripts/video/drews-video.txt`). NEXA renamed itself **NEXA
+Lending** in October 2025 (HousingWire); his email is at nexalending.com.
+
+**Rules for every article in the series**
+- It's a researched article (the method above), Buying category, with a podcast episode.
+  It must teach something useful on its own; the referral is the call to action, not the
+  whole article.
+- **Her words about him only.** Quote "Drew's Video" for what he does ("over 200 banks
+  and wholesale lenders", "won't even run your credit until he knows the numbers make
+  sense") and attribute it to her video. Don't add claims about him or NEXA that no
+  readable source states — no "largest brokerage", no UWM badges, no rankings.
+- **Call to action through Erika:** "Get with me so you can get with Andrew" → `/contact`.
+  That's how she works (she briefs him before a referral). His phone and email stay off
+  the site unless the owner and Andrew say otherwise.
+- **The disclosure line**, every time, before Sources: not a loan offer, a rate quote or
+  financial advice; Erika is a real estate agent with Axen Realty, not a lender; his title
+  with both NMLS numbers; "You are free to choose any lender."
+- **No rates, payments, terms or programs** with numbers. They would make the article an
+  advertisement of credit terms, and they go stale.
+- **Never state that Axen Realty and NEXA are affiliated** unless the owner confirms it. His
+  office address is the same as Axen Realty's Arizona licence address (5559 S Sossaman Rd
+  Bldg 1 #101, Mesa). If they share ownership, referrals need an Affiliated Business
+  Arrangement disclosure (Regulation X §1024.15). That's an open question for the owner.
+- **"Benefits from NEXA" for referrals are a RESPA question.** Regulation X §1024.14(b):
+  no fee, kickback or "thing of value" for referring settlement business. The articles are
+  fine; any reward per referral must be cleared by Axen's broker or an attorney first. Say
+  so if it comes up; don't write anything that implies she's paid to refer.
+- **Topics not yet used**, all to be researched from official sources (CFPB, Georgia DCA
+  for Georgia Dream, HUD for FHA):
+  - getting pre-approved before house hunting;
+  - reading and comparing Loan Estimates;
+  - Georgia down-payment help (Georgia Dream);
+  - FHA vs conventional;
+  - her method of running the credit profile through the lender even for a
+    lease-purchase client (`memory/domain/real-estate-craft.md`);
+  - the lender's side of title insurance (her title-insurance part 2);
+  - her Fannie Mae 620-score video, which needs re-checking first: it's dated November 2025.
+
 ## Checks, and the bug behind each
 
 `tools/check-article.mjs` runs the article checks in one go and prints PASS/FAIL per
@@ -336,6 +388,14 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 
 ## Open items
 
+- **NEXA / Andrew series: 1 of 2 for October** (the bank-vs-broker article, 10 Oct). One
+  more is due by 31 Oct. See *NEXA / Andrew series*.
+- **For the owner, before any "benefit" from NEXA:**
+  - Are Axen Realty and NEXA under common ownership? They share a Mesa address. If so,
+    referrals need an Affiliated Business Arrangement disclosure.
+  - Any reward for referrals must clear RESPA §8: check with Axen's broker or an attorney.
+  - Also, should Andrew's phone and email go on the site? He and Erika should read the
+    article.
 - **For Erika to review:** the open-house article (9 Oct). Her caption and her
   Smyrna lines are hers; the two headline lines are **Evelyn's**, credited to her —
   check Evelyn is happy to be quoted by name. The safety, fair-housing and NAR facts are

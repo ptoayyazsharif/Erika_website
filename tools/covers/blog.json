@@ -1,5 +1,15 @@
 [
   {
+    "slug": "your-bank-is-not-your-best-option-for-a-mortgage",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "Your bank is not your best option for a mortgage.",
+    "sub": "A mortgage broker goes shopping for you.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b14-personal-banking-sign.jpg",
+    "refPos": "72% 50%"
+  },
+  {
     "slug": "the-open-house-is-a-sales-event",
     "template": "bold",
     "eyebrow": "Selling",
