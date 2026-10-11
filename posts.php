@@ -25,6 +25,123 @@
 return [
 
     [
+        // Researched around her Gwinnett rollback-rate reel (Dbs_B2MBThx): her
+        // lines are quoted; every fact is listed with its source in
+        // tools/research/the-rollback-rate-explained.md. Companion to the
+        // homestead article, which closed the other half of that reel's promise.
+        'slug'           => 'the-rollback-rate-explained',
+        'title'          => 'Same tax rate, so why a &ldquo;tax increase&rdquo;?',
+        'seo_title'      => 'The Rollback Rate, Explained: Why Georgia Counties Announce a &ldquo;Tax Increase&rdquo;',
+        'seo_desc'       => 'Gwinnett kept its 6.95 millage rate and still had to announce a tax increase. What Georgia&rsquo;s rollback rate is, why the law requires it, and what it means for your bill.',
+        'excerpt'        => 'Gwinnett County kept its tax rate the same and still had to advertise a property tax increase. Here&rsquo;s the Georgia rule behind the headline, how to read the rollback rate on your own assessment notice, and why your bill can be different from your neighbor&rsquo;s.',
+        'date'           => '2026-10-10',
+        'updated'        => '2026-10-10',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['property taxes', 'rollback rate', 'millage rate', 'Gwinnett County', 'homestead exemption', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/the-rollback-rate-explained-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Same tax rate, so why a &ldquo;tax increase&rdquo;?',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@tara-winstead" rel="nofollow noopener" target="_blank">Tara Winstead</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/the-rollback-rate-explained.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'rollback',
+        'audio_secs'     => 318,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'What is the rollback rate in Georgia?',
+                'a' => 'It&rsquo;s the tax rate that, applied to this year&rsquo;s property values, would bring in the same revenue last year&rsquo;s values did. The Georgia Department of Revenue describes it as the millage rate that will produce the same total revenue on the current year&rsquo;s new digest.',
+            ],
+            [
+                'q' => 'Why does a county announce a tax increase when the rate didn&rsquo;t change?',
+                'a' => 'Under Georgia law (O.C.G.A. 48-5-32.1), if property values rise and the county adopts a rate above the rollback rate, it must notify the public that taxes are being increased: three public hearings, newspaper notices a week before each, and a press release.',
+            ],
+            [
+                'q' => 'Does that mean my own tax bill will go up?',
+                'a' => 'Not automatically. Your exemptions and your assessment decide your bill. In Gwinnett, for example, homeowners with the regular homestead exemption also get the Value Offset Exemption, which keeps the county portion of the bill from rising with the property&rsquo;s value when the rate is held steady. It doesn&rsquo;t apply to schools or cities.',
+            ],
+            [
+                'q' => 'Where can I see the rollback rate for my property?',
+                'a' => 'On your annual notice of assessment. Taxing authorities that certify one list an Estimated Roll-Back Millage Rate for their general fund next to your net taxable value. The notice isn&rsquo;t a bill, and it tells you the deadline to appeal your value.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Is Gwinnett County raising your property taxes?</p>
+
+<p>This summer, Gwinnett announced what most people were calling a property tax increase. But that&rsquo;s not exactly what was happening. Let me explain.</p>
+
+<h2>What happened in Gwinnett</h2>
+
+<p>The county proposed keeping its general fund millage rate right where it was: <strong>6.950 mills</strong>. The commissioners <a href="https://www.gwinnettcounty.com/-/news-events/news-releases/news-details/gwinnett-board-of-commissioners-proposes-holding-general-fund-millage-rate-steady" target="_blank" rel="noopener">lowered it to 6.950 in 2020 and have held it steady since</a>.</p>
+
+<p>So why the headline? Because the county&rsquo;s <a href="https://www.gwinnettcounty.com/documents/d/gwinnett-county/2026-notice-of-property-tax-increase" target="_blank" rel="noopener">official notice</a> had to say this, word for word: the 2026 millage rate &ldquo;will require an increase in property tax by 2.33 percent.&rdquo; Without that &ldquo;increase,&rdquo; the rate would have been no more than <strong>6.792 mills</strong>. Keeping 6.950 was 0.158 mills above that.</p>
+
+<p>The county held three public hearings, two on July 23 and one on August 4. That afternoon, the commissioners <a href="https://www.gwinnettcounty.com/-/news-events/stories/story-details/gwinnett-county-commission-holds-general-fund-millage-rate-steady-1" target="_blank" rel="noopener">voted to keep 6.95 mills</a>, the same rate for the seventh year in a row.</p>
+
+<p>Same rate. Still a &ldquo;tax increase.&rdquo; Here&rsquo;s why.</p>
+
+<h2>The rollback rate, in plain English</h2>
+
+<p>When property values go up, the same tax rate brings in more money. The <strong>rollback rate</strong> is the lower rate that would bring in the same revenue as last year. Gwinnett&rsquo;s <a href="https://www.gwinnettcounty.com/documents/d/gwinnett-county/2025-how-to-read-your-gwinnett-county-annual-notice-of-assessment-pdf-2" target="_blank" rel="noopener">assessors put it this way</a>: it&rsquo;s the tax rate that, applied to current year property values, produces the same amount of tax revenue as the previous year&rsquo;s property values did.</p>
+
+<p>Now here&rsquo;s the rule. Under Georgia law, if property values increase and the county doesn&rsquo;t lower its rate to the rollback rate, it legally has to advertise that as a tax increase, and it has to hold public hearings. The Georgia Department of Revenue&rsquo;s <a href="https://dor.georgia.gov/property-taxpayers-bill-rights" target="_blank" rel="noopener">Property Taxpayer&rsquo;s Bill of Rights</a> (O.C.G.A. 48-5-32.1) spells it out:</p>
+
+<ul>
+<li>a rollback rate must be computed that would produce the same total revenue on this year&rsquo;s new digest;</li>
+<li>if the county doesn&rsquo;t roll back, it must notify the public that taxes are being increased;</li>
+<li><strong>three public hearings</strong>, and one of them must begin between 6:00 and 7:00 in the evening;</li>
+<li>a notice in the paper one week before each hearing;</li>
+<li>and a press release explaining its intent to increase taxes.</li>
+</ul>
+
+<p>It&rsquo;s a transparency rule. Even when the rate stays the same, you get told, and you get a chance to speak.</p>
+
+[[img:assets/photos/17/b15-suburban-neighborhood-aerial.jpg|Rows of suburban homes and lawns seen from above|Photo by <a href="https://www.pexels.com/@alex-hostetler-2159652617" rel="nofollow noopener" target="_blank">Alex Hostetler</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>How the math works</h2>
+
+<p>A tax rate in mills is easier than it sounds. According to the <a href="https://dor.georgia.gov/local-government-services/digest-compliance/property-tax-millage-rates" target="_blank" rel="noopener">Department of Revenue</a>, one mill is a tax of one dollar for every $1,000 of <em>assessed</em> value, and in Georgia the assessed value is 40% of the fair market value. The department&rsquo;s own example: a house worth $100,000 has an assessed value of $40,000, and at 25 mills, the tax is $1,000.</p>
+
+<p>Exemptions come off before the rate is applied. That&rsquo;s where your situation starts to separate from your neighbor&rsquo;s.</p>
+
+<h2>Now here&rsquo;s the important part</h2>
+
+<p>A &ldquo;tax increase&rdquo; notice <strong>doesn&rsquo;t automatically mean every homeowner is going to pay more.</strong> If you have a homestead exemption, or depending on how your property is assessed, your situation can be very, very different from your neighbor.</p>
+
+<p>Gwinnett is a good example. Homeowners there who qualify for the regular homestead exemption also get the <strong>Value Offset Exemption</strong>, which the county says keeps the assessed value of the home constant for the <em>county</em> portion of the bill. With the rate held steady, the county tax amount won&rsquo;t go up even if the home&rsquo;s value did. But the county is clear that it applies only to the county government portion, not to schools or cities.</p>
+
+<p>If you don&rsquo;t have your homestead exemption yet, start there. I explained it in <a href="/blog/georgia-homestead-exemption-explained">Georgia&rsquo;s homestead exemption, explained</a>.</p>
+
+<h2>Where to see it for yourself</h2>
+
+<p>You don&rsquo;t have to wait for the headline. Your <strong>annual notice of assessment</strong>, the one that says &ldquo;this is not a bill,&rdquo; now lists an <strong>Estimated Roll-Back Millage Rate</strong> for each taxing authority that certified one, under O.C.G.A. 48-5-306. A taxing authority that doesn&rsquo;t certify one has to show <a href="https://dor.georgia.gov/document/document/pt-306e-annual-notice-assessment-estimated-taxes/download" target="_blank" rel="noopener">its previous year&rsquo;s millage rate and an estimated tax</a> instead. The notice also gives you your deadline to appeal your value: 45 days from the notice date.</p>
+
+<p>In Gwinnett, the August vote cleared the way for tax bills to go out in September, with payments due in November.</p>
+
+<p>So before you panic, and before you decide it&rsquo;s not a good time to buy or sell a home, talk to someone who understands how this actually works. That&rsquo;s why headlines don&rsquo;t tell the whole story. If you&rsquo;re thinking about buying or selling in Metro Atlanta, <a href="/contact">reach out</a>, and if you want to know what your home is worth today, <a href="/home-value">start here</a>.</p>
+
+<p>So that&rsquo;s the rollback rate, explained.</p>
+
+<p><em>This article explains how property tax rates are set in Georgia. It isn&rsquo;t tax or legal advice. Millage rates, exemptions and deadlines differ by county, city and school district, so confirm yours with your county tax assessor and tax commissioner.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Erika K. Page, Gwinnett property tax video and caption (2026), her own words.</li>
+<li>Gwinnett County, <a href="https://www.gwinnettcounty.com/-/news-events/news-releases/news-details/gwinnett-board-of-commissioners-proposes-holding-general-fund-millage-rate-steady" target="_blank" rel="noopener">Board of Commissioners proposes holding general fund millage rate steady</a> (July 14, 2026).</li>
+<li>Gwinnett County Board of Commissioners, <a href="https://www.gwinnettcounty.com/documents/d/gwinnett-county/2026-notice-of-property-tax-increase" target="_blank" rel="noopener">Notice of Property Tax Increase</a> (2026).</li>
+<li>Gwinnett County, <a href="https://www.gwinnettcounty.com/-/news-events/stories/story-details/gwinnett-county-commission-holds-general-fund-millage-rate-steady-1" target="_blank" rel="noopener">Gwinnett County Commission holds general fund millage rate steady</a> (August 4, 2026).</li>
+<li>Gwinnett County Tax Assessors&rsquo; Office, <a href="https://www.gwinnettcounty.com/documents/d/gwinnett-county/2025-how-to-read-your-gwinnett-county-annual-notice-of-assessment-pdf-2" target="_blank" rel="noopener">How to read your Gwinnett County annual notice of assessment</a> (2025).</li>
+<li>Georgia Department of Revenue, <a href="https://dor.georgia.gov/property-taxpayers-bill-rights" target="_blank" rel="noopener">Property Taxpayer&rsquo;s Bill of Rights</a>.</li>
+<li>Georgia Department of Revenue, <a href="https://dor.georgia.gov/local-government-services/digest-compliance/property-tax-millage-rates" target="_blank" rel="noopener">Property Tax Millage Rates</a>.</li>
+<li>Georgia Department of Revenue, <a href="https://dor.georgia.gov/document/document/pt-306e-annual-notice-assessment-estimated-taxes/download" target="_blank" rel="noopener">Form PT-306E, annual notice of assessment</a> (revised April 2025).</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around two of her own videos: "Drew's Video" (her lender
         // partner, quoted) and "convincing a stranger to loan you money". Every
         // other fact is listed with its source in

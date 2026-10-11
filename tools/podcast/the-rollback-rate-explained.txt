@@ -1,0 +1,62 @@
+# Erika Explains — podcast episode script
+# Article: /blog/the-rollback-rate-explained
+# Facts: every one is in tools/research/the-rollback-rate-explained.md. Her lines are from
+# her Gwinnett rollback-rate reel (Dbs_B2MBThx); nothing else about her is added.
+#
+# voice: stability=0.38 similarity=0.8 style=0.22 speaker_boost=1
+
+Hey, it's Erika. Welcome back to Erika Explains.
+
+Is Gwinnett County raising your property taxes?
+
+This summer, Gwinnett announced what most people were calling a property tax increase. But that's not exactly what was happening. So let me explain.
+
+Here's what the county actually did. It proposed keeping its general fund tax rate exactly where it was. Six point nine five mills. The commissioners lowered it to that in twenty twenty, and they've held it steady ever since.
+
+So why the headline? Because the county's official notice had to say this, word for word... that the twenty twenty-six rate "will require an increase in property tax by two point three three percent."
+
+Same rate. Still a "tax increase." So what's going on?
+
+It comes down to something called the rollback rate.
+
+Think about it like this. When property values go up, the same tax rate brings in more money. Right? The rollback rate is the lower rate that would bring in the same revenue as last year. Gwinnett's tax assessors put it simply. It's the rate that, applied to this year's property values, produces the same amount of tax revenue as last year's values did.
+
+In Gwinnett this year, that rollback rate was six point seven nine two mills. Keeping six point nine five was a little above it.
+
+Now here's the rule. Under Georgia law, if property values increase and the county doesn't lower its rate to the rollback rate, then they legally have to advertise it as a tax increase. And they even have to hold public hearings.
+
+The Georgia Department of Revenue spells it out. Three public hearings. One of them has to start between six and seven in the evening. There has to be a notice in the newspaper a week before each hearing. And the county has to put out a press release explaining that it intends to increase taxes.
+
+So Gwinnett held its hearings. Two on July twenty-third, and one on August fourth. And that same afternoon, the commissioners voted to keep six point nine five mills. The same rate, for the seventh year in a row.
+
+Okay. Let's do the math, because mills sound scarier than they are.
+
+One mill is one dollar of tax for every thousand dollars of assessed value. And in Georgia, the assessed value is forty percent of what your home is worth. The Department of Revenue uses this example. A house worth a hundred thousand dollars has an assessed value of forty thousand. At twenty-five mills, the tax is a thousand dollars.
+
+And your exemptions come off before the rate is applied. Which is exactly where your situation starts to look different from your neighbor's.
+
+Now here's the important part.
+
+A "tax increase" notice doesn't automatically mean every homeowner is going to pay more. If you have a homestead exemption, or depending on how your property is assessed, your situation can be very, very different from your neighbor.
+
+Gwinnett is a good example. Homeowners there who qualify for the regular homestead exemption also get something called the Value Offset Exemption. The county says it keeps the assessed value of your home constant for the county part of your bill. So with the rate held steady, the county tax amount won't go up, even if your home's value did.
+
+But... and the county is clear about this... it only applies to the county government's part of the bill. Not the schools. Not the cities.
+
+And if you don't have your homestead exemption yet? Start there. I did a whole episode on it.
+
+So where can you see all this for yourself?
+
+Your annual notice of assessment. That's the one that says, "this is not a bill." It now shows an estimated rollback rate for each taxing authority that certified one. If an authority didn't certify one, it has to show last year's rate and an estimated tax instead. And that notice tells you your deadline to appeal your value. You've got forty-five days from the date on the notice.
+
+In Gwinnett, that August vote cleared the way for tax bills to go out in September, with payments due in November.
+
+So that's why headlines don't tell the whole story.
+
+Before you panic, and before you decide it's not a good time to buy or sell a home, talk to someone who understands how this actually works. And if you're thinking about buying or selling in Metro Atlanta, reach out through my website.
+
+Just so you know, this is general information, not tax or legal advice. Every county, city and school district sets its own rates, so check with your county tax assessor and tax commissioner.
+
+I've put links to every source I used in the show notes, and in the article on my website.
+
+So that's the rollback rate, explained. I'm Erika Page. Thanks for listening, and I'll talk to you next time.
