@@ -7,6 +7,51 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-10 (later) — "Same tax rate, so why a tax increase?" (the rollback rate)
+
+**Asked.** "Please publish a new blog for today as well."
+
+**Picked.** The strongest unused material in `ceo_erika`: her Gwinnett rollback-rate
+reel `Dbs_B2MBThx`. Its homestead half was answered on 5 Oct; the rollback half was
+still unused. This article isn't part of the NEXA / Andrew series, which stays at **1 of
+2 for October**.
+
+**Done**
+- **Research, all official.**
+  - Gwinnett's 2026 sources: the legal *Notice of Property Tax Increase* (PDF), the
+    14 July and 4 August releases, and the assessors' "how to read your notice" guide
+    (PDF).
+  - Georgia DOR: the Property Taxpayer's Bill of Rights (O.C.G.A. 48-5-32.1), the
+    millage-rates page (a mill, the 40% ratio), and form PT-306E (estimated roll-back
+    rate under 48-5-306).
+- **Conflict resolved at the source.** Gwinnett's rollback rate was 6.792 in the July
+  release and 6.782 on its comment page. The legal notice says "no more than 6.792
+  mills", and 6.950 − 0.158 = 6.792.
+- **Article** `/blog/the-rollback-rate-explained` (Buying, short `/rollback`, dated
+  10 Oct, ~940 words, FAQ of 4, 8 sources). It links to the homestead article.
+- **Photos:** aerial suburban street (Alex Hostetler, B15, recompressed to 249 KB);
+  "PAID / DUE" bills (Tara Winstead, B16). **Bold cover** C10, with the tile's crop moved
+  onto the notes.
+- **Podcast** (814 words, 318 s): the whole-file listen-back matched, all figures right.
+
+**Passed**
+- `check-article.mjs --all`: ALL PASS on 10 articles, locally and live.
+- 13 uploads byte-identical.
+
+**Failed, and what was done**
+- **A drafting slip got into the podcast script:** "so working people can come.
+  Hmm... actually, let me just say what the law says." The reason it gave is in no
+  source. Caught when re-reading, before recording, and removed, along with "comes in
+  the spring", which no source states. Lesson added to `CLAUDE.md`.
+- **The cover tile showed blank paper.** Its crop was moved onto the notes; the subline
+  is now her own words only.
+
+**Open**
+- Erika to review the article and its script.
+- **NEXA / Andrew: 1 of 2 for October.** One more is due by 31 Oct.
+
+---
+
 ## 2026-10-10 — NEXA / Andrew series #1: "Your bank is not your best option for a mortgage"
 
 **Asked.** Publish an article that refers Erika's lender partner Andrew and NEXA ("to get

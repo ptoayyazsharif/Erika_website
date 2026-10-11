@@ -82,6 +82,7 @@ Google AI Studio is still outstanding.
 | `leasing-a-restaurant-space` | Investing | `/restaurant-space` | none — researched around her nine restaurant-space reels; episode recorded 9 Oct |
 | `the-open-house-is-a-sales-event` | Selling | `/open-house` | none — researched around her reel with Evelyn (9 Oct); Evelyn's words credited to Evelyn |
 | `your-bank-is-not-your-best-option-for-a-mortgage` | Buying | `/lender` | none — **NEXA / Andrew series #1** (10 Oct): her "Drew's Video" + CFPB |
+| `the-rollback-rate-explained` | Buying | `/rollback` | none — researched around her Gwinnett rollback reel (10 Oct); companion to the homestead article |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -247,6 +248,10 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
      restaurant script is 1,218);
    - audit it against her recordings like the article: small flourishes slip in ("out
      and in", "No kitchen. Nothing.") that she never said;
+   - re-read the whole script before recording, for drafting slips as well as
+     flourishes. On 10 Oct a half-rewritten line ("so working people can come. Hmm...
+     actually, let me just say what the law says") nearly went to the voice, and the
+     reason it gave was in no source;
    - the `# voice:` line keeps the settings: `stability=0.38 similarity=0.8 style=0.22
      speaker_boost=1` gave a natural, less read-aloud delivery on 5 Oct 2026. Keep it
      for consistency between episodes.
@@ -398,6 +403,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   - Any reward for referrals must clear RESPA §8: check with Axen's broker or an attorney.
   - Also, should Andrew's phone and email go on the site? He and Erika should read the
     article.
+- **For Erika to review:** the rollback-rate article and episode (10 Oct). Her reel's lines
+  are quoted; Gwinnett's figures and the Georgia rules are researched. Re-check the ★ facts
+  when the 2027 millage rates are set.
 - **For Erika to review:** the open-house article (9 Oct). Her caption and her
   Smyrna lines are hers; the two headline lines are **Evelyn's**, credited to her —
   check Evelyn is happy to be quoted by name. The safety, fair-housing and NAR facts are
