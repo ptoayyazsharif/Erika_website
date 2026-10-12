@@ -1,5 +1,15 @@
 [
   {
+    "slug": "when-stairs-become-the-enemy",
+    "template": "bold",
+    "eyebrow": "Lifestyle",
+    "line": "When stairs become the enemy.",
+    "sub": "Looking for something that’s easy on the knees?",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b18-single-story-brick-ranch-home.jpg",
+    "refPos": "60% 45%"
+  },
+  {
     "slug": "the-rollback-rate-explained",
     "template": "bold",
     "eyebrow": "Buying",

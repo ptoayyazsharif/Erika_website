@@ -25,6 +25,122 @@
 return [
 
     [
+        // Researched around her short reel "stairs become the enemy"
+        // (intake/transcripts/video/stairs-hidden-enemy): her lines are quoted;
+        // every fact is listed with its source in
+        // tools/research/when-stairs-become-the-enemy.md. Her "five coming to
+        // market" line is left out (a dated listing claim).
+        'slug'           => 'when-stairs-become-the-enemy',
+        'title'          => 'When stairs become the enemy.',
+        'seo_title'      => 'When Stairs Become the Enemy: Making Your Home Safer, or Moving to One Level',
+        'seo_desc'       => 'Fix the stairs you have, or move to a home without them? CDC fall-prevention steps, what to plan, and the tax rules worth knowing before you sell.',
+        'excerpt'        => 'If you keep living and you get old enough, stairs become the enemy. Here&rsquo;s what the CDC says to fix first, how to think about moving to one level, and the tax rules worth knowing before you sell the family home.',
+        'date'           => '2026-10-12',
+        'updated'        => '2026-10-12',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'lifestyle',
+        'tags'           => ['aging in place', 'downsizing', 'single-level homes', 'fall prevention', 'selling a home', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/when-stairs-become-the-enemy-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: When stairs become the enemy.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@michaelgaultphotos" rel="nofollow noopener" target="_blank">Get Lost Mike</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/when-stairs-become-the-enemy.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'stairs',
+        'audio_secs'     => 279,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'How common are falls for older adults?',
+                'a' => 'The CDC says more than one out of four older people falls each year, and less than half tell their doctor. Falls are the most common cause of traumatic brain injuries for older adults.',
+            ],
+            [
+                'q' => 'How do I make the stairs in my home safer?',
+                'a' => 'The CDC&rsquo;s home checklist says to keep objects off the stairs, fix loose or uneven steps, have a light and light switch at the top and bottom, and make sure handrails are on both sides and as long as the stairs.',
+            ],
+            [
+                'q' => 'If I sell my two-story home, will I owe tax on the gain?',
+                'a' => 'Maybe not. The IRS lets you exclude up to $250,000 of gain, or $500,000 on a joint return, if you owned the home and lived in it for at least two of the five years before the sale, with some limits. Talk to a tax professional about your situation.',
+            ],
+            [
+                'q' => 'Are there property tax breaks for older homeowners in Georgia?',
+                'a' => 'Georgia has state exemptions for homeowners 65 and older, and 62 and older for school taxes, with tight income limits, and the state Constitution lets counties enact their own local homestead exemptions. Ask your county tax commissioner what applies to you.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Who knew? Who knew that stairs would become the enemy?</p>
+
+<p>You know, if you keep living and you get old enough, stairs become the enemy. I said that in a video, laughing. And in that same video I said we&rsquo;re listing more homes for people who need a home that doesn&rsquo;t have stairs.</p>
+
+<p>So if the stairs in your house are starting to feel like a problem, you have two choices. Make the stairs you have safer, or move to a home without them. Let me explain both.</p>
+
+<h2>Why it&rsquo;s worth taking seriously</h2>
+
+<p>This isn&rsquo;t just about sore knees. According to the <a href="https://www.cdc.gov/falls/data-research/facts-stats/index.html" target="_blank" rel="noopener">CDC</a>:</p>
+
+<ul>
+<li><strong>more than one out of four</strong> older people falls each year, and less than half tell their doctor;</li>
+<li>falls are the most common cause of traumatic brain injuries for older adults;</li>
+<li>and there are about 4.5 million emergency department visits a year because older people fall.</li>
+</ul>
+
+<h2>Choice one: make the stairs you have safer</h2>
+
+<p>The National Institute on Aging says to go through your home <a href="https://www.nia.nih.gov/health/aging-place/aging-place-growing-older-home" target="_blank" rel="noopener">room by room</a> and first correct any immediate dangers, &ldquo;such as loose stair railings and poor lighting,&rdquo; then keep re-checking as your needs change.</p>
+
+<p>The CDC&rsquo;s home fall-prevention checklist, <a href="https://www.cdc.gov/steadi/pdf/patient/customizable/CheckforSafety-Brochure-Final-Customizable-508.pdf" target="_blank" rel="noopener"><em>Check for Safety</em></a>, gets specific about stairs:</p>
+
+<ul>
+<li>keep papers, shoes, books and other objects <strong>off the stairs</strong>;</li>
+<li>fix loose or uneven steps;</li>
+<li>have a <strong>light and a light switch at the top and bottom</strong> of the stairs. You can even get light switches that glow;</li>
+<li>make sure carpet is firmly attached to every step, or remove it and use non-slip rubber treads;</li>
+<li>and make sure <strong>handrails are on both sides</strong> of the stairs, and as long as the stairs.</li>
+</ul>
+
+<p>The same checklist goes past the stairs, too: a lamp you can reach from the bed, a nightlight on the path from the bed to the bathroom, and grab bars next to and inside the tub and next to the toilet.</p>
+
+[[img:assets/photos/17/b17-staircase-handrail-wall-light.jpg|An indoor staircase with a wooden handrail on one side and a light on the wall|Photo by <a href="https://www.pexels.com/@hson" rel="nofollow noopener" target="_blank">HONG SON</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Choice two: a home that&rsquo;s easy on the knees</h2>
+
+<p>Sometimes the better answer is a different house. That&rsquo;s the move I was talking about: a home that doesn&rsquo;t have stairs.</p>
+
+<p>The National Institute on Aging&rsquo;s advice on timing applies here, too: the best time to think about how to age in place is before you need a lot of care.</p>
+
+<p>When you&rsquo;re touring, bring the checklist with you. Look at the steps to get in the front door, the lighting, where the bedroom and the bathroom are, and whether there&rsquo;s room for grab bars where you&rsquo;d need them.</p>
+
+<h2>Now here&rsquo;s the important part: the money side of selling</h2>
+
+<p>If you&rsquo;ve been in your two-story home for years, two rules are worth knowing before you sell.</p>
+
+<p><strong>The federal tax exclusion.</strong> According to the <a href="https://www.irs.gov/taxtopics/tc701" target="_blank" rel="noopener">IRS</a>, if you owned the home and used it as your residence for at least two of the five years before the sale, you may be able to exclude up to $250,000 of the gain from your income, or up to $500,000 if you file a joint return with your spouse. Generally you can&rsquo;t use it if you excluded the gain from another home sale in the two years before. A tax professional can tell you how it applies to you.</p>
+
+<p><strong>Georgia property tax breaks.</strong> The <a href="https://dor.georgia.gov/property-tax-homestead-exemptions" target="_blank" rel="noopener">Georgia Department of Revenue</a> lists a $4,000 exemption from county taxes for homeowners 65 or older, and an exemption from school taxes for homeowners 62 or older. Both have an income limit of $10,000 for the prior year, which is tight. But the state Constitution also lets counties enact their own local homestead exemptions, so ask your county tax commissioner what&rsquo;s available where you&rsquo;re moving. And if you move, check that the homestead exemption is filed on your new home. I explained how in <a href="/blog/georgia-homestead-exemption-explained">Georgia&rsquo;s homestead exemption, explained</a>.</p>
+
+<h2>Get rid of the enemy</h2>
+
+<p>So if you are looking for something that&rsquo;s easy on the knees and you want to get rid of this enemy, <a href="/contact">reach out</a>. And if you want to know what your current home is worth before you decide, <a href="/home-value">start here</a>.</p>
+
+<p>So that&rsquo;s when stairs become the enemy, explained.</p>
+
+<p><em>This article explains general safety guidance and how these rules work. It isn&rsquo;t medical, tax or legal advice. Talk to your doctor about fall risk, a tax professional about selling your home, and your county about property tax exemptions.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Erika K. Page, &ldquo;stairs become the enemy&rdquo; video, her own words.</li>
+<li>Centers for Disease Control and Prevention, <a href="https://www.cdc.gov/falls/data-research/facts-stats/index.html" target="_blank" rel="noopener">Older Adult Falls Data</a> (reviewed September 8, 2026).</li>
+<li>Centers for Disease Control and Prevention, <a href="https://www.cdc.gov/steadi/pdf/patient/customizable/CheckforSafety-Brochure-Final-Customizable-508.pdf" target="_blank" rel="noopener">Check for Safety: A Home Fall Prevention Checklist for Older Adults</a> (2018).</li>
+<li>National Institute on Aging, <a href="https://www.nia.nih.gov/health/aging-place/aging-place-growing-older-home" target="_blank" rel="noopener">Aging in Place: Growing Older at Home</a> (reviewed October 12, 2023).</li>
+<li>Internal Revenue Service, <a href="https://www.irs.gov/taxtopics/tc701" target="_blank" rel="noopener">Topic no. 701, Sale of your home</a> (reviewed September 24, 2026).</li>
+<li>Georgia Department of Revenue, <a href="https://dor.georgia.gov/property-tax-homestead-exemptions" target="_blank" rel="noopener">Property Tax Homestead Exemptions</a>.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her Gwinnett rollback-rate reel (Dbs_B2MBThx): her
         // lines are quoted; every fact is listed with its source in
         // tools/research/the-rollback-rate-explained.md. Companion to the

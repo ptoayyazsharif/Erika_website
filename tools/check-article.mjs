@@ -53,19 +53,28 @@ const report = (ok, what, detail = '') => { if (!ok) fails++; console.log(`  ${o
 const warn = (what, detail = '') => console.log(`  WARN  ${what}${detail ? '  — ' + detail : ''}`);
 const DEFAULT_NOTE = 'An AI narration of the article above, in Erika’s voice. Same words, read aloud.';
 
-// Outside links in the article body (its references). 2xx/3xx pass; 403 is only a
+// Outside links in the article body (its references). 2xx/3xx pass; 403/405 is only a
 // warning — some government sites refuse anything that isn't a browser — and
 // 404, 5xx or no answer fail. Retried, because one failed request proves nothing.
 function sourceLinks(body) {
   return [...new Set([...body.matchAll(/href="(https?:\/\/[^"]+)"/g)].map(m => m[1].replace(/&amp;/g, '&')))]
     .filter(u => !/erikakpage\.com|pexels\.com|pixabay\.com/.test(u));
 }
+// Some sites refuse the checker's own user agent but serve a browser: NIH answers 405
+// to "Mozilla/5.0 (link check)" and 200 to a browser string (12 Oct 2026). So a refusal
+// (403/405) is retried once as a browser before it's reported.
+const BROWSER_UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 function linkStatus(u) {
-  let code = '000';
-  for (let i = 0; i < 3 && !/^[23]/.test(code); i++) {
-    const a = ['-sS', '-L', '--max-time', '40', '-A', 'Mozilla/5.0 (link check)', '-o', '/dev/null', '-w', '%{http_code}', u];
+  const get = ua => {
+    const a = ['-sS', '-L', '--max-time', '40', '-A', ua, '-o', '/dev/null', '-w', '%{http_code}', u];
     if (fs.existsSync(CA)) a.unshift('--cacert', CA);
-    try { code = execFileSync('curl', a, { encoding: 'utf8' }).trim(); } catch { code = '000'; }
+    try { return execFileSync('curl', a, { encoding: 'utf8' }).trim(); } catch { return '000'; }
+  };
+  let code = '000';
+  for (let i = 0; i < 3 && !/^[23]/.test(code); i++) code = get('Mozilla/5.0 (link check)');
+  if (code === '403' || code === '405') {
+    const again = get(BROWSER_UA);
+    if (/^[23]/.test(again)) code = again;
   }
   return code;
 }
@@ -227,7 +236,7 @@ for (const slug of slugs) {
     const bad = [];
     for (const u of links) {
       const c = linkStatus(u);
-      if (c === '403') warn('source link refuses non-browser requests (open it by hand once)', `${c} ${u}`);
+      if (c === '403' || c === '405') warn('source link refuses non-browser requests (open it by hand once)', `${c} ${u}`);
       else if (!/^[23]/.test(c)) bad.push(`${c} ${u}`);
     }
     report(!bad.length, `every source link answers (${links.length} checked)`, bad.join(', '));
