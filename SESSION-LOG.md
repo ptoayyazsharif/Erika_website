@@ -7,6 +7,49 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-12 — "When stairs become the enemy."
+
+**Asked.** "Please research and post a new blog for Erika's website!"
+
+**Picked.** Her unused short video `stairs-hidden-enemy`. The NEXA / Andrew series stays
+at **1 of 2 for October**; the second is spaced for later in the month.
+
+**Done**
+- **Research, all official:**
+  - CDC: older-adult falls data, and the *Check for Safety* checklist (2018).
+  - National Institute on Aging: aging in place.
+  - IRS Topic 701: the home-sale exclusion.
+  - Georgia DOR: senior homestead exemptions.
+- **Article** `/blog/when-stairs-become-the-enemy` (Lifestyle, short `/stairs`, ~840
+  words, FAQ of 4, 6 sources).
+  - Her lines open and close it.
+  - Her dated "five coming to market" line was left out.
+  - Three lines that gave her intent or opinions she never voiced were cut before
+    publishing.
+- **Photos:** a staircase with a handrail on one side and a wall light (HONG SON, B17);
+  a single-story brick ranch home (Get Lost Mike, B18). **Bold cover** C11.
+- **Podcast** (805 words, 279 s).
+  - Re-reading the script found two slips: "I love that" (a feeling she never stated) and
+    "here's one a lot of homes miss" (no source). Both were cut before recording.
+  - Whole-file listen-back matched.
+
+**Passed**
+- `check-article.mjs --all`: ALL PASS on 11 articles, locally and live.
+- 13 uploads byte-identical.
+
+**Failed, and what was done**
+- **The link check failed on NIH (405).** NIH answers 405 to the checker's user agent
+  "Mozilla/5.0 (link check)" and 200 to a browser string. `check-article.mjs` now retries
+  a 403/405 once as a browser, and a refusal that persists is a WARN, like 403.
+- **CDC refuses curl even with a browser UA (403).** WebFetch can still read its PDFs: it
+  saves the binary under `tool-results/`, which pypdf reads. Noted in `CLAUDE.md`.
+
+**Open**
+- Erika to review the article and its episode.
+- **NEXA / Andrew: 1 of 2 for October.** One more is due by 31 Oct.
+
+---
+
 ## 2026-10-10 (later) — "Same tax rate, so why a tax increase?" (the rollback rate)
 
 **Asked.** "Please publish a new blog for today as well."

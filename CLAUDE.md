@@ -83,6 +83,7 @@ Google AI Studio is still outstanding.
 | `the-open-house-is-a-sales-event` | Selling | `/open-house` | none — researched around her reel with Evelyn (9 Oct); Evelyn's words credited to Evelyn |
 | `your-bank-is-not-your-best-option-for-a-mortgage` | Buying | `/lender` | none — **NEXA / Andrew series #1** (10 Oct): her "Drew's Video" + CFPB |
 | `the-rollback-rate-explained` | Buying | `/rollback` | none — researched around her Gwinnett rollback reel (10 Oct); companion to the homestead article |
+| `when-stairs-become-the-enemy` | Lifestyle | `/stairs` | none — researched around her short "stairs" video (12 Oct): CDC, NIA, IRS, Georgia DOR |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -210,7 +211,9 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
    folder and read them with the venv's pypdf (`python -I`). That route gave the Fulton
    and GNR health-department documents, the Gwinnett fire CO leaflet and GDOT's TADA
    guide on 7 Oct. Check each document's date; the Gwinnett leaflet is from 2012, so
-   it's starred and used only as an example. WebFetch reads some of them (BLS, Census Reporter). If nothing can read
+   it's starred and used only as an example. WebFetch reads some of them (BLS, Census Reporter). CDC refuses curl even as a
+   browser, but when WebFetch meets a PDF it saves the binary under `tool-results/`; copy it
+   to a scratch folder and read it with pypdf (the CDC *Check for Safety* checklist, 12 Oct). If nothing can read
    a source, leave the fact out — the relocation notes list three facts dropped this
    way. The Census Bureau's own data API now needs a key; Census Reporter shows the
    same ACS figures.
@@ -340,7 +343,7 @@ check there and a row here.
 | Narration duration measured from the file; transcription spot-check | typed durations drift; TTS mishears |
 | PDFs: per-character font check, geometry, clipping, each page's `data-must` text | fonts silently fell back; grepping the PDF for a font name gave a false pass |
 | No HTML entity shows as text on the page, in the title or the share tags | `&rsquo;` was escaped twice on every `/blog` card (fixed 2 Oct 2026) |
-| Every outside link in the article answers (2xx/3xx; 403 = WARN, check by hand) | a researched article is only as good as its references; Fulton's assessor site answers 403 to non-browsers, so it's verified by search instead |
+| Every outside link in the article answers (2xx/3xx; a 403/405 is retried once as a browser, then WARN — check by hand) | a researched article is only as good as its references; Fulton's assessor site answers 403 to non-browsers, and NIH answered 405 to the checker's own user agent but 200 to a browser (12 Oct 2026) |
 | The line under the audio player matches the post (`audio_note`, or the "read aloud" default) | it said "same words, read aloud" for any audio; untrue for a podcast episode |
 | Admin round-trip keeps `audio_note` too | proven 5 Oct 2026 on a throwaway copy with a test login (see SESSION-LOG) |
 | **No picture on two articles**; no cover tile repeats its own article's body picture (whole blog, every run) | the same signing photo was on two articles four times, and two more were shared — the owner called it lazy (7 Oct 2026) |
@@ -403,6 +406,8 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   - Any reward for referrals must clear RESPA §8: check with Axen's broker or an attorney.
   - Also, should Andrew's phone and email go on the site? He and Erika should read the
     article.
+- **For Erika to review:** the stairs article and episode (12 Oct). Her lines open and close
+  it; the CDC, NIA, IRS and DOR facts are researched.
 - **For Erika to review:** the rollback-rate article and episode (10 Oct). Her reel's lines
   are quoted; Gwinnett's figures and the Georgia rules are researched. Re-check the ★ facts
   when the 2027 millage rates are set.
