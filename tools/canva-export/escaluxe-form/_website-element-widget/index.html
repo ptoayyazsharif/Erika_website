@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact Form</title>
+<meta name="robots" content="noindex">
+<!--
+  Escaluxe contact form. Replaces the Canva form widget that the Contact page shows in
+  its frame (Canva served it at /_website-element-widget). Same fields and look; it posts
+  to /contact-form/send.php, which emails the answers (see README.txt).
+  Laid out for the 1114 x 728 frame Canva gives it; Canva scales the page on phones.
+-->
+<style>
+  @font-face { font-family: "DM Sans"; src: url(fonts/DMSans-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "DM Sans"; src: url(fonts/DMSans-Bold.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+  :root { --ink: #2b2b2b; --gold: #ffe192; --line: rgba(255, 225, 146, .38); --tint: rgba(255, 225, 146, .13); --rose: #b76e79; --edge: #395244; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: transparent; }
+  body { font-family: "DM Sans", system-ui, Arial, sans-serif; color: var(--gold); }
+  .card { height: 100%; background: var(--ink); border: 2px solid var(--edge); border-radius: 8px; padding: 26px 26px 18px; display: flex; flex-direction: column; }
+  h1 { margin: 0 0 10px; font-weight: 400; font-size: 30px; letter-spacing: .2px; }
+  /* spread the fields over the whole card, as Canva's form does */
+  form { display: flex; flex-direction: column; justify-content: space-between; flex: 1; }
+  label, legend { display: block; font-size: 14px; margin: 0 0 6px; padding: 0; }
+  input[type=text], input[type=email], textarea {
+    width: 100%; background: transparent; color: #fff5e9; font: inherit; font-size: 15px;
+    border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; height: 31px; outline: none; }
+  textarea { height: 46px; resize: none; }
+  input:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(255, 225, 146, .18); }
+  fieldset { border: 0; margin: 0; padding: 0; }
+  .choice { position: relative; display: flex; align-items: center; gap: 10px; background: var(--tint); border-radius: 6px; padding: 0 12px; height: 40px; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
+  .choice:last-child { margin-bottom: 0; }
+  /* Canva shows plain Yes/No blocks: the radio stays for keyboards and screen readers, just not drawn */
+  .choice input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+  .choice:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .choice:has(input:checked) { background: rgba(255, 225, 146, .3); color: #fff5e9; }
+  button { margin-top: 4px; height: 34px; border: 0; border-radius: 17px; background: rgba(183, 110, 121, .45); color: #fff5e9; font: inherit; font-size: 15px; cursor: pointer; }
+  button:hover { background: rgba(183, 110, 121, .65); }
+  button:disabled { opacity: .6; cursor: default; }
+  .msg { min-height: 14px; font-size: 12px; text-align: center; margin: 4px 0 0; }
+  .msg.err { color: #ffb4a8; }
+  .done { flex: 1; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 10px; }
+  .done p { margin: 0; font-size: 17px; color: #fff5e9; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .sent form { display: none; } .sent .done { display: flex; }
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <h1>Contact Form</h1>
+  <form id="f" action="/contact-form/send.php" method="post" novalidate>
+    <div><label for="name">Name*</label><input id="name" name="name" type="text" required maxlength="120" autocomplete="name"></div>
+    <div><label for="email">Email address*</label><input id="email" name="email" type="email" required maxlength="160" autocomplete="email"></div>
+    <div><label for="address">Property address*</label><input id="address" name="property_address" type="text" required maxlength="250" autocomplete="street-address"></div>
+    <fieldset>
+      <legend>Is the property currently rented?*</legend>
+      <label class="choice"><input type="radio" name="rented" value="Yes" required> Yes</label>
+      <label class="choice"><input type="radio" name="rented" value="No"> No</label>
+    </fieldset>
+    <div><label for="rent">Monthly Rent*</label><input id="rent" name="monthly_rent" type="text" required maxlength="60" inputmode="decimal"></div>
+    <div><label for="message">Leave a message</label><textarea id="message" name="message" maxlength="4000"></textarea></div>
+    <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <input type="hidden" name="_t" id="t">
+    <button type="submit" id="go">Submit</button>
+    <p class="msg" id="msg" role="status"></p>
+  </form>
+  <div class="done" role="status"><p>Thank you. Your message has been sent.</p></div>
+</div>
+<script>
+  document.getElementById('t').value = Math.floor(Date.now() / 1000);
+  const f = document.getElementById('f'), msg = document.getElementById('msg'), go = document.getElementById('go');
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    msg.className = 'msg'; msg.textContent = '';
+    if (!f.checkValidity()) {
+      const bad = f.querySelector(':invalid');
+      msg.className = 'msg err';
+      msg.textContent = bad && bad.type === 'email' && bad.value ? 'Please enter a valid email address.' : 'Please fill in all the fields marked *.';
+      if (bad) bad.focus();
+      return;
+    }
+    go.disabled = true; go.textContent = 'Sending…';
+    try {
+      const r = await fetch(f.action, { method: 'POST', body: new FormData(f), headers: { Accept: 'application/json' } });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.ok) { document.getElementById('card').classList.add('sent'); return; }
+      throw new Error(j.error || 'send');
+    } catch (err) {
+      msg.className = 'msg err';
+      msg.textContent = err.message && err.message !== 'send' && err.message !== 'Failed to fetch' ? err.message : 'Sorry, the message could not be sent. Please try again, or schedule a call below.';
+    } finally { go.disabled = false; go.textContent = 'Submit'; }
+  });
+</script>
+</body>
+</html>

@@ -7,6 +7,72 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-12 (later still) — Full copy of escaluxe.com (property management site)
+
+**Asked.** "Make the whole copy of Erika's property management website, as it is":
+https://escaluxe.com/. The owner chose to rebuild the Canva contact form so its answers
+are emailed through the VPS.
+
+**Found**
+- A Canva website export (`<base href="/">`) with **6 pages**, taken from its page list:
+  `/`, `/services`, `/faq`, `/faq-2` (What We Don't Do), `/contact`, and
+  `/government-backed--housing-authority-rental-programs` (Section 8 & Voucher Programs).
+  Every page's HTML carries all six designs; only the title differs.
+- The Contact page holds a **Canva form widget** (`/_website-element-widget`). It loads
+  Canva's app code and fonts and posts to `www.canva.com/_ajax/form/`, so it can't work
+  off Canva.
+
+**Done**
+- **Capture:** `capture.mjs` now takes a list of pages; all 6 captured at desktop and
+  phone.
+- **Sweep:** `sweep.py` reads the HTML and CSS for every `_assets/` and `url()` file
+  and downloaded the 139 files the browser hadn't asked for (other font formats and
+  photo sizes), with 0 failures. The site is 33 MB, byte-identical to Canva's.
+- **Rebuilt the contact form:** same fields and look, set in DM Sans. Canva's form used
+  Hagrid, a font Canva licenses, so it wasn't copied.
+  - `send.php` emails each message over SMTP (PHPMailer) with Reply-To set to the
+    visitor.
+  - It validates the fields and has a honeypot, a too-fast check, a 5-per-10-minutes
+    limit per IP, and header-injection guards.
+  - `config.sample.php` holds the SMTP settings; `.htaccess` files block the private
+    files.
+- **`exports/escaluxe-property-management/`** and its zip (33 MB): `site/` (the web root),
+  `README.txt` (form setup, nginx/Apache), `FILES.txt`, and `screenshots/`.
+- **Tools:** `build-site.py`, `sweep.py`, `verify-site.mjs` and the form source
+  `escaluxe-form/` are in `tools/canva-export/`. Building from the repo tools reproduces
+  the delivered site exactly.
+
+**Passed**
+- Offline (outside network blocked): **all 6 pages, desktop and phone: 0 failed and 0
+  outside requests**, form included.
+- Live vs copy, full-length: **9 of 12 views at 0.00%**.
+  - Contact desktop differs by 3.5%; that's the rebuilt form.
+  - FAQ and Contact on phone: the live measurement didn't find the scroller. The first
+    screen matches at 0.00%.
+- Menu navigation offline: every link opens the right page and title.
+- Form, end to end with a local SMTP catcher:
+  - validation messages, and the email delivered with the right To, From, Reply-To and
+    Subject;
+  - the honeypot and too-fast submissions are silently dropped;
+  - injection is refused, and the 4th message in 10 minutes gets a 429.
+- The zip unpacks and serves from a fresh folder. With no `config.php`, the form says
+  it isn't set up yet.
+
+**Failed, and what was done**
+- **Chromium crashed at launch (SIGTRAP)** when `TMPDIR` pointed at the long scratchpad
+  path. Leave `TMPDIR` alone.
+- **Canva pages scroll inside one DIV**, so `fullPage` screenshots show one screen.
+  `verify-site.mjs` scrolls that DIV (for lazy photos), expands it, then shoots.
+
+**Open**
+- **The owner sets up `config.php`** (recipient plus the SMTP mailbox), then sends a
+  test message.
+- The live site sends `x-robots-tag: none`; decide on indexing on the VPS.
+- "FOR HOMEOWNERS &amp; BUSY PROFESSIONALS" on the FAQ is in Canva's original. Fix it in
+  Canva.
+
+---
+
 ## 2026-10-12 (later) — Downloadable copy of the Canva page escaluxeglobal.com/ai-clone-video-services
 
 **Asked.** Make a downloadable copy of Erika's Canva page, to host on their own VPS later.

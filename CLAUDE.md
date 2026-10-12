@@ -400,12 +400,27 @@ check there and a row here.
   - `build.py <captureSite> <gfontsDir> <out>`;
   - `verify.mjs <shotDir>`, offline, with servers on 8760 (export) and 8761
     (`canva-original/`).
+- **`exports/escaluxe-property-management/`** (12 Oct 2026): all 6 pages of escaluxe.com.
+  The Canva contact form was rebuilt as `_website-element-widget/index.html` plus
+  `contact-form/send.php`, which emails through SMTP once `config.php` is filled in.
+  Remake it with:
+  1. `capture.mjs "<url>,<url>,…" <out>/site <shots>`;
+  2. `sweep.py <out>/site https://escaluxe.com`;
+  3. `build-site.py <capture>/site tools/canva-export/escaluxe-form <exportDir>`;
+  4. `verify-site.mjs local|live <base> <shotDir> ",services,faq,…"`.
 - **Lessons from Canva sites:**
   - a page made with "Canva Code" is a codelet in an iframe. It needs `Sec-Fetch-Dest:
     iframe` (404 without it), redirects to a signed `<id>.canvacode.com` URL, and loads
     root-relative scripts from there;
   - the useful part is that codelet's own HTML: plain Tailwind, Lucide and Google Fonts;
   - Canva's wrapper has an absolute `<base href>`.
+  - a multi-page Canva site has its page list in the HTML (`"K":"PB…","L":"<slug>","O":"<title>"`);
+  - each page scrolls inside one DIV, so screenshots must expand it (`verify-site.mjs`);
+  - a **Canva form** is a `_website-element-widget` iframe that talks to `www.canva.com`, so
+    it must be rebuilt to work off Canva;
+  - Canva's form font (Hagrid) is licensed for use in Canva: don't carry it off.
+- **Environment:** don't set `TMPDIR` to the scratchpad when launching Chromium; it
+  crashes (SIGTRAP) with the long profile path.
 
 ## Content model gotcha
 

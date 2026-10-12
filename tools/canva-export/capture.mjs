@@ -10,8 +10,11 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 
 const { chromium } = pw;
-const [url, OUT, SHOT] = process.argv.slice(2);
-const SITE = new URL(url).host;
+// <url> may be a comma-separated list of pages on one site (escaluxe.com has six).
+const [urlArg, OUT, SHOT] = process.argv.slice(2);
+const URLS = urlArg.split(',');
+const SITE = new URL(URLS[0]).host;
+const slugOf = u => (new URL(u).pathname.replace(/^\/|\/$/g, '') || 'home').replace(/[^a-z0-9-]+/gi, '_');
 const CA = '/root/.ccr/ca-bundle.crt';
 const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 const TMP = fs.mkdtempSync(path.join(process.env.TMPDIR || '/tmp', 'cap-'));
@@ -98,6 +101,7 @@ for (const [name, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', {
     }
     return route.fulfill({ status: r.code || 502, headers: keep, body });
   });
+  for (const url of URLS) {
   const page = await ctx.newPage();
   await page.goto(url, { waitUntil: 'networkidle', timeout: 180000 });
   // scroll the whole page so lazy media loads
@@ -110,9 +114,12 @@ for (const [name, vp] of [['desktop', { width: 1440, height: 900 }], ['phone', {
   await page.waitForTimeout(2000);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(800);
-  await page.screenshot({ path: `${SHOT}-${name}.png`, fullPage: true });
+  const tag = URLS.length > 1 ? `${slugOf(url)}-${name}` : name;
+  await page.screenshot({ path: `${SHOT}-${tag}.png`, fullPage: true });
   const outLinks = await page.evaluate(() => [...document.querySelectorAll('a[href], iframe[src]')].map(e => (e.tagName + ' ' + (e.href || e.src) + ' | ' + (e.innerText || e.title || '').trim().slice(0, 60))));
-  fs.writeFileSync(`${SHOT}-${name}-links.txt`, [...new Set(outLinks)].join('\n'));
+  fs.writeFileSync(`${SHOT}-${tag}-links.txt`, [...new Set(outLinks)].join('\n'));
+  await page.close();
+  }
   await ctx.close();
 }
 await browser.close();

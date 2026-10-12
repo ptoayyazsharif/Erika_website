@@ -1,0 +1,1 @@
+PHPMailer is not duplicated here: build copies lib/phpmailer/*.php into contact-form/phpmailer/ (see build notes in CLAUDE.md, Exports).
