@@ -7,6 +7,61 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-12 (later) — Downloadable copy of the Canva page escaluxeglobal.com/ai-clone-video-services
+
+**Asked.** Make a downloadable copy of Erika's Canva page, to host on their own VPS later.
+
+**Found**
+- The page is a Canva "export_website" build (12 KB of HTML and Canva's JavaScript
+  runtime).
+- All its content is one **Canva Code widget** (a "codelet") in an iframe: a
+  self-contained HTML page built on Tailwind, Lucide and Google Fonts.
+
+**Done**
+- **Captured everything the page loads,** in headless Chromium at desktop and phone
+  width. Each request was relayed through curl with TLS verified.
+- **Built `exports/escaluxe-ai-clone-video-services/`** and its zip (4.2 MB, not in
+  git):
+  - `index.html`: the widget as a plain page. Canva's three hosting scripts were removed
+    (telemetry, data and element SDKs; the page doesn't use them). Tailwind, Lucide and
+    all 49 Google Font files are local in `vendor/`.
+  - `canva-original/`: Canva's wrapper, byte-identical, as a backup.
+  - `README.txt`: what's what, nginx/Apache hosting, the page's outside links.
+  - `FILES.txt`: checksums.
+- Tools kept in `tools/canva-export/` (`capture.mjs`, `build.py`, `verify.mjs`).
+
+**Passed**
+- Offline check (all outside network blocked): the standalone page made 0 failed
+  requests and 0 outside requests, on desktop and phone. All 8 fonts loaded and every
+  section rendered.
+- Screenshot diff against the live page: 0.00% on desktop for both copies, and 0.00% on
+  phone for the backup.
+- The zip unpacks and serves from a fresh folder.
+
+**Failed, and what was done**
+- **The widget answered 404 to the capture.** Canva's codelet needs the browser's
+  `Sec-Fetch-*` iframe headers. Chromium adds those after Playwright intercepts the
+  request, so the relay now rebuilds them.
+- **The widget's scripts went to the wrong host.** The codelet redirects to a signed
+  `<id>.canvacode.com` URL, and its root-relative scripts then hit escaluxeglobal.com.
+  The relay now gives a redirected HTML page a `<base>` at its final URL. (Handing the
+  redirect to the browser doesn't work: Playwright doesn't route the follow-up request.)
+- **Long signed tokens broke the file paths** (ENAMETOOLONG); they're shortened to hashes.
+- **The backup's widget couldn't reach `vendor/`.** Canva's absolute `<base href>` means
+  the backup needs its own copy of the libraries.
+
+**Differences, and left as-is**
+- On phones, Canva scales its frame down, so the standalone page shows the design's own
+  mobile layout at full size (14.9% of pixels differ; same content).
+- An SVG `<polyline>` with a missing number is in Canva's original markup too.
+
+**Open**
+- The owner hosts it on the VPS.
+- The page's links (Calendly, email, phone, escaluxeglobal.com) are unchanged; recheck
+  them once escaluxeglobal.com moves.
+
+---
+
 ## 2026-10-12 — "When stairs become the enemy."
 
 **Asked.** "Please research and post a new blog for Erika's website!"

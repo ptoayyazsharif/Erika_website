@@ -388,6 +388,25 @@ check there and a row here.
   variable fonts must be cut to static weights first — `tools/build-guide.mjs` does
   both; see the README.
 
+## Exports (copies made for the owner, not part of the site)
+
+`exports/` is git-ignored; the owner gets the zip.
+
+- **`exports/escaluxe-ai-clone-video-services/`** (12 Oct 2026): Erika's Canva page
+  escaluxeglobal.com/ai-clone-video-services, made standalone for their VPS. Remake it
+  with `tools/canva-export/`:
+  - `capture.mjs <url> <outDir> <shotPrefix>`, in headless Chromium through a verified
+    curl relay;
+  - `build.py <captureSite> <gfontsDir> <out>`;
+  - `verify.mjs <shotDir>`, offline, with servers on 8760 (export) and 8761
+    (`canva-original/`).
+- **Lessons from Canva sites:**
+  - a page made with "Canva Code" is a codelet in an iframe. It needs `Sec-Fetch-Dest:
+    iframe` (404 without it), redirects to a signed `<id>.canvacode.com` URL, and loads
+    root-relative scripts from there;
+  - the useful part is that codelet's own HTML: plain Tailwind, Lucide and Google Fonts;
+  - Canva's wrapper has an absolute `<base href>`.
+
 ## Content model gotcha
 
 `posts.php` and `products.php` are only the **defaults**. Once anyone saves the Blog
