@@ -11,6 +11,8 @@
  *   node tools/covers/blog.js                       every entry in blog.json
  *   node tools/covers/blog.js <slug>                one entry
  *   node tools/covers/blog.js <slug> --all --out d  that entry in all five templates
+ *   node tools/covers/blog.js [<slug>] --podcast    square podcast episode art, 1400x1400,
+ *                                                   to tools/podcast/art/<slug>.jpg
  *
  * Output is 1600x1000, the ratio of every other editorial picture on the site, so
  * the /blog card, the article hero and the share preview all crop it the same way.
@@ -29,6 +31,11 @@ try { pw = require('playwright'); } catch (e) { pw = require('playwright-core');
 const ROOT = path.join(__dirname, '..', '..');
 const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const W = 1600, H = 1000;
+/* Templates that are not 1600x1000. Podcast episode art must be square: RSS.com
+   refuses anything under 1024x1024, and Apple asks for 1400 to 3000. 1400 is as
+   large as the portrait (1022x1536) allows without upscaling it. */
+const SIZES = { podcast: [1400, 1400] };
+const size = t => SIZES[t] || [W, H];
 
 const C = {
   ink: '#453230', cream: '#FBF7F3', gold: '#C9A15E', goldDeep: '#8F6B2E',
@@ -42,10 +49,10 @@ const C = {
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const url = p => 'file://' + (path.isAbsolute(p) ? p : path.join(ROOT, p));
 
-const BASE = `
+const BASE = (w, h) => `
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{width:${W}px;height:${H}px;overflow:hidden}
-  .c{position:relative;width:${W}px;height:${H}px;overflow:hidden}
+  html,body{width:${w}px;height:${h}px;overflow:hidden}
+  .c{position:relative;width:${w}px;height:${h}px;overflow:hidden}
   .eyebrow{font-family:'Archivo',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.22em}
   /* Tight headline leading lets descenders (the g in "thing") hang below the
      last line box; the padding keeps them inside it, so the overflow check
@@ -153,13 +160,28 @@ const TEMPLATES = {
         <div class="mark" style="margin-top:auto;font-size:36px;color:${C.cream}">Erika <span style="color:${C.gold}">Explains</span></div>
       </div>
     </div>`,
+
+  /* Podcast episode art (1400x1400, --podcast): Bold, squared. The show's name
+     leads, since in a podcast app it sits beside other shows. */
+  podcast: s => `
+    <div class="c" style="${pink}">
+      ${portrait(s, 'position:absolute;right:-170px;top:-20px;height:1500px;width:auto;')}
+      <div class="fit" style="position:absolute;left:0;top:0;width:800px;height:1400px;background:${C.merlotDeep};padding:110px 84px 96px 100px;display:flex;flex-direction:column">
+        <div class="mark" style="font-size:58px;color:${C.cream}">Erika <span style="color:${C.gold}">Explains</span></div>
+        <div class="rule" style="width:110px;margin:36px 0 44px"></div>
+        <div class="eyebrow" style="font-size:24px;color:${C.gold}">${esc(s.eyebrow)}</div>
+        <div class="hl fit" data-min="64" data-max="150" style="line-height:1.04;color:${C.cream};margin-top:28px;max-height:720px">${esc(s.line)}</div>
+        <div style="margin-top:auto">${subRow(s, C.cream, 28, .9, 140)}</div>
+      </div>
+    </div>`,
 };
 
 async function render(browser, spec, template, outFile) {
-  const html = `<!doctype html><html><head><meta charset="utf-8"><style>${BASE}</style></head><body>${TEMPLATES[template](spec)}</body></html>`;
+  const [w, h] = size(template);
+  const html = `<!doctype html><html><head><meta charset="utf-8"><style>${BASE(w, h)}</style></head><body>${TEMPLATES[template](spec)}</body></html>`;
   const tmp = path.join(os.tmpdir(), `blog-cover-${process.pid}.html`);
   fs.writeFileSync(tmp, html);
-  const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
   await page.goto('file://' + tmp, { waitUntil: 'load' });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(300);
@@ -212,8 +234,11 @@ async function render(browser, spec, template, outFile) {
 (async () => {
   const args = process.argv.slice(2);
   const all = args.includes('--all');
+  const podcast = args.includes('--podcast');
   const oi = args.indexOf('--out');
-  const outDir = oi >= 0 ? args[oi + 1] : path.join(ROOT, 'assets', 'photos', '17');
+  const outDir = oi >= 0 ? args[oi + 1]
+    : podcast ? path.join(ROOT, 'tools', 'podcast', 'art') : path.join(ROOT, 'assets', 'photos', '17');
+  fs.mkdirSync(outDir, { recursive: true });
   const slug = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--out');
 
   const specs = JSON.parse(fs.readFileSync(path.join(__dirname, 'blog.json'), 'utf8'))
@@ -223,11 +248,11 @@ async function render(browser, spec, template, outFile) {
   const browser = await pw.chromium.launch({ executablePath: fs.existsSync(CHROME) ? CHROME : undefined });
   let failed = 0;
   for (const s of specs) {
-    const templates = all ? Object.keys(TEMPLATES) : [s.template];
+    const templates = podcast ? ['podcast'] : all ? Object.keys(TEMPLATES) : [s.template];
     for (const t of templates) {
       if (!TEMPLATES[t]) { console.error(`unknown template "${t}"`); failed++; continue; }
       if (t === 'print' && !s.ref) { console.log(`  skip ${s.slug} / ${t}: needs a reference picture (ref)`); continue; }
-      const file = path.join(outDir, all ? `${s.slug}--${t}.jpg` : `${s.slug}-cover.jpg`);
+      const file = path.join(outDir, podcast ? `${s.slug}.jpg` : all ? `${s.slug}--${t}.jpg` : `${s.slug}-cover.jpg`);
       try { await render(browser, s, t, file); console.log(`  ok   ${path.relative(ROOT, file) || file}`); }
       catch (e) { console.error('  FAIL ' + e.message); failed++; }
     }

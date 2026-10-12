@@ -7,6 +7,48 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-12 (night) — Podcast episode art, and even volume on every episode
+
+**Asked.** The owner started publishing the podcast on RSS.com with episode 1 (closing
+costs). RSS.com refused the art: "Minimum resolution required is 1024 x 1024 px". "Make
+it, and add this to the notes." Also: "verify all voices have the same volume; at some
+point the volume changes, why?"
+
+**Found**
+- The episode art was the 1600×1000 article cover. Podcast art must be square.
+- **The volume really did vary.** Nothing levelled the narrations:
+  - between episodes it ranged from -38 LUFS (homestead, cash is king) to -17.5 (closing
+    costs), a 20 dB spread;
+  - inside episodes too. In the bank-vs-broker episode the voice sat around -42, jumped to
+    -18 at the chunk seam (2:15), then drifted back down to -40. The restaurant and
+    relocation episodes swung about 15 dB.
+  - **Why:** ElevenLabs returns each ~2,300-character chunk at its own level, and the level
+    drifts inside a chunk too. `narrate.py` joined the chunks as they came.
+
+**Done**
+- `tools/covers/blog.js --podcast`: a square **Bold** template, 1400×1400, with "Erika
+  Explains" at the top. Art for all 11 episodes is in `tools/podcast/art/`.
+- `tools/level-audio.py`: two passes of loudnorm in dynamic mode ride the drift, then a
+  measured linear pass to **-19 LUFS** (mono podcast target), a -3 dBFS limiter (MP3
+  encoding pushed two files above 0 dBTP without it), and 64 kbps mono. `--check` measures.
+- All 11 MP3s were levelled. `narrate.py` now levels every new episode, and
+  `check-article.mjs` fails an article whose audio isn't levelled.
+
+**Passed**
+- All 11: -19.4 to -19.7 LUFS, true peak -1.2 to -2.9 dB, every 10-second stretch within
+  2.7 dB.
+- Durations are unchanged (each `audio_secs` still matches) and the ID3 tags were kept.
+- The noise floor after the gain is about -70 dBFS (inaudible).
+- `check-article.mjs --all` locally: ALL PASS. The new check fails the old bank file
+  (14.8 dB spread).
+
+**Open**
+- **Deploy the levelled MP3s**: no cPanel keys in this part of the session, so the live
+  site still plays the uneven originals.
+- Hand over episodes 2–11 with their square art as the owner publishes.
+
+---
+
 ## 2026-10-12 (later still) — Full copy of escaluxe.com (property management site)
 
 **Asked.** "Make the whole copy of Erika's property management website, as it is":

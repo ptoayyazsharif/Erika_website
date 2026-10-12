@@ -225,6 +225,11 @@ for (const slug of slugs) {
     const [code] = curl(`${BASE}/${post.audio}`, tmp);
     let secs = 0;
     try { secs = parseFloat(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', tmp], { encoding: 'utf8' })); } catch {}
+    // Episodes once ranged from -38 to -17.5 LUFS and drifted 20 dB inside one file.
+    let loud = '', loudOk = false;
+    try { loud = execFileSync('python3', [path.join(ROOT, 'tools', 'level-audio.py'), '--check', tmp], { encoding: 'utf8' }); loudOk = true; }
+    catch (e) { loud = String(e.stdout || e.message); }
+    report(code === '200' && loudOk, 'audio is levelled (-19 LUFS, even throughout; tools/level-audio.py)', loud.trim().replace(/^\S+\s+\S+: /, ''));
     fs.rmSync(tmp, { force: true });
     report(code === '200' && Math.abs(secs - post.audio_secs) <= 2, 'audio file is there and audio_secs matches it', `http ${code}, file ${secs.toFixed(1)}s, post ${post.audio_secs}s`);
   } else {

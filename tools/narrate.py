@@ -26,9 +26,10 @@ How it is built, and why:
     chunks of ~2,300 characters on paragraph boundaries. Each request is given the
     end of the previous chunk and the start of the next (previous_text/next_text),
     which stops pitch and pace resetting audibly at every seam.
-  * The parts are joined with ffmpeg and re-encoded to 64 kbps mono, to match the
-    other narrations on the site (128 kbps doubles the file for no audible gain
-    in speech).
+  * The parts are joined with ffmpeg, levelled and re-encoded to 64 kbps mono by
+    tools/level-audio.py (128 kbps doubles the file for no audible gain in speech).
+    Each part comes back at its own volume, and the volume drifts inside a part:
+    unlevelled, the episodes ranged from -38 to -17.5 LUFS (12 Oct 2026).
   * The duration is measured from the finished file with the site's own
     mp3_duration(), never typed in.
 
@@ -179,8 +180,9 @@ def main():
         open(lst, "w").write("".join(f"file '{f}'\n" for f in files))
         raw = os.path.join(tmp, "raw.mp3")
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", raw], check=True)
-        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", raw, "-codec:a", "libmp3lame", "-b:a", "64k",
-                        "-ac", "1", "-ar", "44100", os.path.join(ROOT, out)], check=True)
+        # Level and encode in one step: the parts come back at different volumes.
+        subprocess.run([sys.executable, os.path.join(ROOT, "tools", "level-audio.py"), raw,
+                        "--out", os.path.join(ROOT, out)], check=True)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 

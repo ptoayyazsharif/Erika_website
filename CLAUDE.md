@@ -188,6 +188,15 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
    narrated with an AI voice trained on Erika's own. The words are hers."*, and the
    explanatory-only / Axen Realty / Equal Housing close. Episode type Full, not
    explicit.
+   - **Episode art must be square, at least 1024×1024**: RSS.com refuses anything
+     smaller ("Minimum resolution required is 1024 x 1024 px", 12 Oct 2026), and the
+     1600×1000 article cover doesn't qualify. Run `NODE_PATH=/opt/node22/lib/node_modules
+     node tools/covers/blog.js <slug> --podcast`; it writes 1400×1400 (Apple's minimum;
+     the portrait is too small for more without upscaling) to
+     `tools/podcast/art/<slug>.jpg`, from the same `blog.json` entry. Send it with the MP3.
+   - **The MP3 must be levelled** (`tools/level-audio.py`, which `narrate.py` now runs):
+     -19 LUFS, true peak under -1 dB, no 10-second stretch more than 4 dB off.
+     `check-article.mjs` fails an episode that isn't. Re-check before sending.
 
 ## Research articles and podcast episodes
 
@@ -344,6 +353,7 @@ check there and a row here.
 | PDFs: per-character font check, geometry, clipping, each page's `data-must` text | fonts silently fell back; grepping the PDF for a font name gave a false pass |
 | No HTML entity shows as text on the page, in the title or the share tags | `&rsquo;` was escaped twice on every `/blog` card (fixed 2 Oct 2026) |
 | Every outside link in the article answers (2xx/3xx; a 403/405 is retried once as a browser, then WARN — check by hand) | a researched article is only as good as its references; Fulton's assessor site answers 403 to non-browsers, and NIH answered 405 to the checker's own user agent but 200 to a browser (12 Oct 2026) |
+| Audio is levelled: -19 LUFS ±1, true peak ≤ -1 dB, every 10-second stretch within 4 dB (`level-audio.py --check`) | ElevenLabs returns each chunk at its own volume and drifts inside a chunk; nothing corrected it. On 12 Oct 2026 the owner heard the volume change: episodes ranged from -38 to -17.5 LUFS, and the bank episode went from -42 to -18 at a seam. All 11 were levelled that day |
 | The line under the audio player matches the post (`audio_note`, or the "read aloud" default) | it said "same words, read aloud" for any audio; untrue for a podcast episode |
 | Admin round-trip keeps `audio_note` too | proven 5 Oct 2026 on a throwaway copy with a test login (see SESSION-LOG) |
 | **No picture on two articles**; no cover tile repeats its own article's body picture (whole blog, every run) | the same signing photo was on two articles four times, and two more were shared — the owner called it lazy (7 Oct 2026) |
@@ -434,6 +444,12 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 
 - **NEXA / Andrew series: 1 of 2 for October** (the bank-vs-broker article, 10 Oct). One
   more is due by 31 Oct. See *NEXA / Andrew series*.
+- **Deploy the 11 levelled MP3s** (`assets/audio/*.mp3`, levelled 12 Oct 2026, committed).
+  The live site still has the uneven originals: no cPanel keys were given in that part of
+  the session. Ask for them, deploy, byte-compare, and run `check-article.mjs` live.
+- **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order from
+  episode 1 (closing costs). Hand each episode over with the levelled MP3, its square
+  art from `tools/podcast/art/`, and the title and description.
 - **For the owner, before any "benefit" from NEXA:**
   - Are Axen Realty and NEXA under common ownership? They share a Mesa address. If so,
     referrals need an Affiliated Business Arrangement disclosure.
