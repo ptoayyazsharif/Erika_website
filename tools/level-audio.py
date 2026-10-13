@@ -64,16 +64,20 @@ def level(src, dst):
             sys.exit(r.stderr)
         r = ff("-i", ride, "-af", f"loudnorm=I={TARGET_I}:TP={TARGET_TP}:LRA=11:print_format=json", "-f", "null", "-")
         m = json.loads(r.stderr[r.stderr.rfind("{"):r.stderr.rfind("}") + 1])
-        final = (f"loudnorm=I={TARGET_I}:TP={TARGET_TP}:LRA=11:linear=true:measured_I={m['input_i']}"
-                 f":measured_TP={m['input_tp']}:measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}"
-                 f":offset={m['target_offset']},aresample=44100,"
-                 # MP3 encoding overshoots peaks by up to ~2.5 dB (two episodes came out above
-                 # 0 dBTP without this): hold sample peaks at -3 dBFS before encoding.
-                 "alimiter=limit=0.708:level=false:attack=5:release=50")
+        norm = (f"loudnorm=I={TARGET_I}:TP={TARGET_TP}:LRA=11:linear=true:measured_I={m['input_i']}"
+                f":measured_TP={m['input_tp']}:measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}"
+                f":offset={m['target_offset']},aresample=44100")
         out = os.path.join(tmp, "out.mp3")
-        r = ff("-y", "-i", ride, "-af", final, "-codec:a", "libmp3lame", "-b:a", "64k", "-ac", "1", "-ar", "44100", out)
-        if r.returncode:
-            sys.exit(r.stderr)
+        # MP3 encoding overshoots peaks by up to ~2.5 dB (two episodes came out above 0 dBTP
+        # without a limiter, and one at 0.0 with a 5 ms one, 13 Oct 2026). Hold sample peaks
+        # down before encoding, and lower the ceiling until the encoded file passes.
+        for limit in (0.708, 0.6, 0.5):
+            final = f"{norm},alimiter=limit={limit}:level=false:attack=1:release=50"
+            r = ff("-y", "-i", ride, "-af", final, "-codec:a", "libmp3lame", "-b:a", "64k", "-ac", "1", "-ar", "44100", out)
+            if r.returncode:
+                sys.exit(r.stderr)
+            if measure(out)[1] <= MAX_TP - 0.2:
+                break
         shutil.move(out, dst)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)

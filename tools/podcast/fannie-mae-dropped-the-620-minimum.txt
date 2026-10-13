@@ -1,0 +1,75 @@
+# Erika Explains — podcast episode script
+# Article: /blog/fannie-mae-dropped-the-620-minimum
+# Facts: every one is in tools/research/fannie-mae-dropped-the-620-minimum.md.
+# Her lines are from her "Fannie Mae" video (November 2025) and "Drew's Video"; nothing
+# else about her or Andrew is added. Second episode of the NEXA / Andrew series.
+#
+# voice: stability=0.38 similarity=0.8 style=0.22 speaker_boost=1
+
+Hey, it's Erika. Welcome back to Erika Explains.
+
+So let me ask you something. Have you ever felt like your credit score was the final boss in the whole home buying game?
+
+That's how I opened a video back in November of twenty twenty-five. Because Fannie Mae had just hit the reset. And in that video I said, "Starting November twenty twenty-five, Fannie Mae is removing the six twenty minimum credit score requirement."
+
+Well, it's almost a year later. And I wanted to know... did that actually hold up? So I went back to Fannie Mae's own rule book. It's called the Selling Guide. And today I want to walk you through what changed, what didn't change, and what you should do about it.
+
+Let me explain.
+
+First, what changed. Fannie Mae announced it on November fifth, twenty twenty-five. And right now, the Selling Guide says it plainly. A minimum credit score is not required for loans that go through D U.
+
+So what's D U? It's Desktop Underwriter. That's Fannie Mae's automated underwriting system. And instead of one cutoff number, D U looks at your whole file. In the guide's own words, credit scores are not an integral part of D U's risk assessment, because D U does its own analysis of your credit report.
+
+And here's why that matters. I've seen clients with all the assets in the world struggle just because of credit score. One number used to close the door before anybody looked at the rest of the story.
+
+Now here's the important part. No minimum score is not the same as no standards. This is not a free pass.
+
+A few things did not change at all. Your scores still get pulled. Lenders still have to request scores from all three credit bureaus.
+
+If a loan is underwritten by hand, instead of through D U, there's still a floor. Six twenty for a fixed-rate loan. Six forty for an adjustable-rate one.
+
+Government-backed loans are their own thing, too. For F H A, V A and U S D A loans that Fannie Mae buys, the guide still lists a six twenty minimum.
+
+And remember... Fannie Mae doesn't lend you the money. It buys mortgages from lenders. Your lender still makes the loan. So this change doesn't guarantee anybody a loan.
+
+So if the score isn't the gatekeeper anymore... what is? The rest of your credit story. And Fannie Mae actually publishes what D U looks at.
+
+Time is on your side. An older, established history helps. But a newer history isn't automatically considered high risk, especially when you've paid as agreed.
+
+Recent late payments weigh more than old ones. The guide's own example is a thirty-day late payment from less than three months ago. That's a higher risk than one from several years back.
+
+Keep your card balances low. Using your credit cards lightly, or paying them off regularly, is considered lower risk.
+
+Medical collections? They're not used in D U's assessment at all.
+
+And shopping for a mortgage is fine. When different mortgage lenders check your credit in the same time frame, D U doesn't treat that as a pile of separate inquiries. Applying for a lot of new credit, though... that's a different story.
+
+And it's not only credit. D U also looks at your down payment, your savings, your debt compared to your income, the property, and the loan itself.
+
+Now let's talk about rent. In my video I said that if you've got solid rental history, you might qualify even if your score isn't picture perfect. So here's how that actually works.
+
+D U can use your rent payments to help your credit assessment. Only to help, never to hurt. That's when at least one borrower has been renting for at least twelve months, paying three hundred dollars a month or more. And they have no mortgage on their credit report, or a limited credit history, or no credit score at all.
+
+And if your rent isn't on your credit report, D U can find it in twelve months of your bank statement data. Your lender enters the rent you pay, gets a verification report on your account, and confirms that's the account you pay rent from.
+
+So if you rent... pay it from a bank account in your name. The same way, every month. That paper trail is working for you.
+
+What about utilities? I also said, "you pay your utilities on time." Here's where that fits. For a borrower who doesn't have a credit score, Fannie Mae lets the lender build what's called a nontraditional credit history. And utilities are on that list. Electricity, gas, water, phone, TV, internet. So are things like car insurance, renter's insurance and your cell phone bill. When D U says that's needed, at least two of those references are required for each borrower. So keep those bills current. They can matter more than you think.
+
+So what should you do before you talk to a lender? Four things.
+
+First, pull your credit reports. They're free at Annual Credit Report dot com, or you can call eight seven seven, three two two, eight two two eight.
+
+Second, don't obsess over one number. The Consumer Financial Protection Bureau says it straight. You don't have just one credit score.
+
+Third, if something on your report is wrong, fix it. Explain in writing what's wrong and why, with copies of your proof. Send it to the credit reporting company, and to the company that reported it.
+
+And fourth, hold off on new credit. No new cards. No new car. Not while you're getting ready to buy.
+
+And this is exactly why I send my clients to my lender partner, Andrew Channell with NEXA. Like I said in my video about him, he and his team have access to over two hundred banks and wholesale lenders. And he won't even run your credit until he knows the numbers make sense. When the rules get more flexible, you want somebody who knows where that flexibility actually lives.
+
+So if your score has been the thing holding you back, please... don't decide for yourself that you can't buy. Get with me, so you can get with Andrew. I've put links to every source in the show notes.
+
+Quick note. This episode explains how Fannie Mae's published guidelines generally work. It isn't a loan offer, a rate quote or financial advice. I'm a real estate agent with Axen Realty, not a lender. And you are always free to choose any lender.
+
+So that's Fannie Mae's six twenty change, explained. I'm Erika Page. Thanks for listening, and I'll talk to you next time.

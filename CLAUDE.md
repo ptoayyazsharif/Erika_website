@@ -84,6 +84,7 @@ Google AI Studio is still outstanding.
 | `your-bank-is-not-your-best-option-for-a-mortgage` | Buying | `/lender` | none — **NEXA / Andrew series #1** (10 Oct): her "Drew's Video" + CFPB |
 | `the-rollback-rate-explained` | Buying | `/rollback` | none — researched around her Gwinnett rollback reel (10 Oct); companion to the homestead article |
 | `when-stairs-become-the-enemy` | Lifestyle | `/stairs` | none — researched around her short "stairs" video (12 Oct): CDC, NIA, IRS, Georgia DOR |
+| `fannie-mae-dropped-the-620-minimum` | Buying | `/credit-score` | none — **NEXA / Andrew series #2** (13 Oct): her "Fannie Mae" video (Nov 2025) re-checked against the current Fannie Mae Selling Guide; CFPB |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -197,6 +198,17 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
    - **The MP3 must be levelled** (`tools/level-audio.py`, which `narrate.py` now runs):
      -19 LUFS, true peak under -1 dB, no 10-second stretch more than 4 dB off.
      `check-article.mjs` fails an episode that isn't. Re-check before sending.
+   - **The other RSS.com fields**, every time: Full; Season 1 and the next episode
+     number (episodes go out in article-date order); Explicit **No**; AI content **Yes**;
+     6–8 keywords; "What place this episode is about" (Georgia, or the place the episode is
+     about); "Where this episode is made" is the owner's choice (her notes only say Metro
+     Atlanta).
+   - **Is it still true today?** Episodes go out weeks after the article. Before handing
+     one over, read its dated lines against today's date. If a line says "right now" or
+     "most recent" about something that has moved on, re-date the article and add the
+     recording date to the episode description and `audio_note`. On 13 Oct 2026 the
+     closing-costs article (episode 1) said "Where Metro Atlanta sits right now… the most
+     recent… brief, covering July 2026"; it now says "stood this summer" and "for July 2026".
 
 ## Research articles and podcast episodes
 
@@ -206,6 +218,10 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
 1. **Pick a topic that is useful and Georgia-specific**, and if possible one she has
    touched on camera (the homestead article closed a promise from her reel
    `Dbs_B2MBThx`). Check `ceo_erika`'s blog note for what's owed and what's used.
+   **A recording's date is not today's date.** Check at the source that what she said is
+   still true now. Her November 2025 "Fannie Mae" video was re-checked against the Selling
+   Guide as published on 7 Oct 2026 before it was used (13 Oct). Quote only her public
+   recordings, never her private mentoring calls (`memory/domain/real-estate-craft.md`).
 2. **Research, primary sources first:**
    - official sources first: state agencies (georgia.gov, dor.georgia.gov), the bill as
      signed (gov.georgia.gov/document/…), county tax or assessor offices;
@@ -273,7 +289,8 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
    `stt-check.py <mp3> --full` — the whole episode in one call — and read it against the
    script: every seam, every date, bill or percentage, and the ending. (Windowed `--at`
    checks are for a single passage you've regenerated.)
-   ElevenLabs' transcriber writes "Erica"; the voice says her name correctly.
+   ElevenLabs' transcriber writes "Erica"; the voice says her name correctly. It also
+   writes "Axon Realty" for Axen (the same sound).
 7. **Set `audio_note` on the post** ("A podcast episode on this topic, in Erika's AI
    voice. The sources are listed at the end of the article."). Without it the page says
    "Same words, read aloud", which is false for an episode. `check-article.mjs` checks
@@ -333,7 +350,7 @@ Lending** in October 2025 (HousingWire); his email is at nexalending.com.
   - her method of running the credit profile through the lender even for a
     lease-purchase client (`memory/domain/real-estate-craft.md`);
   - the lender's side of title insurance (her title-insurance part 2);
-  - her Fannie Mae 620-score video, which needs re-checking first: it's dated November 2025.
+  - ~~her Fannie Mae 620-score video~~ — used 13 Oct 2026 (series #2), after re-checking.
 
 ## Checks, and the bug behind each
 
@@ -352,7 +369,7 @@ check there and a row here.
 | Narration duration measured from the file; transcription spot-check | typed durations drift; TTS mishears |
 | PDFs: per-character font check, geometry, clipping, each page's `data-must` text | fonts silently fell back; grepping the PDF for a font name gave a false pass |
 | No HTML entity shows as text on the page, in the title or the share tags | `&rsquo;` was escaped twice on every `/blog` card (fixed 2 Oct 2026) |
-| Every outside link in the article answers (2xx/3xx; a 403/405 is retried once as a browser, then WARN — check by hand) | a researched article is only as good as its references; Fulton's assessor site answers 403 to non-browsers, and NIH answered 405 to the checker's own user agent but 200 to a browser (12 Oct 2026) |
+| Every outside link in the article answers (2xx/3xx; a 403/405 is retried once as a browser, and a 429 once after a pause, then WARN — check by hand) | a researched article is only as good as its references; Fulton's assessor site answers 403 to non-browsers, and NIH answered 405 to the checker's own user agent but 200 to a browser (12 Oct 2026). georgia.gov and dor.georgia.gov answer 429 (too many requests) after a few full runs; one at a time they give 200 (13 Oct 2026) |
 | Audio is levelled: -19 LUFS ±1, true peak ≤ -1 dB, every 10-second stretch within 4 dB (`level-audio.py --check`) | ElevenLabs returns each chunk at its own volume and drifts inside a chunk; nothing corrected it. On 12 Oct 2026 the owner heard the volume change: episodes ranged from -38 to -17.5 LUFS, and the bank episode went from -42 to -18 at a seam. All 11 were levelled that day |
 | The line under the audio player matches the post (`audio_note`, or the "read aloud" default) | it said "same words, read aloud" for any audio; untrue for a podcast episode |
 | Admin round-trip keeps `audio_note` too | proven 5 Oct 2026 on a throwaway copy with a test login (see SESSION-LOG) |
@@ -442,14 +459,16 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 
 ## Open items
 
-- **NEXA / Andrew series: 1 of 2 for October** (the bank-vs-broker article, 10 Oct). One
-  more is due by 31 Oct. See *NEXA / Andrew series*.
-- **Deploy the 11 levelled MP3s** (`assets/audio/*.mp3`, levelled 12 Oct 2026, committed).
-  The live site still has the uneven originals: no cPanel keys were given in that part of
-  the session. Ask for them, deploy, byte-compare, and run `check-article.mjs` live.
-- **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order from
-  episode 1 (closing costs). Hand each episode over with the levelled MP3, its square
-  art from `tools/podcast/art/`, and the title and description.
+- **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
+  620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
+- **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
+  Episodes 1 (closing costs) and 2 (owning vs investing) were handed over on 12–13 Oct.
+  Hand each next one over with the levelled MP3, its square art from
+  `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
+  step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
+  figures are from July 2026."
+- **For Erika (and Andrew) to review:** the Fannie Mae 620 article and episode (13 Oct).
+  Her video lines are quoted; the Selling Guide and CFPB facts are researched.
 - **For the owner, before any "benefit" from NEXA:**
   - Are Axen Realty and NEXA under common ownership? They share a Mesa address. If so,
     referrals need an Affiliated Business Arrangement disclosure.

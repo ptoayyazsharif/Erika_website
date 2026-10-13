@@ -76,6 +76,14 @@ function linkStatus(u) {
     const again = get(BROWSER_UA);
     if (/^[23]/.test(again)) code = again;
   }
+  // 429 is "too many requests", not a dead link: georgia.gov and dor.georgia.gov started
+  // answering it after several full runs on 13 Oct 2026, while the same pages gave 200 one
+  // at a time. Wait, try once more as a browser, and only warn if it still refuses.
+  if (code === '429') {
+    execFileSync('sleep', ['5']);
+    const again = get(BROWSER_UA);
+    if (/^[23]/.test(again)) code = again;
+  }
   return code;
 }
 const base = f => path.basename(f || '');
@@ -242,6 +250,7 @@ for (const slug of slugs) {
     for (const u of links) {
       const c = linkStatus(u);
       if (c === '403' || c === '405') warn('source link refuses non-browser requests (open it by hand once)', `${c} ${u}`);
+      else if (c === '429') warn('source site is rate-limiting the checker (open it by hand once)', `${c} ${u}`);
       else if (!/^[23]/.test(c)) bad.push(`${c} ${u}`);
     }
     report(!bad.length, `every source link answers (${links.length} checked)`, bad.join(', '));

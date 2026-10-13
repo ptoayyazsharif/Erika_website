@@ -7,6 +7,68 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-13 — Fannie Mae 620 article (NEXA #2), episode 2 hand-over, freshness fix
+
+**Asked.**
+- "Post a new blog for Erika's website."
+- "Give me the details for the 2nd episode": the title, description, keywords and other
+  fields.
+- Mid-task: "make sure anything published is relevant for the current time".
+
+**Done**
+- **Article** `/blog/fannie-mae-dropped-the-620-minimum` (`/credit-score`, Buying), **NEXA
+  / Andrew series #2**, which completes October (2 of 2).
+  - Built around her unused "Fannie Mae" video (November 2025), re-checked first against
+    the current Selling Guide (published 7 Oct 2026). The Guide now says: "A minimum
+    credit score is not required for DU loan casefiles."
+  - It also covers what didn't change: 620/640 for manual underwriting, 620 for
+    government loans, and the lender still makes the loan.
+  - What DU weighs; rent history ($300+, 12 months, bank-statement data); utilities as
+    nontraditional credit when there's no score; the CFPB steps for free reports and
+    disputes.
+  - Her lines are quoted from her two public videos only. Her private mentoring-call
+    method was left out.
+  - Disclosure line with both NMLS numbers; no rates.
+- **Pictures:** two new Pexels photos (B19 a magnifier over a bank statement, B20 bills
+  beside a laptop). Bold cover with her line "Fannie Mae just hit the reset."; square
+  podcast art.
+- **Episode:** 1,111-word script, 409 s, levelled. The full transcript matched the script.
+- **Episode 2** (owning vs investing): MP3, art, title, description, keywords and field
+  settings handed over.
+- **Deployed** the article and **all 12 levelled MP3s** (the 11 from 12 Oct were still the
+  uneven originals live). 26 files, each size-matched, and the MP3s and pictures
+  byte-identical live.
+- **Freshness audit** of every published article for "right now", "most recent", "this
+  year" and similar.
+  - One real problem: closing costs (episode 1) said "Where Metro Atlanta sits right
+    now… the most recent… brief, covering July 2026". It now says "stood this summer" and
+    "for July 2026", plus "Markets move month to month…".
+  - Its `audio_note` dates the recording (29 Sep) and the figures (July 2026). Deployed
+    and confirmed live.
+  - Everything else is either dated in the text or still current.
+
+**Failed, and what was done**
+- **`level-audio.py` let a peak through at 0.0 dBTP** on the new episode: the 5 ms limiter
+  was too slow. It now uses a 1 ms attack and steps the ceiling down (0.708, 0.6, 0.5)
+  until the encoded file measures under -1.2 dBTP. The episode passed at -1.2.
+- **georgia.gov and dor.georgia.gov answered 429** (rate limiting) after several full
+  check runs, so 3 articles failed "every source link answers". The same pages gave 200
+  one at a time. `check-article.mjs` now pauses, retries a 429 once as a browser, and
+  warns instead of failing.
+- The transcriber writes "Axon Realty" for Axen; it's the same sound, like "Erica".
+
+**Passed**
+- New article: `check-article.mjs` ALL PASS, locally and live.
+- Whole blog, live: every episode levelled (-19.4 to -19.7 LUFS). After the 429 change,
+  the three rate-limited articles pass too, with warnings only.
+
+**Open**
+- Episode 1's RSS.com description should add "Recorded September 29, 2026; the market
+  figures are from July 2026."
+- Erika and Andrew to read the new article.
+
+---
+
 ## 2026-10-12 (night) — Podcast episode art, and even volume on every episode
 
 **Asked.** The owner started publishing the podcast on RSS.com with episode 1 (closing

@@ -25,6 +25,139 @@
 return [
 
     [
+        // NEXA / Andrew series #2 (October). Researched around her "Fannie Mae"
+        // video (intake/transcripts/video/fannie-mae, November 2025), re-checked
+        // against the current Selling Guide on 13 Oct 2026; her claims about Andrew
+        // come only from "Drew's Video". Every fact is listed with its source in
+        // tools/research/fannie-mae-dropped-the-620-minimum.md.
+        'slug'           => 'fannie-mae-dropped-the-620-minimum',
+        'title'          => 'No more 620 minimum? Here’s what really changed.',
+        'seo_title'      => 'Fannie Mae Dropped the 620 Minimum Credit Score: What It Means for Home Buyers',
+        'seo_desc'       => 'Fannie Mae no longer sets a minimum credit score for loans run through its DU system. What changed, what didn&rsquo;t, and how rent history can count.',
+        'excerpt'        => 'Fannie Mae took away its 620 minimum credit score for loans run through its automated system. That&rsquo;s real, and it&rsquo;s good news. But it isn&rsquo;t a free pass. Here&rsquo;s what changed, what didn&rsquo;t, and how your rent history can now count.',
+        'date'           => '2026-10-13',
+        'updated'        => '2026-10-13',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['credit score', 'Fannie Mae', 'mortgage', 'first-time buyer', 'rent history', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/fannie-mae-dropped-the-620-minimum-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: No more 620 minimum? Here&rsquo;s what really changed.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@cottonbro" rel="nofollow noopener" target="_blank">cottonbro studio</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/fannie-mae-dropped-the-620-minimum.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'credit-score',
+        'audio_secs'     => 409,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Did Fannie Mae really remove the 620 minimum credit score?',
+                'a' => 'For loans run through its automated underwriting system, Desktop Underwriter (DU), yes. Fannie Mae&rsquo;s Selling Guide now says a minimum credit score is not required for DU loan casefiles; DU assesses creditworthiness through its own risk factors. Fannie Mae announced the change on November 5, 2025.',
+            ],
+            [
+                'q' => 'Does that mean anyone can get a mortgage now?',
+                'a' => 'No. DU still weighs your payment history, late payments, card balances, collections, inquiries, debt-to-income ratio, reserves and more. Manually underwritten loans still need 620 for a fixed rate and 640 for an adjustable rate, and government-backed loans Fannie Mae buys still need 620.',
+            ],
+            [
+                'q' => 'Can my rent payments help me qualify?',
+                'a' => 'They can. If at least one borrower has rented for 12 months or more at $300 a month or more, and has no mortgage on their credit report, a limited credit history or no score, DU can find the rent payments in 12 months of bank statement data and use them to help, never to hurt.',
+            ],
+            [
+                'q' => 'How do I check my credit before I talk to a lender?',
+                'a' => 'Get your free credit reports at AnnualCreditReport.com or by calling (877) 322-8228. If something is wrong, the CFPB says to dispute it in writing with the credit reporting company and with the company that reported it, and include copies of your proof.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Ever felt like your credit score was the final boss in the whole home buying game? That&rsquo;s how I opened a video back in November 2025, because Fannie Mae had just hit the reset.</p>
+
+<p>Let me explain what changed, what didn&rsquo;t, and what you should do about it.</p>
+
+<h2>What I said, and what the rule says now</h2>
+
+<p>In that video I said: &ldquo;Starting November 2025, Fannie Mae is removing the 620 minimum credit score requirement.&rdquo; Almost a year later, I went back and checked it against Fannie Mae&rsquo;s own rule book, the Selling Guide. It holds up.</p>
+
+<p>Fannie Mae announced the change on November 5, 2025. Today the Guide says it plainly: <strong>&ldquo;A minimum credit score is not required for DU loan casefiles.&rdquo;</strong> <a href="https://selling-guide.fanniemae.com/sel/b3-5.1-01/general-requirements-credit-scores" target="_blank" rel="noopener">[1]</a></p>
+
+<p>DU is Desktop Underwriter, Fannie Mae&rsquo;s automated underwriting system. Instead of a cutoff, it &ldquo;will assess a borrower&rsquo;s creditworthiness&rdquo; by weighing a whole list of risk factors. In the Guide&rsquo;s own words, credit scores &ldquo;are not an integral part of DU&rsquo;s risk assessment because DU performs its own analysis of the credit report data.&rdquo; <a href="https://selling-guide.fanniemae.com/sel/b3-5.1-01/general-requirements-credit-scores" target="_blank" rel="noopener">[1]</a></p>
+
+<p>And here&rsquo;s why that matters. I&rsquo;ve seen clients with all the assets in the world struggle just because of credit score. A single number used to close the door before anybody looked at the rest of the file.</p>
+
+<h2>Now here&rsquo;s the important part: it isn&rsquo;t a free pass</h2>
+
+<p>No minimum score is not the same as no standards. A few things didn&rsquo;t change at all:</p>
+
+<ul>
+<li><strong>Your scores still get pulled.</strong> Lenders still have to request scores from all three credit bureaus when they order your credit report. <a href="https://selling-guide.fanniemae.com/sel/b3-5.1-01/general-requirements-credit-scores" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>Manual underwriting still has a floor.</strong> If a loan is underwritten by hand instead of through DU, the minimum is still 620 for a fixed-rate loan and 640 for an adjustable-rate one. <a href="https://selling-guide.fanniemae.com/sel/b3-5.1-01/general-requirements-credit-scores" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>Government-backed loans are different.</strong> For FHA, VA and USDA loans that Fannie Mae buys, the Guide still lists a minimum representative score of 620. <a href="https://selling-guide.fanniemae.com/sel/b3-5.1-01/general-requirements-credit-scores" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>Fannie Mae doesn&rsquo;t lend you the money.</strong> It buys mortgages from lenders. <a href="https://www.fanniemae.com/about-us" target="_blank" rel="noopener">[4]</a> Your lender still makes the loan, and this change doesn&rsquo;t guarantee anybody a loan.</li>
+</ul>
+
+<h2>What DU actually looks at</h2>
+
+<p>If the score isn&rsquo;t the gatekeeper, the rest of your credit story is. Fannie Mae publishes what DU weighs. <a href="https://selling-guide.fanniemae.com/sel/b3-2-03/risk-factors-evaluated-du" target="_blank" rel="noopener">[2]</a> Here&rsquo;s what I&rsquo;d want you to know:</p>
+
+<ul>
+<li><strong>Time is on your side.</strong> An older, established history helps. But a new credit history &ldquo;is not automatically considered a high credit risk,&rdquo; especially if you&rsquo;ve paid as agreed.</li>
+<li><strong>Recent late payments weigh more.</strong> The Guide&rsquo;s own example: a 30-day late payment less than three months old is a higher risk than one from several years ago.</li>
+<li><strong>Keep your card balances low.</strong> Low use of your revolving credit, or paying it off regularly, is considered lower risk.</li>
+<li><strong>Medical collections don&rsquo;t count.</strong> They &ldquo;are not used in the DU risk assessment.&rdquo;</li>
+<li><strong>Shopping for a mortgage is fine.</strong> Inquiries from different mortgage lenders in the same time frame aren&rsquo;t treated as multiple inquiries. Applying for lots of new credit is a different story.</li>
+<li><strong>It&rsquo;s more than credit.</strong> DU also weighs your down payment and equity, your savings, your debt-to-income ratio, the property and the loan itself.</li>
+</ul>
+
+[[img:assets/photos/17/b19-magnifying-glass-on-credit-document.jpg|A magnifying glass held over a bank statement|Photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Your rent can count</h2>
+
+<p>In my video I said that if you&rsquo;ve got solid rental history, you might qualify even if your score isn&rsquo;t picture perfect. Here&rsquo;s how that actually works.</p>
+
+<p>DU can use your rent payment history to <strong>positively</strong> supplement its credit assessment, when at least one borrower has been renting for at least 12 months, paying $300 a month or more, and has no mortgage on their credit report, a limited credit history, or no credit score. <a href="https://selling-guide.fanniemae.com/sel/b3-2-03/risk-factors-evaluated-du" target="_blank" rel="noopener">[2]</a></p>
+
+<p>If your rent isn&rsquo;t on your credit report, DU can find it in 12 months of your bank statement data. Your lender enters the rent you pay, gets a verification report of your account, and confirms it&rsquo;s the account you pay rent from. <a href="https://selling-guide.fanniemae.com/sel/b3-2-03/risk-factors-evaluated-du" target="_blank" rel="noopener">[2]</a> So if you rent, pay it from a bank account in your name, the same way every month. That paper trail is working for you.</p>
+
+<h2>And your utilities?</h2>
+
+<p>I also said &ldquo;you pay your utilities on time.&rdquo; Here&rsquo;s where that fits. For a borrower <strong>without a credit score</strong>, Fannie Mae lets the lender build a nontraditional credit history, and utilities are on the list: electricity, gas, water, phone, TV and internet. So are things like car insurance, renter&rsquo;s insurance and cell phone payments. <a href="https://selling-guide.fanniemae.com/sel/b3-5.4-02/number-and-types-nontraditional-credit-references" target="_blank" rel="noopener">[3]</a></p>
+
+<p>DU will say when that&rsquo;s needed, and then at least two credit references are required for each borrower. <a href="https://selling-guide.fanniemae.com/sel/b3-5.4-02/number-and-types-nontraditional-credit-references" target="_blank" rel="noopener">[3]</a> So keep those bills current. They can matter more than you think.</p>
+
+<h2>Before you talk to a lender, do this</h2>
+
+<ul>
+<li><strong>Pull your reports.</strong> You can get free credit reports at <a href="https://www.annualcreditreport.com" target="_blank" rel="noopener">AnnualCreditReport.com</a> or by calling (877) 322-8228. <a href="https://www.consumerfinance.gov/ask-cfpb/how-do-i-get-a-free-copy-of-my-credit-reports-en-5/" target="_blank" rel="noopener">[6]</a></li>
+<li><strong>Don&rsquo;t obsess over one number.</strong> The CFPB says it straight: &ldquo;You do not have just &lsquo;one&rsquo; credit score.&rdquo; <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-a-credit-score-en-315/" target="_blank" rel="noopener">[5]</a></li>
+<li><strong>Fix what&rsquo;s wrong.</strong> If something on your report is an error, explain in writing what&rsquo;s wrong and why, with copies of your proof, to the credit reporting company and to the company that reported it. <a href="https://www.consumerfinance.gov/ask-cfpb/how-do-i-dispute-an-error-on-my-credit-report-en-314/" target="_blank" rel="noopener">[7]</a></li>
+<li><strong>Hold off on new credit.</strong> No new cards and no new car while you&rsquo;re getting ready to buy.</li>
+</ul>
+
+<h2>Where Andrew comes in</h2>
+
+<p>This is exactly why I send my clients to my lender partner, Andrew Channell with NEXA. As I said in my video about him, he and his team have &ldquo;access to over 200 banks and wholesale lenders,&rdquo; and &ldquo;he won&rsquo;t even run your credit until he knows the numbers make sense.&rdquo; When the rules get more flexible, you want somebody who knows where that flexibility actually lives.</p>
+
+<p>If your score has been the thing holding you back, don&rsquo;t decide for yourself that you can&rsquo;t buy. <a href="/contact">Get with me so you can get with Andrew.</a> And if you already own and you&rsquo;re wondering what your house is worth before your next move, <a href="/home-value">start here</a>.</p>
+
+<p>So that&rsquo;s Fannie Mae&rsquo;s 620 change, explained.</p>
+
+<p><em>This article explains how Fannie Mae&rsquo;s published guidelines generally work. It isn&rsquo;t a loan offer, a rate quote or financial advice, and it doesn&rsquo;t guarantee that anyone will qualify. Erika K. Page is a real estate agent with Axen Realty, not a lender. Andrew &ldquo;Drew&rdquo; Channell is a Senior Loan Officer, NMLS #1920676, with NEXA (company NMLS #1660690). You are free to choose any lender.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Fannie Mae Selling Guide, <a href="https://selling-guide.fanniemae.com/sel/b3-5.1-01/general-requirements-credit-scores" target="_blank" rel="noopener">B3-5.1-01, General Requirements for Credit Scores</a> (April 22, 2026 version; lists Announcement SEL-2025-09 of November 5, 2025).</li>
+<li>Fannie Mae Selling Guide, <a href="https://selling-guide.fanniemae.com/sel/b3-2-03/risk-factors-evaluated-du" target="_blank" rel="noopener">B3-2-03, Risk Factors Evaluated by DU</a> (February 5, 2025 version).</li>
+<li>Fannie Mae Selling Guide, <a href="https://selling-guide.fanniemae.com/sel/b3-5.4-02/number-and-types-nontraditional-credit-references" target="_blank" rel="noopener">B3-5.4-02, Number and Types of Nontraditional Credit References</a> (February 4, 2026 version).</li>
+<li>Fannie Mae, <a href="https://www.fanniemae.com/about-us" target="_blank" rel="noopener">About us</a>.</li>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-a-credit-score-en-315/" target="_blank" rel="noopener">What is a credit score?</a> (reviewed September 2, 2026).</li>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/ask-cfpb/how-do-i-get-a-free-copy-of-my-credit-reports-en-5/" target="_blank" rel="noopener">How do I get a free copy of my credit reports?</a> (reviewed August 28, 2023).</li>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/ask-cfpb/how-do-i-dispute-an-error-on-my-credit-report-en-314/" target="_blank" rel="noopener">How do I dispute an error on my credit report?</a> (reviewed September 2, 2026).</li>
+<li>Erika K. Page, her &ldquo;Fannie Mae&rdquo; video (November 2025) and &ldquo;Drew&rsquo;s Video&rdquo; (June 2026), her own words. Andrew &ldquo;Drew&rdquo; Channell&rsquo;s title and NMLS numbers as supplied from his business signature, October 2026.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her short reel "stairs become the enemy"
         // (intake/transcripts/video/stairs-hidden-enemy): her lines are quoted;
         // every fact is listed with its source in
@@ -1260,7 +1393,7 @@ HTML,
         'seo_desc'       => 'Closing costs are not your down payment. What they actually cover, who pays what in Georgia, why your number differs from your neighbor\'s, and how to avoid surprises.',
         'excerpt'        => 'Closing costs are the most misunderstood number in a home purchase. Here is what they actually cover, who pays what in Georgia, and the four habits that keep the closing table calm.',
         'date'           => '2026-09-29',
-        'updated'        => '2026-09-29',
+        'updated'        => '2026-10-13',
         'author'         => 'Erika K. Page',
         'cat'            => 'buying',
         'tags'           => ['closing costs', 'Georgia real estate', 'first-time buyers', 'Metro Atlanta', 'title insurance'],
@@ -1268,6 +1401,9 @@ HTML,
         'cover_alt'      => 'Erika K. Page beside the headline: Closing costs in Georgia, explained.',
         'cover_credit'   => '',
         'audio'          => 'assets/audio/closing-costs-in-georgia-explained.mp3',
+        // The text was re-dated on 13 Oct 2026 ("right now" -> "this summer"); the
+        // recording from 29 Sep still says "most recent", so the note dates it.
+        'audio_note'     => 'The article read aloud in Erika’s AI voice, recorded on September 29, 2026. The market figures in it are from July 2026.',
         'guide'          => 'assets/guides/closing-costs-101.pdf',
         // The product this guide is. The article's offer card takes its cover,
         // name and page count from that record, and the product's own page links
@@ -1381,13 +1517,13 @@ HTML,
 
 <p>Skipping the owner&rsquo;s policy to save a few hundred dollars can cost you tens of thousands later. Most buyers never learn they had a choice until it is too late to make one. Which is why I keep saying it: <strong>real estate isn&rsquo;t expensive, but ignorance certainly is.</strong></p>
 
-<h2>Where Metro Atlanta sits right now</h2>
+<h2>Where Metro Atlanta stood this summer</h2>
 
 <p>None of this is theory, and the market you are negotiating in decides how much of it you can ask for.</p>
 
-<p>The most recent <a href="https://atlantarealtors.com/resources/news/atlanta-realtors-market-brief-july-2026" rel="nofollow noopener" target="_blank">Atlanta REALTORS&reg; Market Brief</a>, covering July 2026 across the eleven-county metro and compiled from FMLS data, put the median sale price at <strong>$445,000</strong>, up 2.1% on the year. There were <strong>20,863 active listings</strong> and a <strong>4.7-month supply</strong>, and homes were averaging <strong>24 days on market</strong>.</p>
+<p>The <a href="https://atlantarealtors.com/resources/news/atlanta-realtors-market-brief-july-2026" rel="nofollow noopener" target="_blank">Atlanta REALTORS&reg; Market Brief</a> for July 2026, covering the eleven-county metro and compiled from FMLS data, put the median sale price at <strong>$445,000</strong>, up 2.1% on the year. There were <strong>20,863 active listings</strong> and a <strong>4.7-month supply</strong>, and homes were averaging <strong>24 days on market</strong>.</p>
 
-<p>Read that as a buyer for a second. Four to five months of supply is a balanced market, not a frenzy. Twenty-four days is not a house selling before you can see it. In a market like this, asking a seller to contribute toward your closing costs is a normal conversation rather than an insult &mdash; and in a market like the one we had three years ago, it wasn&rsquo;t.</p>
+<p>Read that as a buyer for a second. Four to five months of supply is a balanced market, not a frenzy. Twenty-four days is not a house selling before you can see it. In a market like that, asking a seller to contribute toward your closing costs is a normal conversation rather than an insult &mdash; and in a market like the one we had three years ago, it wasn&rsquo;t. Markets move month to month, so check the latest numbers before you negotiate.</p>
 
 <p>Which is my whole point. The market is not slow. <strong>The market is selective.</strong> Deals that make sense are still moving. Strategy matters more than speed.</p>
 
