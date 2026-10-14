@@ -185,8 +185,12 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
    printed `audio_secs` on the post.
 7. **Verify** — `NODE_PATH=/opt/node22/lib/node_modules node tools/check-article.mjs
    --all` against the local server, then against the live site after deploying (next
-   section), **commit**, rebuild `dist/erikakpage-site.zip` from the
-   tracked files (`git ls-files` minus `config.php` and `dist/`), push, **deploy**.
+   section), **commit**, push, **deploy**.
+   - **The site zip is no longer committed** (14 Oct 2026). `dist/erikakpage-site.zip`
+     reached 103 MB and GitHub refuses files over 100 MB; it only ever duplicated the
+     tracked files, and its 27 committed copies are most of the repo's 2.1 GB history. The
+     copy in git is from 13 Oct. When the owner wants a zip, build it from the tracked
+     files (`git ls-files` minus `config.php` and `dist/`) into the scratchpad and send it.
 8. **Podcast episode** — hand the owner the MP3 plus paste-ready title and
    description: the article and `/home-value` links, the line *"This episode is
    narrated with an AI voice trained on Erika's own. The words are hers."*, and the

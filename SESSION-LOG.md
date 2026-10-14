@@ -43,6 +43,10 @@ history behind it. See "The loop" in `CLAUDE.md`.
   it was read with WebFetch.
 - Uploads byte-identical live.
 
+- **GitHub refused the push**: the rebuilt site zip was 102.9 MB, over its 100 MB file
+  limit. The unpushed zip commit was undone locally, and the article commit was pushed
+  without it. The zip is no longer committed; build it on request (CLAUDE.md step 7).
+
 **Open**
 - Erika to read the article. ★ Re-check it when Treasury issues regulations, and after
   7 Jan 2027.
