@@ -85,6 +85,7 @@ Google AI Studio is still outstanding.
 | `the-rollback-rate-explained` | Buying | `/rollback` | none — researched around her Gwinnett rollback reel (10 Oct); companion to the homestead article |
 | `when-stairs-become-the-enemy` | Lifestyle | `/stairs` | none — researched around her short "stairs" video (12 Oct): CDC, NIA, IRS, Georgia DOR |
 | `fannie-mae-dropped-the-620-minimum` | Buying | `/credit-score` | none — **NEXA / Andrew series #2** (13 Oct): her "Fannie Mae" video (Nov 2025) re-checked against the current Fannie Mae Selling Guide; CFPB |
+| `wall-street-homebuying-ban-explained` | Buying | `/wall-street` | none — researched around her "Banning Wall Street homebuying" video (14 Oct): H.R. 6644 Sec. 1001 as enrolled, EO 14376, GAO (Atlanta 25%), Urban Institute. ★ Ban starts 7 Jan 2027 |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -164,7 +165,9 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
    <slug>`. It writes `assets/photos/17/<slug>-cover.jpg`, sizes the headline to fit,
    and refuses to write a cover with an upscaled picture or overflowing text. Then
    **look at it** at full size and at ~290 px wide (the `/blog` card): the checks can't
-   see text running into her hair. The cover is also the `og:image` — it's what shows
+   see text running into her hair. **Then run `php tools/build-images.php` again**: the
+   cover needs its WebP versions too, and building them before the cover exists leaves
+   them out (14 Oct 2026: the first deploy went up without them). The cover is also the `og:image` — it's what shows
    when the link is shared.
    - The portrait used on every cover, `assets/photos/01/a7-pink-suit-ai.jpg`, is
      labelled **AI-generated** in `photos.php`. It was the site operator's choice; if
@@ -462,11 +465,15 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1 (closing costs) and 2 (owning vs investing) were handed over on 12–13 Oct.
+  Episodes 1 (closing costs), 2 (owning vs investing) and 3 (know your house before you
+  list) were handed over on 12–14 Oct.
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
+- **For Erika to review:** the Wall Street homebuying-ban article and episode (14 Oct). Her
+  video lines are quoted; the law, GAO and Urban Institute facts are researched. ★ Re-check
+  when Treasury issues regulations under Sec. 1001, and after the ban starts on 7 Jan 2027.
 - **For Erika (and Andrew) to review:** the Fannie Mae 620 article and episode (13 Oct).
   Her video lines are quoted; the Selling Guide and CFPB facts are researched.
 - **For the owner, before any "benefit" from NEXA:**

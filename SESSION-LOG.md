@@ -7,6 +7,48 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-14 — The Wall Street homebuying-ban article; podcast episode 3 hand-over
+
+**Asked.** "Publish a new blog for Erika and give me the next podcast to publish."
+
+**Done**
+- **Article** `/blog/wall-street-homebuying-ban-explained` (`/wall-street`, Buying).
+  - Built around her unused video `banning-wall-street-homebuying`. In it she described a
+    proposal; it was **re-checked against today**. It became law on 11 July 2026 as
+    Section 1001 of the 21st Century ROAD to Housing Act (H.R. 6644), read in the
+    enrolled text on govinfo. The purchase ban starts **7 January 2027**.
+  - It covers the law (350+ homes; two units or fewer; $1M or 3× penalties; no forced
+    sales; the exceptions) and the Atlanta angle: GAO estimated investors with more than
+    1,000 homes held about 25% of Atlanta's single-family rental market as of 2022.
+  - It gives her prediction and the Urban Institute's caution side by side.
+  - Two new photos: B21, a row of new homes by a pond; B22, a Wall St sign (cover tile).
+    Bold cover with her line "Wall Street could be your next-door neighbor."; square art.
+  - Episode: 995-word script, 370 s, levelled (-19.9 LUFS).
+- **Podcast episode 3** (know your house before you list) handed over with its MP3, art,
+  title, description, keywords and fields. Its text has no dated lines.
+
+**Failed, and what was done**
+- **My draft gave her feelings and opinions she never stated**: "and I love this", "My
+  honest read", and "a title I think says it all" in the script. All removed before
+  recording.
+- **The voice garbled "HUD"**: the transcript heard "SHUDI". The line now says "the
+  Department of Housing and Urban Development". After re-recording, the full transcript
+  matches the script. The new take is faster (370 s, was 405).
+- **The cover's WebP versions were missing on the first deploy**: `build-images.php` had
+  run before the cover was rendered. Rebuilt and uploaded. CLAUDE.md step 5 now says to
+  run it again after the cover.
+
+**Passed**
+- `check-article.mjs`: ALL PASS locally and live. GAO answers 403 to the checker (WARN);
+  it was read with WebFetch.
+- Uploads byte-identical live.
+
+**Open**
+- Erika to read the article. ★ Re-check it when Treasury issues regulations, and after
+  7 Jan 2027.
+
+---
+
 ## 2026-10-13 — Fannie Mae 620 article (NEXA #2), episode 2 hand-over, freshness fix
 
 **Asked.**

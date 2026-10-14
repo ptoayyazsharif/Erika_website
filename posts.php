@@ -25,6 +25,128 @@
 return [
 
     [
+        // Researched around her video "Banning Wall Street homebuying"
+        // (intake/transcripts/video/banning-wall-street-homebuying, early 2026). What she
+        // described as a proposal became law on 11 July 2026 (H.R. 6644, Sec. 1001); the
+        // purchase ban starts 7 January 2027. Every fact is listed with its source in
+        // tools/research/wall-street-homebuying-ban-explained.md.
+        'slug'           => 'wall-street-homebuying-ban-explained',
+        'title'          => 'The Wall Street homebuying ban is law now. Here’s what it does.',
+        'seo_title'      => 'The Wall Street Homebuying Ban, Explained: What the New Law Means for Metro Atlanta',
+        'seo_desc'       => 'From January 7, 2027, investors with 350+ homes can&rsquo;t buy most single-family homes. What the law does, what it doesn&rsquo;t, and why Atlanta should care.',
+        'excerpt'        => 'Earlier this year I told you Wall Street could be your next-door neighbor. Now there&rsquo;s a federal law about it. Starting January 7, 2027, the biggest investors can&rsquo;t buy most single-family homes. Here&rsquo;s what it does, what it doesn&rsquo;t, and why Metro Atlanta in particular should pay attention.',
+        'date'           => '2026-10-14',
+        'updated'        => '2026-10-14',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['institutional investors', 'housing law', 'first-time buyer', 'single-family rentals', 'Metro Atlanta', 'ROAD to Housing Act'],
+        'cover'          => 'assets/photos/17/wall-street-homebuying-ban-explained-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: The Wall Street homebuying ban is law now. Here&rsquo;s what it does.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@loquellano" rel="nofollow noopener" target="_blank">Raphael Loquellano</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/wall-street-homebuying-ban-explained.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'wall-street',
+        'audio_secs'     => 370,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Is the ban on Wall Street buying homes actually law?',
+                'a' => 'Yes. It&rsquo;s Section 1001 of the 21st Century ROAD to Housing Act (H.R. 6644), which became law on July 11, 2026. The purchase ban takes effect 180 days after that, on January 7, 2027, and lasts 15 years.',
+            ],
+            [
+                'q' => 'Who counts as a large institutional investor?',
+                'a' => 'A for-profit company or fund that, alone or with others, controls 350 or more single-family homes. Governments aren&rsquo;t covered, and neither is a small landlord with a few rentals.',
+            ],
+            [
+                'q' => 'Will big investors have to sell the homes they already own?',
+                'a' => 'No. The law says nothing in it requires a large institutional investor to sell any single-family home it bought before the law was enacted.',
+            ],
+            [
+                'q' => 'Are there exceptions?',
+                'a' => 'Several, including build-to-rent communities, renovate-to-rent programs that put at least 15% of the price into repairs, homeownership programs that report rent to the credit bureaus and give renters a first look, foreclosures, 55+ communities, and for two years, purchases from smaller investors.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Did you know that Wall Street could be your next-door neighbor? I asked that in a video earlier this year, when the President announced he was moving to ban large institutional investors from buying single-family homes.</p>
+
+<p>Well, it isn&rsquo;t just an announcement anymore. It&rsquo;s a federal law. Let me explain what it does, what it doesn&rsquo;t, and why Metro Atlanta in particular should pay attention.</p>
+
+<h2>How we got here</h2>
+
+<p>On January 20, 2026, the President signed an executive order called &ldquo;Stopping Wall Street From Competing With Main Street Homebuyers.&rdquo; It set the policy that large institutional investors &ldquo;should not buy single-family homes,&rdquo; and it asked for a law to make it stick. <a href="https://www.govinfo.gov/content/pkg/FR-2026-01-23/html/2026-01424.htm" target="_blank" rel="noopener">[3]</a></p>
+
+<p>Congress delivered. The 21st Century ROAD to Housing Act passed the Senate 85 to 5 and the House 358 to 32, and it became law on July 11, 2026. <a href="https://www.lw.com/en/insights/21st-century-road-to-housing-act-becomes-law" target="_blank" rel="noopener">[2]</a> The section that matters here is titled &ldquo;Homes are for people, not corporations.&rdquo; <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a></p>
+
+<h2>What the law actually says</h2>
+
+<p>The core of it is one sentence: <strong>&ldquo;No large institutional investor may purchase, or enter into a contract to directly or indirectly purchase, any single-family home.&rdquo;</strong> <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a></p>
+
+<ul>
+<li><strong>Who it covers.</strong> A for-profit company or fund that, alone or with others, controls 350 or more single-family homes. Governments aren&rsquo;t covered. <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>What a single-family home is.</strong> A building with two or fewer units, not counting manufactured homes. <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>When it starts.</strong> 180 days after it became law, which is January 7, 2027, and it runs for 15 years. <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a> <a href="https://www.lw.com/en/insights/21st-century-road-to-housing-act-becomes-law" target="_blank" rel="noopener">[2]</a></li>
+<li><strong>The teeth.</strong> A civil penalty of up to $1,000,000 per violation, or three times the purchase price, whichever is greater. <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a></li>
+</ul>
+
+<h2>Now here&rsquo;s the important part: what it doesn&rsquo;t do</h2>
+
+<p>Headlines called it a ban, and for buying existing homes, it mostly is. But read the details before you decide what it means for you.</p>
+
+<ul>
+<li><strong>Nobody has to sell.</strong> The law says plainly that it doesn&rsquo;t require a large investor to sell any single-family home it already owned. <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a> The homes they own today stay theirs.</li>
+<li><strong>They can still build.</strong> Build-to-rent communities, homes built new to be rented, are an exception. So are renovate-to-rent programs that fix homes that don&rsquo;t meet code and put at least 15% of the price into the work. <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>Rent-to-own programs can continue,</strong> if they report the renter&rsquo;s on-time rent to the credit bureaus (when the renter opts in), and some give the renter a right of first refusal and a 30-day &ldquo;first look.&rdquo; <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>Other exceptions</strong> cover foreclosures, communities for people 55 and older, and, for the first two years after it starts, buying from smaller investors. <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>Small landlords aren&rsquo;t touched.</strong> If you own a few rentals, you are nowhere near 350 homes.</li>
+</ul>
+
+[[img:assets/photos/17/b21-row-of-new-homes-by-a-pond.jpg|A row of new single-family homes reflected in a pond|Photo by <a href="https://www.pexels.com/@gentooexpressions" rel="nofollow noopener" target="_blank">TLK GentooExpressions</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Why Atlanta should care more than most</h2>
+
+<p>Nationally, the big investors are a small slice: about 3 percent of single-family rentals, and less than half a percent of all single-family homes. <a href="https://www.urban.org/urban-wire/will-regulating-large-institutional-investors-actually-make-housing-more-affordable" target="_blank" rel="noopener">[6]</a></p>
+
+<p>Metro Atlanta is different. In its 2024 report, the Government Accountability Office estimated that as of 2022, investors with over 1,000 homes held about <strong>25% of Atlanta&rsquo;s single-family rental market</strong>, the highest of the areas it looked at, ahead of Jacksonville and Charlotte. <a href="https://www.gao.gov/products/gao-24-106643" target="_blank" rel="noopener">[4]</a> <a href="https://nlihc.org/resource/gao-releases-report-institutional-investments-single-family-rental-housing" target="_blank" rel="noopener">[5]</a> So if this law changes anything anywhere, it&rsquo;s here.</p>
+
+<h2>So will it help you buy a house?</h2>
+
+<p>In my video I said that cutting out the big institutional buyers reduces competition, and &ldquo;that means fewer cash offers and also more breathing room for everyday buyers.&rdquo;</p>
+
+<p>That&rsquo;s the hope. To be fair, not everybody agrees it will add much. The Urban Institute&rsquo;s Laurie Goodman wrote that limiting large investors &ldquo;may not actually add to the housing supply for first-time homebuyers,&rdquo; partly because many homes investors buy need repairs and are &ldquo;unlikely to be purchased by owner-occupants otherwise.&rdquo; <a href="https://www.urban.org/urban-wire/will-regulating-large-institutional-investors-actually-make-housing-more-affordable" target="_blank" rel="noopener">[6]</a></p>
+
+<p>What the law itself guarantees is narrower: from January 7, 2027, one kind of buyer, the very largest, steps back from most existing homes. How much that matters depends on your price range and your neighborhood. That&rsquo;s a local question, not a national one.</p>
+
+<h2>If you rent from a big investor</h2>
+
+<p>The law also tells HUD to set up a toll-free number and a website, within 180 days, to help renters in homes owned by large institutional investors with disputes. <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">[1]</a> And if your landlord offers a rent-to-own or homeownership program, ask whether your on-time rent is being reported to the credit bureaus. Under this law, that&rsquo;s part of how those programs qualify.</p>
+
+<h2>What to do now</h2>
+
+<p>If you&rsquo;re buying, don&rsquo;t wait for January to start. Get your financing lined up and know your numbers, because a law doesn&rsquo;t change what you can afford. If you&rsquo;re selling, know who&rsquo;s likely to be on the other side of your deal in 2027.</p>
+
+<p>And like I said in my video, I&rsquo;ll pull local numbers and walk you through all of your options. <a href="/contact">Get with me here</a>, or if you own and want to know what your house is worth, <a href="/home-value">start here</a>.</p>
+
+<p>So that&rsquo;s the Wall Street homebuying ban, explained.</p>
+
+<p><em>This article explains what the law says. It isn&rsquo;t legal or financial advice, and regulations under it may add detail. Check the current rules before you rely on them.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>H.R. 6644, <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6644enr/html/BILLS-119hr6644enr.htm" target="_blank" rel="noopener">21st Century ROAD to Housing Act, enrolled bill</a>, Title X, Section 1001, &ldquo;Homes are for people, not corporations.&rdquo;</li>
+<li>Latham &amp; Watkins, <a href="https://www.lw.com/en/insights/21st-century-road-to-housing-act-becomes-law" target="_blank" rel="noopener">21st Century ROAD to Housing Act Becomes Law</a> (July 14, 2026).</li>
+<li>Executive Order 14376, <a href="https://www.govinfo.gov/content/pkg/FR-2026-01-23/html/2026-01424.htm" target="_blank" rel="noopener">Stopping Wall Street From Competing With Main Street Homebuyers</a>, Federal Register (January 23, 2026).</li>
+<li>U.S. Government Accountability Office, <a href="https://www.gao.gov/products/gao-24-106643" target="_blank" rel="noopener">Rental Housing: Information on Institutional Investment in Single-Family Homes</a>, GAO-24-106643 (May 22, 2024).</li>
+<li>National Low Income Housing Coalition, <a href="https://nlihc.org/resource/gao-releases-report-institutional-investments-single-family-rental-housing" target="_blank" rel="noopener">GAO Releases Report on Institutional Investments in Single-Family Rental Housing</a> (May 28, 2024).</li>
+<li>Urban Institute, Laurie Goodman, <a href="https://www.urban.org/urban-wire/will-regulating-large-institutional-investors-actually-make-housing-more-affordable" target="_blank" rel="noopener">Will Regulating Large Institutional Investors Actually Make Housing More Affordable?</a> (January 26, 2026).</li>
+<li>Erika K. Page, her &ldquo;Banning Wall Street homebuying&rdquo; video (2026), her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // NEXA / Andrew series #2 (October). Researched around her "Fannie Mae"
         // video (intake/transcripts/video/fannie-mae, November 2025), re-checked
         // against the current Selling Guide on 13 Oct 2026; her claims about Andrew
