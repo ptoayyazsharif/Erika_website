@@ -25,6 +25,132 @@
 return [
 
     [
+        // Researched around her four-part Home Depot "Path to Pro" series
+        // (intake/transcripts/video/home-depot-part-1, -part-2-v2, -part-3,
+        // trades-vs-4-year-college). Her pay figure is quoted as hers, with BLS medians
+        // beside it. Every fact is listed with its source in
+        // tools/research/not-everyone-needs-a-degree.md.
+        'slug'           => 'not-everyone-needs-a-degree',
+        'title'          => 'Not everyone needs a degree. Some people need a trade.',
+        'seo_title'      => 'Not Everyone Needs a Degree: Free Trades Training, What Trades Pay, and Georgia&rsquo;s HOPE Career Grant',
+        'seo_desc'       => 'Home Depot&rsquo;s free Path to Pro training, what electricians, plumbers and HVAC techs really earn, and how Georgia&rsquo;s HOPE Career Grant can cover tuition.',
+        'excerpt'        => 'College is great for the right person, but it isn&rsquo;t the only way. Here&rsquo;s the free trades training Home Depot runs, what electricians, plumbers and HVAC techs actually earn, and how Georgia can cover your technical college tuition.',
+        'date'           => '2026-10-15',
+        'updated'        => '2026-10-15',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'lifestyle',
+        'tags'           => ['skilled trades', 'Path to Pro', 'HOPE Career Grant', 'careers', 'wealth', 'Georgia'],
+        'cover'          => 'assets/photos/17/not-everyone-needs-a-degree-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Not everyone needs a degree. Some people need a trade.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@kathleen-austin-kuhn-2152973960" rel="nofollow noopener" target="_blank">Kathleen Austin Kuhn</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/not-everyone-needs-a-degree.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'trades',
+        'audio_secs'     => 364,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Is Home Depot&rsquo;s Path to Pro training really free?',
+                'a' => 'Home Depot describes its online Skills Program as free, and says more than 200,000 people have graduated from it. It also runs the Path to Pro Network, a database of nearly 165,000 candidates looking for work in the skilled trades.',
+            ],
+            [
+                'q' => 'How much do electricians, plumbers and HVAC technicians make?',
+                'a' => 'According to the Bureau of Labor Statistics, median pay in May 2025 was $63,190 for electricians, $63,800 for plumbers, pipefitters and steamfitters, and $61,010 for HVAC mechanics and installers. The top 10% earned more than about $95,000 to $108,000.',
+            ],
+            [
+                'q' => 'Can Georgia pay for trade school?',
+                'a' => 'Georgia&rsquo;s HOPE Career Grant can cover 100% of tuition at a Technical College System of Georgia college for HOPE Grant-qualified students in certain high-demand fields. Ask your college whether your program is on the current list.',
+            ],
+            [
+                'q' => 'Do I need a license to work in the trades?',
+                'a' => 'Often, yes. The BLS says most states require electricians to pass a test and be licensed, most states and some localities license plumbers, and nearly all HVAC technicians need EPA certification to handle refrigerant.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>They say college is the only way. What they forget to mention is that some people graduate from college with a lot of debt and no job.</p>
+
+<p>I made a series of videos about this, and one line sums it up: <strong>&ldquo;Not everyone needs a degree. Some people need skills, certification, and access to real jobs.&rdquo;</strong> College is great for the right person. But it&rsquo;s not the only way, and too many people were never shown another one.</p>
+
+<p>Let me explain the path I talked about, what the trades actually pay, and how Georgia can help you pay for the training.</p>
+
+<h2>The Home Depot program I told you about</h2>
+
+<p>It&rsquo;s called <strong>Path to Pro</strong>, and it&rsquo;s run by The Home Depot, whose Store Support Center is right here in Atlanta. <a href="https://corporate.homedepot.com/page/about-us" target="_blank" rel="noopener">[3]</a> In my videos I described it as &ldquo;free trades training, free certifications, and free connections to hiring.&rdquo; Here&rsquo;s how Home Depot itself describes it today:</p>
+
+<ul>
+<li><strong>A free online Skills Program.</strong> More than 200,000 people have graduated from it. <a href="https://corporate.homedepot.com/node/1957" target="_blank" rel="noopener">[1]</a> <a href="https://corporate.homedepot.com/node/2024" target="_blank" rel="noopener">[2]</a></li>
+<li><strong>The Path to Pro Network,</strong> &ldquo;a database of nearly 165,000 candidates seeking employment in the skilled trades.&rdquo; <a href="https://corporate.homedepot.com/node/1957" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>Certification through nonprofit partners,</strong> with more than 70,000 people certified. <a href="https://corporate.homedepot.com/node/1957" target="_blank" rel="noopener">[1]</a> <a href="https://corporate.homedepot.com/node/2024" target="_blank" rel="noopener">[2]</a></li>
+<li><strong>Who it&rsquo;s for:</strong> Home Depot says it has given free training to separating military, youth, career changers and others, and it runs a free curriculum called Skills Explorers for young people ages 11 to 17. <a href="https://corporate.homedepot.com/node/2024" target="_blank" rel="noopener">[2]</a></li>
+</ul>
+
+<p>And here&rsquo;s a story from my own travels. While I was in the Atlanta airport, I met a gentleman who worked for an engineering company. He was a mechanical engineer, and he told me straight up that they recruit from graduates of the Home Depot Path to Pro program.</p>
+
+<h2>Now here&rsquo;s the important part: what the trades pay</h2>
+
+<p>In one of my videos I said skilled trades can earn seventy-five thousand to one hundred and fifty thousand a year, with many hitting six figures once they&rsquo;re independent. That&rsquo;s the upside. Here&rsquo;s what the Bureau of Labor Statistics says about the typical worker, as of May 2025:</p>
+
+<ul>
+<li><strong>Electricians:</strong> median pay $63,190. The top 10% earned more than $108,510. <a href="https://www.bls.gov/ooh/construction-and-extraction/electricians.htm" target="_blank" rel="noopener">[4]</a></li>
+<li><strong>Plumbers, pipefitters and steamfitters:</strong> median pay $63,800. The top 10% earned more than $108,420. <a href="https://www.bls.gov/ooh/construction-and-extraction/plumbers-pipefitters-and-steamfitters.htm" target="_blank" rel="noopener">[5]</a></li>
+<li><strong>HVAC mechanics and installers:</strong> median pay $61,010. The top 10% earned more than $95,210. <a href="https://www.bls.gov/ooh/installation-maintenance-and-repair/heating-air-conditioning-and-refrigeration-mechanics-and-installers.htm" target="_blank" rel="noopener">[6]</a></li>
+</ul>
+
+<p>Median means half earn more and half earn less. So six figures is real, but it&rsquo;s the top of the field, and in my videos I tied it to people who go on to run their own business.</p>
+
+<p>The work is there, too. The BLS projects about 72,700 openings a year for electricians, 42,000 for plumbers and 40,600 for HVAC technicians over the 2025 to 2035 decade. <a href="https://www.bls.gov/ooh/construction-and-extraction/electricians.htm" target="_blank" rel="noopener">[4]</a> <a href="https://www.bls.gov/ooh/construction-and-extraction/plumbers-pipefitters-and-steamfitters.htm" target="_blank" rel="noopener">[5]</a> <a href="https://www.bls.gov/ooh/installation-maintenance-and-repair/heating-air-conditioning-and-refrigeration-mechanics-and-installers.htm" target="_blank" rel="noopener">[6]</a> And Home Depot says more than 4.1 million skilled trades jobs are expected to open over the next decade. <a href="https://corporate.homedepot.com/node/2024" target="_blank" rel="noopener">[2]</a></p>
+
+[[img:assets/photos/17/b23-electrician-stripping-wire.jpg|An electrician in blue coveralls stripping a wire on a ladder|Photo by <a href="https://www.pexels.com/@audy-of-course-306413796" rel="nofollow noopener" target="_blank">Audy of Course</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>How you actually get in</h2>
+
+<ul>
+<li><strong>Electricians and plumbers</strong> mostly learn through a 4- or 5-year apprenticeship, which is paid on-the-job training. <a href="https://www.bls.gov/ooh/construction-and-extraction/electricians.htm" target="_blank" rel="noopener">[4]</a> <a href="https://www.bls.gov/ooh/construction-and-extraction/plumbers-pipefitters-and-steamfitters.htm" target="_blank" rel="noopener">[5]</a></li>
+<li><strong>HVAC technicians</strong> usually complete a program at a technical school or community college that lasts 6 months to 2 years. <a href="https://www.bls.gov/ooh/installation-maintenance-and-repair/heating-air-conditioning-and-refrigeration-mechanics-and-installers.htm" target="_blank" rel="noopener">[6]</a></li>
+<li><strong>Licenses matter.</strong> Most states require electricians to pass a test and be licensed, most states and some localities license plumbers, and nearly all HVAC technicians need EPA certification to handle refrigerant. <a href="https://www.bls.gov/ooh/construction-and-extraction/electricians.htm" target="_blank" rel="noopener">[4]</a> <a href="https://www.bls.gov/ooh/construction-and-extraction/plumbers-pipefitters-and-steamfitters.htm" target="_blank" rel="noopener">[5]</a> <a href="https://www.bls.gov/ooh/installation-maintenance-and-repair/heating-air-conditioning-and-refrigeration-mechanics-and-installers.htm" target="_blank" rel="noopener">[6]</a> Check Georgia&rsquo;s requirements before you take paid work.</li>
+</ul>
+
+<h2>Georgia can cover your tuition</h2>
+
+<p>If you&rsquo;re in Georgia, look at the <strong>HOPE Career Grant</strong>. It&rsquo;s for HOPE Grant-qualified students who enroll in majors tied to industries where Georgia has more jobs than skilled workers to fill them. <a href="https://www.gafutures.org/hope-state-aid-programs/hope-zell-miller-grants/hope-career-grant/" target="_blank" rel="noopener">[7]</a> The Technical College System of Georgia says it can cover <strong>100% of your college tuition</strong> in those high-demand fields. <a href="https://www.tcsg.edu/career/" target="_blank" rel="noopener">[8]</a></p>
+
+<p>The list of eligible programs changes, so ask the financial aid office at your technical college whether the trade you want is on it this year.</p>
+
+<h2>Then build it into a business</h2>
+
+<p>And you know, entrepreneurship is my jam. Once you&rsquo;ve learned, you&rsquo;re licensed and you&rsquo;re working, you can start your own business. In my video I said you can add a Google business page, a scheduling app, and now you&rsquo;ve got a business, not just a job.</p>
+
+<p>In real estate, I work with these service providers on a constant basis.</p>
+
+<h2>A note for parents</h2>
+
+<p>I said this as a parent, and I&rsquo;ll say it again: a lot of parents could have a great conversation with their kids about the trades. If nobody ever told you this path existed, that&rsquo;s not your fault. But once you know, you can choose differently.</p>
+
+<p>If you&rsquo;re building wealth, whether through a trade, a business or your first home, <a href="/contact">reach out to me</a>.</p>
+
+<p>So that&rsquo;s the path into the trades, explained.</p>
+
+<p><em>This article explains publicly available programs and data. Pay, programs and eligibility change; confirm details with the program, your technical college and Georgia&rsquo;s licensing authorities before you rely on them.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>The Home Depot, <a href="https://corporate.homedepot.com/node/1957" target="_blank" rel="noopener">The Home Depot Foundation Helps Revitalize &ldquo;Shop Class&rdquo; with Nationwide Grants</a> (March 10, 2026).</li>
+<li>The Home Depot, <a href="https://corporate.homedepot.com/node/2024" target="_blank" rel="noopener">The Home Depot and The Home Depot Foundation Aim to Provide 15 Million Introductions to Skilled Trades Careers by 2032</a> (September 17, 2026).</li>
+<li>The Home Depot, <a href="https://corporate.homedepot.com/page/about-us" target="_blank" rel="noopener">About us</a>.</li>
+<li>U.S. Bureau of Labor Statistics, Occupational Outlook Handbook, <a href="https://www.bls.gov/ooh/construction-and-extraction/electricians.htm" target="_blank" rel="noopener">Electricians</a> (May 2025 wages; 2025&ndash;35 projections).</li>
+<li>U.S. Bureau of Labor Statistics, Occupational Outlook Handbook, <a href="https://www.bls.gov/ooh/construction-and-extraction/plumbers-pipefitters-and-steamfitters.htm" target="_blank" rel="noopener">Plumbers, Pipefitters, and Steamfitters</a>.</li>
+<li>U.S. Bureau of Labor Statistics, Occupational Outlook Handbook, <a href="https://www.bls.gov/ooh/installation-maintenance-and-repair/heating-air-conditioning-and-refrigeration-mechanics-and-installers.htm" target="_blank" rel="noopener">Heating, Air Conditioning, and Refrigeration Mechanics and Installers</a>.</li>
+<li>Georgia Student Finance Commission (GAfutures), <a href="https://www.gafutures.org/hope-state-aid-programs/hope-zell-miller-grants/hope-career-grant/" target="_blank" rel="noopener">HOPE Career Grant</a>.</li>
+<li>Technical College System of Georgia, <a href="https://www.tcsg.edu/career/" target="_blank" rel="noopener">Career</a> (&ldquo;Free Tuition&rdquo;).</li>
+<li>Erika K. Page, her Home Depot &ldquo;Path to Pro&rdquo; series (parts 1&ndash;3) and &ldquo;Trades vs. 4-year college&rdquo; video, her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her video "Banning Wall Street homebuying"
         // (intake/transcripts/video/banning-wall-street-homebuying, early 2026). What she
         // described as a proposal became law on 11 July 2026 (H.R. 6644, Sec. 1001); the

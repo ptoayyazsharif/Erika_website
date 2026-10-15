@@ -86,6 +86,7 @@ Google AI Studio is still outstanding.
 | `when-stairs-become-the-enemy` | Lifestyle | `/stairs` | none — researched around her short "stairs" video (12 Oct): CDC, NIA, IRS, Georgia DOR |
 | `fannie-mae-dropped-the-620-minimum` | Buying | `/credit-score` | none — **NEXA / Andrew series #2** (13 Oct): her "Fannie Mae" video (Nov 2025) re-checked against the current Fannie Mae Selling Guide; CFPB |
 | `wall-street-homebuying-ban-explained` | Buying | `/wall-street` | none — researched around her "Banning Wall Street homebuying" video (14 Oct): H.R. 6644 Sec. 1001 as enrolled, EO 14376, GAO (Atlanta 25%), Urban Institute. ★ Ban starts 7 Jan 2027 |
+| `not-everyone-needs-a-degree` | Lifestyle | `/trades` | none — researched around her four-part Home Depot "Path to Pro" series (15 Oct): Home Depot's 2026 releases, BLS pay (May 2025), Georgia's HOPE Career Grant. Her "$75k–150k" is quoted as hers beside the BLS medians |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -257,7 +258,11 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
    source**. Star (★) anything dated (deadlines, percentages, law). List what you
    deliberately left out and why. Every fact in the article and the script must be a
    row here.
-4. **The article** keeps her voice and rules (*Publishing* step 2), links each fact
+4. **When her claim and the data disagree, show both.** Quote hers as hers and put the
+   official figure beside it; never quietly "correct" her words or drop the data. Her
+   "skilled trades can earn seventy-five thousand to one hundred and fifty K" sits beside
+   the BLS medians (about $61k–64k) in the trades article (15 Oct).
+   **The article** keeps her voice and rules (*Publishing* step 2), links each fact
    inline to its source (`target="_blank" rel="noopener"`), and ends with a
    `<h2>Sources</h2>` numbered list. Add the one-line "explains how it works; isn't tax
    or legal advice; confirm with your county" note before it. **Nothing about Erika she
@@ -297,7 +302,9 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
    script: every seam, every date, bill or percentage, and the ending. (Windowed `--at`
    checks are for a single passage you've regenerated.)
    ElevenLabs' transcriber writes "Erica"; the voice says her name correctly. It also
-   writes "Axon Realty" for Axen (the same sound).
+   writes "Axon Realty" for Axen (the same sound). Spell out acronyms the voice might
+   read as a word: "HUD" came back "SHUDI" (14 Oct), so write "the Department of Housing
+   and Urban Development"; "E P A" and "D U" spaced out read correctly.
 7. **Set `audio_note` on the post** ("A podcast episode on this topic, in Erika's AI
    voice. The sources are listed at the end of the article."). Without it the page says
    "Same words, read aloud", which is false for an episode. `check-article.mjs` checks
@@ -469,12 +476,16 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1 (closing costs), 2 (owning vs investing) and 3 (know your house before you
-  list) were handed over on 12–14 Oct.
+  Episodes 1 (closing costs), 2 (owning vs investing), 3 (know your house before you
+  list) and 4 (cash is king) were handed over on 12–15 Oct.
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
+- **For Erika to review:** the trades / Path to Pro article and episode (15 Oct). Her
+  series is quoted; her pay figure ("$75k to $150k") sits beside the BLS medians (about
+  $61k–64k), which she may want to see. ★ Re-check the BLS figures when May 2026 wages
+  come out.
 - **For Erika to review:** the Wall Street homebuying-ban article and episode (14 Oct). Her
   video lines are quoted; the law, GAO and Urban Institute facts are researched. ★ Re-check
   when Treasury issues regulations under Sec. 1001, and after the ban starts on 7 Jan 2027.

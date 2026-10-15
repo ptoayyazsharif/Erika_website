@@ -1,5 +1,15 @@
 [
   {
+    "slug": "not-everyone-needs-a-degree",
+    "template": "bold",
+    "eyebrow": "Lifestyle",
+    "line": "Not everyone needs a degree. Some people need a trade.",
+    "sub": "College is great for the right person, but it’s not the only way.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b24-hvac-technician-outdoor-unit.jpg",
+    "refPos": "72% 45%"
+  },
+  {
     "slug": "wall-street-homebuying-ban-explained",
     "template": "bold",
     "eyebrow": "Buying",

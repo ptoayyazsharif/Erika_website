@@ -7,6 +7,49 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-15 — The trades / Path to Pro article; podcast episode 4 hand-over
+
+**Asked.** "Please publish a new blog and give me episode 4."
+
+**Done**
+- **Article** `/blog/not-everyone-needs-a-degree` (`/trades`, Lifestyle).
+  - Built around her four-part Home Depot series (`home-depot-part-1`, `-part-2-v2`,
+    `-part-3`, `trades-vs-4-year-college`), unused until now.
+  - **Re-checked against today:** Path to Pro is still running (Home Depot's releases of
+    10 Mar and 17 Sep 2026).
+  - What it covers:
+    - the free online Skills Program, with 200,000+ graduates;
+    - the Path to Pro Network, with nearly 165,000 candidates;
+    - 70,000+ people certified through nonprofit partners;
+    - her Atlanta-airport story;
+    - BLS pay for electricians, plumbers and HVAC (May 2025), openings and training;
+    - Georgia's HOPE Career Grant ("100%" of tuition, per TCSG);
+    - her business and parent lines.
+  - **Her "$75k to $150k" is quoted as hers**, beside the BLS medians ($61k–64k). The rule
+    "show both" is now in CLAUDE.md.
+  - Two new photos: B23, an electrician stripping wire (body); B24, an HVAC technician
+    (cover tile). Bold cover; square art.
+  - Episode: 953 words, 364 s, levelled. The full transcript matched the script.
+- **Podcast episode 4** (cash is king) handed over. Its text has no dated lines.
+
+**Failed, and what was done**
+- **Invented lines in the first draft** ("the line I keep coming back to", "the part I
+  care about most", and a real-estate claim she never made) were replaced with her actual
+  words before recording ("entrepreneurship is my jam", "I work with these service
+  providers on a constant basis").
+- Left out: which trades are on the HOPE Career Grant list (sources disagree: 12, 17 or
+  18 fields) and Georgia's licensing rules (sos.ga.gov answers 403).
+
+**Passed**
+- `check-article.mjs`: ALL PASS locally and live. BLS answers 403 to the checker (WARN);
+  it was read with WebFetch.
+- Uploads byte-identical live.
+
+**Open**
+- Erika to read it, especially the pay figures beside her own.
+
+---
+
 ## 2026-10-14 — The Wall Street homebuying-ban article; podcast episode 3 hand-over
 
 **Asked.** "Publish a new blog for Erika and give me the next podcast to publish."
