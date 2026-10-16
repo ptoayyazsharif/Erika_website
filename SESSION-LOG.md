@@ -7,6 +7,48 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-16 — The perfect Atlanta weekend article; podcast episode 5 hand-over
+
+**Asked.** "Post a new blog for Erika for today, and give me the next episode."
+
+**Done**
+- **Topic choice.** Two candidates were dropped first:
+  - her 50-year-mortgage video: it was only ever floated, and no reliable source shows
+    whether it exists now;
+  - her ground-lease reel: only commercial explainers were readable, and the Georgia
+    statute site answered 403.
+- **Article** `/blog/the-perfect-atlanta-weekend` (`/weekend`, Lifestyle).
+  - Built from her unused Atlanta-weekend material: four videos and four reels.
+  - Only year-round places are kept: Ponce City Market and its roof, Buckhead home tours,
+    brunch and the BeltLine, the skyline, and Sunday in Madison.
+  - Her dated picks are left out (restaurant week, Smorgasburg, a Braves game, one-off
+    events). Phipps Plaza's Screen on the Green is kept in her words, with "check the
+    current schedule".
+  - Facts from the Beltline (22-mile loop, 45 neighborhoods), Ponce City Market ("10 steps
+    from the beltline") and Visit Madison ("just an hour east", one of Georgia's largest
+    historic districts).
+  - Two new photos: B25, a graffiti underpass (body); B26, the SkyView wheel at sunset
+    (tile). Bold cover with her line "Lord knows we have plenty of rooftops in Atlanta.";
+    square art.
+  - Episode: 618 words, 232 s, levelled.
+- **Podcast episode 5** (homestead) handed over, with its sources in the description. Its
+  ★ dates (1 April 2027; the 2026 HOME Act) are still ahead.
+
+**Failed, and what was done**
+- **Invented lines in the first draft** were removed: "the version I'd hand a friend",
+  "what you're really buying… the life around it", "a whole afternoon of inspiration", and
+  in the script "Here's something I believe" and "that's a Friday".
+- **The full-file transcript heard "twenty-mile"**. Checked alone with `--at 115`, the
+  voice says "twenty-two-mile"; it was the transcriber. Lesson added to CLAUDE.md.
+
+**Passed**
+- `check-article.mjs`: ALL PASS locally and live. Uploads byte-identical.
+
+**Open**
+- Erika to read it.
+
+---
+
 ## 2026-10-15 — The trades / Path to Pro article; podcast episode 4 hand-over
 
 **Asked.** "Please publish a new blog and give me episode 4."

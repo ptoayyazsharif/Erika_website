@@ -25,6 +25,102 @@
 return [
 
     [
+        // Built from her Atlanta-weekend videos and reels (erika-explains-perfect-
+        // atlanta-weekend, atlanta-this-weekend, phipps-green-fridays, atlantas-rooftops;
+        // reels DbMgF1chCj1, Da6I7GNh-2C, Dbe3bbbgb0c, DaoAvpmB1DG). Only year-round places
+        // are kept; her dated picks are left out. Every fact is listed with its source in
+        // tools/research/the-perfect-atlanta-weekend.md.
+        'slug'           => 'the-perfect-atlanta-weekend',
+        'title'          => 'Want the perfect Atlanta weekend? Here’s exactly where I’d go.',
+        'seo_title'      => 'The Perfect Atlanta Weekend: Ponce City Market, the BeltLine, Buckhead and a Day in Madison',
+        'seo_desc'       => 'An Atlanta agent&rsquo;s weekend: free Friday movies, the roof at Ponce City Market, Buckhead homes, brunch, the BeltLine, and a Sunday drive to Madison, GA.',
+        'excerpt'        => 'Great food, beautiful homes, a little luxury and a Sunday drive. Here&rsquo;s the Atlanta weekend I&rsquo;d plan, from a free Friday movie to the roof at Ponce City Market, the BeltLine and historic Madison.',
+        'date'           => '2026-10-16',
+        'updated'        => '2026-10-16',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'lifestyle',
+        'tags'           => ['Atlanta weekend', 'things to do in Atlanta', 'Atlanta BeltLine', 'Ponce City Market', 'Buckhead', 'Madison GA'],
+        'cover'          => 'assets/photos/17/the-perfect-atlanta-weekend-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Want the perfect Atlanta weekend? Here&rsquo;s exactly where I&rsquo;d go.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@gryziu" rel="nofollow noopener" target="_blank">Dominik Gryzbon</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/the-perfect-atlanta-weekend.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'weekend',
+        'audio_secs'     => 232,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'How long is the Atlanta BeltLine?',
+                'a' => 'The Atlanta Beltline describes itself as a 22-mile loop of trails, parks and future transit connecting 45 neighborhoods, with over 16 miles of urban trails open to explore.',
+            ],
+            [
+                'q' => 'Is Ponce City Market on the BeltLine?',
+                'a' => 'Yes. Ponce City Market describes itself as &ldquo;10 steps from the beltline,&rdquo; and it has a rooftop, The Roof, with skyline views.',
+            ],
+            [
+                'q' => 'How far is Madison, Georgia from Atlanta?',
+                'a' => 'Madison&rsquo;s visitors bureau puts it &ldquo;just an hour east of Atlanta,&rdquo; about 60 miles, and calls it home to one of Georgia&rsquo;s largest historic districts.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Want the perfect Atlanta weekend? Let me explain.</p>
+
+<p>If I were planning my weekend in Atlanta, here&rsquo;s exactly where I&rsquo;d go if I wanted great food, fun experiences, and a little luxury. I&rsquo;ve made a few videos about this; here it is in one place.</p>
+
+<h2>Friday night: a movie, or a rooftop</h2>
+
+<p><strong>A free movie at Phipps Plaza.</strong> Atlanta, did you know this was free? In my video I talked about Phipps Plaza&rsquo;s Screen on the Green: free movies on Friday nights, out on the green. There are chairs and Wi-Fi, you can bring a blanket or a chair, and there&rsquo;s free parking underneath. I said I thought it ran all the way through October, around 6 p.m. Check Phipps Plaza&rsquo;s current schedule before you go.</p>
+
+<p><strong>Or go up.</strong> Luxury starts with standards. Sometimes it&rsquo;s choosing a rooftop instead of sitting at home, and Lord knows we have plenty of rooftops in Atlanta. It&rsquo;s enjoying one great cocktail instead of three average ones. The roof at Ponce City Market is one of my favorite places to watch the sun go down, with skyline views. <a href="https://poncecitymarket.com/" target="_blank" rel="noopener">[2]</a></p>
+
+<h2>Saturday morning: tour a few Buckhead homes</h2>
+
+<p>I am in real estate, after all. On Saturday morning I&rsquo;m touring a few luxury homes in Buckhead. Even if you&rsquo;re not buying, it&rsquo;s one of my favorite ways to get inspired by beautiful architecture, gorgeous landscape, and creative design.</p>
+
+<p>You don&rsquo;t have to be buying a house to appreciate beautiful architecture and dream a little bigger.</p>
+
+[[img:assets/photos/17/b25-atlanta-graffiti-underpass.jpg|A graffiti-covered underpass in Atlanta|Photo by <a href="https://www.pexels.com/@msuatgunerli" rel="nofollow noopener" target="_blank">Mehmet Suat Gunerli</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Saturday afternoon: brunch, then the BeltLine</h2>
+
+<p>After that, it&rsquo;s brunch at Ponce City Market, followed by a walk along the Atlanta BeltLine. Great food, local art, amazing people-watching, and some of the best spots in the city to create content.</p>
+
+<p>The two go together. Ponce City Market says it&rsquo;s &ldquo;10 steps from the beltline.&rdquo; <a href="https://poncecitymarket.com/" target="_blank" rel="noopener">[2]</a> And the BeltLine itself is a 22-mile loop of trails, parks and future transit connecting 45 neighborhoods, with over 16 miles of trails that link up neighborhoods, shops, parks and public art. <a href="https://beltline.org/visit/" target="_blank" rel="noopener">[1]</a> Wear comfortable shoes.</p>
+
+<h2>Saturday night: the skyline</h2>
+
+<p>Then I&rsquo;d end the evening with rooftop cocktails overlooking the Atlanta skyline. There&rsquo;s just something so beautiful and special about the view, and it reminds you how amazing our city really is.</p>
+
+<h2>Sunday: slow down in Madison</h2>
+
+<p>Sunday, I&rsquo;d slow things down with a drive to Madison, Georgia. Think charming boutiques, historic homes, great restaurants, and a relaxing escape that&rsquo;s less than two hours from Atlanta.</p>
+
+<p>It&rsquo;s actually closer than that. Madison&rsquo;s visitors bureau calls it &ldquo;just an hour east of Atlanta,&rdquo; about 60 miles, and says it has one of Georgia&rsquo;s largest historic districts. <a href="https://www.visitmadisonga.com/" target="_blank" rel="noopener">[3]</a></p>
+
+<h2>Why a real estate agent cares about your weekend</h2>
+
+<p>On Erika Explains, we talk about real estate, wealth, and the lifestyle that makes it all worth it. A weekend like this is the lifestyle part.</p>
+
+<p>If one of these weekends has you thinking about living closer to it, <a href="/contact">let&rsquo;s talk</a>. And if you already own and want to know what your home is worth, <a href="/home-value">start here</a>.</p>
+
+<p>So that&rsquo;s the perfect Atlanta weekend, explained.</p>
+
+<p><em>Places, hours and events change. Check each venue&rsquo;s own site before you go.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Atlanta Beltline, <a href="https://beltline.org/visit/" target="_blank" rel="noopener">Visit</a>.</li>
+<li><a href="https://poncecitymarket.com/" target="_blank" rel="noopener">Ponce City Market</a>.</li>
+<li><a href="https://www.visitmadisonga.com/" target="_blank" rel="noopener">Visit Madison GA</a>.</li>
+<li>Erika K. Page, her Atlanta-weekend videos and reels (2026), her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her four-part Home Depot "Path to Pro" series
         // (intake/transcripts/video/home-depot-part-1, -part-2-v2, -part-3,
         // trades-vs-4-year-college). Her pay figure is quoted as hers, with BLS medians

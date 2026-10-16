@@ -87,6 +87,7 @@ Google AI Studio is still outstanding.
 | `fannie-mae-dropped-the-620-minimum` | Buying | `/credit-score` | none — **NEXA / Andrew series #2** (13 Oct): her "Fannie Mae" video (Nov 2025) re-checked against the current Fannie Mae Selling Guide; CFPB |
 | `wall-street-homebuying-ban-explained` | Buying | `/wall-street` | none — researched around her "Banning Wall Street homebuying" video (14 Oct): H.R. 6644 Sec. 1001 as enrolled, EO 14376, GAO (Atlanta 25%), Urban Institute. ★ Ban starts 7 Jan 2027 |
 | `not-everyone-needs-a-degree` | Lifestyle | `/trades` | none — researched around her four-part Home Depot "Path to Pro" series (15 Oct): Home Depot's 2026 releases, BLS pay (May 2025), Georgia's HOPE Career Grant. Her "$75k–150k" is quoted as hers beside the BLS medians |
+| `the-perfect-atlanta-weekend` | Lifestyle | `/weekend` | none — from her Atlanta-weekend videos and reels (16 Oct): year-round places only (Ponce City Market, the BeltLine, Buckhead, Madison); Beltline, Ponce and Visit Madison sites. Shorter episode (232 s): a short source makes a short episode |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -304,7 +305,9 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
    ElevenLabs' transcriber writes "Erica"; the voice says her name correctly. It also
    writes "Axon Realty" for Axen (the same sound). Spell out acronyms the voice might
    read as a word: "HUD" came back "SHUDI" (14 Oct), so write "the Department of Housing
-   and Urban Development"; "E P A" and "D U" spaced out read correctly.
+   and Urban Development"; "E P A" and "D U" spaced out read correctly. The full-file
+   transcript can drop a word the voice said ("twenty-two-mile" came back "twenty-mile",
+   16 Oct); before re-recording, check that passage alone with `--at <seconds>`.
 7. **Set `audio_note` on the post** ("A podcast episode on this topic, in Erika's AI
    voice. The sources are listed at the end of the article."). Without it the page says
    "Same words, read aloud", which is false for an episode. `check-article.mjs` checks
@@ -476,12 +479,15 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1 (closing costs), 2 (owning vs investing), 3 (know your house before you
-  list) and 4 (cash is king) were handed over on 12–15 Oct.
+  Episodes 1–5 were handed over on 12–16 Oct (closing costs, owning vs investing, know
+  your house, cash is king, homestead). Next is 6: relocating to Metro Atlanta.
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
+- **For Erika to review:** the Atlanta-weekend article and episode (16 Oct): her lines,
+  lightly arranged into one itinerary. Phipps Plaza's Screen on the Green is given in her
+  words with "check the current schedule" (no official 2026 schedule could be read).
 - **For Erika to review:** the trades / Path to Pro article and episode (15 Oct). Her
   series is quoted; her pay figure ("$75k to $150k") sits beside the BLS medians (about
   $61k–64k), which she may want to see. ★ Re-check the BLS figures when May 2026 wages

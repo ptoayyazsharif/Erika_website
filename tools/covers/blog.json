@@ -1,5 +1,15 @@
 [
   {
+    "slug": "the-perfect-atlanta-weekend",
+    "template": "bold",
+    "eyebrow": "Lifestyle",
+    "line": "Want the perfect Atlanta weekend? Here’s exactly where I’d go.",
+    "sub": "Lord knows we have plenty of rooftops in Atlanta.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b26-skyview-ferris-wheel-sunset.jpg",
+    "refPos": "85% 40%"
+  },
+  {
     "slug": "not-everyone-needs-a-degree",
     "template": "bold",
     "eyebrow": "Lifestyle",
