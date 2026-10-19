@@ -587,6 +587,11 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   next (owning vs investing), then every episode in date order. Erika has to verify her YouTube
   account. Ask the owner whether Erika has a
   Google Business Profile, and whether her Instagram bio should point to the blog.
+- **New pages proposed by Erika's AI review (19 Oct; `ceo_erika` `business/conversion-pathways`),
+  waiting on her approval:** a **podcast landing page** (Apple Podcasts first, then Spotify; no
+  Amazon Music) for any future podcast QR code; an **AI Twin** demo and inquiry page for the 30-day
+  pilot (`business/ai-twin-pilot`; no prices on the page, none are validated); unique tracking links
+  per post. The site has `/erika-explains` and `/contact` today, neither built for this.
 - **Episode 1's audio, to listen to** (found by the YouTube captions' listen-back, 19 Oct):
   at 7:51 the transcriber hears "twenty thousand one hundred and sixty-three" active listings
   where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the

@@ -7,6 +7,15 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-19 (late night) — Her AI's strategy review: two proposed pages
+
+**Asked.** The VA shared the strategy review Erika's AI wrote after the meeting.
+**Done.** Open items gain the proposed podcast landing page and AI Twin inquiry page (not built;
+waiting on Erika's approval of the pilot). The review itself is in `ceo_erika`
+(`intake/strategy/2026-10-19-escaluxe-strategic-review.md`, `STATUS.md` tasks 6–8).
+
+---
+
 ## 2026-10-19 (night) — Erika's meeting with her VA: packs for the top articles only
 
 **Asked.** The VA shared Erika's 19 Oct meeting notes and asked for every repo and her second brain
