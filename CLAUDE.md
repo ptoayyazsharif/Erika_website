@@ -557,6 +557,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
+- **Owner: make `main` GitHub's default branch** (Settings → General → Default branch →
+  `main`). It can't be done from a session (the proxy refuses settings writes, 19 Oct 2026).
+  Until then, new sessions may start from the old default: merge `origin/main` first.
 - **Still waiting on Erika from the 25 Aug walkthrough** (`docs/MEETING-2026-08-25-PENDING.md`):
   the speaker one-sheet PDF, the testimonial videos, her welcome video, the real Erika
   Explains episode titles, and more gallery photos. The code for each is in place.

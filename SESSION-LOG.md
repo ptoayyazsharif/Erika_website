@@ -15,7 +15,8 @@ are kept.
 
 **Done**
 - **`main` created** from the website's default (`claude/client-website-ux-ra0p3o`, c874d58b923e)
-  and made the GitHub default branch.
+  and pushed. Making it GitHub's default failed from here: "Repository settings writes are
+  not permitted through this proxy" (403). The owner switches it in GitHub.
 - **Merged into it:**
   - `claude/escalate-app-bugs-l73sgw` (d612bda253c0): the Escalate app, the Stella demo and
     the n8n flow, in `escalate/`, `stella-demo/` and `manifest-n8n/`. It already contained
@@ -45,6 +46,7 @@ are kept.
   (`escalate/COOLIFY.md`).
 
 **Open**
+- **Owner:** set `main` as the default branch on GitHub (Settings → General → Default branch).
 - When the owner wants Escalate deployed from `main`, Coolify's `git_branch` changes and its
   base directory becomes `escalate/`. That is the owner's step.
 
