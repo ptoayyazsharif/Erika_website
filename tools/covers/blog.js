@@ -13,6 +13,8 @@
  *   node tools/covers/blog.js <slug> --all --out d  that entry in all five templates
  *   node tools/covers/blog.js [<slug>] --podcast    square podcast episode art, 1400x1400,
  *                                                   to tools/podcast/art/<slug>.jpg
+ *   node tools/covers/blog.js [<slug>] --youtube    the episode video's thumbnail, 1280x720,
+ *                                                   to tools/youtube/thumbs/<slug>.jpg
  *
  * Output is 1600x1000, the ratio of every other editorial picture on the site, so
  * the /blog card, the article hero and the share preview all crop it the same way.
@@ -34,7 +36,7 @@ const W = 1600, H = 1000;
 /* Templates that are not 1600x1000. Podcast episode art must be square: RSS.com
    refuses anything under 1024x1024, and Apple asks for 1400 to 3000. 1400 is as
    large as the portrait (1022x1536) allows without upscaling it. */
-const SIZES = { podcast: [1400, 1400] };
+const SIZES = { podcast: [1400, 1400], youtube: [1280, 720] };
 const size = t => SIZES[t] || [W, H];
 
 const C = {
@@ -176,6 +178,18 @@ const TEMPLATES = {
     </div>`,
 };
 
+/* YouTube thumbnail (--youtube): Bold at 16:9. It is seen small, beside other
+   videos, so the headline gets most of the block and the supporting line is left off. */
+TEMPLATES.youtube = s => `
+    <div class="c" style="${pink}">
+      ${portrait(s, 'position:absolute;right:-110px;top:-14px;height:900px;width:auto;')}
+      <div class="fit" style="position:absolute;left:0;top:0;width:760px;height:720px;background:${C.merlotDeep};padding:58px 56px 50px 64px;display:flex;flex-direction:column">
+        <div class="eyebrow" style="font-size:18px;color:${C.gold}">${esc(s.eyebrow)}</div>
+        <div class="hl fit" data-min="52" data-max="150" style="line-height:1.02;color:${C.cream};margin-top:18px;max-height:500px">${esc(s.line)}</div>
+        <div class="mark" style="margin-top:auto;font-size:34px;color:${C.cream}">Erika <span style="color:${C.gold}">Explains</span></div>
+      </div>
+    </div>`;
+
 async function render(browser, spec, template, outFile) {
   const [w, h] = size(template);
   const html = `<!doctype html><html><head><meta charset="utf-8"><style>${BASE(w, h)}</style></head><body>${TEMPLATES[template](spec)}</body></html>`;
@@ -235,9 +249,11 @@ async function render(browser, spec, template, outFile) {
   const args = process.argv.slice(2);
   const all = args.includes('--all');
   const podcast = args.includes('--podcast');
+  const youtube = args.includes('--youtube');
   const oi = args.indexOf('--out');
   const outDir = oi >= 0 ? args[oi + 1]
-    : podcast ? path.join(ROOT, 'tools', 'podcast', 'art') : path.join(ROOT, 'assets', 'photos', '17');
+    : podcast ? path.join(ROOT, 'tools', 'podcast', 'art')
+    : youtube ? path.join(ROOT, 'tools', 'youtube', 'thumbs') : path.join(ROOT, 'assets', 'photos', '17');
   fs.mkdirSync(outDir, { recursive: true });
   const slug = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--out');
 
@@ -248,11 +264,11 @@ async function render(browser, spec, template, outFile) {
   const browser = await pw.chromium.launch({ executablePath: fs.existsSync(CHROME) ? CHROME : undefined });
   let failed = 0;
   for (const s of specs) {
-    const templates = podcast ? ['podcast'] : all ? Object.keys(TEMPLATES) : [s.template];
+    const templates = podcast ? ['podcast'] : youtube ? ['youtube'] : all ? Object.keys(TEMPLATES).filter(t => !SIZES[t]) : [s.template];
     for (const t of templates) {
       if (!TEMPLATES[t]) { console.error(`unknown template "${t}"`); failed++; continue; }
       if (t === 'print' && !s.ref) { console.log(`  skip ${s.slug} / ${t}: needs a reference picture (ref)`); continue; }
-      const file = path.join(outDir, podcast ? `${s.slug}.jpg` : all ? `${s.slug}--${t}.jpg` : `${s.slug}-cover.jpg`);
+      const file = path.join(outDir, podcast || youtube ? `${s.slug}.jpg` : all ? `${s.slug}--${t}.jpg` : `${s.slug}-cover.jpg`);
       try { await render(browser, s, t, file); console.log(`  ok   ${path.relative(ROOT, file) || file}`); }
       catch (e) { console.error('  FAIL ' + e.message); failed++; }
     }

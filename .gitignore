@@ -7,3 +7,5 @@ tools/guides/.fontcache/
 
 # Downloadable copies made for the owner (e.g. the Canva page export); not site code
 exports/
+
+__pycache__/

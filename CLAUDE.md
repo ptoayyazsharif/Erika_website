@@ -220,6 +220,52 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
      closing-costs article (episode 1) said "Where Metro Atlanta sits right now… the most
      recent… brief, covering July 2026"; it now says "stood this summer" and "for July 2026".
 
+## Social post pack and YouTube video — with every article (from 19 Oct 2026)
+
+The owner's instruction (19 Oct 2026): every new blog also gets a **social post pack** and
+its podcast episode a **YouTube video**. The owner posts and uploads; we make the files.
+Started with the first article and episode 1 (closing costs). Hand them over in order,
+like the RSS.com episodes. Outputs go to `exports/` (git-ignored); zip each and send.
+
+**Social post pack**: `tools/social/<slug>.json` holds the words, then
+`NODE_PATH=/opt/node22/lib/node_modules node tools/social/pack.js <slug>`.
+- Five slides, 1080×1350, in the Bold style: the cover, three points (a gold number, one
+  point, two or three sentences), and an end slide with her line, the short link, "Erika K.
+  Page · Axen Realty" and the explanatory-only / Equal Housing line. Plus `carousel.pdf`
+  (LinkedIn shows a PDF "document" post as a carousel) and `google-business.jpg`, 1200×900.
+- Three captions (Instagram, Facebook, LinkedIn) and a Google Business Profile update
+  (≤ 1,500 characters, button "Learn more" → the article). `pack.md` collects them all, with
+  alt text for every slide.
+- **Every line comes from the article.** No new claims, no feelings or stories of hers. For
+  a researched article, take the facts the article states and keep its sources behind them.
+- Instagram captions don't link, and her bio link is `stan.store/erikakpage`
+  (`ceo_erika/memory/business/instagram-account.md`). Give the short link as text; never
+  write "link in bio" unless the owner says the bio points to the blog.
+- Google rejects Business Profile posts with a phone number in the text. Whether Erika has
+  a profile isn't in her notes yet: ask.
+- Look at every slide: the renderer catches overflow and upscaling but not a link wrapping
+  mid-word (fixed 19 Oct with `white-space:nowrap`).
+
+**YouTube video**: `python3 tools/youtube/episode.py <slug> --episode <n> [--note "Recorded …"]`
+(needs `ELEVENLABS_API_KEY` the first time per recording), then
+`node tools/covers/blog.js <slug> --youtube` for the 1280×720 thumbnail (`tools/youtube/thumbs/`).
+- 1920×1080 MP4: the square art on the left, captions burned into the merlot panel on the
+  right (Archivo 66 px, ≤ 56 characters a cue, readable on a phone), a gold progress line.
+  Plus `<slug>.en.srt` for YouTube's subtitle upload, `chapters.txt` (from the article's
+  headings, read-aloud episodes only) and `upload.md` (title, description, tags, settings).
+- Word timings come from ElevenLabs' transcriber once per recording and are committed in
+  `tools/youtube/timing/<slug>.json`. A re-recorded MP3 is transcribed again (sha256).
+- The transcript is aligned with the recorded text: the text's spelling wherever the two
+  agree. The transcriber writes numbers as words, so `digits()` turns them back into figures
+  ("$445,000", "2.1%", "2026") before aligning. Where the recording really differs, the
+  captions show what was said. **Read the printed list of differences before handing over:**
+  it is also a listen-back of the episode.
+- Settings every time: playlist "Erika Explains" set as a podcast; not made for kids;
+  **altered or synthetic content: Yes** (an AI clone of a real person's voice); Education;
+  English captions from the .srt.
+- **Is it still true today?** applies to YouTube as it does to RSS.com: pass `--note` with
+  the recording date when the episode carries dated figures.
+
 ## Research articles and podcast episodes
 
 The worked example is the homestead article: `tools/research/georgia-homestead-exemption-explained.md`
@@ -488,6 +534,15 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
+- **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
+  episode 1 handed over on 19 Oct. Next: pack 2 and YouTube episode 2 (owning vs investing),
+  in date order, and one for every new article on its day. Ask the owner whether Erika has a
+  Google Business Profile, and whether her Instagram bio should point to the blog.
+- **Episode 1's audio, to listen to** (found by the YouTube captions' listen-back, 19 Oct):
+  at 7:51 the transcriber hears "twenty thousand one hundred and sixty-three" active listings
+  where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the
+  voice did misread them, re-record the episode (it is on RSS.com, so the owner swaps the file).
+  The captions show the text's figures.
 - **For Erika to review:** the HUD homes article and episode (19 Oct). Her closing-day
   caption opens it and her line closes it; everything about HUD is from hudhomestore.gov.
   ★ Re-check the listing periods and Good Neighbor Next Door terms before re-using them.

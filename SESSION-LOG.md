@@ -7,6 +7,50 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-19 (later) — Social post packs and YouTube videos: the tools, and the first of each
+
+**Asked.** "A social post pack for each article: 3 captions, a 5-slide carousel in her Bold
+cover style, and a Google Business Profile post… The podcast on YouTube. Each episode as a
+video, with the square art and captions… let's do it for the first one."
+
+**Done**
+- **`tools/social/pack.js`** with `tools/social/<slug>.json`:
+  - five 1080×1350 slides in the Bold style;
+  - `carousel.pdf` for LinkedIn;
+  - `google-business.jpg` (1200×900);
+  - `pack.md` with three captions, the Google Business Profile post and alt text.
+  - Pack 1 (closing costs): every line taken from the article.
+- **`tools/youtube/episode.py`** with `frame.js`:
+  - word timings from ElevenLabs, saved in `tools/youtube/timing/`;
+  - aligned with the recorded text, numbers turned back into figures;
+  - an SRT, burned-in captions on a 1920×1080 frame with the square art, chapters from the
+    headings, and `upload.md`.
+  - **Thumbnail:** a `--youtube` template in `tools/covers/blog.js` (1280×720).
+  - **Episode 1:** 667 s, 239 captions, 11 chapters, 29 MB, with the note "Recorded
+    September 29, 2026. The market figures are from July 2026."
+
+**Failed, and what was done**
+- **Numbers as words.** The first captions showed "three thousand dollars" and "two-point-one
+  percent", because the transcriber writes numbers as words. Added `digits()`; tested on
+  amounts, percentages, years, "a hundred and eighty" and "twenty-four".
+- **Small captions.** At 50 px they were too small for a phone; now 66 px with shorter cues.
+- **Missing chapter.** The market chapter didn't appear: the heading was re-worded after
+  recording. Headings now fall back to their first three words.
+- **Repeated title on the frame.** The right panel repeated the art's show name and title;
+  it now shows only the episode number.
+- **Link wrapping.** The end slide's link wrapped mid-word; it is now kept on one line.
+
+**Found**
+- Episode 1 (recorded 29 Sep, spot-checked then, before `--full` was the rule): the
+  transcriber hears "20,163" at 7:51 (text: 20,863) and "one hour" at 2:42 (text: $1.00), the
+  same twice. Flagged to the owner to listen to; the captions show the text's figures.
+
+**Open**
+- Ask whether Erika has a Google Business Profile, and where her Instagram bio should point.
+- Pack 2 and YouTube episode 2 next.
+
+---
+
 ## 2026-10-19 — HUD homes article; podcast episode 6 hand-over
 
 **Asked.** "Post a new blog and give me episode 6."
