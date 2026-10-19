@@ -7,6 +7,45 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-19 — HUD homes article; podcast episode 6 hand-over
+
+**Asked.** "Post a new blog and give me episode 6."
+
+**Done**
+- **Article** `/blog/buying-a-hud-home` (`/hud-homes`, Buying): "Your first home could be a
+  foreclosure. Here's how HUD homes work."
+  - Built around her unused closing-day reel `DbXJNqdPo6y` ("celebrating a first-time
+    homebuyer who scored an incredible foreclosure deal"). The caption doesn't say what
+    kind of foreclosure, so the article never says her client bought a HUD home.
+  - Facts all from hudhomestore.gov and its FAQ (read in full as a browser): where HUD
+    homes come from, the Lottery / Exclusive / Extended periods, who counts as an
+    owner-occupant, bidding through a HUD-registered broker, repair codes IN / IE / UI,
+    and Good Neighbor Next Door.
+  - Left out: Fannie Mae HomePath and "First Look" (every Fannie Mae page answered 403),
+    and "as is" as HUD's words (not in the pages read).
+  - Two new photos: B27, an old home being restored (body), and B28, keys handed over
+    (tile). Bold cover with her line "Behind every closing is a lot of strategy, patience,
+    and teamwork."; square art.
+  - Episode: 794 words, 271 s, levelled (-19.6 LUFS, peak -2.0 dB).
+- **Podcast episode 6** (relocating to Metro Atlanta) handed over. Its dated lines were
+  re-checked today: Census Reporter still shows ACS 2024 (32.4 minutes), and no pollen
+  count newer than the 14,801 record of March 2025 was found.
+
+**Failed, and what was done**
+- **The script said "a H U D home".** That reads wrongly aloud, so it was changed to
+  "an H U D" before recording. Lesson added to CLAUDE.md.
+- **The research row for the Lottery period lacked the quote** for "insured single-unit
+  homes in a revitalization area". The FAQ was re-read and the quote added.
+
+**Passed**
+- `check-article.mjs`: ALL PASS locally (whole blog) and live. Uploads byte-identical.
+- The full transcript matches the script.
+
+**Open**
+- Erika to read it.
+
+---
+
 ## 2026-10-16 — The perfect Atlanta weekend article; podcast episode 5 hand-over
 
 **Asked.** "Post a new blog for Erika for today, and give me the next episode."

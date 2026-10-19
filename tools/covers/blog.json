@@ -1,5 +1,15 @@
 [
   {
+    "slug": "buying-a-hud-home",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "Your first home could be a foreclosure. Here’s how HUD homes work.",
+    "sub": "Behind every closing is a lot of strategy, patience, and teamwork.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b28-new-homeowner-holding-keys.jpg",
+    "refPos": "40% 45%"
+  },
+  {
     "slug": "the-perfect-atlanta-weekend",
     "template": "bold",
     "eyebrow": "Lifestyle",

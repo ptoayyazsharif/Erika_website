@@ -25,6 +25,114 @@
 return [
 
     [
+        // Researched around her closing-day reel DbXJNqdPo6y ("a first-time homebuyer who
+        // scored an incredible foreclosure deal"). HUD facts from HUD Homestore and its FAQ;
+        // Fannie Mae HomePath left out (unreadable). Every fact is listed with its source in
+        // tools/research/buying-a-hud-home.md.
+        'slug'           => 'buying-a-hud-home',
+        'title'          => 'Your first home could be a foreclosure. Here’s how HUD homes work.',
+        'seo_title'      => 'Buying a HUD Home as a First-Time Buyer: Owner-Occupant Bidding, Repair Codes and Good Neighbor Next Door',
+        'seo_desc'       => 'HUD homes give owner-occupants a head start on investors. How bidding works, what IN, IE and UI mean for your loan, and the 50% Good Neighbor discount.',
+        'excerpt'        => 'I handed keys to a first-time buyer who scored an incredible foreclosure deal. One kind of foreclosure is built to give people like her a head start: HUD homes. Here&rsquo;s how the bidding works, what the repair codes mean for your loan, and who gets 50% off.',
+        'date'           => '2026-10-19',
+        'updated'        => '2026-10-19',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['HUD homes', 'foreclosure', 'first-time buyer', 'FHA', 'Good Neighbor Next Door', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/buying-a-hud-home-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Your first home could be a foreclosure. Here&rsquo;s how HUD homes work.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@gustavo-fring" rel="nofollow noopener" target="_blank">Gustavo Fring</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/buying-a-hud-home.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'hud-homes',
+        'audio_secs'     => 271,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'What is a HUD home?',
+                'a' => 'A single-family home the Federal Housing Administration acquired through foreclosure, which HUD then sells. You can search them by state, city or ZIP code at HUDHomestore.gov.',
+            ],
+            [
+                'q' => 'Do owner-occupants get priority on HUD homes?',
+                'a' => 'Yes. HUD gives owner-occupants an Exclusive period with no investor bids: 15 days for insured homes and 5 days for uninsured ones. Investors can only bid in the Extended period that follows.',
+            ],
+            [
+                'q' => 'What do IN, IE and UI mean on a HUD listing?',
+                'a' => 'They tell you about FHA financing. IN: eligible for an FHA-insured loan as it is. IE: eligible with a repair escrow, for repairs estimated at no more than $10,000. UI: repairs estimated over $10,000, so not eligible for an FHA-insured loan unless a Section 203(k) loan can be arranged.',
+            ],
+            [
+                'q' => 'What is Good Neighbor Next Door?',
+                'a' => 'A HUD program for law enforcement officers, firefighters, emergency medical technicians and teachers: 50% off eligible homes in revitalization areas if you live there for three years. With an FHA-insured mortgage, the down payment is only $100.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>A morning of negotiating offers. An afternoon handing over keys. That was one of my days, celebrating a first-time homebuyer who scored an incredible foreclosure deal.</p>
+
+<p>You might think foreclosures are only for investors with cash. Some of them are built to give you a head start. Let me explain one kind: <strong>HUD homes</strong>.</p>
+
+<h2>What a HUD home is</h2>
+
+<p>When a home with an FHA-insured mortgage goes through foreclosure, the Federal Housing Administration can end up owning it, and HUD sells it. HUD describes these as single-family homes &ldquo;acquired by the Federal Housing Administration (FHA) as a result of foreclosure.&rdquo; <a href="https://www.hudhomestore.gov/" target="_blank" rel="noopener">[1]</a></p>
+
+<p>You can search every listing by state, city or ZIP code at <a href="https://www.hudhomestore.gov/" target="_blank" rel="noopener">HUDHomestore.gov</a>. <a href="https://www.hudhomestore.gov/" target="_blank" rel="noopener">[1]</a></p>
+
+<h2>Now here&rsquo;s the important part: you go before the investors</h2>
+
+<p>HUD sorts its listings into periods, and the order matters. <a href="https://www.hudhomestore.gov/FAQ" target="_blank" rel="noopener">[2]</a></p>
+
+<ul>
+<li><strong>Exclusive period: no bidding for investors.</strong> 15 days for insured homes and 5 days for uninsured ones. This is your window.</li>
+<li><strong>Lottery period (7 days).</strong> Uninsured homes start here, and so do insured single-unit homes in a revitalization area.</li>
+<li><strong>Extended period.</strong> Up to 180 days, or open-ended. This is the only period in which investors can bid.</li>
+</ul>
+
+<p>To bid as an owner-occupant, you must not have bought a HUD home as an owner-occupant in the past two years. <a href="https://www.hudhomestore.gov/FAQ" target="_blank" rel="noopener">[2]</a></p>
+
+<h2>You can&rsquo;t bid alone</h2>
+
+<p>HUD only takes offers through a HUD-registered selling broker or agent. <a href="https://www.hudhomestore.gov/" target="_blank" rel="noopener">[1]</a> <a href="https://www.hudhomestore.gov/FAQ" target="_blank" rel="noopener">[2]</a> Your agent submits the bid for you, and you can follow its status under My Bids on HUDHomestore.gov. <a href="https://www.hudhomestore.gov/FAQ" target="_blank" rel="noopener">[2]</a></p>
+
+[[img:assets/photos/17/b27-restoring-old-home-interior.jpg|A woman working on an old house mid-renovation, by a wooden staircase|Photo by <a href="https://www.pexels.com/@monica" rel="nofollow noopener" target="_blank">Monica Silvestre</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Read the repair code before you fall in love</h2>
+
+<p>Every HUD listing tells you how it can be financed, and that tells you a lot about its condition. <a href="https://www.hudhomestore.gov/FAQ" target="_blank" rel="noopener">[2]</a></p>
+
+<ul>
+<li><strong>IN, insurable:</strong> eligible for an FHA-insured loan in its current condition.</li>
+<li><strong>IE, insurable with repair escrow:</strong> needs repairs estimated at no more than $10,000; an FHA loan works if your lender sets up a repair escrow at closing.</li>
+<li><strong>UI, uninsured:</strong> needs repairs estimated at more than $10,000; not eligible for an FHA-insured loan unless a Section 203(k) loan can be arranged.</li>
+</ul>
+
+<p>Those are estimates. Get your own inspection, and get your financing lined up before you bid, because the loan you can use depends on that code.</p>
+
+<h2>Teachers, officers, firefighters and EMTs: read this twice</h2>
+
+<p>HUD&rsquo;s <strong>Good Neighbor Next Door</strong> program is for law enforcement officers, firefighters, emergency medical technicians and teachers. On eligible homes in revitalization areas, HUD gives a <strong>50% discount</strong> off the list price if you live in the home for three years. <a href="https://www.hudhomestore.gov/" target="_blank" rel="noopener">[1]</a></p>
+
+<p>The discount applies to bids in the Lottery period, and if you qualify for an FHA-insured mortgage, your down payment is only $100 and you may finance your closing costs. <a href="https://www.hudhomestore.gov/FAQ" target="_blank" rel="noopener">[2]</a></p>
+
+<h2>Strategy, patience and teamwork</h2>
+
+<p>Behind every closing is a lot of strategy, patience, and teamwork. If you&rsquo;re a first-time buyer in Metro Atlanta and want to know whether a HUD home could be your way in, <a href="/contact">let&rsquo;s talk</a>. And if you already own, find out <a href="/home-value">what your home is worth</a>.</p>
+
+<p>So that&rsquo;s buying a HUD home, explained.</p>
+
+<p><em>This article explains how HUD&rsquo;s home sales generally work, from HUD&rsquo;s own site. Periods, programs and rules can change: check HUDHomestore.gov and each listing before you rely on them. It isn&rsquo;t legal or financial advice.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>U.S. Department of Housing and Urban Development, <a href="https://www.hudhomestore.gov/" target="_blank" rel="noopener">HUD Homestore</a>.</li>
+<li>U.S. Department of Housing and Urban Development, <a href="https://www.hudhomestore.gov/FAQ" target="_blank" rel="noopener">HUD Homestore Help / FAQ</a>.</li>
+<li>Erika K. Page, closing-day reel and caption (2026), her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Built from her Atlanta-weekend videos and reels (erika-explains-perfect-
         // atlanta-weekend, atlanta-this-weekend, phipps-green-fridays, atlantas-rooftops;
         // reels DbMgF1chCj1, Da6I7GNh-2C, Dbe3bbbgb0c, DaoAvpmB1DG). Only year-round places

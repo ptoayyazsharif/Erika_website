@@ -88,6 +88,7 @@ Google AI Studio is still outstanding.
 | `wall-street-homebuying-ban-explained` | Buying | `/wall-street` | none — researched around her "Banning Wall Street homebuying" video (14 Oct): H.R. 6644 Sec. 1001 as enrolled, EO 14376, GAO (Atlanta 25%), Urban Institute. ★ Ban starts 7 Jan 2027 |
 | `not-everyone-needs-a-degree` | Lifestyle | `/trades` | none — researched around her four-part Home Depot "Path to Pro" series (15 Oct): Home Depot's 2026 releases, BLS pay (May 2025), Georgia's HOPE Career Grant. Her "$75k–150k" is quoted as hers beside the BLS medians |
 | `the-perfect-atlanta-weekend` | Lifestyle | `/weekend` | none — from her Atlanta-weekend videos and reels (16 Oct): year-round places only (Ponce City Market, the BeltLine, Buckhead, Madison); Beltline, Ponce and Visit Madison sites. Shorter episode (232 s): a short source makes a short episode |
+| `buying-a-hud-home` | Buying | `/hud-homes` | none — researched around her closing-day reel ("first-time homebuyer who scored an incredible foreclosure deal", 19 Oct): HUD Homestore and its FAQ — listing periods, owner-occupant rules, repair codes, Good Neighbor Next Door. The reel never says HUD, so the article never says her client bought one |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -302,6 +303,8 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
    `stt-check.py <mp3> --full` — the whole episode in one call — and read it against the
    script: every seam, every date, bill or percentage, and the ending. (Windowed `--at`
    checks are for a single passage you've regenerated.)
+   Write "an" before a spelled-out acronym that starts with a vowel sound ("an H U D home",
+   19 Oct); "a H U D" reads wrongly aloud.
    ElevenLabs' transcriber writes "Erica"; the voice says her name correctly. It also
    writes "Axon Realty" for Axen (the same sound). Spell out acronyms the voice might
    read as a word: "HUD" came back "SHUDI" (14 Oct), so write "the Department of Housing
@@ -479,12 +482,15 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1–5 were handed over on 12–16 Oct (closing costs, owning vs investing, know
-  your house, cash is king, homestead). Next is 6: relocating to Metro Atlanta.
+  Episodes 1–6 were handed over on 12–19 Oct (closing costs, owning vs investing, know
+  your house, cash is king, homestead, relocating). Next is 7: leasing a restaurant space.
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
+- **For Erika to review:** the HUD homes article and episode (19 Oct). Her closing-day
+  caption opens it and her line closes it; everything about HUD is from hudhomestore.gov.
+  ★ Re-check the listing periods and Good Neighbor Next Door terms before re-using them.
 - **For Erika to review:** the Atlanta-weekend article and episode (16 Oct): her lines,
   lightly arranged into one itinerary. Phipps Plaza's Screen on the Green is given in her
   words with "check the current schedule" (no official 2026 schedule could be read).
