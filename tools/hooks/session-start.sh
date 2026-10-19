@@ -6,8 +6,9 @@
 #   * the newest entry of SESSION-LOG.md (what the last session did, what failed);
 #   * the "Open items" list from CLAUDE.md.
 cd "$(dirname "${BASH_SOURCE[0]}")/../.." 2>/dev/null || exit 0
-DEFAULT="$(git symbolic-ref -q --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
-DEFAULT="${DEFAULT:-claude/client-website-ux-ra0p3o}"
+# The one branch everything ends up in (the owner's rule; main since 19 Oct 2026). Pinned
+# rather than read from origin/HEAD, which a clone can leave pointing at a session branch.
+DEFAULT="main"
 timeout 20 git fetch -q origin "$DEFAULT" 2>/dev/null
 BR="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 

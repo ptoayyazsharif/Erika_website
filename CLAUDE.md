@@ -39,17 +39,38 @@ branch, or site changes newer than the last log entry.
 
 ## Branch — one branch, read first
 
-**The default branch, `claude/client-website-ux-ra0p3o`, is the single source of
-truth** (the owner's rule, 2 Oct 2026: "always use the default branch… always merge the
-new branches so the default is updated"). It holds the live PHP site; the old static
-mockup was merged in and retired that day.
+**`main` is the default branch and the single source of truth** (the owner's rule: "always
+use the default branch… always merge the new branches so the default is updated", 2 Oct
+2026; on 19 Oct 2026: "make a main branch and all things in one place"). It holds the live
+PHP site at the root and the owner's other projects in their own folders (next section).
 
-- Whatever branch a session is given, start with `git fetch origin
-  claude/client-website-ux-ra0p3o && git merge origin/claude/client-website-ux-ra0p3o`.
-- End every piece of work by bringing the default up to it — `git push origin
-  HEAD:claude/client-website-ux-ra0p3o` (a fast-forward once the default is merged in)
-  — and pushing the session branch too.
+- Whatever branch a session is given, start with `git fetch origin main && git merge
+  origin/main`.
+- End every piece of work by bringing `main` up to it — `git push origin HEAD:main` (a
+  fast-forward once `main` is merged in) — and pushing the session branch too.
 - Plain merges only. Never force-push, never rewrite history.
+- The old branches are kept as they were (the owner's choice, 19 Oct 2026), and are
+  fully merged into `main`. Their last commits on that day:
+  `claude/client-website-ux-ra0p3o` c874d58b923e (the default until then),
+  `claude/escalate-app-bugs-l73sgw` d612bda253c0, `claude/erika-manifestation-demo-jgjpch`
+  f6356a9b1db1, `claude/ask-erika` 7b65ccfb1550, `claude/erika-website-photos-6p20hw`
+  f0e589ed59dd, `claude/lite-cms` eee81b2d0a47.
+- **Don't delete `claude/escalate-app-bugs-l73sgw`:** escalate.cloud deploys from it
+  (`escalate/COOLIFY.md`).
+
+## Other projects in this repo — not the website
+
+Merged into `main` on 19 Oct 2026, each in its own folder. None is part of erikakpage.com:
+never pass them to `tools/deploy.sh`, and leave them out of a site zip.
+
+- `escalate/`: the Escalate app (escalate.cloud, Laravel). Its own notes are
+  `escalate/CLAUDE.md`. Its deploy follows `claude/escalate-app-bugs-l73sgw`, so Escalate
+  work goes there first and is merged into `main`, until the owner points Coolify at `main`.
+- `stella-demo/` and `manifest-n8n/`: the earlier manifestation demos.
+- `ask-erika/`: the "Ask Erika" coaching knowledge base, foundation only (`BRIEF.md`).
+- `docs/`: owner documents. `MEETING-2026-08-25-PENDING.md` is what's still waiting on
+  Erika from the August walkthrough, `PHOTO-PLACEMENT-GUIDE.md` the photo slots, and
+  `UPLOAD-THIS-README.txt` the install note that goes at the root of a site zip.
 
 ## Secrets — never commit them
 
@@ -192,8 +213,10 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
    - **The site zip is no longer committed** (14 Oct 2026). `dist/erikakpage-site.zip`
      reached 103 MB and GitHub refuses files over 100 MB; it only ever duplicated the
      tracked files, and its 27 committed copies are most of the repo's 2.1 GB history. The
-     copy in git is from 13 Oct. When the owner wants a zip, build it from the tracked
-     files (`git ls-files` minus `config.php` and `dist/`) into the scratchpad and send it.
+     copy in git's history is from 13 Oct; `dist/` is now ignored. When the owner wants a zip,
+     build it from the tracked files (`git ls-files` minus `config.php`, `escalate/`,
+     `stella-demo/`, `manifest-n8n/`, `ask-erika/` and `docs/`, with
+     `docs/UPLOAD-THIS-README.txt` placed at the zip's root) into the scratchpad and send it.
 8. **Podcast episode** — hand the owner the MP3 plus paste-ready title and
    description: the article and `/home-value` links, the line *"This episode is
    narrated with an AI voice trained on Erika's own. The words are hers."*, and the
@@ -534,6 +557,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
+- **Still waiting on Erika from the 25 Aug walkthrough** (`docs/MEETING-2026-08-25-PENDING.md`):
+  the speaker one-sheet PDF, the testimonial videos, her welcome video, the real Erika
+  Explains episode titles, and more gallery photos. The code for each is in place.
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. Next: pack 2 and YouTube episode 2 (owning vs investing),
   in date order, and one for every new article on its day. Ask the owner whether Erika has a

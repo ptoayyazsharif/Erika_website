@@ -7,6 +7,49 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-19 (evening) — One `main` branch with everything in it
+
+**Asked.** "Merge, make a main branch, and all things in one place instead of all the
+clutter." The owner chose: the other projects go into `main` as folders, and the old branches
+are kept.
+
+**Done**
+- **`main` created** from the website's default (`claude/client-website-ux-ra0p3o`, c874d58b923e)
+  and made the GitHub default branch.
+- **Merged into it:**
+  - `claude/escalate-app-bugs-l73sgw` (d612bda253c0): the Escalate app, the Stella demo and
+    the n8n flow, in `escalate/`, `stella-demo/` and `manifest-n8n/`. It already contained
+    `claude/erika-manifestation-demo-jgjpch` (f6356a9b1db1).
+  - `claude/ask-erika` (7b65ccfb1550, its own unrelated history) into `ask-erika/`, so it
+    doesn't land on the website's `lib/` and `tests/`.
+  - `claude/erika-website-photos-6p20hw` and `claude/lite-cms` were already in.
+- **Conflicts resolved:**
+  - the website's root `CLAUDE.md` and `README.md` won;
+  - Escalate's project notes moved to `escalate/CLAUDE.md`, with their links made relative;
+  - the two `.gitignore` files were combined.
+- **Clutter:**
+  - the stale 103 MB `dist/erikakpage-site.zip` (from 13 Oct) left the tree, and `dist/` is
+    ignored;
+  - the August meeting list, the photo placement guide and the zip's install README moved
+    into `docs/`;
+  - the meeting's waiting items are now in CLAUDE.md's open items.
+- **Hooks** are pinned to `main`. They used to read `origin/HEAD`, which in this clone pointed
+  at the session branch.
+- **README and CLAUDE.md** describe `main`, the folders, and the zip rule (leave the other
+  projects out).
+- No secrets in the merged projects (pattern scan of both branches).
+
+**Not changed**
+- Every old branch is kept as it was.
+- `claude/escalate-app-bugs-l73sgw` must stay: escalate.cloud's Coolify deploy follows it
+  (`escalate/COOLIFY.md`).
+
+**Open**
+- When the owner wants Escalate deployed from `main`, Coolify's `git_branch` changes and its
+  base directory becomes `escalate/`. That is the owner's step.
+
+---
+
 ## 2026-10-19 (later) — Social post packs and YouTube videos: the tools, and the first of each
 
 **Asked.** "A social post pack for each article: 3 captions, a 5-slide carousel in her Bold

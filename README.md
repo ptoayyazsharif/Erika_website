@@ -274,8 +274,25 @@ Checking articles: `NODE_PATH=/opt/node22/lib/node_modules node tools/check-arti
 
 ## Branches
 
-- `claude/client-website-ux-ra0p3o` — **the default branch and the single source of
-  truth**: the live PHP site. (It held the original static mockup until 2 Oct 2026, when
-  the live work was merged into it.) Any other branch is merged back into it.
+- `main` — **the default branch and the single source of truth** (since 19 Oct 2026).
+  It holds the live PHP site at the root and, each in its own folder, the owner's other
+  projects (see "Other projects in this repo" below). Every session branch is merged back
+  into it. Until then the default was `claude/client-website-ux-ra0p3o`; it and the older
+  `claude/…` branches are kept as they were.
 - `CLAUDE.md` is the working runbook and `SESSION-LOG.md` the history of what each
   session did, passed and failed; hooks in `.claude/settings.json` keep both current.
+
+## Other projects in this repo
+
+They came from their own branches on 19 Oct 2026 and sit beside the website. None of them
+is part of the site: never upload them with `tools/deploy.sh`, and leave them out of a site
+zip.
+
+| Folder | What it is | Notes |
+|---|---|---|
+| `escalate/` | Escalate, the manifestation-journal app live at escalate.cloud (Laravel) | `escalate/CLAUDE.md`. **Its live deploy still follows `claude/escalate-app-bugs-l73sgw`**, so don't delete that branch |
+| `stella-demo/` | Manifest, the earlier PHP manifestation demo | `stella-demo/README.md` |
+| `manifest-n8n/` | the n8n workflow version of it | `manifest-n8n/README.md` |
+| `ask-erika/` | "Ask Erika", a coaching knowledge base, started 24 Jul 2026 (foundation only) | `ask-erika/BRIEF.md` |
+| `docs/` | owner documents: the 25 Aug meeting's pending list, the photo placement guide, the zip's install README | |
+

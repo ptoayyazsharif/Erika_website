@@ -17,8 +17,9 @@ case "$input" in *'"stop_hook_active":true'*|*'"stop_hook_active": true'*) exit 
 cd "$(dirname "${BASH_SOURCE[0]}")/../.." 2>/dev/null || exit 0
 git rev-parse --git-dir >/dev/null 2>&1 || exit 0
 
-DEFAULT="$(git symbolic-ref -q --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
-DEFAULT="${DEFAULT:-claude/client-website-ux-ra0p3o}"
+# The one branch everything ends up in (the owner's rule; main since 19 Oct 2026). Pinned
+# rather than read from origin/HEAD, which a clone can leave pointing at a session branch.
+DEFAULT="main"
 problems=()
 
 [ -n "$(git status --porcelain 2>/dev/null)" ] && problems+=("uncommitted changes (git status) — commit them")

@@ -77,6 +77,6 @@ NOTHING IN THE ADMIN IS NEEDED FOR THE ARTICLE
   files are uploaded. Editing it afterwards in the admin is optional.
 
 STILL WAITING ON ERIKA
-  See MEETING-2026-08-25-PENDING.md in this zip - the one-sheet PDF, the
+  See docs/MEETING-2026-08-25-PENDING.md in this zip - the one-sheet PDF, the
   testimonial videos, the welcome video, the Erika Explains topic list, and
   the rest of the gallery photos.
