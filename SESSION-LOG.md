@@ -7,6 +7,25 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-19 (night) — Erika's meeting with her VA: packs for the top articles only
+
+**Asked.** The VA shared Erika's 19 Oct meeting notes and asked for every repo and her second brain
+to be brought up to date.
+
+**Done**
+- *Social post pack and YouTube video* rewritten: packs for the **top 6–7 articles** by original
+  reel traction only, a CTA in every caption, Erika approves first, about one a week, LinkedIn not
+  daily; YouTube for every episode; podcast links Apple first, Spotify second, never Amazon Music.
+- Open items updated to match.
+- In `ceo_erika`: the meeting went into `memory/` (14 new notes), and `STATUS.md` now holds every
+  project's progress, the links and the task list. The 15 blog-record commits made by this repo's
+  loop on `claude/erika-ai-memory-system-73dbz0` had never reached `ceo_erika`'s `main`; merged.
+
+**Open**
+- Re-pull current reel views, then build packs 2–7 in ranking order and send them to Erika.
+
+---
+
 ## 2026-10-19 (evening) — One `main` branch with everything in it
 
 **Asked.** "Merge, make a main branch, and all things in one place instead of all the

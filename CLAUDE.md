@@ -247,8 +247,26 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
 
 The owner's instruction (19 Oct 2026): every new blog also gets a **social post pack** and
 its podcast episode a **YouTube video**. The owner posts and uploads; we make the files.
-Started with the first article and episode 1 (closing costs). Hand them over in order,
-like the RSS.com episodes. Outputs go to `exports/` (git-ignored); zip each and send.
+Started with the first article and episode 1 (closing costs). Outputs go to `exports/`
+(git-ignored); zip each and send.
+
+**Narrowed by Erika the same day** (her meeting with the VA, 19 Oct; `ceo_erika`
+`memory/business/carousels-top-articles`): **not a pack for every article.**
+- Rank the articles by how well the **original reel** did and make packs for the **top six or
+  seven** only. The provisional ranking (from the 15 Sep Instagram numbers) is in `ceo_erika`
+  `STATUS.md`: weekend, restaurant, relocating, homestead, owning vs investing, open house, then
+  rollback or HUD. Re-pull current views first.
+- **Every caption has a call to action** that leads toward her goal of $20,000 a month
+  (`memory/business/twenty-k-a-month`), and each platform gets its own caption.
+- **Erika sees the slides and captions before anything posts.**
+- About **one carousel a week**; LinkedIn more often but **never daily**. Never several of the
+  same format in a row on her grid.
+- Five slides is deliberate: each slide is also reused as a story, a static post, or a frame she
+  narrates over.
+- **YouTube videos still go out for every episode**, in order, from 19 Oct.
+- **Podcast links: Apple Podcasts first, Spotify second, never Amazon Music**, in any caption,
+  card or QR code (Apple https://podcasts.apple.com/podcast/id6822448035, Spotify
+  https://open.spotify.com/show/1yBRzP6unSx9jrUsofuPs4).
 
 **Social post pack**: `tools/social/<slug>.json` holds the words, then
 `NODE_PATH=/opt/node22/lib/node_modules node tools/social/pack.js <slug>`.
@@ -564,8 +582,10 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   the speaker one-sheet PDF, the testimonial videos, her welcome video, the real Erika
   Explains episode titles, and more gallery photos. The code for each is in place.
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
-  episode 1 handed over on 19 Oct. Next: pack 2 and YouTube episode 2 (owning vs investing),
-  in date order, and one for every new article on its day. Ask the owner whether Erika has a
+  episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
+  traction (see the section above), Erika approves each before posting. **YouTube:** episode 2
+  next (owning vs investing), then every episode in date order. Erika has to verify her YouTube
+  account. Ask the owner whether Erika has a
   Google Business Profile, and whether her Instagram bio should point to the blog.
 - **Episode 1's audio, to listen to** (found by the YouTube captions' listen-back, 19 Oct):
   at 7:51 the transcriber hears "twenty thousand one hundred and sixty-three" active listings
