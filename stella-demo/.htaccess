@@ -1,0 +1,18 @@
+# Serve index.html when someone opens the folder itself.
+# Without this, GoDaddy answers /stella-demo/ with 403 Forbidden.
+DirectoryIndex index.html index.php
+
+Options -Indexes
+
+# Generated narration is served straight from disk.
+<IfModule mod_mime.c>
+  AddType audio/wav  .wav
+  AddType audio/mpeg .mp3
+</IfModule>
+
+# The reading never changes once it is cached — let the browser keep it.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType audio/wav  "access plus 30 days"
+  ExpiresByType audio/mpeg "access plus 30 days"
+</IfModule>

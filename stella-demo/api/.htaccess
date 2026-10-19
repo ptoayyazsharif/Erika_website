@@ -1,0 +1,19 @@
+# TTS can take a while on a cold generation — give it room on cPanel.
+<IfModule mod_php.c>
+  php_value max_execution_time 120
+  php_value default_socket_timeout 120
+</IfModule>
+<IfModule lsapi_module>
+  php_value max_execution_time 120
+</IfModule>
+
+# config.php holds your keys. It is PHP so it is never served as text,
+# but block direct hits anyway — belt and braces.
+<Files "config.php">
+  Require all denied
+</Files>
+<Files "lib.php">
+  Require all denied
+</Files>
+
+Options -Indexes

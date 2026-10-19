@@ -1,0 +1,44 @@
+# ============================================================================
+# Deny everything.
+#
+# This file exists because of one very likely cPanel mistake. The correct setup
+# points the domain's document root at escalate/public. But the repository root
+# already contains an index.html, so the natural thing to do is point
+# public_html at the repo root and reach the app at /escalate/ — and then
+# Apache happily serves this directory as plain files:
+#
+#   /escalate/.env                        → live API keys AND the APP_KEY
+#   /escalate/database/database.sqlite    → the whole database
+#   /escalate/storage/logs/laravel.log    → every stack trace
+#   /escalate/storage/app/escalate/…mp3   → every user's narration, bypassing
+#                                           the ownership check entirely
+#
+# Apache does not block .env by default — only .ht* files. And the APP_KEY
+# sitting next to the database is what makes this catastrophic rather than
+# merely bad: every `encrypted` cast in this app is decryptable by anyone
+# holding both, so the encryption at rest buys nothing against this one
+# misconfiguration.
+#
+# Nothing outside public/ is ever meant to be fetched over HTTP, so the safe
+# rule is a blanket denial here. public/.htaccess re-opens exactly what the
+# front controller needs.
+#
+# This is defence in depth, not the fix. Still set the document root to
+# escalate/public, and verify with:  curl -i https://your-domain/escalate/.env
+# ============================================================================
+
+# Apache 2.4 (cPanel)
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+# Apache 2.2 fallback
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
+
+# Directory listings, in case a future module ordering lets a request through.
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>

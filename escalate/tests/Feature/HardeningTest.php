@@ -1,0 +1,298 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Narration;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+
+/**
+ * Regressions for findings an adversarial review turned up.
+ *
+ * Each of these was a real defect that no existing test would have caught, and
+ * each would come back silently.
+ */
+class HardeningTest extends TestCase
+{
+    use RefreshDatabase;
+
+    /**
+     * The header that renders a plain-HTTP deployment unusable.
+     *
+     * `upgrade-insecure-requests` was sent unconditionally. asset() builds
+     * absolute URLs from APP_URL, so on an http:// origin the browser was
+     * handed http://host/css/app.css and told to fetch it over https, where
+     * nothing was listening — every stylesheet, script and font failed and the
+     * live site rendered as raw unstyled HTML.
+     *
+     * What made it expensive was how well it hid: the assets were served
+     * correctly, 200 with the right content type, and curl fetched them
+     * happily. Only a browser applies a CSP.
+     */
+    public function test_insecure_requests_are_only_upgraded_when_the_request_was_secure(): void
+    {
+        $plain = $this->get('/login')->headers->get('Content-Security-Policy');
+        $this->assertStringNotContainsString('upgrade-insecure-requests', $plain);
+
+        // Same condition HSTS uses, so assert they agree rather than drift.
+        $secure = $this->get('https://localhost/login');
+        $this->assertStringContainsString(
+            'upgrade-insecure-requests',
+            $secure->headers->get('Content-Security-Policy'),
+        );
+        $this->assertNotNull($secure->headers->get('Strict-Transport-Security'));
+    }
+
+    /**
+     * The directive that stranded everyone on "Taking you to Stripe…".
+     *
+     * Checkout is reached by POSTing a form here and being redirected out to
+     * Stripe, and browsers apply form-action to the redirect target as well as
+     * to the action attribute. With 'self' alone the POST succeeded, the 302
+     * came back, and the browser silently declined to follow it — the button
+     * span forever and the console blamed our own URL, so it read as a broken
+     * route rather than a header.
+     */
+    public function test_the_stripe_handoff_is_allowed_out_of_form_action(): void
+    {
+        $csp = $this->get('/login')->headers->get('Content-Security-Policy');
+
+        preg_match('/form-action ([^;]+)/', $csp, $m);
+        $this->assertNotEmpty($m, 'form-action is missing from the CSP entirely.');
+
+        $this->assertStringContainsString("'self'", $m[1]);
+        $this->assertStringContainsString('https://checkout.stripe.com', $m[1]);
+        $this->assertStringContainsString('https://billing.stripe.com', $m[1]);
+    }
+
+    /**
+     * And the exception stays an exception.
+     *
+     * form-action is the only directive allowed to name a third party. If a
+     * host ever appears in one of the others, it was either a mistake or the
+     * kind of change that deserves to be argued for rather than absorbed.
+     */
+    public function test_no_other_directive_admits_a_third_party(): void
+    {
+        $csp = $this->get('/login')->headers->get('Content-Security-Policy');
+
+        foreach (explode(';', $csp) as $directive) {
+            $directive = trim($directive);
+
+            if ($directive === '' || str_starts_with($directive, 'form-action')) {
+                continue;
+            }
+
+            $this->assertStringNotContainsString(
+                '//',
+                $directive,
+                "“{$directive}” names an external host. Only form-action may.",
+            );
+        }
+    }
+
+    public function test_a_forged_forwarded_header_cannot_change_the_client_ip(): void
+    {
+        // trustProxies used to be at:'*', which made $request->ip() whatever
+        // the caller put in X-Forwarded-For — collapsing the login lockout and
+        // every rate limit in the app.
+        $this->get('/login', ['X-Forwarded-For' => '1.2.3.4']);
+
+        $this->assertNotSame('1.2.3.4', request()->ip());
+    }
+
+    public function test_the_login_lockout_survives_a_rotating_source_address(): void
+    {
+        $user = $this->makeUser('locked@escalate.test');
+
+        // Six failures, each from a different address. The email+IP bucket is
+        // fresh every time; the email-only bucket is not.
+        for ($i = 0; $i < 6; $i++) {
+            $this->post(route('login.store'), [
+                'email' => 'locked@escalate.test',
+                'password' => 'wrong-'.$i,
+            ], ['X-Forwarded-For' => "10.0.0.{$i}"]);
+        }
+
+        // The correct password must still be refused while the lockout holds.
+        $this->post(route('login.store'), [
+            'email' => 'locked@escalate.test',
+            'password' => 'a-long-enough-password-1',
+        ])->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+    }
+
+    public function test_the_gratitude_page_never_loads_an_unbounded_number_of_entries(): void
+    {
+        $user = $this->makeUser('many@escalate.test');
+        $window = \App\Http\Controllers\GratitudeController::SEARCH_WINDOW;
+
+        foreach (range(1, $window + 5) as $i) {
+            $user->gratitudeEntries()->create([
+                'body' => "Entry number {$i}",
+                'for_date' => today()->subDays($i % 300),
+            ]);
+        }
+
+        $response = $this->actingAs($user)->get(route('gratitude.index'))->assertOk();
+
+        // Every row is decrypted and rendered, so an unbounded query is a
+        // memory fatal on shared hosting, not just a slow page.
+        $this->assertLessThanOrEqual($window, $response->viewData('grouped')->flatten()->count());
+        $this->assertTrue($response->viewData('truncated'));
+        $response->assertSee('most recent');
+    }
+
+    public function test_array_query_parameters_do_not_crash_the_gratitude_page(): void
+    {
+        $user = $this->makeUser('arr@escalate.test');
+
+        // Casting ?q[]=x to a string raised a PHP warning, which Laravel turns
+        // into an ErrorException — a 500 any signed-in user could spam.
+        $this->actingAs($user)->get('/gratitude?q[]=x')->assertOk();
+        $this->actingAs($user)->get('/gratitude?tag[]=x')->assertOk();
+    }
+
+    public function test_like_wildcards_in_a_tag_filter_are_not_treated_as_wildcards(): void
+    {
+        $user = $this->makeUser('wild@escalate.test');
+
+        $user->gratitudeEntries()->create(['body' => 'VISIBLE', 'tags' => ['work'], 'for_date' => today()]);
+        $user->gratitudeEntries()->create(['body' => 'ALSOVISIBLE', 'tags' => ['home'], 'for_date' => today()]);
+
+        // An unescaped % would match every tagged entry, quietly turning a
+        // filtered page back into the unbounded one.
+        $this->actingAs($user)->get(route('gratitude.index', ['tag' => '%']))
+            ->assertOk()
+            ->assertDontSee('VISIBLE')
+            ->assertDontSee('ALSOVISIBLE');
+    }
+
+    public function test_deleting_one_narration_does_not_destroy_audio_another_still_uses(): void
+    {
+        Storage::fake('private');
+
+        $user = $this->makeUser('shared@escalate.test');
+        $storyA = $this->makeReadyStory($user);
+        $storyB = $this->makeReadyStory($user);
+
+        $a = $this->makeReadyNarration($storyA, 'still', 'shared-hash');
+
+        // The dedupe in NarrateStory points a second row at the same file when
+        // the content hash matches — that is what stops a user paying twice.
+        $b = Narration::query()->make();
+        $b->forceFill([
+            'story_id' => $storyB->id, 'user_id' => $user->id, 'voice' => 'still',
+            'state' => 'ready', 'path' => $a->path, 'content_hash' => 'shared-hash',
+        ])->save();
+
+        $b->delete();
+
+        // A's audio must survive B's deletion.
+        Storage::disk('private')->assertExists($a->path);
+        $this->assertTrue($a->fresh()->isReady());
+
+        // And once the last row goes, so does the file.
+        $a->fresh()->delete();
+        Storage::disk('private')->assertMissing($a->path);
+    }
+
+    public function test_json_responses_are_not_storable(): void
+    {
+        $user = $this->makeUser('json@escalate.test');
+        $story = $this->makeReadyStory($user);
+
+        // /stories/{id}/state returns the full text of a reading and is polled
+        // every couple of seconds; under Symfony's default those responses were
+        // written to the browser's disk cache in plaintext.
+        $cacheControl = $this->actingAs($user)
+            ->getJson(route('stories.state', $story))
+            ->assertOk()
+            ->headers->get('Cache-Control');
+
+        $this->assertStringContainsString('no-store', $cacheControl);
+        $this->assertStringContainsString('private', $cacheControl);
+    }
+
+    public function test_a_suspended_session_is_told_to_clear_itself(): void
+    {
+        $user = $this->makeUser('susp@escalate.test');
+        $user->forceFill(['suspended_at' => now()])->save();
+
+        // RejectSuspended intercepts POST /logout too, so the ordinary
+        // sign-out response never runs for this account.
+        $this->actingAs($user)->post(route('logout'))
+            ->assertRedirect(route('login'))
+            ->assertHeader('Clear-Site-Data', '"cache", "storage"');
+    }
+
+    public function test_asking_for_the_profile_twice_does_not_try_a_second_insert(): void
+    {
+        $user = $this->makeUser('twice@escalate.test');
+        $user->profile()->delete();
+        $user->unsetRelation('profile');
+
+        // create() does not populate the cached relation, so the second call
+        // used to attempt another INSERT and hit the unique index.
+        $first = $user->world();
+        $second = $user->world();
+
+        $this->assertSame($first->id, $second->id);
+        $this->assertSame(1, $user->profile()->count());
+    }
+
+    /**
+     * The suite must never be able to run against a real database.
+     *
+     * RefreshDatabase drops every table before each test, so this assertion is
+     * about data destruction rather than tidiness. phpunit.xml alone could not
+     * guarantee it: a plain <env> does not overwrite an already-set variable,
+     * and even force="true" rewrites only getenv() and $_ENV — never $_SERVER,
+     * which is the one Laravel's env() reads first. tests/bootstrap.php pins
+     * all three; this fails the moment that stops being true.
+     */
+    public function test_the_suite_can_never_be_aimed_at_a_real_database(): void
+    {
+        $this->assertSame(':memory:', config('database.connections.sqlite.database'));
+        $this->assertSame(':memory:', $_SERVER['DB_DATABASE'] ?? null);
+        $this->assertSame(':memory:', env('DB_DATABASE'));
+    }
+
+    /**
+     * `?thing[]=x` must never reach a string cast.
+     *
+     * An array parameter through a (string) cast — or through Laravel's own
+     * $request->string(), which builds a Stringable from it — raises a PHP
+     * warning the framework promotes to an ErrorException, and the result is a
+     * 500. On the two routes below that need no account, that is a 500 anyone
+     * can produce in a loop, filling the log until the disk is gone — and this
+     * app keeps its SQLite database on that same disk.
+     *
+     * The gratitude screen was hardened against this and grew a private helper;
+     * five other places had the same hole. This covers all of them.
+     */
+    public function test_array_query_parameters_never_produce_a_server_error(): void
+    {
+        // Public — no account needed to reach these.
+        $this->get('/register?invite[]=x')->assertOk();
+        $this->get('/reset-password/sometoken?email[]=x')->assertOk();
+
+        $user = $this->makeUser('arrays@escalate.test');
+
+        $this->actingAs($user)->get('/desires?status[]=z')->assertOk();
+        $this->actingAs($user)->get('/gratitude?q[]=x&tag[]=y')->assertOk();
+
+        $admin = $this->makeUser('arrayadmin@escalate.test');
+        $admin->forceFill(['role' => 'admin'])->save();
+
+        $this->actingAs($admin->fresh())
+            ->withSession(['admin.verified' => true, 'admin.verified_at' => now()->timestamp])
+            ->get('/admin/users?q[]=x')->assertOk();
+
+        $this->actingAs($admin->fresh())
+            ->withSession(['admin.verified' => true, 'admin.verified_at' => now()->timestamp])
+            ->post('/admin/settings/reset', ['key' => ['x']])->assertNotFound();
+    }
+}

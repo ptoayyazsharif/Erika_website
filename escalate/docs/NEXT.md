@@ -1,0 +1,273 @@
+# Where things stand, and what to do next
+
+Written at `c7401a9` plus the announcement notifications on top of it. This is
+the handover: read it first, then [`LAUNCH-PLAN.md`](LAUNCH-PLAN.md) if you need
+the reasoning behind a decision rather than the state of it.
+
+---
+
+## Live right now
+
+- 439 tests passing. `bash tests/push/real-send.sh` sends a real, signed,
+  encrypted notification to a stand-in push service and checks what arrived —
+  the one part of push nothing else exercises.
+- Public pages are **Ivory** — warm ivory ground, aubergine text. Body text
+  measures 14.37:1, muted 5.34:1, on a 390×844 phone.
+- Erika's doorway E is the mark, everywhere: public pages, signed-in topbar,
+  every admin page, and the admin door.
+- Invite-only is **on**. Email verification is **off**.
+- Stripe is in **test** mode.
+- **Admin → Testers** shows where each invited person actually got to
+  (invited → opened → signed up → wrote → active), with a Revoke that frees the
+  invite, waitlists the application and optionally emails them.
+- **Every email is worded from Admin → Settings → Emails**, including Laravel's
+  own password reset and verification. Structural parts — the invite code, the
+  buttons, the links — deliberately stay in the Blade files.
+- **Admin → Announcements** reaches everybody three ways, chosen per message: a
+  dismissible banner in the app, an email with a working unsubscribe, and a
+  notification on their phone. Each send is its own deliberate press and each is
+  guarded against a double press.
+- **A daily reminder by web push**, hourly by the scheduler so each device gets
+  it at the chosen hour in its own timezone. `schedule:work` runs in the
+  container beside the queue worker.
+
+---
+
+- **One voice, written down.** [`VOICE.md`](VOICE.md) is Erika's guide and the
+  source of truth for every string a user reads. `App\Support\Voice` holds the
+  fragments the three writers share, and `tests/Feature/VoiceTest.php` keeps it
+  from drifting back.
+
+---
+
+## Next, in the order I would do them
+
+### 1. Brand colours, editable from the admin — small, and asked for
+
+Erika's eight brand colours live in `config/escalate.php` under `escalate.brand`
+and are read by the theme blocks in `public/css/app.css`. **None of them is in
+`Settings::editable()`**, so changing a hex is still a code change and a deploy —
+which during a launch is the wrong shape, and is exactly the problem her copy
+fields already solved.
+
+- Add them to the `'How it looks'` group as `type => 'text'`, the same type
+  `Words on the public pages` uses. Config defaults stay the source of truth; an
+  admin row is a change of mind.
+- **`escalate.themes_offered` is also missing from the allowlist** — found while
+  writing this. `Theme::offered()` exists and is tested, including the guard that
+  an admin cannot hide a theme somebody is already using, but nothing in the
+  admin is wired to it. Same section, same fix, do them together.
+- **The caution that makes this worth doing carefully:** a colour box Erika can
+  type into is a colour box that can be made unreadable. Each field should render
+  a live swatch and a contrast reading against its own ground, so a bad value is
+  visible before it is saved rather than discovered by a tester.
+
+### 2. Per-screen light and dark — the largest piece of the brand brief
+
+Erika asked for everyday screens light, immersive screens dark, and the app does
+not do this. `Theme::forUser()` is four lines — the person's chosen theme, else
+the public one — with no notion of which screen it is on. The string `immersive`
+appears in no view.
+
+Both ends already exist: Ivory and Aubergine are complete palettes. What is
+missing is the thing that chooses between them.
+
+- `@section('surface', 'immersive')` on the reading, narration and Rewind views;
+  `Theme::forUser()` becomes surface-aware and resolves those to Aubergine while
+  everything else stays on Ivory.
+- Champagne (`--champagne`) gets bound to the remaining achievement states. It is
+  currently read by exactly one thing, `.pill-founding`.
+- **Decide deliberately whether a person's own theme choice still wins.** It
+  currently beats the public setting, and it is not obvious that it should beat a
+  per-screen decision — a light theme on a bedtime listening screen defeats the
+  point of the screen. This is a product question, not a technical one; ask.
+
+### 3. A logo uploader — real work, and not urgent
+
+Asked about, not built. There is **no file upload anywhere in the app** — zero
+`type="file"` inputs, no controller that handles an uploaded file. Escalate has
+never accepted a file from anyone.
+
+If it gets built, the two things that will bite:
+
+- **`public/brand/` is baked into the Docker image and wiped on every deploy.**
+  An uploaded logo has to live on the persistent volume the SQLite database
+  already uses, and be served through a route, or it silently vanishes on the
+  next ship.
+- **The container has no image library** — no Pillow, no ImageMagick, no sharp.
+  The colourway derivation and icon generation done for the current mark were run
+  through Chromium's canvas from this sandbox, which is not available to the app
+  at runtime.
+
+The cheap version that avoids both: admin uploads the files she already has —
+one for light grounds, one for dark, one square for icons — and the app serves
+what it is given, with no derivation. A quarter of the work and better results,
+because her own export always beats a recolour.
+
+---
+
+## Waiting on a human, not on code
+
+- **Turn on `REQUIRE_VERIFICATION`.** Still off, and it was only ever off because
+  mail did not send. Mail sends now. This should happen before real testers
+  arrive.
+- **Erika's own aubergine logo export.** The dark-on-light mark currently shipped
+  is her ivory artwork recoloured programmatically. It holds up at every size the
+  app uses, but her own export from the brand sheet would be better. Dropping it
+  in as `public/brand/mark-aubergine.png` is a one-file swap — nothing else
+  changes, because the palette points at the filename.
+- **Confirm inbound port 25 is open**, before self-hosted mail can receive. This
+  sandbox egresses on 80 and 443 only, so it cannot open an SMTP connection to
+  prove it. From a laptop: `nc -vz escalate.cloud 25`, or just send
+  `admin@escalate.cloud` a message and look for it at
+  <https://mail.escalate.cloud/webmail/>. (The `A` record for
+  `mail.escalate.cloud` was added on `2026-09-11` and the webmail has a real
+  certificate — that half is done.)
+- **Regenerate the ranch reading** on the live app. The fix for readings naming
+  people who do not exist shipped in `284525c`; that specific reading is still
+  the ruined one, and `stories.regenerate` on the reading screen replaces it.
+  It is the proof the fix worked.
+- **Stripe is in test mode.** Live keys and the webhook still to be set up before
+  anybody can actually pay.
+- **Confirm one real push notification on a real phone.** The PHP side, the
+  selection rules and the service worker are all tested; delivery to a device
+  needs a real push service and a real phone, which this sandbox has neither of.
+  Until somebody has seen one arrive, treat push as untested in the way that
+  matters. On iPhone it only works for an app installed to the home screen —
+  Safari does not deliver push to a browser tab, at any iOS version.
+- **Press “Generate the keys” once, under Settings → Reminders.** Notifications
+  need a keypair to sign with and there is nothing to set up beyond that button:
+  the pair is minted in the app and stored encrypted, so no environment variable
+  and no deploy. `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` still work as a
+  fallback for a server configured the old way, but nothing needs them now. Once
+  the keys exist the button disappears and the route refuses — see below.
+
+---
+
+## Things that will waste your time if you do not know them
+
+**Deploying.** Connection details are in [`../COOLIFY.md`](../COOLIFY.md), and
+have been rediscovered by guesswork twice — read the file rather than trying a
+plausible hostname. Two specifics:
+
+- The deploy endpoint is **POST**. `GET` returns
+  `{"message":"This endpoint has changed to a POST request."}`.
+- Coolify tracks `claude/escalate-app-bugs-l73sgw`. Pushing anywhere else does
+  not reach production, and a redeploy will happily rebuild the same old commit
+  and look successful.
+
+**A deploy does not touch the keys or anybody's notifications.** Asked, and
+worth having the answer written down:
+
+- The database is SQLite at `/var/www/html/storage/database/escalate.sqlite`, and
+  `docker/coolify-setup.sh` mounts `/var/www/html/storage` as a **persistent
+  volume**. A deploy replaces the container; the volume is not touched. The
+  settings rows holding the notification keys, and every `push_subscriptions`
+  row, are inside that file — along with every account and everything anybody has
+  written.
+- `docker/entrypoint.sh` runs `migrate --force` on boot and nothing that drops or
+  truncates.
+- The one thing that *would* destroy them is **changing `APP_KEY`**, because
+  settings values are encrypted with it. The entrypoint refuses to start without
+  one and deliberately never generates one; its own comment says why.
+
+So deploy freely. Erika presses Generate once, ever.
+
+**There is deliberately no “regenerate keys” button.** A second pair invalidates
+every device at once — each subscribed under the current public key, and the push
+service answers 403, which is not a code `Push` prunes on. So the screen offers
+it only when no keys exist, and `SettingsController::pushKeys()` refuses when
+they do, because hiding a button is not removing a hazard. Rotating a genuinely
+leaked key is still possible and deliberately slower: paste a pair into the two
+fields on that page, or drop the override with the reset link and press Generate
+again. `public/js/app.js` re-subscribes a device whose key no longer matches, on
+the next page it opens, which is what makes a hand rotation survivable.
+
+**A stored setting beats the config default.** `Settings::apply()` overlays
+database rows onto config at boot. Changing a default in `config/escalate.php`
+and deploying does *not* change a value that has been saved in the admin panel —
+this cost a cycle when the public theme stayed Amethyst after Ivory shipped as
+the default.
+
+**This sandbox cannot browser-test the live site.** Chromium reaches no external
+host — verified against `example.com`, which fails identically. `curl` works
+fine. So live verification is `curl` and reading HTML; browser checks run against
+a local server:
+
+```sh
+php artisan serve --host=127.0.0.1 --port=8112     # with a throwaway DB
+# Chromium at /opt/pw-browsers/chromium, PLAYWRIGHT_BROWSERS_PATH is preset
+```
+
+Do not imply a live page was seen in a browser. It was not.
+
+**The QA account is not an admin on production.** `/admin` and `/admin/login`
+both 404 for it, which is the app working as designed — the admin door is
+invisible to non-admins. Admin changes on production need Erika or a real admin
+account.
+
+**No image library in this sandbox either.** Pixel work goes through Chromium's
+canvas. Working scripts from the logo change are the pattern to copy: probe
+alpha and bounds, recolour, then render a sheet and *look at it*. Note that a
+`file://` image taints the canvas — inline it as a `data:` URI to read pixels.
+
+---
+
+## What shipped since, briefly
+
+`c4732ee` **Stage A** — the scheduler (`schedule:work` in supervisord, nothing
+recurring was possible before it), Admin → Testers, revoke, and suspend surfaced
+on the users list where it was findable.
+
+`c2af4f0` **Stage B** — every email editable from the admin panel. The finding:
+`Markdown::parse()` does **not** escape HTML. `html_input => 'escape'` appears in
+that file but on a branch the default path never takes, and a `<script>` an admin
+typed reached a rendered email. `App\Support\SafeMarkdown` is the fix and the
+place that reasoning now lives.
+
+`9a2591d` **Stage C** — announcements, in the app and by email, with a signed
+unsubscribe that works from a signed-out browser. Transactional mail deliberately
+ignores that opt-out.
+
+`c7401a9` **Stage D** — web push. `minishlink/web-push` v11 needs no `gmp`, so
+the Dockerfile did not change. Per-device timezone, dead subscriptions pruned on
+404/410. **Still unproven on a real phone** — see below.
+
+Notification keys moved out of the server environment and into Settings →
+Reminders, with a one-time button that mints a pair. Better held there than in a
+container's environment, which is plaintext to anything that can read it, while
+the settings table encrypts its values. The half that makes this safe is in
+`public/js/app.js`: a device whose key no longer matches re-subscribes silently
+on the next page load, so changing the pair is recoverable rather than a
+permanent, invisible break. `tests/browser/push-rekey.mjs` asserts that decision
+in all five states.
+
+Announcement notifications — the third destination on Admin → Announcements. The
+notification carries the announcement's real title and first line or two, which
+is the same lock-screen privacy rule as the daily reminder applied to different
+content: an announcement is admin-authored and sent to everybody, so there is
+nothing left for a passer-by to learn. Each announcement carries its own
+notification tag so a second one sits beside the first; the daily reminder keeps
+one fixed tag so three unread nudges never stack.
+`tests/browser/push-notifications.mjs` asserts both halves in a real worker.
+
+---
+
+## What shipped in the session before that, briefly
+
+`855d54b` Ivory and Aubergine palettes, `escalate.brand`, the iridescent
+gradient spent on exactly two things. Three incidental fixes fell out of it:
+Parchment had no `--ring` and was inheriting a focus ring nearly invisible on
+cream; `--brass` was set to the champagne hex on the brand themes, putting the
+reserved colour on every eyebrow in the app; and both new utilities were losing
+to `.btn`/`.pill` on source order, so the iridescent button rendered flat.
+
+`e2bfbb0` A hand-drawn doorway E, as an interim mark.
+
+`43d3d18` `coolify.escaluxe.com` recorded as a dead hostname, after it cost a
+deploy that was reported as blocked by the environment when it was not.
+
+`0014262` Erika's real artwork replaces the drawing. Master in
+`resources/brand/`, two colourways in `public/brand/`, `--mark-url` declared per
+theme so the token-parity test catches a theme that forgets, icons regenerated,
+lockups exported.
