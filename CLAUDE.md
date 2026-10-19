@@ -264,8 +264,8 @@ Started with the first article and episode 1 (closing costs). Outputs go to `exp
 - Five slides is deliberate: each slide is also reused as a story, a static post, or a frame she
   narrates over.
 - **YouTube videos still go out for every episode**, in order, from 19 Oct.
-- **Podcast links: Apple Podcasts first, Spotify second, never Amazon Music**, in any caption,
-  card or QR code (Apple https://podcasts.apple.com/podcast/id6822448035, Spotify
+- **Podcast links: Apple Podcasts first, Spotify second, never Amazon Music**, in any caption
+  or card (Apple https://podcasts.apple.com/podcast/id6822448035, Spotify
   https://open.spotify.com/show/1yBRzP6unSx9jrUsofuPs4).
 
 **Social post pack**: `tools/social/<slug>.json` holds the words, then

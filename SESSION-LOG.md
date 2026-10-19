@@ -24,6 +24,9 @@ to be brought up to date.
 **Open**
 - Re-pull current reel views, then build packs 2–7 in ranking order and send them to Erika.
 
+**Correction (same night).** The QR code she asked about was a one-off for the podcast-launch
+video, already fixed by the VA in CapCut. No QR-code rule here.
+
 ---
 
 ## 2026-10-19 (evening) — One `main` branch with everything in it
