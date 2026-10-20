@@ -110,6 +110,7 @@ Google AI Studio is still outstanding.
 | `not-everyone-needs-a-degree` | Lifestyle | `/trades` | none — researched around her four-part Home Depot "Path to Pro" series (15 Oct): Home Depot's 2026 releases, BLS pay (May 2025), Georgia's HOPE Career Grant. Her "$75k–150k" is quoted as hers beside the BLS medians |
 | `the-perfect-atlanta-weekend` | Lifestyle | `/weekend` | none — from her Atlanta-weekend videos and reels (16 Oct): year-round places only (Ponce City Market, the BeltLine, Buckhead, Madison); Beltline, Ponce and Visit Madison sites. Shorter episode (232 s): a short source makes a short episode |
 | `buying-a-hud-home` | Buying | `/hud-homes` | none — researched around her closing-day reel ("first-time homebuyer who scored an incredible foreclosure deal", 19 Oct): HUD Homestore and its FAQ — listing periods, owner-occupant rules, repair codes, Good Neighbor Next Door. The reel never says HUD, so the article never says her client bought one |
+| `listing-photos-and-drones` | Selling | `/listing-photos` | none — researched around her reel with her photographer, Jonathan Martinez (20 Oct): NAR's 2025 Profile (via Virginia REALTORS), Code of Ethics Article 12 ("a true picture", images), FAA Part 107 (Remote Pilot Certificate, registration, Remote ID). Her "25,000 buyers" line left out |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -306,6 +307,10 @@ Started with the first article and episode 1 (closing costs). Outputs go to `exp
   ("$445,000", "2.1%", "2026") before aligning. Where the recording really differs, the
   captions show what was said. **Read the printed list of differences before handing over:**
   it is also a listen-back of the episode.
+- A read-aloud episode narrated with `--numbered-label` (owning vs investing used
+  `Question`) needs the same `--numbered-label` here, or the captions show "1." where the
+  voice says "Question one" (20 Oct 2026).
+- The description carries the podcast links, Apple Podcasts first, then Spotify.
 - Settings every time: playlist "Erika Explains" set as a podcast; not made for kids;
   **altered or synthetic content: Yes** (an AI clone of a real person's voice); Education;
   English captions from the .srt.
@@ -626,8 +631,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1–6 were handed over on 12–19 Oct (closing costs, owning vs investing, know
-  your house, cash is king, homestead, relocating). Next is 7: leasing a restaurant space.
+  Episodes 1–7 were handed over on 12–20 Oct (closing costs, owning vs investing, know
+  your house, cash is king, homestead, relocating, restaurant space). Next is 8: the open
+  house is a sales event.
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
@@ -647,8 +653,8 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   Explains episode titles, and more gallery photos. The code for each is in place.
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
-  traction (see the section above), Erika approves each before posting. **YouTube:** episode 2
-  next (owning vs investing), then every episode in date order. Erika has to verify her YouTube
+  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–2
+  handed over (19–20 Oct); next is 3 (know your house), then every episode in date order. Erika has to verify her YouTube
   account. Ask the owner whether Erika has a
   Google Business Profile, and whether her Instagram bio should point to the blog.
 - **New pages proposed by Erika's AI review (19 Oct; `ceo_erika` `business/conversion-pathways`),
@@ -661,6 +667,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the
   voice did misread them, re-record the episode (it is on RSS.com, so the owner swaps the file).
   The captions show the text's figures.
+- **For Erika to review:** the listing-photos article and episode (20 Oct). Her reel with
+  Jonathan Martinez is quoted (he is named, as in her caption); the NAR and FAA facts are
+  researched. Her "over 25,000 buyers in our database" line is left out (no source).
 - **For Erika to review:** the HUD homes article and episode (19 Oct). Her closing-day
   caption opens it and her line closes it; everything about HUD is from hudhomestore.gov.
   ★ Re-check the listing periods and Good Neighbor Next Door terms before re-using them.

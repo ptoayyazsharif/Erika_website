@@ -157,5 +157,15 @@
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/b1-inspector-crawl-space.jpg",
     "refPos": "28% 50%"
+  },
+  {
+    "slug": "listing-photos-and-drones",
+    "template": "bold",
+    "eyebrow": "Selling",
+    "line": "Buyers scroll. Good photos stop the scroll.",
+    "sub": "Meet the man behind every photo you’ve ever seen on my listings.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b30-aerial-suburban-homes.jpg",
+    "refPos": "55% 55%"
   }
 ]

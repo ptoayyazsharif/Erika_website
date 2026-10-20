@@ -25,6 +25,115 @@
 return [
 
     [
+        // Researched around her reel DcKdzUiulyk with her photographer, Jonathan Martinez,
+        // flying a drone over a listing of a little over an acre. NAR (2025 Profile via
+        // Virginia REALTORS, Code of Ethics Article 12) and the FAA's Part 107 pages. Every
+        // fact is listed with its source in tools/research/listing-photos-and-drones.md.
+        'slug'           => 'listing-photos-and-drones',
+        'title'          => 'Buyers scroll. Good photos stop the scroll.',
+        'seo_title'      => 'Listing Photos and Drone Shots: Why They Sell Homes, “A True Picture”, and the FAA Rules',
+        'seo_desc'       => 'Most home searches start online. Why professional listing photos matter, what “a true picture” means for editing, and the FAA rules for real estate drones.',
+        'excerpt'        => 'Before anyone walks through your front door, they&rsquo;ve walked through your photos. Here&rsquo;s why professional listing photos matter, where editing has to stop, and what to ask before a drone goes up over your home.',
+        'date'           => '2026-10-20',
+        'updated'        => '2026-10-20',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'selling',
+        'tags'           => ['listing photos', 'real estate photography', 'drone photography', 'selling a home', 'Metro Atlanta', 'Part 107'],
+        'cover'          => 'assets/photos/17/listing-photos-and-drones-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Buyers scroll. Good photos stop the scroll.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@curtis-adams-1694007" rel="nofollow noopener" target="_blank">Curtis Adams</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/listing-photos-and-drones.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'listing-photos',
+        'audio_secs'     => 236,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Why do listing photos matter so much?',
+                'a' => 'Because the search usually starts online. In NAR&rsquo;s 2025 Profile of Home Buyers and Sellers, the home search most often began online, and buyers typically viewed a mix of online and in-person properties. Your photos are the first showing.',
+            ],
+            [
+                'q' => 'Can listing photos be edited?',
+                'a' => 'Editing can show a home at its best, but the REALTOR&reg; Code of Ethics requires &ldquo;a true picture&rdquo; in advertising, including images, and prohibits manipulating listing content in a way that produces a deceptive or misleading result.',
+            ],
+            [
+                'q' => 'Who can fly a drone over my home for the listing?',
+                'a' => 'Flying a drone for work or business falls under the FAA&rsquo;s Part 107 rules. The pilot needs a Remote Pilot Certificate, and the drone has to be registered and comply with Remote ID. Ask whoever flies it whether they hold the certificate.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Meet the man behind every photo you&rsquo;ve ever seen on my listings: Jonathan Martinez. He&rsquo;s camera shy, which is very funny for a man who points a camera at things for a living.</p>
+
+<p>I pulled up to a listing that&rsquo;s a little over an acre, and I hadn&rsquo;t ordered drone. He had it in the trunk anyway, because he just has his stuff with him all the time. That property was over an acre, and I wanted to show it.</p>
+
+<p>Buyers scroll. Good photos stop the scroll. Let me explain why that matters when you sell.</p>
+
+<h2>Your photos are your first showing</h2>
+
+<p>The National Association of REALTORS&reg; surveys recent buyers and sellers every year. Its 2025 Profile of Home Buyers and Sellers covers people who bought or sold between July 2024 and June 2025. <a href="https://www.nar.realtor/research-and-statistics/research-reports/highlights-from-the-profile-of-home-buyers-and-sellers" target="_blank" rel="noopener">[1]</a></p>
+
+<p>Most often, the home search began online. The median search took 10 weeks, and buyers typically viewed a mix of online and in-person properties. Real estate agents were still ranked the most useful source of information, by 85% of recent buyers. <a href="https://virginiarealtors.org/2025/12/08/key-takeaways-from-nars-2025-profile-of-home-buyers-and-sellers" target="_blank" rel="noopener">[2]</a></p>
+
+<p>So before anyone walks through your front door, they&rsquo;ve walked through your photos. If the photos don&rsquo;t stop them, they keep scrolling.</p>
+
+<h2>What professional photos get you</h2>
+
+<p>Here&rsquo;s what that gets you:</p>
+
+<ul>
+<li>professional, beautiful photos;</li>
+<li>fast delivery;</li>
+<li>properties that look amazing;</li>
+<li>under contract faster.</li>
+</ul>
+
+<p>That last one isn&rsquo;t a coincidence. Jonathan edits the photos, and he makes our properties look amazing, which is part of the reason why we can get them under contract so fast.</p>
+
+[[img:assets/photos/17/b29-drone-over-house.jpg|A camera drone hovering in front of a house|Photo by <a href="https://www.pexels.com/@matthew-529520" rel="nofollow noopener" target="_blank">Matthew</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Now here&rsquo;s the important part: edited is not the same as altered</h2>
+
+<p>Editing makes a home look its best. It can&rsquo;t show a home that isn&rsquo;t there.</p>
+
+<p>The REALTOR&reg; Code of Ethics says REALTORS&reg; &ldquo;shall present a true picture in their advertising, marketing, and other representations.&rdquo; That obligation includes images, and it prohibits &ldquo;manipulating&hellip; listing and other content in any way that produces a deceptive or misleading result.&rdquo; <a href="https://www.nar.realtor/about-nar/governing-documents/code-of-ethics/2025-code-of-ethics-standards-of-practice" target="_blank" rel="noopener">[3]</a></p>
+
+<p>That protects you too: what a buyer sees online should be what they find at the door.</p>
+
+<h2>When a drone earns its place</h2>
+
+<p>On a lot over an acre, the land is part of what you&rsquo;re selling. That&rsquo;s why I wanted it shown, and that&rsquo;s what the drone does.</p>
+
+<p>There are rules, though. A small drone under 55 pounds flown for work or business falls under the FAA&rsquo;s Part 107 rules. <a href="https://www.faa.gov/uas/commercial_operators" target="_blank" rel="noopener">[4]</a> To fly under Part 107, the pilot must hold a <strong>Remote Pilot Certificate</strong> from the FAA. That means being at least 16, passing the aeronautical knowledge exam, and completing recurrent training every 24 calendar months. <a href="https://www.faa.gov/uas/commercial_operators/become_a_drone_pilot" target="_blank" rel="noopener">[5]</a></p>
+
+<p>The drone itself has to be registered, and a drone registered only for recreation can&rsquo;t be flown under Part 107. Registered drones have to comply with Remote ID. <a href="https://www.faa.gov/uas/getting_started/register_drone" target="_blank" rel="noopener">[6]</a></p>
+
+<p>So when you interview a listing agent, ask who takes the photos, and if there&rsquo;s a drone, whether the pilot holds a Remote Pilot Certificate.</p>
+
+<h2>What this means when you sell</h2>
+
+<p>If you want the whole thing done chef&rsquo;s-kiss perfect when you sell, that&rsquo;s what we do. <a href="/contact">Let&rsquo;s talk about your home</a>, or start with <a href="/home-value">what it&rsquo;s worth</a>.</p>
+
+<p>So that&rsquo;s listing photos, explained.</p>
+
+<p><em>This article explains how listing photography and drone rules generally work. It isn&rsquo;t legal advice: rules change, so check the FAA&rsquo;s pages before any drone flight.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>National Association of REALTORS&reg;, <a href="https://www.nar.realtor/research-and-statistics/research-reports/highlights-from-the-profile-of-home-buyers-and-sellers" target="_blank" rel="noopener">Highlights From the Profile of Home Buyers and Sellers</a> (2025).</li>
+<li>Virginia REALTORS&reg;, <a href="https://virginiarealtors.org/2025/12/08/key-takeaways-from-nars-2025-profile-of-home-buyers-and-sellers" target="_blank" rel="noopener">Key Takeaways from NAR&rsquo;s 2025 Profile of Home Buyers and Sellers</a> (December 8, 2025).</li>
+<li>National Association of REALTORS&reg;, <a href="https://www.nar.realtor/about-nar/governing-documents/code-of-ethics/2025-code-of-ethics-standards-of-practice" target="_blank" rel="noopener">2025 Code of Ethics and Standards of Practice</a>, Article 12.</li>
+<li>Federal Aviation Administration, <a href="https://www.faa.gov/uas/commercial_operators" target="_blank" rel="noopener">Certificated Remote Pilots including Commercial Operators</a>.</li>
+<li>Federal Aviation Administration, <a href="https://www.faa.gov/uas/commercial_operators/become_a_drone_pilot" target="_blank" rel="noopener">Become a Certificated Remote Pilot</a>.</li>
+<li>Federal Aviation Administration, <a href="https://www.faa.gov/uas/getting_started/register_drone" target="_blank" rel="noopener">How to Register Your Drone</a>.</li>
+<li>Erika K. Page, reel with her photographer and its caption (2026), her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her closing-day reel DbXJNqdPo6y ("a first-time homebuyer who
         // scored an incredible foreclosure deal"). HUD facts from HUD Homestore and its FAQ;
         // Fannie Mae HomePath left out (unreadable). Every fact is listed with its source in

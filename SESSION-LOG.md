@@ -38,6 +38,52 @@ video, already fixed by the VA in CapCut. No QR-code rule here.
 
 ---
 
+## 2026-10-20 (evening) — Listing-photos article; podcast episode 7; YouTube episode 2
+
+**Asked.** "Do what we do daily: post a new blog and give me the next episode."
+
+**Done**
+- **Article** `/blog/listing-photos-and-drones` (`/listing-photos`, Selling): "Buyers scroll.
+  Good photos stop the scroll."
+  - Built around her unused reel `DcKdzUiulyk` with her photographer, Jonathan Martinez,
+    flying a drone over a listing of a little over an acre. Her caption and lines are quoted.
+  - Researched:
+    - NAR's 2025 Profile of Home Buyers and Sellers, via Virginia REALTORS' summary: the
+      search began online most often, the median search took 10 weeks, and 85% ranked
+      agents most useful;
+    - NAR Code of Ethics Article 12 and Standard of Practice 12-10 ("a true picture",
+      images, no misleading manipulation);
+    - the FAA's Part 107 pages (Remote Pilot Certificate, registration, Remote ID).
+  - Two new photos: B29, a drone in front of a house (body); B30, an aerial of suburban homes
+    (tile). Bold cover with her line "Meet the man behind every photo you've ever seen on my
+    listings."; square art.
+  - Episode: 613 words, 236 s, levelled (-19.6 LUFS).
+- **Podcast episode 7** (leasing a restaurant space) handed over: levelled (-19.7 LUFS), no
+  dated lines.
+- **YouTube episode 2** (owning vs investing) made and handed over: 195 captions, 10 chapters.
+
+**Failed, and what was done**
+- **Lines in her voice she never said:** "Here's what I tell sellers", a buyer driving
+  across town, "the right answer tells you a lot", "honestly". Removed before recording.
+- **No single readable figure for "buyers who find photos very useful".** Secondary sources
+  disagree (81, 83 or 87%) and the report is members-only, so it's left out.
+- **Her reel's "over 25,000 buyers in our database" and "your home is probably already
+  sold"** are left out: no source.
+- **YouTube captions showed "1." where the voice says "Question one"** (the episode was
+  narrated with `--numbered-label Question`). `episode.py` now takes the same option.
+- **The YouTube description lacked the podcast links.** Apple Podcasts then Spotify are now
+  in every description.
+
+**Passed**
+- `check-article.mjs`: ALL PASS locally and live. Uploads byte-identical.
+- The full transcript matches the script.
+
+**Open**
+- Erika to read the article and episode.
+- Next: podcast episode 8 (open house), YouTube episode 3 (know your house).
+
+---
+
 ## 2026-10-20 — Landing pages (/page/<address>) and one Leads list for every form
 
 **Asked.** A landing page on the site like Erika's Stan Store lead magnet for 1039 Mariners

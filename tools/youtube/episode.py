@@ -2,6 +2,7 @@
 
     ELEVENLABS_API_KEY=... python3 tools/youtube/episode.py <slug>
     python3 tools/youtube/episode.py <slug> --episode 1 --note "Recorded September 29, 2026."
+    python3 tools/youtube/episode.py <slug> --numbered-label Question   # as narrate.py was run
 
 Writes, under exports/youtube/<slug>/ (git-ignored; the owner uploads):
   <slug>.mp4      1920x1080: the square episode art on the left, the Bold merlot panel
@@ -257,6 +258,7 @@ def main():
     ap.add_argument("slug")
     ap.add_argument("--episode", type=int, help="its RSS.com episode number (episodes go out in article-date order)")
     ap.add_argument("--note", default="", help="a line above the link, e.g. the recording date")
+    ap.add_argument("--numbered-label", default="", help="the label narrate.py was given (a read-aloud episode whose headings are \"1. …\")")
     ap.add_argument("--frame-only", action="store_true")
     a = ap.parse_args()
 
@@ -281,7 +283,7 @@ def main():
 
     script = os.path.join(ROOT, "tools", "podcast", f"{a.slug}.txt")
     episode = bool(p.get("audio_note")) and os.path.exists(script) and "podcast episode" in p["audio_note"]
-    text = narrate.read_script(script)[0] if episode else narrate.script(p, "")
+    text = narrate.read_script(script)[0] if episode else narrate.script(p, a.numbered_label)
     ref = [w[0] for w in digits([[w, 0, 0] for w in tokens(text)])]      # a script's "twenty twenty-seven" shows as 2027
     words, report = align(ref, digits(timings(a.slug, mp3)))
     for kind, t, said, at in report:
@@ -319,7 +321,10 @@ def write_upload(p, a, ch, episode, path):
             f"Read the article: {site}/blog/{a.slug}"]
     if p.get("product"):
         desc.append(f"Free guide: {site}/digital-products/{p['product']}")
-    desc += [f"What's your home worth? {site}/home-value", ""]
+    desc += [f"What's your home worth? {site}/home-value", "",
+             # Apple first, Spotify second, never Amazon Music (Erika, 19 Oct 2026)
+             "Listen on Apple Podcasts: https://podcasts.apple.com/podcast/id6822448035",
+             "Listen on Spotify: https://open.spotify.com/show/1yBRzP6unSx9jrUsofuPs4", ""]
     if ch:
         desc += [f"{int(t // 60)}:{int(t % 60):02d} {h}" for t, h in ch] + [""]
     desc.append("Voiced by an AI trained on Erika's own voice. Researched from the sources linked in the article."
