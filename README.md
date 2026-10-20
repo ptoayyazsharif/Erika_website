@@ -296,3 +296,9 @@ zip.
 | `ask-erika/` | "Ask Erika", a coaching knowledge base, started 24 Jul 2026 (foundation only) | `ask-erika/BRIEF.md` |
 | `docs/` | owner documents: the 25 Aug meeting's pending list, the photo placement guide, the zip's install README | |
 
+## Landing pages and leads
+
+`/page/<address>` lead-capture pages (Stan-style), built in the admin under **Landing pages**,
+and one **Leads** list for every form on the site. How they work, the rules and the QA script:
+`CLAUDE.md`, "Landing pages and leads".
+

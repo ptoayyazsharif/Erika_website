@@ -77,7 +77,11 @@ button:hover{background:#9C4A3E}
 $pages = manifest();
 $pageIds = array_keys($pages);
 $cur = $_GET['page'] ?? 'home';
-if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty', 'gallery-photos', 'blog-posts', 'products-list'], true)) $cur = 'home';
+if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty', 'gallery-photos', 'blog-posts', 'products-list', 'landing-pages', 'leads'], true)) $cur = 'home';
+
+/* ---------- landing pages and leads: downloads, the CSV and the save buttons (lib/admin-landing.php) ---------- */
+require __DIR__ . '/lib/admin-landing.php';
+landing_admin_early($cur);
 
 /* ---------- change password ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_password'])) {
@@ -452,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     }
 }
 
-$curTitle = $cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : ($cur === 'gallery-photos' ? 'Gallery photos' : ($cur === 'blog-posts' ? 'Blog posts' : ($cur === 'products-list' ? 'Digital products' : $pages[$cur]['title'])))));
+$curTitle = in_array($cur, ['landing-pages', 'leads'], true) ? landing_admin_title($cur) : ($cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : ($cur === 'gallery-photos' ? 'Gallery photos' : ($cur === 'blog-posts' ? 'Blog posts' : ($cur === 'products-list' ? 'Digital products' : $pages[$cur]['title']))))));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -546,13 +550,16 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
     <a href="admin.php?page=gallery-photos" class="<?= $cur === 'gallery-photos' ? 'on' : '' ?>">Gallery photos</a>
     <a href="admin.php?page=blog-posts" class="<?= $cur === 'blog-posts' ? 'on' : '' ?>">Blog posts</a>
     <a href="admin.php?page=products-list" class="<?= $cur === 'products-list' ? 'on' : '' ?>">Digital products</a>
+    <div class="grp">Leads</div>
+    <a href="admin.php?page=landing-pages" class="<?= $cur === 'landing-pages' ? 'on' : '' ?>">Landing pages</a>
+    <a href="admin.php?page=leads" class="<?= $cur === 'leads' ? 'on' : '' ?>">Leads</a>
     <div class="grp">Account</div>
     <a href="admin.php?page=email" class="<?= $cur === 'email' ? 'on' : '' ?>">Email / Forms</a>
     <a href="admin.php?page=lofty" class="<?= $cur === 'lofty' ? 'on' : '' ?>">CRM / Lofty</a>
     <a href="admin.php?page=settings" class="<?= $cur === 'settings' ? 'on' : '' ?>">Settings</a>
   </nav>
 
-  <main class="main">
+  <main class="main<?= in_array($cur, ['landing-pages', 'leads'], true) ? ' wide' : '' ?>">
     <?php if ($flash): ?><div class="flash"><?= esc($flash) ?></div><?php endif; ?>
     <?php if ($err): ?><div class="err"><?= esc($err) ?></div><?php endif; ?>
 
@@ -656,6 +663,8 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
         </table>
       </div>
       <?php endif; ?>
+
+    <?php elseif ($cur === 'landing-pages' || $cur === 'leads'): landing_admin_view($cur); ?>
 
     <?php elseif ($cur === 'products-list'): ?>
       <h1>Digital products</h1>

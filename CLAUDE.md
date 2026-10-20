@@ -115,6 +115,11 @@ Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
 Their short links: `/closing-costs-guide`, `/hidden-value`, `/landlord-guide`.
 
+Landing pages (`/page/<address>`, see *Landing pages and leads*): `1039-mariners-court`
+(the 1039 Mariners Ct investor package, Stone Mountain) is deployed as a **draft**: it
+goes live when the owner uploads the photo and `1039 Mariners Merged.pdf` in the admin
+and presses Publish.
+
 Every article is narrated in Erika's cloned voice and goes out as an episode of the
 **Erika Explains** podcast on RSS.com — the owner uploads; see *Podcast* below.
 
@@ -307,6 +312,52 @@ Started with the first article and episode 1 (closing costs). Outputs go to `exp
 - **Is it still true today?** applies to YouTube as it does to RSS.com: pass `--note` with
   the recording date when the episode carries dated figures.
 
+## Landing pages and leads (from 20 Oct 2026)
+
+The owner's instruction (20 Oct 2026): lead capture pages like Erika's Stan Store ones, at
+**`erikakpage.com/page/<address>`**, in the site's design, built from the admin; the visitor
+answers the questions and gets the file; every lead lands in one admin list, in the owner's
+email and in Lofty.
+
+- **The owner builds them**: admin → **Landing pages** → New, or edit. Stan's steps:
+  1 image (1920×1080), 2 title / description / bottom title / button, 3 questions (short
+  answer, phone, long answer, dropdown, checkboxes; required toggle; reorder), 4 the file
+  (upload, kept private) or a link, 5 options (address, thank-you text, consent line, email
+  the link to the visitor, Lofty source / tags / lead type, "Let Google list this page").
+  Save as draft / Publish / Unpublish / Duplicate / Delete. A live phone preview uses the
+  page's own stylesheet.
+- **A page goes live only when it's published and has its file (or link).** Drafts 404 for
+  visitors; a logged-in admin sees them with a banner.
+- **The file is private**: `uploads/private/` (its own `.htaccess`; `router.php` locally).
+  The only way out is `/page/<address>/download?t=…`, a link signed with HMAC (secret in the
+  `landing.secret` setting), good for 30 days, tied to its page. It doesn't need the
+  database, so a failed lead insert never costs the visitor their file.
+- **Leads** (admin → **Leads**): every landing-page lead *and every other form on the site*
+  (`submit.php` now records them too) in the `leads` table, created on first use (SQLite
+  and MySQL). Filter by source, period, search; detail with every answer; CSV export
+  (Excel-safe); "Send to Lofty again"; delete. Each lead records whether the email and Lofty
+  went through, and landing-page downloads.
+- **What happens on a submission**: the visitor gets their link by email (if on); the owner
+  gets an email with every answer; Lofty gets the lead (name split, phone, tags, lead type,
+  every answer in the note) through the existing `send_to_lofty()`. Lofty or email being
+  down never blocks the visitor.
+- **Spam**: honeypot, a two-second minimum, and 12 leads an hour from one address
+  (`LANDING_RATE_PER_HOUR`; the host is plain Apache, no proxy, so the address is the
+  visitor's own).
+- Code: `lib/landing.php` (model, files, links, leads, capture), `landing.php` (the public
+  page; `index.php` hands `/page/…` to it first), `lib/admin-landing.php` (the screens),
+  `assets/css/landing.css`, `landing-pages.php` (defaults; the admin's saved copy wins,
+  like posts and products).
+- **QA**: `QA_USER=… QA_PASS=… tools/check-landing/run.sh` (local only). A local SMTP
+  catcher and a fake Lofty, then two Playwright rounds (59 checks): editor, publish rules,
+  public page, server-side validation, byte-identical download, phone layout, Leads, CSV,
+  Lofty failure + retry, tampered/forged links, private folder, the question builder,
+  unpublish/duplicate/delete, script in a question. It backs up and restores the local
+  database. Passed on SQLite and on MariaDB 10.11 (20 Oct 2026).
+- **Words on a page are the owner's or Erika's.** The 1039 Mariners Ct page copies her Stan
+  page word for word; the consent line and thank-you text are ours, in plain terms, and
+  editable — flag them for her.
+
 ## Research articles and podcast episodes
 
 The worked example is the homestead article: `tools/research/georgia-homestead-exemption-explained.md`
@@ -482,12 +533,18 @@ check there and a row here.
 | Admin round-trip keeps `audio_note` too | proven 5 Oct 2026 on a throwaway copy with a test login (see SESSION-LOG) |
 | **No picture on two articles**; no cover tile repeats its own article's body picture (whole blog, every run) | the same signing photo was on two articles four times, and two more were shared — the owner called it lazy (7 Oct 2026) |
 | Short link answers **301** to the article (with `#guide` only when there is a guide) | a 404 after an admin save; a `#guide` anchor on an article with no guide |
+| Landing pages (`tools/check-landing/run.sh`, 59 checks in a browser) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
 | **Live**: byte-compare every upload; confirm pages by completeness (`</html>`, >150 KB), not status | see the host's holding page below |
 
 ## Deploying, and the environment
 
 - `CPANEL_USER=… CPANEL_TOKEN=… tools/deploy.sh <files…>` uploads, creates
   directories, and confirms each file's size from a fresh listing.
+  The listing now asks for hidden files (`show_hidden=1`); without it a `.htaccess` upload
+  read as ABSENT though it was there (20 Oct 2026). Don't byte-compare PHP through cPanel's
+  `get_file_content`: it rewrites the `<head>` of anything that looks like HTML (it adds
+  its own `<meta charset>`), so a good upload reads as different. Trust the sizes, and
+  byte-compare static files over HTTP.
 - **The host serves an anti-bot holding page ("One moment, please…") at random, with
   HTTP 200.** A 200 proves nothing — not for uploads, pages or redirects. Retry until
   the body is the real one.
@@ -575,6 +632,13 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
+- **Owner: put the 1039 Mariners Ct page live** (admin → Landing pages → the page): upload
+  the property photo (1920×1080) and `1039 Mariners Merged.pdf`, press Publish, then send
+  one test lead and check it arrives in your email, in Lofty and under Leads. Erika should
+  read the consent line and the thank-you text, which are ours, not hers.
+- **Leads from now on are kept in the admin** (Leads), from every form on the site. Lofty
+  only receives them while CRM / Lofty is switched on with a key; whether it is on the live
+  site isn't known from here.
 - **Owner: make `main` GitHub's default branch** (Settings → General → Default branch →
   `main`). It can't be done from a session (the proxy refuses settings writes, 19 Oct 2026).
   Until then, new sessions may start from the old default: merge `origin/main` first.

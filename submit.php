@@ -79,8 +79,11 @@ $htmlBody = '<div style="font-family:system-ui,Arial,sans-serif;color:#453230">'
 [$ok, $err] = send_mail($subject, $htmlBody, $textBody, $replyEmail, $replyName);
 
 // --- also create a lead in Lofty CRM (secondary; never blocks the visitor) ---
+$lok = null;          // null = not sent to Lofty (switched off, or off for this form)
+$ldetail = 'Lofty is off (CRM / Lofty in the admin).';
 if (lofty_enabled()) {
     $map = lofty_mapping($pageId, $formName);
+    $ldetail = 'This form is set to email only.';
     if ($map['on']) {
         // name: prefer explicit first/last, else split a single "name" field
         $first = $raw['first_name'] ?? '';
@@ -117,6 +120,12 @@ if (lofty_enabled()) {
         crm_log_add($formName . ' (' . $pageLabel . ')', $replyEmail, $lok, $ldetail);
     }
 }
+
+// --- keep it: every lead is listed in the admin under Leads, whatever happened to the email ---
+$slugP = blog_slug_for_path('/blog/' . ($_POST['_post'] ?? ''));
+$prodP = product_slug_for_path('/digital-products/' . ($_POST['_product'] ?? ''));
+lead_record_form($pageId, $formName, $slugP !== '' ? post_path($slugP) : ($prodP !== '' ? product_path($prodP) : path_for($pageId ?: 'home')),
+    $rows, $raw, $replyEmail, $replyName, $ok, (string) $err, $lok, $ldetail);
 
 if ($ok) back_to($pageId, 'sent=1');
 back_to($pageId, 'senterr=' . (stripos($err, 'not configured') !== false ? 'config' : '1'));

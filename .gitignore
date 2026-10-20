@@ -2,6 +2,9 @@ config.local.php
 cms.sqlite
 uploads/*
 !uploads/.htaccess
+!uploads/private/
+uploads/private/*
+!uploads/private/.htaccess
 .gstack/
 tools/guides/.fontcache/
 

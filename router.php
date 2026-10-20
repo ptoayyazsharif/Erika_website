@@ -11,6 +11,9 @@ $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 if ($path === '/sitemap.xml') { require __DIR__ . '/sitemap.php'; return; }
 
+// Landing-page files are handed over by landing.php only (uploads/private/.htaccess on the host).
+if (stripos(rawurldecode($path), '/uploads/private') === 0) { http_response_code(403); echo 'Forbidden'; return true; }
+
 $file = __DIR__ . $path;
 if ($path !== '/' && file_exists($file) && !is_dir($file)) return false;
 

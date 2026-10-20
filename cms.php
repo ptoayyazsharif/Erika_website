@@ -1017,10 +1017,14 @@ function set_setting(string $k, string $v): void {
 
 /* ---------- email via SMTP (PHPMailer, self-hosted) ---------- */
 
-/** Send an email using the admin-configured SMTP settings. Returns [ok, error]. */
-function send_mail(string $subject, string $htmlBody, string $textBody, string $replyTo = '', string $replyName = ''): array {
+/**
+ * Send an email using the admin-configured SMTP settings. Returns [ok, error].
+ * It goes to the Email / Forms recipient, or to $to when given (a landing page
+ * sending a visitor their download link).
+ */
+function send_mail(string $subject, string $htmlBody, string $textBody, string $replyTo = '', string $replyName = '', string $to = ''): array {
     $host = setting('smtp.host');
-    $to   = setting('smtp.to');
+    if ($to === '') $to = setting('smtp.to');
     if ($host === '' || $to === '') {
         return [false, 'Email is not configured yet. Set it up under Email / Forms in the admin.'];
     }
@@ -1322,3 +1326,7 @@ function handle_upload(array $file): array {
 
     return ['uploads/' . $name, ''];
 }
+
+/* ---------- landing pages and leads (lib/landing.php) ---------- */
+
+require_once __DIR__ . '/lib/landing.php';

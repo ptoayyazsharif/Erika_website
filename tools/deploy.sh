@@ -67,7 +67,7 @@ remote_size () {
   d=$(dirname "$f"); [ "$d" = "." ] && d=""
   for i in 1 2 3 4; do
     "${CURL[@]}" --get "https://erikakpage.com/execute/Fileman/list_files" \
-      --data-urlencode "dir=$WEB${d:+/$d}" --data-urlencode "types=file" -o "$TMP" 2>/dev/null
+      --data-urlencode "dir=$WEB${d:+/$d}" --data-urlencode "types=file" --data-urlencode "show_hidden=1" -o "$TMP" 2>/dev/null
     local s
     s=$(python3 -c "
 import json,sys,os

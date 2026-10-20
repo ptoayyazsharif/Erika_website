@@ -29,6 +29,11 @@ foreach (ROUTES as $path => $id) {
         'mod'  => $id === 'blog' ? $newestPost : '',
     ];
 }
+// Landing pages are left out unless the owner ticked "Let Google list this page".
+foreach (landing_all() as $lpg) {
+    if (!$lpg['indexable']) continue;
+    $urls[] = ['loc' => abs_url(landing_path($lpg['slug'])), 'pri' => '0.6', 'freq' => 'monthly', 'mod' => $lpg['updated']];
+}
 foreach ($posts as $p) {
     $urls[] = [
         'loc'  => abs_url(post_path($p['slug'])),

@@ -1,0 +1,7 @@
+# Files handed over by landing pages: never served directly.
+# landing.php streams them after checking a signed link.
+Require all denied
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>

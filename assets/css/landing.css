@@ -1,0 +1,100 @@
+/* Landing pages (/page/<address>) — the site's own palette and type, on a page
+   with one job. Every rule is prefixed lp- so the admin's live preview can load
+   this same file without restyling the admin. */
+.lp{
+  --ink:#453230; --ink-deep:#332423; --cream:#FBF7F3; --cream-2:#F5EBE4;
+  --gold:#C9A15E; --gold-soft:#DCC08C; --gold-deep:#8F6B2E;
+  --merlot:#C67F72; --merlot-deep:#B05E51; --merlot-ink:#9C4A3E;
+  --blush:#D49388; --blush-soft:#EFD3CC; --body:#5C4B47; --line:rgba(69,50,48,.14);
+  --shadow-m:0 14px 30px rgba(69,50,48,.10),0 4px 10px rgba(69,50,48,.05);
+  --ease:cubic-bezier(.22,.68,.32,1);
+  font-family:'Archivo',system-ui,sans-serif;color:var(--body);line-height:1.6;font-size:16px;
+  -webkit-font-smoothing:antialiased;background:var(--cream)
+}
+.lp *,.lp *::before,.lp *::after{box-sizing:border-box}
+body.lp{margin:0;min-height:100vh;display:flex;flex-direction:column}
+.lp a{color:inherit}
+.lp img{max-width:100%;height:auto;display:block}
+.lp :focus-visible{outline:2px solid var(--merlot-deep);outline-offset:3px}
+.lp-serif,.lp h1,.lp h2{font-family:'Fraunces',Georgia,serif;color:var(--ink);font-weight:500;line-height:1.12;text-wrap:balance;margin:0}
+.lp-wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* top bar: the brand and a way to call — nothing else to wander off to */
+.lp-top{background:#fff;border-bottom:1px solid var(--line);border-top:3px solid var(--gold)}
+.lp-top .lp-wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:16px}
+.lp-brand{font-family:'Fraunces',Georgia,serif;font-size:22px;color:var(--ink);text-decoration:none;white-space:nowrap}
+.lp-brand span{color:var(--merlot-deep)}
+.lp-phone{font-size:13px;letter-spacing:.08em;font-weight:600;color:var(--merlot-ink);text-decoration:none;white-space:nowrap}
+.lp-phone:hover{color:var(--merlot-deep)}
+
+.lp-draft{background:var(--gold-soft);color:var(--ink-deep);font-size:13px;text-align:center;padding:9px 16px}
+.lp-main{flex:1}
+.lp-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:56px;align-items:start;padding-top:48px;padding-bottom:72px}
+
+.lp-hero{margin:0 0 30px;border:1px solid var(--line);box-shadow:var(--shadow-m);background:var(--cream-2);aspect-ratio:16/9;overflow:hidden}
+.lp-hero img{width:100%;height:100%;object-fit:cover}
+.lp-eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--merlot-ink);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lp-eyebrow::before{content:"";width:22px;height:1px;background:var(--gold)}
+.lp-title{font-size:clamp(30px,3.6vw,44px)}
+.lp-rule{width:56px;height:2px;background:linear-gradient(90deg,var(--gold),var(--blush));margin:20px 0 22px}
+.lp-desc{font-size:17px}
+.lp-desc p{margin:0 0 6px}
+.lp-desc strong,.lp-desc b{color:var(--ink);font-weight:600}
+.lp-desc ul,.lp-desc ol{margin:0 0 12px;padding-left:22px}
+.lp-desc a{color:var(--merlot-ink);text-decoration:underline}
+
+/* the form card, in the site's .form-card style */
+.lp-card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);padding:34px 32px 30px;box-shadow:var(--shadow-m)}
+/* the picture and the pitch stay in view while the (longer) form scrolls past */
+.lp-intro{position:sticky;top:24px}
+.lp-card h2{font-size:26px}
+.lp-card .lp-rule{margin:14px 0 22px}
+.lp-errors{background:#FBEAEA;border:1px solid #D9908B;color:#8C3B32;padding:11px 14px;font-size:14px;margin-bottom:18px}
+.lp-field{margin:0 0 18px;border:0;padding:0;min-width:0}
+.lp-field>legend{padding:0}
+.lp-label{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink);margin-bottom:7px;line-height:1.45}
+.lp-label .lp-req{color:var(--merlot-deep);margin-left:2px}
+.lp-input{width:100%;padding:13px 14px;border:1px solid rgba(69,50,48,.22);background:var(--cream);font:inherit;font-size:15.5px;color:var(--ink);border-radius:0;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
+.lp-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,94,.22)}
+textarea.lp-input{min-height:110px;resize:vertical}
+select.lp-input{padding-right:40px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%239C4A3E' stroke-width='1.6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center}
+.lp-field.lp-bad .lp-input{border-color:#C9665C;background:#FFF8F7}
+.lp-msg{display:block;color:#A8473D;font-size:13px;margin-top:6px}
+.lp-check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--cream);border:1px solid rgba(69,50,48,.16);cursor:pointer;font-size:14px;line-height:1.55;color:var(--body);margin-bottom:8px}
+.lp-check input{flex:none;width:19px;height:19px;margin:2px 0 0;accent-color:var(--merlot-deep);cursor:pointer}
+.lp-field.lp-bad .lp-check{border-color:#C9665C}
+.lp-hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.lp-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px 22px;margin-top:6px;border:0;cursor:pointer;background:var(--merlot-deep);color:#fff;font:inherit;font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;text-decoration:none;text-align:center;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s}
+.lp-btn:hover{background:var(--merlot-ink);transform:translateY(-2px);box-shadow:var(--shadow-m)}
+.lp-btn[disabled]{opacity:.7;cursor:wait;transform:none}
+.lp-btn-gold{background:linear-gradient(120deg,var(--gold) 0%,var(--gold-soft) 130%);color:var(--ink-deep)}
+.lp-btn-gold:hover{background:linear-gradient(120deg,#BC9251 0%,var(--gold) 130%)}
+.lp-consent{font-size:12px;color:#8a746f;margin:14px 0 0;line-height:1.5}
+
+/* after the form */
+.lp-done{text-align:center}
+.lp-tick{width:58px;height:58px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;background:var(--cream-2);color:var(--gold-deep)}
+.lp-file{font-size:13.5px;color:#8a746f;margin:16px 0 4px}
+.lp-note{font-size:13px;color:#8a746f;margin-top:14px}
+.lp-back{display:inline-block;margin-top:18px;font-size:13px;color:var(--merlot-ink);text-decoration:underline}
+
+.lp-foot{background:#3D2B29;color:rgba(251,247,243,.72);font-size:12.5px;padding:26px 0}
+.lp-foot .lp-wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px}
+.lp-foot b{color:#FBF7F3;font-weight:600}
+.lp-foot a{color:rgba(251,247,243,.85);text-decoration:none}
+.lp-foot a:hover{color:var(--gold-soft)}
+
+.lp-404{text-align:center;padding:90px 0 110px}
+.lp-404 h1{font-size:34px;margin-bottom:12px}
+
+@media(max-width:900px){
+  .lp-grid{grid-template-columns:1fr;gap:30px;padding-top:0;padding-bottom:48px}
+  .lp-hero{margin:0 -24px 24px;border-left:0;border-right:0;box-shadow:none}
+  .lp-card{padding:26px 20px 24px}
+  .lp-intro{position:static}
+  .lp-done{order:-1;margin-top:24px}
+  .lp-top .lp-wrap{padding-top:13px;padding-bottom:13px}
+  .lp-brand{font-size:20px}
+}
+@media(max-width:900px){.lp-intro:not(:has(.lp-hero)){padding-top:32px}}
+@media(prefers-reduced-motion:reduce){.lp-btn,.lp-input{transition:none}}

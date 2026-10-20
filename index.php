@@ -4,6 +4,9 @@ require __DIR__ . '/routes.php';
 
 $reqPath = $_SERVER['REQUEST_URI'] ?? '/';
 
+// A landing page (/page/<address>) is its own small document, with one job: see landing.php.
+if ($lp = landing_route($reqPath)) { require __DIR__ . '/landing.php'; exit; }
+
 // Which page does this URL ask for? (clean slug -> internal id)
 $current = id_for_path($reqPath);
 

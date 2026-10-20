@@ -38,6 +38,76 @@ video, already fixed by the VA in CapCut. No QR-code rule here.
 
 ---
 
+## 2026-10-20 — Landing pages (/page/<address>) and one Leads list for every form
+
+**Asked.** A landing page on the site like Erika's Stan Store lead magnet for 1039 Mariners
+Court (screenshots and the whole page pasted), at `website.com/page/<custom address>`, in the
+site's design. A backend as easy as Stan's. Visitors answer the questions, then get the file.
+An admin page listing every lead and the page it came from. All leads go to email and to
+Lofty. "Do QA before and all."
+
+**Done**
+- **Landing pages:** `lib/landing.php`, `landing.php`, `assets/css/landing.css`,
+  `landing-pages.php`.
+  - The public page: the site's palette and type, a focused header and footer, the picture
+    and pitch staying in view beside the form.
+  - Server-side validation that keeps the answers.
+  - A thank-you page and a signed 30-day download link (HMAC, tied to the page). The file
+    is private in `uploads/private/`.
+  - Noindex by default, plus a sitemap entry when the page is set to be listed.
+- **Admin:** `lib/admin-landing.php`, hooked into `admin.php`.
+  - A *Landing pages* list.
+  - A Stan-style editor (image, description with rich text, question builder,
+    file-or-link, options) with a live phone preview.
+  - Draft / Publish / Unpublish / Duplicate / Delete.
+  - A *Leads* screen: stats, filters, search, detail, CSV, "Send to Lofty again", delete.
+- **Every site form is now a lead too.** `submit.php` records each one in the new `leads`
+  table, after its email and Lofty push. Until today a missed email was a lost lead.
+- **The Mariners page:** title, description, bottom title, button and all six questions
+  copied word for word, deployed as a draft. It needs the owner to upload the photo and the
+  PDF (neither came with the request) and publish.
+- **Supporting changes:**
+  - `send_mail()` takes an optional recipient, for the visitor's link.
+  - `router.php` refuses `/uploads/private` locally.
+  - An `mb_substr` fallback, because the live host's mbstring isn't confirmed.
+
+**QA (all pass)**
+- `tools/check-landing/run.sh`: 59 browser checks, run with a local SMTP catcher and a fake
+  Lofty, on SQLite and on MariaDB 10.11.
+  - Emails and the Lofty payload were read by hand: name split, phone, Investor lead type,
+    tags, and every answer in the note.
+  - Also tested: site-form capture, the honeypot, the rate limit (stops at 12 an hour),
+    Lofty off, and the mail server down. The lead is kept and the visitor still gets the
+    file.
+- `check-article.mjs --all`: ALL PASS locally and live after the deploy.
+- Live:
+  - the draft page 404s for the public;
+  - `/uploads/private` answers 403, and `landing.php` can't be opened directly;
+  - home, admin login, sitemap (47 URLs) and the contact forms are fine.
+
+**Failed, and what was done**
+- **The editor lost a half-finished question after a refused save.** The server cleaned the
+  posted questions before redrawing. It now redraws exactly what was typed.
+- **Layout fixes from the screenshots:**
+  - the description lines sat too far apart;
+  - the checkbox legend was indented;
+  - the form card was sticky though taller than the screen (the intro is sticky instead);
+  - on a phone the download card came after the description (it now comes first);
+  - the agreement text sat in a one-line box (now a textarea).
+- **`deploy.sh` reported the private `.htaccess` as ABSENT.** The cPanel listing hides
+  dot-files; it now asks for them.
+- **cPanel's `get_file_content` rewrites the `<head>`** of HTML-looking PHP, so read-back
+  compares differ falsely. Sizes match; static files were compared over HTTP.
+- **MariaDB's first install failed** on a stale package index; `apt-get update` fixed it.
+
+**Open**
+- Owner: upload the Mariners photo and PDF, publish, and send one test lead.
+- Erika: read the consent line and the thank-you text, which are ours.
+- Whether Lofty is switched on live isn't visible from here. The Leads screen shows each
+  lead's Lofty status.
+
+---
+
 ## 2026-10-19 (evening) — One `main` branch with everything in it
 
 **Asked.** "Merge, make a main branch, and all things in one place instead of all the
