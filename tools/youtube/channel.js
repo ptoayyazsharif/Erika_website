@@ -1,24 +1,29 @@
 /**
- * The YouTube channel's own images (Studio → Customization → Profile), made from the
+ * The YouTube channel's own images (Studio → Customization → Profile), in the look of the
  * show's art on RSS.com — her preferred image (the owner, 20 Oct 2026):
- * tools/podcast/art/show.jpg, 1400x1400, brown backdrop, pink suit, "Erika Explains…
- * with Erika Page" in Playfair Display (her brand system's title face) and gold.
+ * tools/podcast/art/show.jpg, brown backdrop, pink suit, "Erika Explains… with Erika Page"
+ * in Playfair Display (her brand system's title face) and gold.
  *
  *   NODE_PATH=/opt/node22/lib/node_modules node tools/youtube/channel.js [outDir]
+ *
+ * Her picture is the full-size cut-out (tools/podcast/art/erika-cutout.png, made by
+ * cutout.py) set on a backdrop drawn here, not a crop of the show art: blending a crop
+ * into a drawn background left visible edges and a muddy patch (owner, 20 Oct 2026). The
+ * backdrop is one smooth gradient with a fine grain so the dark browns don't band.
  *
  * Writes to exports/youtube/channel/ (git-ignored) unless given a folder:
  *   banner.jpg       2048x1152. YouTube shows all of it only on a TV; a computer shows the
  *                    middle 2048x423 and a phone the middle 1546x423, so the words and her
  *                    face sit inside the 1235x338 safe area in the centre.
- *   picture.jpg      585x585, her face from the show art, right of its title. YouTube crops it
- *                    to a circle; 585 is as large as that allows without upscaling (minimum 98).
- *   picture-pink.jpg 700x700, the alternative: her face from the original photo, on its pink.
+ *   picture.jpg      800x800, her face on the brown. YouTube crops it to a circle.
+ *   picture-pink.jpg 700x700, the alternative: her face in the original photo, on its pink.
  *   watermark.png    150x150, transparent outside the circle; shown in the corner of
  *                    every video, and a click on it subscribes.
  *   podcast-square.jpg the show art itself, for the "Erika Explains" playlist set as a podcast.
  *   safe-area.jpg    the banner with the phone / computer crops drawn on, to check by eye.
+ *   qa-*.jpg         QA sheets: the phone and computer crops, and her edges at 2x.
+ *   channel-setup.md every Profile field to paste (kept in tools/youtube/channel-setup.md).
  *
- * The show art has its title beside her hair; every crop keeps clear of it.
  * Fails rather than write a picture that is upscaled or text that overflows its box.
  */
 const fs = require('fs');
@@ -34,29 +39,26 @@ const OUT = process.argv[2] || path.join(ROOT, 'exports', 'youtube', 'channel');
 const SHOW = path.join(ROOT, 'tools', 'podcast', 'art', 'show.jpg');
 const FONT = 'file://' + path.join(__dirname, 'fonts', 'PlayfairDisplay-latin.woff2');
 
-/* Sampled from show.jpg: the backdrop is lit behind her head (#4c2b24) and falls off to
-   the corners; the banner's gradient below repeats those values around her. */
+const CUT = path.join(ROOT, 'tools', 'podcast', 'art', 'erika-cutout.png');   // 1022x1536
+
+/* Sampled from show.jpg: the backdrop is lit behind her head and falls off to the corners. */
 const C = {
-  lit: '#45261e', mid: '#391d17', edge: '#25120d',
+  lit: '#4c2b24', mid: '#391d17', edge: '#21100b',
   cream: '#FBF4EA', gold: '#E9CD8A', goldDeep: '#C29A55',
 };
 
-/* show.jpg drawn at scale k with its top-left at (x, y), through a soft mask. The title
-   sits left of her: above y=565 her hair starts at x≈820 (the dots of "Explains..." end at
-   810); from 565 to 700 her hair starts at x≈630 ("with Erika Page" ends at 612); below
-   that her sleeve reaches x≈470. The mask keeps her side of those lines, blurred so the
-   edges melt into the banner's brown; the top edge fades over ~50 px and the right (where
-   the art cuts her blazer) over the last 16%. */
-const MASK = 'data:image/svg+xml,' + encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1400"><filter id="b" x="-20%" y="-20%" width="140%" height="140%">' +
-  '<feGaussianBlur stdDeviation="16"/></filter>' +
-  '<linearGradient id="r"><stop offset="0.84" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>' +
-  '<mask id="m"><rect width="1400" height="1400" fill="url(#r)"/></mask>' +
-  '<g mask="url(#m)"><polygon filter="url(#b)" fill="#fff" points="' +
-  '855,55 1400,55 1400,1500 480,1500 480,735 665,735 665,575 855,575"/></g></svg>');
-const show = (k, x, y) => `
-  <img src="file://${SHOW}" style="position:absolute;left:${x}px;top:${y}px;width:${1400 * k}px;height:${1400 * k}px;
-    -webkit-mask-image:url('${MASK}');-webkit-mask-size:100% 100%;-webkit-mask-mode:luminance;mask-mode:luminance">`;
+/* The backdrop: one smooth radial light around (cx, cy), plus fine grain. */
+const GRAIN = 'data:image/svg+xml,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>' +
+  '<feColorMatrix values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.09 0"/></filter><rect width="300" height="300" filter="url(#n)"/></svg>');
+const backdrop = (cx, cy, rx, ry) => `
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse ${rx}px ${ry}px at ${cx}px ${cy}px,${C.lit} 0%,#43251e 25%,${C.mid} 52%,#2c1610 78%,${C.edge} 100%)"></div>
+  <div style="position:absolute;inset:0;background:url('${GRAIN}');mix-blend-mode:overlay"></div>`;
+
+/* The cut-out at scale k, her face (460, 300 in the photo) placed at (fx, fy). */
+const erika = (k, fx, fy) => `
+  <img src="file://${CUT}" style="position:absolute;left:${fx - 460 * k}px;top:${fy - 300 * k}px;width:${1022 * k}px;height:${1536 * k}px;
+    filter:drop-shadow(0 30px 60px rgba(0,0,0,.35))">`;
 
 const gold = `background:linear-gradient(180deg,${C.gold} 10%,${C.goldDeep} 95%);-webkit-background-clip:text;background-clip:text;color:transparent`;
 
@@ -69,9 +71,11 @@ const BASE = (w, h, bg) => `
 
 const PAGES = {
   /* Her face at (1500, 580): inside the safe area, and in the phone crop. */
+  /* Her face at (1490, 560): inside the safe area and the phone crop; her hair's top
+     just inside the computer crop. */
   banner: { w: 2048, h: 1152, file: 'banner.jpg', bg: C.mid, html: `
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 900px 800px at 1470px 470px,#4c2b24 0%,#45261f 22%,#3b1f19 45%,#321b15 68%,#2a150f 85%,#22100c 100%)"></div>
-    ${show(0.62, 818, 300)}
+    ${backdrop(1490, 520, 1000, 820)}
+    ${erika(0.66, 1490, 560)}
     <div class="fit" style="position:absolute;left:430px;top:407px;width:800px;height:338px;display:flex;flex-direction:column;justify-content:center">
       <div class="pf" style="font-size:120px;line-height:.98;color:${C.cream}">Erika</div>
       <div class="pf" style="font-size:120px;line-height:1.02;${gold};padding-bottom:6px">Explains...</div>
@@ -79,7 +83,7 @@ const PAGES = {
     </div>` },
 
   /* Right of x=815 the art has no title, only her and the backdrop. */
-  picture: { w: 585, h: 585, file: 'picture.jpg', bg: C.mid, html: `<img src="file://${SHOW}" style="position:absolute;left:-815px;top:-150px;width:1400px;height:1400px">` },
+  picture: { w: 800, h: 800, file: 'picture.jpg', bg: C.mid, html: `${backdrop(400, 330, 620, 620)}${erika(1, 400, 390)}` },
 
   /* The same photo before the show art's brown and title (photos.php 01/A7), for a pink
      alternative: 700x700 centred on her face. */
@@ -115,8 +119,16 @@ async function render(browser, name, p) {
   });
   if (problems.length) { await page.close(); throw new Error(`${name}:\n  ` + problems.join('\n  ')); }
   const file = path.join(OUT, p.file);
-  await page.screenshot(p.png ? { path: file, type: 'png', omitBackground: true } : { path: file, type: 'jpeg', quality: 90 });
+  await page.screenshot(p.png ? { path: file, type: 'png', omitBackground: true } : { path: file, type: 'jpeg', quality: 95 });
   if (name === 'banner') {
+    // QA sheets: what a computer and a phone show, and her edges at twice the size.
+    await page.screenshot({ path: path.join(OUT, 'qa-computer.jpg'), type: 'jpeg', quality: 90, clip: { x: 0, y: 364, width: 2048, height: 423 } });
+    await page.screenshot({ path: path.join(OUT, 'qa-phone.jpg'), type: 'jpeg', quality: 90, clip: { x: 251, y: 364, width: 1546, height: 423 } });
+    const zoom = await browser.newPage({ viewport: { width: p.w, height: p.h }, deviceScaleFactor: 2 });
+    await zoom.goto('file://' + tmp, { waitUntil: 'load' });
+    await zoom.evaluate(() => document.fonts.ready);
+    await zoom.screenshot({ path: path.join(OUT, 'qa-edges-2x.jpg'), type: 'jpeg', quality: 90, clip: { x: 1180, y: 360, width: 560, height: 420 } });
+    await zoom.close();
     // The same banner with the crops each device shows, for checking by eye.
     await page.evaluate(() => {
       const box = (l, t, w, h, c, label) => {
@@ -144,6 +156,7 @@ async function render(browser, name, p) {
     catch (e) { console.error('  FAIL ' + e.message); failed++; }
   }
   fs.copyFileSync(SHOW, path.join(OUT, 'podcast-square.jpg'));
+  fs.copyFileSync(path.join(__dirname, 'channel-setup.md'), path.join(OUT, 'channel-setup.md'));
   console.log('  ok   ' + path.relative(ROOT, path.join(OUT, 'podcast-square.jpg')) + ' (the show art as it is)');
   await browser.close();
   process.exit(failed ? 1 : 0);

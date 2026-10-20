@@ -344,18 +344,30 @@ Started with the first article and episode 1 (closing costs). Outputs go to `exp
 **The channel itself** (set up 20 Oct 2026; Studio → Customization → Profile): run
 `NODE_PATH=/opt/node22/lib/node_modules node tools/youtube/channel.js`. It writes the banner
 (2048×1152, her face and the title inside the 1235×338 band every device shows), the profile
-picture, a pink alternative, the 150×150 watermark and `safe-area.jpg` (the phone / computer
-crops drawn on) to `exports/youtube/channel/`; the paste-ready fields (name, handle,
-description, links, contact, home tab, playlist, keywords) are in `channel-setup.md` there.
+picture, a pink alternative, the 150×150 watermark, the paste-ready fields
+(`tools/youtube/channel-setup.md`, copied out) and QA sheets (`qa-phone.jpg`,
+`qa-computer.jpg`: exactly what each device shows; `qa-edges-2x.jpg`: her edges at twice the
+size) to `exports/youtube/channel/`. **Look at all three QA sheets before sending.**
 - **Her preferred image is the show art**: `tools/podcast/art/show.jpg` (1400×1400, from the
   RSS feed `media.rss.com/erika-explains/feed.xml`): brown backdrop, pink suit, "Erika
-  Explains… with Erika Page" in Playfair Display and gold. Channel art follows it, not the
-  merlot Bold covers. Playfair is in `tools/youtube/fonts/` (OFL).
-- The photo under it is `assets/photos/01/a7-pink-suit-ai.jpg`. `photos.php` labels it
-  AI-generated; the owner sent it on 20 Oct as "real image… no text in it". Which is right is
-  an open question; until it's answered, keep the label.
-- The show art has its title beside her hair, so crops of it keep right of x≈818 (above
-  y 565), x≈630 (to y 700) and x≈470 below; `channel.js` masks along those lines.
+  Explains… with Erika Page" in Playfair Display and gold. Channel art follows that look, not
+  the merlot Bold covers. Playfair is in `tools/youtube/fonts/` (OFL).
+- **Never blend a crop of a photo into a drawn background.** The first banners did (the show
+  art, masked and feathered beside its title): the owner saw "edges" and "mushy" background
+  (20 Oct). Use her cut-out on a backdrop drawn in one piece:
+  `tools/podcast/art/erika-cutout.png` (1022×1536), made by `tools/youtube/cutout.py` (run it
+  with a venv's Python that has pillow, numpy and scipy). The owner's own cut-out
+  (`erika-cutout-guide.png`) is only 407×612, so the script uses it as an outline. It
+  re-cuts the full-size photo: the edge is measured against the photo's own pink, snapped to
+  real edges where blazer meets backdrop, and the backdrop's colour is taken out of every
+  edge pixel, so there's no pink fringe. rembg (isnet) was tried and dropped: it erases the
+  pink blazer on the pink backdrop.
+- The photo is `assets/photos/01/a7-pink-suit-ai.jpg`. `photos.php` labels it AI-generated;
+  the owner sent it on 20 Oct as "real image… no text in it". Which is right is an open
+  question; until it's answered, keep the label.
+- Images pasted into chat don't reach the disk except sometimes as
+  `/tmp/claude-0/<project>/images/<n>.png`. Look there first, then for a public copy (the
+  show art came from the RSS feed).
 
 ## Landing pages and leads (from 20 Oct 2026)
 

@@ -7,6 +7,26 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-20 (night, later) — Channel banner remade from a cut-out, with QA
+
+**Asked.** "The banner is still not good, the bg has edges and mushy; please do a QA after
+making, make them all again." The owner also sent a cut-out of her (no background).
+**Done.**
+- `tools/youtube/cutout.py`: a full-size (1022×1536) cut-out of the pink-suit photo. The
+  owner's 407×612 cut-out is the outline; the edge is re-measured at full size against the
+  photo's pink backdrop, snapped to real edges with a guided filter where the pink blazer
+  meets the pink backdrop, and the backdrop is taken out of edge pixels. The faint edge
+  pixels were choked after a light rim showed along her hair at 2×.
+- `channel.js` rebuilt: banner, 800×800 picture, pink alternative, watermark, all on one
+  drawn radial backdrop with fine grain (no photo edges, no banding), plus QA sheets of the
+  phone and computer crops and her edges at 2×. All three were looked at before sending.
+- `channel-setup.md` now lives in `tools/youtube/` and is copied out on every run; a clean-up
+  of the output folder had deleted it.
+**Tried and dropped.** rembg (isnet-general-use): clean hair but it erased the blazer (pink
+on pink).
+
+---
+
 ## 2026-10-20 (night) — YouTube channel set-up for the podcast
 
 **Asked.** "Give things here to fill for the YouTube setup, all things, the images and all, for
