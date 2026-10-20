@@ -341,6 +341,22 @@ Started with the first article and episode 1 (closing costs). Outputs go to `exp
 - **Is it still true today?** applies to YouTube as it does to RSS.com: pass `--note` with
   the recording date when the episode carries dated figures.
 
+**The channel itself** (set up 20 Oct 2026; Studio → Customization → Profile): run
+`NODE_PATH=/opt/node22/lib/node_modules node tools/youtube/channel.js`. It writes the banner
+(2048×1152, her face and the title inside the 1235×338 band every device shows), the profile
+picture, a pink alternative, the 150×150 watermark and `safe-area.jpg` (the phone / computer
+crops drawn on) to `exports/youtube/channel/`; the paste-ready fields (name, handle,
+description, links, contact, home tab, playlist, keywords) are in `channel-setup.md` there.
+- **Her preferred image is the show art**: `tools/podcast/art/show.jpg` (1400×1400, from the
+  RSS feed `media.rss.com/erika-explains/feed.xml`): brown backdrop, pink suit, "Erika
+  Explains… with Erika Page" in Playfair Display and gold. Channel art follows it, not the
+  merlot Bold covers. Playfair is in `tools/youtube/fonts/` (OFL).
+- The photo under it is `assets/photos/01/a7-pink-suit-ai.jpg`. `photos.php` labels it
+  AI-generated; the owner sent it on 20 Oct as "real image… no text in it". Which is right is
+  an open question; until it's answered, keep the label.
+- The show art has its title beside her hair, so crops of it keep right of x≈818 (above
+  y 565), x≈630 (to y 700) and x≈470 below; `channel.js` masks along those lines.
+
 ## Landing pages and leads (from 20 Oct 2026)
 
 The owner's instruction (20 Oct 2026): lead capture pages like Erika's Stan Store ones, at
@@ -675,6 +691,13 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **Still waiting on Erika from the 25 Aug walkthrough** (`docs/MEETING-2026-08-25-PENDING.md`):
   the speaker one-sheet PDF, the testimonial videos, her welcome video, the real Erika
   Explains episode titles, and more gallery photos. The code for each is in place.
+- **YouTube channel set-up handed over** (20 Oct): banner, picture, watermark, every Profile field
+  (`exports/youtube/channel/channel-setup.md`). Owner to confirm Erika wants
+  erika@axenrealty.com public as the contact email.
+- **RSS.com show description is out of date**: it says every episode is "one article… read start
+  to finish" and "The words are hers", true only of episodes 1–4. Suggested replacement given to
+  the owner on 20 Oct (SESSION-LOG). Also: is `a7-pink-suit-ai.jpg` AI-generated (as
+  `photos.php` says) or a real photo (the owner, 20 Oct)?
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
   traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–2

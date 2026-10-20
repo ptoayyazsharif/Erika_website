@@ -7,6 +7,32 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-20 (night) — YouTube channel set-up for the podcast
+
+**Asked.** "Give things here to fill for the YouTube setup, all things, the images and all, for
+the podcast" (a screenshot of Studio → Customization → Profile). Then: "this is her preferred
+image" (the RSS.com show art) and "here is real image as well, no text in it" (the pink-suit photo).
+**Done.**
+- `tools/youtube/channel.js`: banner 2048×1152, profile picture 585×585 from the show art,
+  a 700×700 pink alternative from the plain photo, watermark 150×150, the show art as the
+  podcast playlist square, and a safe-area check. Every field for the Profile screen in
+  `exports/youtube/channel/channel-setup.md`, all pasted into the reply as well.
+- The show art saved as `tools/podcast/art/show.jpg` (fetched from the RSS feed, since images
+  pasted into chat don't reach the disk). Playfair Display (her brand title face, OFL) in
+  `tools/youtube/fonts/`.
+**Fixed on the way.** The first banner used her red-blazer headshot and the merlot Bold style;
+redone around her preferred show art. Its title sits beside her hair: a plain crop showed
+ghost letters and the dots of "Explains…", and the photo's lit backdrop showed as a lighter
+box. Fixed with a blurred mask along the title's edge and a background gradient sampled from
+the art. A gold dot in the first profile crop: the crop now starts right of the title.
+**Open.**
+- The RSS.com show description says episodes are "read start to finish" and "The words are
+  hers", which is no longer true. Suggested replacement sent to the owner.
+- Erika's contact email going public, to confirm.
+- `a7-pink-suit-ai.jpg`: AI-generated or real?
+
+---
+
 ## 2026-10-19 (late night) — Her AI's strategy review: two proposed pages
 
 **Asked.** The VA shared the strategy review Erika's AI wrote after the meeting.
