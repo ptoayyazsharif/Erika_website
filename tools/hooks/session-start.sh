@@ -41,6 +41,11 @@ if [ -f tools/series/nexa-andrew.tsv ]; then
     echo "REMIND THE OWNER in your first reply and when publishing today's blog: $((2 - done_n)) NEXA/Andrew article(s) still due this month. See CLAUDE.md 'NEXA / Andrew series'."
   fi
 fi
+echo
+echo "-- Hand-over rule (owner, 20 Oct 2026) --"
+echo "Every hand-over puts EVERY field in the reply itself, not only in files: podcast = tools/podcast/handover.py"
+echo "(title, description, sources, KEYWORDS 6-8, settings, MP3 + art); YouTube = title, description, TAGS, settings"
+echo "from upload.md; social = captions + Google post. See CLAUDE.md 'Hand-overs'."
 if [ -f CLAUDE.md ]; then
   echo
   echo "-- Open items (CLAUDE.md) --"

@@ -37,6 +37,29 @@ open items; a **Stop** hook (`tools/hooks/stop-check.sh`) blocks ending a turn �
 while there are uncommitted or unpushed changes, work not merged into the default
 branch, or site changes newer than the last log entry.
 
+## Hand-overs — every field, every time, in the reply (the owner's rule, 20 Oct 2026)
+
+"No keywords? … make sure to remember every time every single thing as an output." A
+hand-over is complete only when **the reply itself** carries every field, laid out to paste.
+A field that sits at the end of a long paragraph, or only inside a zip or `upload.md`,
+counts as missing.
+
+- **Podcast episode (RSS.com):** run `python3 tools/podcast/handover.py <slug> --episode <n>
+  [--note "Recorded …"]` and copy its whole block into the reply:
+  - the MP3 (levelled) and the square art, both attached;
+  - **Title**, **Description** (summary, article and /home-value links, the AI line,
+    sources for a researched episode, the close);
+  - **Keywords (6–8)**, in their own box;
+  - **Settings**: Full; Season 1, Episode n; Explicit No; AI content Yes; the place it's
+    about; where it's made (the owner's choice);
+  - and read its "dated lines" list against today before sending.
+- **YouTube video:** paste the **Title**, **Description** (with chapters and the Apple /
+  Spotify links), **Tags** and **Settings** from `exports/youtube/<slug>/upload.md` into the
+  reply, as well as attaching the zip.
+- **Social pack:** paste the captions, the Google Business post and the posting notes from
+  `pack.md` into the reply.
+- **Article:** the link, the short link, what it covers, and what's for Erika to review.
+
 ## Branch — one branch, read first
 
 **`main` is the default branch and the single source of truth** (the owner's rule: "always
@@ -223,8 +246,9 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
      build it from the tracked files (`git ls-files` minus `config.php`, `escalate/`,
      `stella-demo/`, `manifest-n8n/`, `ask-erika/` and `docs/`, with
      `docs/UPLOAD-THIS-README.txt` placed at the zip's root) into the scratchpad and send it.
-8. **Podcast episode** — hand the owner the MP3 plus paste-ready title and
-   description: the article and `/home-value` links, the line *"This episode is
+8. **Podcast episode** — `python3 tools/podcast/handover.py <slug> --episode <n>` builds the
+   whole hand-over; paste all of it into the reply (*Hand-overs* above). Hand the owner the
+   MP3 plus paste-ready title and description: the article and `/home-value` links, the line *"This episode is
    narrated with an AI voice trained on Erika's own. The words are hers."*, and the
    explanatory-only / Axen Realty / Equal Housing close. Episode type Full, not
    explicit.

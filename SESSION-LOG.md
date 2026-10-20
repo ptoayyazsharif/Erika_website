@@ -38,6 +38,25 @@ video, already fixed by the VA in CapCut. No QR-code rule here.
 
 ---
 
+## 2026-10-20 (late) — Hand-overs carry every field, every time
+
+**Asked.** "No keywords? For the episode, make sure to remember every time every single thing
+as an output. Add this to memory and the repo."
+
+**Done**
+- **Episode 7's keywords and YouTube Episode 2's tags were resent in full.** Episode 7's
+  keywords had been given at the end of a long message; the YouTube tags were only in the zip.
+- **`tools/podcast/handover.py <slug> --episode <n>`** builds the whole RSS.com block from the
+  post itself: the files (with the level check), title, description (with sources for a
+  researched episode), keywords (6–8, required), the settings table, and the dated lines to
+  re-check. A copy is saved to `exports/podcast/`. It exits non-zero if anything is missing.
+- **CLAUDE.md** has a new *Hand-overs* section near the top: every field goes in the reply
+  itself, for the podcast, YouTube, social packs and articles. Publishing step 8 points to the
+  script.
+- **The SessionStart hook** prints the rule at the start of every session.
+
+---
+
 ## 2026-10-20 (evening) — Listing-photos article; podcast episode 7; YouTube episode 2
 
 **Asked.** "Do what we do daily: post a new blog and give me the next episode."
