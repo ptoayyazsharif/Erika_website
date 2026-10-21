@@ -249,6 +249,8 @@ return [
                 ['r' => 'B28', 'f' => 'assets/photos/17/b28-new-homeowner-holding-keys.jpg', 'label' => 'A smiling woman holding out a set of house keys', 'note' => 'stock - Gustavo Fring / Pexels', 'pos' => '45 50'],
                 ['r' => 'B29', 'f' => 'assets/photos/17/b29-drone-over-house.jpg', 'label' => 'A camera drone hovering in front of a house', 'note' => 'stock - Matthew / Pexels', 'pos' => '30 50'],
                 ['r' => 'B30', 'f' => 'assets/photos/17/b30-aerial-suburban-homes.jpg', 'label' => 'Aerial view of large suburban homes on green lots', 'note' => 'stock - Curtis Adams / Pexels', 'pos' => '55 55'],
+                ['r' => 'B31', 'f' => 'assets/photos/17/b31-downtown-atlanta-towers.jpg', 'label' => 'Office towers in downtown Atlanta from above', 'note' => 'stock - K / Pexels', 'pos' => '50 50'],
+                ['r' => 'B32', 'f' => 'assets/photos/17/b32-vacant-lot-beside-building.jpg', 'label' => 'An empty lot behind a fence, an apartment building beyond', 'note' => 'stock - David Brown / Pexels', 'pos' => '50 60'],
                 ['r' => 'C1', 'f' => 'assets/photos/17/owning-vs-investing-in-real-estate-cover.jpg', 'label' => 'Cover: owning vs investing (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
                 ['r' => 'C2', 'f' => 'assets/photos/17/closing-costs-in-georgia-explained-cover.jpg', 'label' => 'Cover: closing costs in Georgia (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],
                 ['r' => 'C3', 'f' => 'assets/photos/17/know-your-house-before-you-list-cover.jpg', 'label' => 'Cover: know your house before you list (Bold template)', 'note' => 'rendered by tools/covers/blog.js', 'pos' => '50 50'],

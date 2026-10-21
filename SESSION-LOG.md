@@ -7,6 +7,36 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-21 — Ground-lease article; podcast episode 8; YouTube episode 3
+
+**Asked.** "Let's do today's blog and next episode."
+**Done.**
+- **Article** `ground-leases-explained` (Investing, `/ground-lease`), researched around her reel
+  `DcbXCobtMCq` and its caption. Sources: MARTA's 29 May 2012 board minutes (One Atlantic Center
+  on MARTA land, 49-year lease from 1983 with extensions to 99; Lindbergh 99-year leases;
+  "a preference for ground leases rather than sales"), the Atlanta Land Trust FAQs (trust owns
+  the land, owner owns the house, resale formula, 25% of appreciation, owner-occupied, approved
+  lenders), Fannie Mae Selling Guide B2-3-03 (lease ≥ 5 years past the loan, plus the lease
+  requirements used as the "what to check" list), 24 CFR 203.37 (FHA: 99 years renewable or 10
+  years past maturity). Claims table in `tools/research/ground-leases-explained.md`.
+- Photos B31 (downtown Atlanta towers, K / Pexels) and B32 (empty lot, David Brown / Pexels);
+  Bold cover, podcast art, YouTube thumbnail.
+- **Episode** from `tools/podcast/ground-leases-explained.txt` (1,055 words, 386 s, -19.6 LUFS).
+  Full listen-back by transcript matched the script.
+- **Checks:** `check-article.mjs` all pass locally and live. Deploy: 15 files, 0 failures.
+- **Hand-overs:** podcast episode 8 (the open house) via `handover.py`; YouTube episode 3 (know
+  your house), with `--numbered-label Reason`.
+**Caught on the way.**
+- One script line ("it's everywhere once you know to look for it") was a claim with no source;
+  cut before recording.
+- The stock skyline is downtown, not Midtown (its Pexels description), so it's named that way.
+- YouTube 3 first ran without `--numbered-label`; the difference list showed "Reason one" said
+  where the captions had "1.", so it was re-run with the label (the CLAUDE.md rule).
+**Open.** Her reel promises a free ground-lease checklist ("Comment GROUND"); none is in her
+files. Ask whether she has one.
+
+---
+
 ## 2026-10-20 (night, later) — Channel banner remade from a cut-out, with QA
 
 **Asked.** "The banner is still not good, the bg has edges and mushy; please do a QA after

@@ -167,5 +167,15 @@
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/b30-aerial-suburban-homes.jpg",
     "refPos": "55% 55%"
+  },
+  {
+    "slug": "ground-leases-explained",
+    "template": "bold",
+    "eyebrow": "Investing",
+    "line": "You can own the building without owning the dirt.",
+    "sub": "Sometimes control beats ownership, and never selling is the smartest play.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b32-vacant-lot-beside-building.jpg",
+    "refPos": "50% 70%"
   }
 ]

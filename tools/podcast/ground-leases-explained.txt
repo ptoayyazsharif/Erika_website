@@ -1,0 +1,80 @@
+# Erika Explains — podcast episode script
+# Article: /blog/ground-leases-explained
+# Facts: every one is in tools/research/ground-leases-explained.md.
+# Her lines are from her reel DcbXCobtMCq and its caption.
+# Left out on purpose: her "free checklist" offer (no checklist in her files).
+# Acronyms are spelled out or spaced so the voice reads them ("F H A", "MARTA" is said as a word).
+#
+# voice: stability=0.38 similarity=0.8 style=0.22 speaker_boost=1
+
+Hey, it's Erika. Welcome back to Erika Explains.
+
+You can own the building... and not own an inch of the ground it's on. That's a ground lease.
+
+The landowner keeps the dirt. You lease it, for up to ninety-nine years. You build on it, and everything you build belongs to you for the whole term of the lease.
+
+Sounds strange, right? Owning a building on land that isn't yours. But stay with me. Today I want to walk you through how it works, where you'll find it right here around Atlanta, and what to check before you ever sign one.
+
+Let me explain.
+
+A ground lease splits a property in two. One person owns the land. Somebody else leases that land, and owns the building that sits on it.
+
+Think about what each side gets. The landowner collects income for decades, without ever selling. The business, or the buyer, gets control of the site without paying for the land, and builds on it. And when the lease is up, the building typically goes back to the landowner.
+
+That's the usual deal. But the lease decides. So that's the very first part I want you to read.
+
+Here's what most people miss. The pharmacy or the bank branch on the corner? A lot of them just lease the dirt.
+
+And it isn't only corner stores. Let me give you an Atlanta example.
+
+MARTA owns land around its train stations, and it leases that land to developers. Back in twenty twelve, in a briefing to its board, MARTA listed five station areas with active ground leases. And it said its guidelines for building around stations state a preference for ground leases rather than sales.
+
+One of those is One Atlantic Center. That's the fifty-story office tower at Fourteenth and West Peachtree, by the Arts Center station. According to that same briefing, MARTA signed a forty-nine-year lease back in nineteen eighty-three, with extensions to ninety-nine years. And the tower went up in nineteen eighty-seven, on about three acres.
+
+Up at Lindbergh, the briefing lists a ninety-nine-year lease with A T and T from the year two thousand, and a ninety-nine-year ground lease for the Uptown Square apartments from two thousand four.
+
+So think about that. A tower on the Atlanta skyline... standing on land its owner rents. That's control, not ownership.
+
+Now, you'll find the same idea in homeownership too.
+
+The Atlanta Land Trust is what's called a community land trust. In their words, the trust owns the land, and the homeowner owns the house on it. Buyers purchase the house at a lower price, and lease the land from the trust. And that keeps the cost lower, because the buyer doesn't have to pay for the land.
+
+For the right buyer, that's a way into a neighborhood that might otherwise be out of reach. But know the trade-offs before you fall in love with the house.
+
+First, the resale is set by a formula. When you sell, you agree to a formula that keeps the home affordable for the next buyer. The trust uses two. One lets the homeowner keep twenty-five percent of the appreciated value. The other uses average income growth.
+
+Second, it has to be your home. Land trust homes can't be rented out, for any period. It has to be where you live.
+
+And third, the lender has to be one of theirs. Buyers must use an approved lender who's been trained in how the land trust works. And the prices are set ahead of time. You don't negotiate them.
+
+One more thing the trust says on taxes. Its properties are taxed at the same rate as other property, for now.
+
+Okay. Now here's the important part. The clock.
+
+A ground lease runs out. That one fact drives everything else, starting with the loan.
+
+Lenders want the lease to outlast the loan. Fannie Mae's rule says the lease has to have at least five years left after the loan's maturity date. And F H A's rule is a renewable lease of at least ninety-nine years, or one with at least ten years left after the mortgage matures.
+
+So let's do the math. On a thirty-year loan, Fannie Mae's rule means at least thirty-five years left on the lease. Which means the years left on the lease matter just as much as the building that sits on it.
+
+So what should you check before you sign? Fannie Mae's lease requirements make a really good checklist, even if you never use a Fannie Mae loan, because they show you exactly what a lender worries about.
+
+Start with the years left, measured against your loan.
+
+Then ask, can you sell it on? The lease should let you assign it, transfer it, mortgage it, and sublease it, without the landowner running a credit check on the next buyer.
+
+Then, what happens if there's a default? Fannie Mae wants the lender to get notice, and at least thirty days to fix it, take over the lease, or foreclose.
+
+Then, what if the property gets taken for public use? The lease should protect the lender if that happens.
+
+And the paperwork. The lease should be recorded with the county, the rent that's due should be paid, and nobody should be claiming a default.
+
+After that, the money questions. How does the ground rent change over the years? Who pays the property taxes and the insurance? And what happens to the building when the lease ends?
+
+So before you think you have to buy the dirt... you don't. You don't. Sometimes control beats ownership, and never selling is the smartest play.
+
+But the lease is the whole deal. So have a real estate attorney read it before you sign. And if you're weighing a ground lease, whether you own the land or you're the one who wants to build on it, reach out to me, and let's talk it through. I've put links to every source in the show notes.
+
+Quick note. This episode explains how ground leases generally work. It isn't legal, tax, or financial advice. The lease itself decides who owns what, and for how long. So have an attorney review it, and check the property tax side with your county.
+
+So that's ground leases, explained. I'm Erika Page. Thanks for listening, and I'll talk to you next time.

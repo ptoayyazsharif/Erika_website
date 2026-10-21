@@ -25,6 +25,129 @@
 return [
 
     [
+        // Researched around her reel DcbXCobtMCq ("You can own the building and not own an inch
+        // of the ground it's on") and its caption. MARTA's 2012 TOD board briefing, the Atlanta
+        // Land Trust FAQs, Fannie Mae's Selling Guide B2-3-03 and 24 CFR 203.37. Every fact is
+        // listed with its source in tools/research/ground-leases-explained.md.
+        'slug'           => 'ground-leases-explained',
+        'title'          => 'You can own the building without owning the dirt.',
+        'seo_title'      => 'Ground Leases Explained: Owning the Building, Not the Land (with Atlanta Examples)',
+        'seo_desc'       => 'How a ground lease works: the landowner keeps the dirt, you own what you build. Atlanta examples, land trust homes, and what lenders require of the lease.',
+        'excerpt'        => 'You can own the building and not own an inch of the ground it&rsquo;s on. Here&rsquo;s how ground leases work, where you&rsquo;ll find them around Atlanta, and what to check before you sign one.',
+        'date'           => '2026-10-21',
+        'updated'        => '2026-10-21',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'investing',
+        'tags'           => ['ground lease', 'commercial real estate', 'land trust', 'leasehold', 'real estate investing', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/ground-leases-explained-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: You can own the building without owning the dirt.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@ninobur" rel="nofollow noopener" target="_blank">David Brown</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/ground-leases-explained.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'ground-lease',
+        'audio_secs'     => 386,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'What is a ground lease?',
+                'a' => 'A ground lease splits a property in two: one party owns the land, and the other leases the land, builds on it and owns the building for the term of the lease. What happens to the building when the lease ends is whatever the lease says.',
+            ],
+            [
+                'q' => 'Can I get a mortgage on a home on leased land?',
+                'a' => 'Often, if the lease runs long enough. Fannie Mae requires the lease to run at least five years past the loan&rsquo;s maturity date. FHA requires a renewable lease of at least 99 years, or one with at least 10 years left after the mortgage matures.',
+            ],
+            [
+                'q' => 'How do Atlanta Land Trust homes work?',
+                'a' => 'The Atlanta Land Trust owns the land and the homeowner owns the house, which keeps the price lower. When you sell, a resale formula keeps the home affordable for the next buyer; you must live there, and you must use one of the trust&rsquo;s approved lenders.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>You can own the building and not own an inch of the ground it&rsquo;s on. That&rsquo;s a ground lease.</p>
+
+<p>The landowner keeps the dirt. You lease it for up to ninety-nine years. You build on it, and everything you build belongs to you for the whole term of the lease.</p>
+
+<p>Let me explain how that works, where you&rsquo;ll find it around Atlanta, and what to check before you sign one.</p>
+
+<h2>Two owners, one property</h2>
+
+<p>A ground lease splits a property in two. One party owns the land. The other leases the land and owns the building on it.</p>
+
+<p>The landowner collects income for decades without ever selling. The business, or the buyer, gets control of the site without paying for the land, and builds on it. And when the lease is up, the building typically goes back to the landowner. That&rsquo;s the usual deal, but the lease decides, so that&rsquo;s the first part to read.</p>
+
+<h2>Here&rsquo;s what most people miss</h2>
+
+<p>The pharmacy or the bank branch on the corner? A lot of them just lease the dirt.</p>
+
+<p>And it isn&rsquo;t only corner stores. MARTA owns land around its stations, and it leases that land to developers. In a 2012 briefing to its board, MARTA listed five station areas with active ground leases, and said its 2010 guidelines for building around stations state &ldquo;a preference for ground leases rather than sales.&rdquo; <a href="https://www.itsmarta.com/pdfs/PER_minutes_52912.pdf" target="_blank" rel="noopener">[1]</a></p>
+
+<p>One of them is One Atlantic Center, the 50-story office tower at 14th and West Peachtree, by Arts Center station. According to that briefing, MARTA signed a 49-year lease in 1983 with extensions to 99 years, and the tower went up in 1987 on 3.08 acres. At Lindbergh, the same briefing lists a 99-year lease with AT&amp;T from 2000 and a 99-year ground lease for the Uptown Square apartments from 2004. <a href="https://www.itsmarta.com/pdfs/PER_minutes_52912.pdf" target="_blank" rel="noopener">[1]</a></p>
+
+<p>So a tower on the skyline can stand on land its owner rents. That&rsquo;s control, not ownership.</p>
+
+[[img:assets/photos/17/b31-downtown-atlanta-towers.jpg|Office towers in downtown Atlanta from above|Photo by <a href="https://www.pexels.com/@kelly" rel="nofollow noopener" target="_blank">K</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>The same idea at home: Atlanta&rsquo;s land trust homes</h2>
+
+<p>You&rsquo;ll find the same split in homeownership. The Atlanta Land Trust is a community land trust: &ldquo;The trust owns the land, and the homeowner owns the house on it.&rdquo; Buyers purchase the house at a lower price and lease the land from the trust, which &ldquo;keeps the cost lower because the buyer doesn&rsquo;t have to pay for the land.&rdquo; <a href="https://atlantalandtrust.org/faqs/" target="_blank" rel="noopener">[2]</a></p>
+
+<p>Know the trade-offs before you fall in love with the house:</p>
+
+<ul>
+<li><strong>The resale is set by a formula.</strong> When you sell, you agree to a resale formula that keeps the home affordable for the next buyer. The trust uses two: one lets the homeowner realize 25% of the appreciated value, and the other uses average income growth. <a href="https://atlantalandtrust.org/faqs/" target="_blank" rel="noopener">[2]</a></li>
+<li><strong>It has to be your home.</strong> Land trust homes can&rsquo;t be rented out for any period; the home must be your primary residence. <a href="https://atlantalandtrust.org/faqs/" target="_blank" rel="noopener">[2]</a></li>
+<li><strong>The lender has to be one of theirs.</strong> Buyers must use an approved lender trained in the land trust&rsquo;s &ldquo;dual ownership structure.&rdquo; Sales prices are pre-set, not negotiable. <a href="https://atlantalandtrust.org/faqs/" target="_blank" rel="noopener">[2]</a></li>
+<li><strong>Taxes, for now, are the same.</strong> The trust says its properties are presently taxed at the same rate as other property. <a href="https://atlantalandtrust.org/faqs/" target="_blank" rel="noopener">[2]</a></li>
+</ul>
+
+<p>For the right buyer, that&rsquo;s a way into a neighborhood that might otherwise be out of reach.</p>
+
+<h2>Now here&rsquo;s the important part: the clock</h2>
+
+<p>A ground lease runs out. That one fact drives everything else, starting with the loan.</p>
+
+<p>Lenders want the lease to outlast the loan. Fannie Mae&rsquo;s Selling Guide requires the lease to have &ldquo;an unexpired term that exceeds the maturity date of the loan by five (5) years or more.&rdquo; <a href="https://selling-guide.fanniemae.com/sel/b2-3-03/special-property-eligibility-and-underwriting-considerations-leasehold-estates" target="_blank" rel="noopener">[3]</a> FHA&rsquo;s rule is a lease &ldquo;for not less than 99 years which is renewable, or&hellip; having a period of not less than 10 years to run beyond the maturity date of the mortgage.&rdquo; <a href="https://www.ecfr.gov/current/title-24/section-203.37" target="_blank" rel="noopener">[4]</a></p>
+
+<p>So on a 30-year loan, Fannie Mae&rsquo;s rule means at least 35 years left on the lease. The years left on the lease matter as much as the building on it.</p>
+
+<h2>What to check before you sign</h2>
+
+<p>Fannie Mae&rsquo;s lease requirements make a good checklist even if you never use a Fannie Mae loan, because they show what a lender worries about: <a href="https://selling-guide.fanniemae.com/sel/b2-3-03/special-property-eligibility-and-underwriting-considerations-leasehold-estates" target="_blank" rel="noopener">[3]</a></p>
+
+<ul>
+<li><strong>The years left</strong> on the lease, measured against your loan.</li>
+<li><strong>Whether you can sell it on.</strong> The lease should let you assign, transfer, mortgage and sublease it, without the landowner running a credit review on the next buyer.</li>
+<li><strong>What happens on a default.</strong> Fannie Mae wants the lender to get notice and at least 30 days to cure it, take over the lease, or foreclose.</li>
+<li><strong>A taking.</strong> The lease should protect the lender if the property is condemned.</li>
+<li><strong>The paperwork.</strong> The lease is recorded in the county land records, rent that&rsquo;s due is paid, and nobody claims a default.</li>
+</ul>
+
+<p>Then the money questions: how the ground rent changes over the years, who pays the property taxes and insurance, and what happens to the building when the lease ends.</p>
+
+<h2>Control beats ownership, sometimes</h2>
+
+<p>So before you think you have to buy the dirt, you don&rsquo;t. Sometimes control beats ownership, and never selling is the smartest play.</p>
+
+<p>But the lease is the whole deal, so have a real estate attorney read it before you sign. If you&rsquo;re weighing a ground lease, as the landowner or as the one who builds, <a href="/contact">let&rsquo;s talk it through</a>.</p>
+
+<p>So that&rsquo;s ground leases, explained.</p>
+
+<p><em>This article explains how ground leases generally work. It isn&rsquo;t legal, tax or financial advice: the lease itself decides who owns what, and for how long, so have an attorney review it, and confirm the property-tax treatment with your county.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>MARTA Board of Directors, Planning &amp; External Relations Committee, <a href="https://www.itsmarta.com/pdfs/PER_minutes_52912.pdf" target="_blank" rel="noopener">minutes of May 29, 2012</a>: briefing on existing transit-oriented development.</li>
+<li>Atlanta Land Trust, <a href="https://atlantalandtrust.org/faqs/" target="_blank" rel="noopener">FAQs</a>.</li>
+<li>Fannie Mae, Selling Guide, <a href="https://selling-guide.fanniemae.com/sel/b2-3-03/special-property-eligibility-and-underwriting-considerations-leasehold-estates" target="_blank" rel="noopener">B2-3-03, Special Property Eligibility and Underwriting Considerations: Leasehold Estates</a> (August 5, 2026).</li>
+<li>Code of Federal Regulations, <a href="https://www.ecfr.gov/current/title-24/section-203.37" target="_blank" rel="noopener">24 CFR 203.37, Nature of title to realty</a> (FHA).</li>
+<li>Erika K. Page, reel on ground leases and its caption (2026), her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her reel DcKdzUiulyk with her photographer, Jonathan Martinez,
         // flying a drone over a listing of a little over an acre. NAR (2025 Profile via
         // Virginia REALTORS, Code of Ethics Article 12) and the FAA's Part 107 pages. Every
