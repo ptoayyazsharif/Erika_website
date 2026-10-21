@@ -1,0 +1,259 @@
+<?php
+/**
+ * Stripe paywall for landing pages, kept as small as Stan's: a page has a price
+ * (or none), the visitor answers the questions, pays on Stripe's own Checkout
+ * page, and comes back to the download.
+ *
+ * The owner only pastes two things in the admin (Payments / Stripe): the secret
+ * key and the webhook's signing secret. No Stripe library: Checkout needs three
+ * calls, made here with curl.
+ *
+ *   POST /page/<address>          answers kept as a lead marked "payment pending",
+ *                                 then a Checkout Session, then 303 to Stripe
+ *   GET  /page/<address>/paid     Stripe sends the visitor back here; the session
+ *                                 is fetched from Stripe (never trusted from the
+ *                                 URL) and, once paid, the lead is completed
+ *   POST /stripe-webhook.php      the same completion when the visitor never comes
+ *                                 back (closed the tab, slow bank), and the
+ *                                 subscription's later life (cancelled, past due)
+ *
+ * Completion (emails to the visitor and the owner, Lofty) happens exactly once,
+ * whichever of the two arrives first: see stripe_complete().
+ *
+ * Subscriptions: a page can bill monthly or yearly instead of once. Checkout
+ * creates the subscription; the webhook keeps its status on the lead. Access is
+ * the same signed download link as a one-off purchase.
+ */
+
+/** Stripe's smallest charge in US dollars, in cents. */
+const STRIPE_MIN_CENTS = 50;
+
+/** How a page can bill: key => label. */
+const STRIPE_BILLING = ['once' => 'One-time payment', 'month' => 'Monthly subscription', 'year' => 'Yearly subscription'];
+
+function stripe_key(): string { return trim(setting('stripe.secret')); }
+function stripe_whsec(): string { return trim(setting('stripe.whsec')); }
+
+/** Can paid pages take money? (A secret key is enough to sell; the webhook makes it robust.) */
+function stripe_ready(): bool {
+    return (bool) preg_match('/^(sk|rk)_(test|live)_[A-Za-z0-9]+$/', stripe_key());
+}
+
+function stripe_mode(): string {
+    return preg_match('/^(sk|rk)_live_/', stripe_key()) ? 'live' : 'test';
+}
+
+/** "$99.99", "$9.99 / month". */
+function stripe_price_label(int $cents, string $billing = 'once'): string {
+    $s = '$' . number_format($cents / 100, $cents % 100 ? 2 : 0);
+    return $s . ($billing === 'month' ? ' / month' : ($billing === 'year' ? ' / year' : ''));
+}
+
+/** "99.99" or "$1,200" -> cents; anything unreadable -> 0 (free). */
+function stripe_parse_price(string $s): int {
+    $s = preg_replace('/[^0-9.]/', '', $s);
+    if ($s === '' || !is_numeric($s)) return 0;
+    return (int) round((float) $s * 100);
+}
+
+/**
+ * One call to Stripe's API. Returns [ok, http code, decoded body or null, error text].
+ * The base URL is a setting only so the QA suite can point it at a local fake.
+ */
+function stripe_http(string $method, string $path, array $params = []): array {
+    $key = stripe_key();
+    if ($key === '') return [false, 0, null, 'No Stripe secret key is set (Payments / Stripe in the admin).'];
+    $url = rtrim(setting('stripe.api_base', '') ?: 'https://api.stripe.com', '/') . $path;
+    $body = http_build_query($params, '', '&');
+    if ($method === 'GET' && $body !== '') { $url .= '?' . $body; $body = ''; }
+    if (!function_exists('curl_init')) return [false, 0, null, 'The server has no curl extension.'];
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_CUSTOMREQUEST => $method, CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $key, 'Content-Type: application/x-www-form-urlencoded'],
+        CURLOPT_CONNECTTIMEOUT => 8, CURLOPT_TIMEOUT => 20,
+    ]);
+    if ($method === 'POST') curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+    $resp = curl_exec($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $cErr = curl_error($ch);
+    curl_close($ch);
+    if ($resp === false) return [false, 0, null, 'Could not reach Stripe: ' . $cErr];
+    $data = json_decode((string) $resp, true);
+    if ($code < 200 || $code >= 300) {
+        $msg = is_array($data) ? (string) ($data['error']['message'] ?? '') : '';
+        return [false, $code, is_array($data) ? $data : null, 'Stripe said (HTTP ' . $code . '): ' . ($msg !== '' ? $msg : substr((string) $resp, 0, 200))];
+    }
+    return [true, $code, is_array($data) ? $data : [], ''];
+}
+
+/** The admin's "Save & test": a read that any working secret key may make. */
+function stripe_test(): array {
+    [$ok, , $data, $err] = stripe_http('GET', '/v1/balance');
+    if (!$ok) return [false, $err];
+    return [true, 'Connected to Stripe (' . stripe_mode() . ' mode).'];
+}
+
+/**
+ * Start Checkout for a lead on a paid page. Returns [url, error].
+ * The lead id travels as client_reference_id and in the metadata, so both the
+ * return trip and the webhook find the lead without trusting the visitor.
+ */
+function stripe_checkout(array $p, int $leadId, string $email): array {
+    $sub = $p['billing'] !== 'once';
+    $meta = ['page' => $p['slug'], 'lead' => (string) $leadId];
+    $params = [
+        'mode' => $sub ? 'subscription' : 'payment',
+        'line_items' => [[
+            'quantity' => 1,
+            'price_data' => array_filter([
+                'currency' => 'usd',
+                'unit_amount' => $p['price_cents'],
+                'product_data' => ['name' => mb_substr($p['title'], 0, 250)],
+                'recurring' => $sub ? ['interval' => $p['billing']] : null,
+            ]),
+        ]],
+        'customer_email' => $email,
+        'client_reference_id' => (string) $leadId,
+        'metadata' => $meta,
+        // {CHECKOUT_SESSION_ID} is filled in by Stripe; the braces must reach it unencoded-in-meaning.
+        'success_url' => abs_url(landing_path($p['slug'], 'paid')) . '?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url' => abs_url(landing_path($p['slug'])) . '?cancelled=1#form',
+    ];
+    $params[$sub ? 'subscription_data' : 'payment_intent_data'] = ['metadata' => $meta];
+    [$ok, , $data, $err] = stripe_http('POST', '/v1/checkout/sessions', $params);
+    if (!$ok || empty($data['url'])) return ['', $err ?: 'Stripe gave no checkout address.'];
+    stripe_lead_pay($leadId, ['session' => (string) ($data['id'] ?? '')]);
+    return [(string) $data['url'], ''];
+}
+
+/* ---------- the payment record on a lead (kept in its meta, under "pay") ---------- */
+
+function stripe_lead_pay(int $leadId, array $changes): void {
+    $l = lead_get($leadId);
+    if (!$l) return;
+    $meta = $l['meta'];
+    $meta['pay'] = array_merge((array) ($meta['pay'] ?? []), $changes);
+    lead_update($leadId, ['meta' => json_encode($meta, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+}
+
+/**
+ * Mark the lead paid and send everything a free page sends at once, exactly once.
+ * The switch from "pending" to "paid" is one guarded UPDATE: whichever of the
+ * return trip and the webhook gets there second changes no row and sends nothing.
+ * Returns ['ok' => bool, 'token' => download token, 'emailed' => bool, 'first' => bool].
+ */
+function stripe_complete(array $session): array {
+    $leadId = (int) ($session['client_reference_id'] ?? ($session['metadata']['lead'] ?? 0));
+    $slug = (string) ($session['metadata']['page'] ?? '');
+    $paid = in_array($session['payment_status'] ?? '', ['paid', 'no_payment_required'], true);
+    $l = $leadId > 0 ? lead_get($leadId) : null;
+    if (!$paid || !$l || $l['source_key'] !== 'page:' . $slug) return ['ok' => false, 'token' => '', 'emailed' => false, 'first' => false];
+
+    $pay = (array) ($l['meta']['pay'] ?? []);
+    $now = array_merge($pay, array_filter([
+        'state' => 'paid', 'paid_at' => date('Y-m-d H:i:s'), 'session' => (string) ($session['id'] ?? ''),
+        'amount' => (int) ($session['amount_total'] ?? ($pay['amount'] ?? 0)),
+        'currency' => (string) ($session['currency'] ?? 'usd'),
+        'intent' => is_string($session['payment_intent'] ?? null) ? $session['payment_intent'] : '',
+        'sub' => is_string($session['subscription'] ?? null) ? $session['subscription'] : '',
+        'sub_status' => is_string($session['subscription'] ?? null) ? 'active' : '',
+        'customer' => is_string($session['customer'] ?? null) ? $session['customer'] : '',
+        'live' => !empty($session['livemode']),
+    ], fn($v) => $v !== '' && $v !== null));
+    $meta = $l['meta'];
+    $meta['pay'] = $now;
+    $first = false;
+    try {
+        $st = db()->prepare('UPDATE leads SET meta = ? WHERE id = ? AND meta LIKE ?');
+        $st->execute([json_encode($meta, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $leadId, '%"state":"pending"%']);
+        $first = $st->rowCount() === 1;
+    } catch (Throwable $e) {}
+
+    $token = landing_token($slug, $leadId);
+    $emailed = false;
+    if ($first) {
+        $p = landing_one($slug, true);
+        if ($p) $emailed = landing_notify($p, $l, $token, true, 'Paid ' . stripe_price_label((int) $now['amount'], (string) ($now['billing'] ?? 'once')))['emailed'];
+    }
+    return ['ok' => true, 'token' => $token, 'emailed' => $emailed, 'first' => $first];
+}
+
+/* ---------- the webhook ---------- */
+
+/** Verify Stripe's signature header against the raw body. Five minutes' tolerance, as Stripe's own libraries use. */
+function stripe_verify(string $payload, string $header, string $secret, int $tolerance = 300): bool {
+    if ($secret === '' || $header === '') return false;
+    $t = 0;
+    $sigs = [];
+    foreach (explode(',', $header) as $part) {
+        [$k, $v] = array_pad(explode('=', trim($part), 2), 2, '');
+        if ($k === 't') $t = (int) $v;
+        if ($k === 'v1') $sigs[] = $v;
+    }
+    if (!$t || !$sigs || abs(time() - $t) > $tolerance) return false;
+    $want = hash_hmac('sha256', $t . '.' . $payload, $secret);
+    foreach ($sigs as $s) if (hash_equals($want, $s)) return true;
+    return false;
+}
+
+/** Find the lead a subscription belongs to. */
+function stripe_lead_by_sub(string $subId): ?array {
+    if (!preg_match('/^sub_[A-Za-z0-9]+$/', $subId)) return null;
+    try {
+        leads_table();
+        $st = db()->prepare('SELECT * FROM leads WHERE meta LIKE ? ORDER BY id DESC LIMIT 1');
+        $st->execute(['%"sub":"' . $subId . '"%']);
+        $r = $st->fetch();
+        return $r ? lead_decode($r) : null;
+    } catch (Throwable $e) { return null; }
+}
+
+/** Handle one verified event. Returns a short note for the response body (and the logs). */
+function stripe_handle_event(array $ev): string {
+    $type = (string) ($ev['type'] ?? '');
+    $obj = (array) ($ev['data']['object'] ?? []);
+    switch ($type) {
+        case 'checkout.session.completed':
+        case 'checkout.session.async_payment_succeeded':
+            $r = stripe_complete($obj);
+            return $r['ok'] ? ($r['first'] ? 'completed' : 'already completed') : 'not paid yet, or not one of ours';
+        case 'checkout.session.async_payment_failed':
+        case 'checkout.session.expired':
+            $id = (int) ($obj['client_reference_id'] ?? 0);
+            $l = $id ? lead_get($id) : null;
+            if ($l && (($l['meta']['pay']['state'] ?? '') === 'pending')) {
+                stripe_lead_pay($id, ['state' => $type === 'checkout.session.expired' ? 'abandoned' : 'failed']);
+                return 'marked ' . ($type === 'checkout.session.expired' ? 'abandoned' : 'failed');
+            }
+            return 'nothing to change';
+        case 'customer.subscription.updated':
+        case 'customer.subscription.deleted':
+            $l = stripe_lead_by_sub((string) ($obj['id'] ?? ''));
+            if (!$l) return 'subscription not found';
+            $status = $type === 'customer.subscription.deleted' ? 'canceled' : (string) ($obj['status'] ?? '');
+            stripe_lead_pay((int) $l['id'], array_filter(['sub_status' => $status, 'sub_cancel_at_end' => !empty($obj['cancel_at_period_end']) ? '1' : '0',
+                'sub_period_end' => isset($obj['current_period_end']) ? date('Y-m-d', (int) $obj['current_period_end']) : ''], fn($v) => $v !== ''));
+            return 'subscription ' . $status;
+    }
+    return 'ignored';
+}
+
+/** A short line for the Leads screen: [chip class, text] or null for a free lead. */
+function stripe_lead_chip(array $l): ?array {
+    $pay = (array) ($l['meta']['pay'] ?? []);
+    if (!$pay) return null;
+    $amt = stripe_price_label((int) ($pay['amount'] ?? 0), (string) ($pay['billing'] ?? 'once'));
+    switch ($pay['state'] ?? '') {
+        case 'paid':
+            if (($pay['sub'] ?? '') !== '') {
+                $s = (string) ($pay['sub_status'] ?? 'active');
+                return [in_array($s, ['active', 'trialing'], true) ? 'ok' : 'bad', 'Subscribed ' . $amt . ($s !== 'active' ? ' · ' . $s : '')];
+            }
+            return ['ok', 'Paid ' . $amt];
+        case 'pending':   return ['off', 'Payment pending'];
+        case 'abandoned': return ['off', 'Left checkout'];
+        case 'failed':    return ['bad', 'Payment failed'];
+    }
+    return null;
+}

@@ -74,7 +74,7 @@ function landing_admin_early(string $cur): void {
         header('Content-Disposition: attachment; filename="erikakpage-leads-' . date('Y-m-d') . '.csv"');
         $out = fopen('php://output', 'w');
         fwrite($out, "\xEF\xBB\xBF");   // so Excel reads the accents and dashes
-        fputcsv($out, ['Received', 'Source', 'Name', 'Email', 'Phone', 'Answers', 'Emailed to you', 'Lofty', 'Lofty detail', 'Downloads', 'Page']);
+        fputcsv($out, ['Received', 'Source', 'Name', 'Email', 'Phone', 'Answers', 'Emailed to you', 'Lofty', 'Lofty detail', 'Downloads', 'Payment', 'Page']);
         for ($off = 0; ; $off += 500) {
             $rows = leads_list($f, 500, $off);
             foreach ($rows as $l) {
@@ -84,7 +84,7 @@ function landing_admin_early(string $cur): void {
                     (string) $l['created'], (string) $l['source_label'], (string) $l['name'], (string) $l['email'], (string) $l['phone'],
                     implode(' | ', $ans), $l['email_ok'] === null ? '' : ((int) $l['email_ok'] ? 'yes' : 'NO'),
                     $l['crm_ok'] === null ? 'not sent' : ((int) $l['crm_ok'] ? 'yes' : 'FAILED'), (string) $l['crm_detail'],
-                    (string) (int) $l['downloads'], abs_url((string) $l['page_url']),
+                    (string) (int) $l['downloads'], ($pc = stripe_lead_chip($l)) ? $pc[1] : '', abs_url((string) $l['page_url']),
                 ]));
             }
             if (count($rows) < 500) break;
@@ -167,6 +167,11 @@ function landing_admin_early(string $cur): void {
         elseif (in_array($type, ['select', 'checkbox'], true) && !$opts) $errs[] = '"' . $label . '" needs at least one option.';
     }
 
+    // the price (blank or 0 = a free page)
+    $priceCents = stripe_parse_price((string) ($_POST['lp_price'] ?? ''));
+    if ($priceCents > 0 && $priceCents < STRIPE_MIN_CENTS) $errs[] = 'A price has to be at least $0.50 (Stripe\'s minimum). Leave it empty for a free page.';
+    if ($priceCents > 99999999) $errs[] = 'That price is too large.';
+
     // the picture
     $image = (string) ($old['image'] ?? '');
     if (!empty($_POST['lp_image_clear'])) $image = '';
@@ -198,6 +203,7 @@ function landing_admin_early(string $cur): void {
         'email_lead' => !empty($_POST['lp_email_lead']), 'crm_on' => !empty($_POST['lp_crm_on']),
         'crm_source' => $_POST['lp_crm_source'] ?? '', 'crm_tags' => $_POST['lp_crm_tags'] ?? '',
         'crm_type' => (int) ($_POST['lp_crm_type'] ?? 0), 'indexable' => !empty($_POST['lp_indexable']),
+        'price_cents' => $priceCents, 'billing' => $_POST['lp_billing'] ?? 'once',
         'published' => $act === 'publish', 'updated' => date('Y-m-d'),
     ]);
     if (($_POST['lp_deliver'] ?? '') === 'url' && trim((string) ($_POST['lp_url'] ?? '')) !== '' && $p && $p['url'] === '') {
@@ -231,6 +237,9 @@ function landing_admin_early(string $cur): void {
     if ($act === 'publish' && !landing_deliverable($p)) {
         $p['published'] = false;
         $warn = 'Saved as a draft: add the file (or a link) before it can go live.';
+    } elseif ($act === 'publish' && !landing_payable($p)) {
+        $p['published'] = false;
+        $warn = 'Saved as a draft: this page has a price, so add your Stripe keys under Payments / Stripe before it can go live.';
     }
     if ($orig !== '' && $orig !== $slug) {
         unset($all[$orig]);
@@ -379,11 +388,11 @@ function lpa_view_list(): void {
       <thead><tr><th>Page</th><th>Status</th><th>Leads</th><th>Updated</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($pages as $p):
-          $live = $p['published'] && landing_deliverable($p);
+          $live = landing_live($p);
           $n = $counts['page:' . $p['slug']]['count'] ?? 0; ?>
         <tr>
-          <td><a href="admin.php?page=landing-pages&amp;edit=<?= esc(rawurlencode($p['slug'])) ?>"><b><?= esc($p['title']) ?></b></a><br><small>/page/<?= esc($p['slug']) ?></small></td>
-          <td><?php if ($live): ?><span class="chip ok">Live</span><?php elseif (!landing_deliverable($p)): ?><span class="chip gold">Draft · needs its file</span><?php else: ?><span class="chip off">Draft</span><?php endif; ?></td>
+          <td><a href="admin.php?page=landing-pages&amp;edit=<?= esc(rawurlencode($p['slug'])) ?>"><b><?= esc($p['title']) ?></b></a><br><small>/page/<?= esc($p['slug']) ?> · <?= $p['price_cents'] > 0 ? esc(stripe_price_label($p['price_cents'], $p['billing'])) : 'free' ?></small></td>
+          <td><?php if ($live): ?><span class="chip ok">Live</span><?php elseif (!landing_deliverable($p)): ?><span class="chip gold">Draft · needs its file</span><?php elseif ($p['published'] && !landing_payable($p)): ?><span class="chip gold">Hidden · needs Stripe</span><?php else: ?><span class="chip off">Draft</span><?php endif; ?></td>
           <td><?php if ($n): ?><a href="admin.php?page=leads&amp;source=<?= esc(rawurlencode('page:' . $p['slug'])) ?>"><?= $n ?> lead<?= $n === 1 ? '' : 's' ?></a><?php else: ?><small>none yet</small><?php endif; ?></td>
           <td><small><?= esc($p['updated']) ?></small></td>
           <td style="white-space:nowrap;text-align:right">
@@ -411,7 +420,7 @@ function lpa_view_editor(string $slug): void {
     ]);
     if ($isNew && !isset($GLOBALS['lpa_posted'])) { $p['slug'] = ''; $p['title'] = ''; }
     $errs = $GLOBALS['lpa_errs'] ?? [];
-    $live = $saved && $saved['published'] && landing_deliverable($saved);
+    $live = $saved && landing_live($saved);
     $fileOk = $p['file'] !== '' && is_file(landing_abs($p['file']));
     $host = preg_replace('#^https?://#', '', site_url());
     $json = fn($v) => json_encode($v, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
@@ -454,7 +463,16 @@ function lpa_view_editor(string $slug): void {
         </div>
 
         <div class="lpa-card">
-          <h2><span class="lpa-num">3</span> Collect info</h2>
+          <h2><span class="lpa-num">3</span> Set price</h2>
+          <div class="two">
+            <div class="fld"><label>Price ($)</label><input type="text" name="lp_price" id="lp_price" inputmode="decimal" value="<?= $p['price_cents'] > 0 ? esc(number_format($p['price_cents'] / 100, 2, '.', '')) : '' ?>" placeholder="Free" maxlength="12"><div class="note">Leave empty for a free page. Visitors pay on Stripe's secure checkout, then get the file.</div></div>
+            <div class="fld"><label>Billing</label><select name="lp_billing" id="lp_billing"><?php foreach (STRIPE_BILLING as $k => $lbl): ?><option value="<?= esc($k) ?>" <?= $p['billing'] === $k ? 'selected' : '' ?>><?= esc($lbl) ?></option><?php endforeach; ?></select><div class="note">A subscription charges again every month or year until the buyer cancels.</div></div>
+          </div>
+          <?php if (!stripe_ready()): ?><p style="font-size:13px;color:#7a5a24;background:#F7EEDC;padding:10px 12px;margin:4px 0 0">Stripe isn't set up yet. A page with a price stays hidden until you add your keys under <a href="admin.php?page=stripe">Payments / Stripe</a>.</p><?php endif; ?>
+        </div>
+
+        <div class="lpa-card">
+          <h2><span class="lpa-num">4</span> Collect info</h2>
           <div class="note" style="font-size:12.5px;color:#8a746f;margin-bottom:8px">Basic info fields can't be edited: every page asks for these.</div>
           <div class="fixed">👤 Name <span style="margin-left:auto">required</span></div>
           <div class="fixed">✉ Email <span style="margin-left:auto">required</span></div>
@@ -466,7 +484,7 @@ function lpa_view_editor(string $slug): void {
         </div>
 
         <div class="lpa-card">
-          <h2><span class="lpa-num">4</span> The file they get</h2>
+          <h2><span class="lpa-num">5</span> The file they get</h2>
           <div class="seg">
             <label><input type="radio" name="lp_deliver" value="file" <?= $p['deliver'] === 'file' ? 'checked' : '' ?>> Upload file</label>
             <label style="border-left:1px solid rgba(69,50,48,.2)"><input type="radio" name="lp_deliver" value="url" <?= $p['deliver'] === 'url' ? 'checked' : '' ?>> Add URL</label>
@@ -494,7 +512,7 @@ function lpa_view_editor(string $slug): void {
         </div>
 
         <div class="lpa-card">
-          <h2><span class="lpa-num">5</span> Options</h2>
+          <h2><span class="lpa-num">6</span> Options</h2>
           <div class="fld"><label>Page address *</label><div class="addr"><span><?= esc($host) ?>/page/</span><input type="text" name="lp_slug" id="lp_slug" value="<?= esc($p['slug']) ?>" pattern="[a-z0-9][a-z0-9\-]*" title="Lowercase letters, numbers and dashes" maxlength="80" style="flex:1"></div><div class="note">Lowercase letters, numbers and dashes. Changing it breaks links already shared.</div></div>
           <div class="two">
             <div class="fld"><label>After the form: heading</label><input type="text" name="lp_thanks_title" value="<?= esc($p['thanks_title']) ?>" maxlength="120"></div>
@@ -537,6 +555,7 @@ function lpa_view_editor(string $slug): void {
               <div class="lp-field"><label class="lp-label">Name<span class="lp-req">*</span></label><input class="lp-input" placeholder="" tabindex="-1"></div>
               <div class="lp-field"><label class="lp-label">Email<span class="lp-req">*</span></label><input class="lp-input" tabindex="-1"></div>
               <div id="pv-fields"></div>
+              <div class="lp-total" id="pv-total" hidden><span>Total</span><span class="lp-dots"></span><b id="pv-price"></b></div>
               <button type="button" class="lp-btn" id="pv-cta" tabindex="-1"></button>
               <p class="lp-consent" id="pv-consent"></p>
             </div>
@@ -628,8 +647,12 @@ function lpa_view_editor(string $slug): void {
           else { h+='<div class="lp-field"><label class="lp-label">'+L+star+'</label><input class="lp-input" tabindex="-1"></div>'; }
         });
         $('pv-fields').innerHTML=h;
+        var pr=parseFloat(($('lp_price').value||'').replace(/[^0-9.]/g,''));
+        $('pv-total').hidden=!(pr>0);
+        if(pr>0){ var b=$('lp_billing').value; $('pv-price').textContent='$'+(pr%1?pr.toFixed(2):pr.toFixed(0)).replace(/\B(?=(\d{3})+(?!\d))/g,',')+(b==='month'?' / month':b==='year'?' / year':''); }
       }
-      ['lp_title','lp_bottom_title','lp_cta','lp_consent'].forEach(function(id){ $(id).addEventListener('input',function(){markDirty();preview();}); });
+      ['lp_title','lp_bottom_title','lp_cta','lp_consent','lp_price'].forEach(function(id){ $(id).addEventListener('input',function(){markDirty();preview();}); });
+      $('lp_billing').addEventListener('change',function(){markDirty();preview();});
 
       /* new pages take their address from the title until it is typed in */
       var slugTouched=!isNew;
@@ -665,6 +688,7 @@ function lpa_view_editor(string $slug): void {
 
 function lpa_chips(array $l): string {
     $h = '';
+    if ($pc = stripe_lead_chip($l)) $h .= '<span class="chip ' . $pc[0] . '">' . esc($pc[1]) . '</span>';
     if ($l['email_ok'] !== null) $h .= (int) $l['email_ok'] ? '<span class="chip ok" title="' . esc((string) $l['email_detail']) . '">Emailed</span>' : '<span class="chip bad" title="' . esc((string) $l['email_detail']) . '">Email failed</span>';
     $h .= $l['crm_ok'] === null ? '<span class="chip off" title="' . esc((string) $l['crm_detail']) . '">Lofty: not sent</span>'
         : ((int) $l['crm_ok'] ? '<span class="chip ok" title="' . esc((string) $l['crm_detail']) . '">In Lofty</span>' : '<span class="chip bad" title="' . esc((string) $l['crm_detail']) . '">Lofty failed</span>');
@@ -764,6 +788,12 @@ function lpa_view_lead(int $id): void {
       <dl class="lpa-kv">
         <dt>Email to you</dt><dd><?= $l['email_ok'] === null ? '—' : ((int) $l['email_ok'] ? 'Sent' : '<b style="color:#A33A2F">Failed</b>') ?><?= $l['email_detail'] ? '<br><small style="color:#8a746f">' . esc((string) $l['email_detail']) . '</small>' : '' ?></dd>
         <dt>Lofty</dt><dd><?= $l['crm_ok'] === null ? 'Not sent' : ((int) $l['crm_ok'] ? 'Lead created' : '<b style="color:#A33A2F">Failed</b>') ?><?= $l['crm_detail'] ? '<br><small style="color:#8a746f">' . esc((string) $l['crm_detail']) . '</small>' : '' ?></dd>
+        <?php $pay = (array) ($l['meta']['pay'] ?? []); if ($pay): $dash = 'https://dashboard.stripe.com/' . (empty($pay['live']) ? 'test/' : ''); ?>
+          <dt>Payment</dt><dd><?= esc(($pc = stripe_lead_chip($l)) ? $pc[1] : (string) ($pay['state'] ?? '')) ?><?= !empty($pay['paid_at']) ? ' · ' . esc(date('M j, Y g:i a', strtotime((string) $pay['paid_at']))) : '' ?>
+            <?php if (!empty($pay['intent'])): ?><br><small><a href="<?= esc($dash . 'payments/' . $pay['intent']) ?>" target="_blank">See it in Stripe ↗</a></small><?php endif; ?>
+            <?php if (!empty($pay['sub'])): ?><br><small><a href="<?= esc($dash . 'subscriptions/' . $pay['sub']) ?>" target="_blank">Subscription in Stripe ↗</a><?= !empty($pay['sub_period_end']) ? ' · current period ends ' . esc((string) $pay['sub_period_end']) : '' ?><?= ($pay['sub_cancel_at_end'] ?? '') === '1' ? ' · cancels then' : '' ?></small><?php endif; ?>
+            <?php if (!empty($pay['error'])): ?><br><small style="color:#A33A2F"><?= esc((string) $pay['error']) ?></small><?php endif; ?></dd>
+        <?php endif; ?>
         <?php if ($l['kind'] === 'landing'): ?><dt>Downloads</dt><dd><?= (int) $l['downloads'] ?><?= $l['last_download'] ? ' · last ' . esc(date('M j, g:i a', strtotime((string) $l['last_download']))) : '' ?></dd><?php endif; ?>
       </dl>
       <form method="post" style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">

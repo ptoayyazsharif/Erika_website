@@ -77,7 +77,7 @@ button:hover{background:#9C4A3E}
 $pages = manifest();
 $pageIds = array_keys($pages);
 $cur = $_GET['page'] ?? 'home';
-if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty', 'gallery-photos', 'blog-posts', 'products-list', 'landing-pages', 'leads'], true)) $cur = 'home';
+if (!isset($pages[$cur]) && !in_array($cur, ['settings', 'email', 'lofty', 'stripe', 'gallery-photos', 'blog-posts', 'products-list', 'landing-pages', 'leads'], true)) $cur = 'home';
 
 /* ---------- landing pages and leads: downloads, the CSV and the save buttons (lib/admin-landing.php) ---------- */
 require __DIR__ . '/lib/admin-landing.php';
@@ -152,6 +152,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_lofty'])) {
         }
     }
     $cur = 'lofty';
+}
+
+/* ---------- save Stripe (the paywall on landing pages; lib/stripe.php) ---------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_stripe'])) {
+    csrf_check();
+    $sk = trim((string) ($_POST['stripe_secret'] ?? ''));
+    $wh = trim((string) ($_POST['stripe_whsec'] ?? ''));
+    $bad = [];
+    if ($sk !== '' && !preg_match('/^(sk|rk)_(test|live)_[A-Za-z0-9]+$/', $sk)) $bad[] = 'That secret key doesn\'t look right: it starts with sk_live_ (or sk_test_ to try things out). The publishable key (pk_…) isn\'t the one.';
+    if ($wh !== '' && !preg_match('/^whsec_[A-Za-z0-9]+$/', $wh)) $bad[] = 'The webhook signing secret starts with whsec_.';
+    if (!$bad) {
+        if ($sk !== '') set_setting('stripe.secret', $sk);
+        if ($wh !== '') set_setting('stripe.whsec', $wh);
+        if (!empty($_POST['stripe_clear'])) { set_setting('stripe.secret', ''); set_setting('stripe.whsec', ''); }
+        $flash = !empty($_POST['stripe_clear']) ? 'Stripe keys removed. Paid pages are hidden until keys are added again.' : 'Stripe settings saved.';
+        if (($_POST['do_stripe'] ?? '') === 'test' && empty($_POST['stripe_clear'])) {
+            [$sok, $sd] = stripe_test();
+            if ($sok) $flash = 'Saved. ' . $sd;
+            else { $err = 'Saved, but the test failed: ' . $sd; $flash = ''; }
+        }
+    } else { $err = implode(' ', $bad); }
+    $cur = 'stripe';
 }
 
 /* ---------- save the gallery list ---------- */
@@ -456,7 +478,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_save'])) {
     }
 }
 
-$curTitle = in_array($cur, ['landing-pages', 'leads'], true) ? landing_admin_title($cur) : ($cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : ($cur === 'gallery-photos' ? 'Gallery photos' : ($cur === 'blog-posts' ? 'Blog posts' : ($cur === 'products-list' ? 'Digital products' : $pages[$cur]['title']))))));
+$curTitle = in_array($cur, ['landing-pages', 'leads'], true) ? landing_admin_title($cur) : ($cur === 'settings' ? 'Settings' : ($cur === 'email' ? 'Email / Forms' : ($cur === 'lofty' ? 'CRM / Lofty' : ($cur === 'stripe' ? 'Payments / Stripe' : ($cur === 'gallery-photos' ? 'Gallery photos' : ($cur === 'blog-posts' ? 'Blog posts' : ($cur === 'products-list' ? 'Digital products' : $pages[$cur]['title'])))))));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -556,6 +578,7 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
     <div class="grp">Account</div>
     <a href="admin.php?page=email" class="<?= $cur === 'email' ? 'on' : '' ?>">Email / Forms</a>
     <a href="admin.php?page=lofty" class="<?= $cur === 'lofty' ? 'on' : '' ?>">CRM / Lofty</a>
+    <a href="admin.php?page=stripe" class="<?= $cur === 'stripe' ? 'on' : '' ?>">Payments / Stripe</a>
     <a href="admin.php?page=settings" class="<?= $cur === 'settings' ? 'on' : '' ?>">Settings</a>
   </nav>
 
@@ -663,6 +686,35 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
         </table>
       </div>
       <?php endif; ?>
+
+    <?php elseif ($cur === 'stripe'):
+      $skSet = stripe_key() !== ''; $whSet = stripe_whsec() !== ''; $hook = abs_url('/stripe-webhook.php');
+      $inp = 'width:100%;padding:11px;border:1px solid rgba(69,50,48,.2);background:#FBF7F3';
+      $saved = '<span style="color:#3E6B36;font-weight:400;text-transform:none;letter-spacing:0">(saved — leave blank to keep)</span>'; ?>
+      <h1>Payments / Stripe</h1>
+      <p class="hint">Charge for a landing page, like on Stan: give the page a price, and visitors pay on Stripe's secure checkout before they get the file. Money goes straight to your Stripe account. Two things to paste below, then set a price on any landing page.</p>
+      <div class="setcard" style="max-width:760px">
+        <p style="margin:0 0 16px;font-size:14px">Status:
+          <?php if (stripe_ready()): ?><b style="color:#3E6B36">Ready to take payments</b> · <?= stripe_mode() === 'live' ? '<b>Live mode</b> (real cards)' : '<b style="color:#8F6B2E">Test mode</b> (test cards only; switch to your sk_live_ key to sell)' ?>
+          <?php else: ?><b style="color:#A33A2F">Not set up</b>: paid pages stay hidden until the secret key is added.<?php endif; ?>
+          <?php if ($skSet && !$whSet): ?><br><span style="color:#8F6B2E">Add the webhook secret too, so a payment still counts when the buyer closes the tab before coming back.</span><?php endif; ?>
+        </p>
+        <form method="post">
+          <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+          <div class="fld"><label>1 · Secret key <?= $skSet ? $saved : '' ?></label><input type="password" name="stripe_secret" value="" placeholder="<?= $skSet ? '••••••••••••' : 'sk_live_…' ?>" autocomplete="off" style="<?= $inp ?>">
+            <p class="hint" style="margin:6px 0 0;font-size:12.5px">Stripe Dashboard → <b>Developers → API keys</b> → Secret key (Reveal). Use <b>sk_test_…</b> first to try it with Stripe's test card 4242 4242 4242 4242, then <b>sk_live_…</b> to sell.</p></div>
+          <div class="fld"><label>2 · Webhook signing secret <?= $whSet ? $saved : '' ?></label><input type="password" name="stripe_whsec" value="" placeholder="<?= $whSet ? '••••••••••••' : 'whsec_…' ?>" autocomplete="off" style="<?= $inp ?>">
+            <p class="hint" style="margin:6px 0 0;font-size:12.5px">Stripe Dashboard → <b>Developers → Webhooks → Add endpoint</b>. Endpoint URL:</p>
+            <input type="text" readonly value="<?= esc($hook) ?>" onclick="this.select()" style="<?= $inp ?>;margin-top:6px;font-family:monospace;font-size:13px">
+            <p class="hint" style="margin:8px 0 0;font-size:12.5px">Events to send: <code>checkout.session.completed</code>, <code>checkout.session.async_payment_succeeded</code>, <code>checkout.session.async_payment_failed</code>, <code>checkout.session.expired</code>, <code>customer.subscription.updated</code>, <code>customer.subscription.deleted</code>. Then copy the endpoint's <b>Signing secret</b> here.</p></div>
+          <?php if ($skSet): ?><label class="rm" style="font-size:13px;color:#8C3B32;margin:4px 0 14px"><input type="checkbox" name="stripe_clear" value="1"> &nbsp;Remove both keys</label><?php endif; ?>
+          <div class="savebar" style="position:static;box-shadow:none;border:none;padding:0;gap:10px;margin-top:8px">
+            <button name="do_stripe" value="save">Save</button>
+            <button name="do_stripe" value="test" style="background:#8F6B2E">Save &amp; test connection</button>
+          </div>
+        </form>
+        <?php if (setting('stripe.last_event') !== ''): ?><p class="hint" style="margin:16px 0 0;font-size:12.5px">Last webhook received: <?= esc(setting('stripe.last_event')) ?></p><?php endif; ?>
+      </div>
 
     <?php elseif ($cur === 'landing-pages' || $cur === 'leads'): landing_admin_view($cur); ?>
 

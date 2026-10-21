@@ -7,6 +7,43 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-21 (evening) — Stripe paywall for landing pages (one-time and subscriptions)
+
+**Asked.** "Let's add a Stripe paywall, a bit simple, no over-engineering, like Stan Store; Erika
+can just add API keys and webhook… add subscriptions as well for later use (or hold them if the
+change is massive)." Screenshot: her Stan product "The Modern Agent Success Blueprint", $99.99.
+**Done.** Subscriptions were a small addition with Stripe Checkout, so they're in.
+- `lib/stripe.php` (no library): Checkout session, session lookup, signature check, the
+  exactly-once completion, webhook events, the Leads chips. `stripe-webhook.php` at the root.
+- Admin → **Payments / Stripe**: secret key + webhook secret, endpoint to copy, events to tick,
+  Save & test, last webhook received.
+- Landing-page editor: step 3 **Set price** (blank = free; one-time / monthly / yearly), the total
+  in the phone preview; a paid page publishes only once Stripe is set up.
+- Public page: "Total $99.99" (or "$29 / month" and how billing works) above the button, a
+  secure-payment note, "Payment cancelled. Nothing was charged." on return.
+- `landing_capture()` split: a paid lead is kept as "payment pending"; `landing_notify()` sends the
+  emails and Lofty once paid (free pages unchanged).
+- Leads: Paid / Subscribed / Payment pending / Left checkout / Payment failed; links to the payment
+  or subscription in Stripe; CSV Payment column.
+**QA.**
+- `tools/check-landing/run.sh` now runs a fake Stripe (`stripe_mock.py`) and round 3
+  (`e2e3.mjs`, 54 checks): ALL PASS. Rounds 1–2 still ALL PASS after the refactor.
+- The payment lifecycle was run against MariaDB 10.11 (pending → paid once → found by
+  subscription → canceled; a session for another page refused): all pass.
+- `check-article.mjs` on two articles: all pass. Deployed 8 files, 0 failures.
+- Live: the webhook answers 405 to GET and 400 to unsigned or badly signed posts; the home page,
+  an article, the admin and the Mariners page load complete.
+**Caught on the way.**
+- The first round-3 run failed where Stripe sends the buyer back: the return address uses the
+  site address (erikakpage.com). That's right in production; run.sh now points it at the local
+  server for the test.
+- The local test login's password was unknown, so it was reset in the local database only.
+**Noticed.** The owner has published the 1039 Mariners Ct page (it's live).
+**Open.** Erika's Stripe keys; one test purchase in test mode; whether abandoned checkouts should
+go to Lofty.
+
+---
+
 ## 2026-10-21 — Ground-lease article; podcast episode 8; YouTube episode 3
 
 **Asked.** "Let's do today's blog and next episode."

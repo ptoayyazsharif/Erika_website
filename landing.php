@@ -12,6 +12,7 @@
  *                                   send it to Lofty; then 303 to /thanks
  *   GET  /page/<address>/thanks     the download button (needs the signed link)
  *   GET  /page/<address>/download   the file itself (needs the signed link)
+ *   GET  /page/<address>/paid       back from Stripe Checkout (paid pages; lib/stripe.php)
  *
  * Drafts are shown to a logged-in admin only, with a banner.
  */
@@ -20,7 +21,7 @@ if (!isset($lp)) { http_response_code(404); exit; }   // only ever run from inde
 [$lpSlug, $lpAction] = $lp;
 $lpAdmin = is_admin();
 $page = landing_one($lpSlug, $lpAdmin);
-if ($page && !$lpAdmin && !($page['published'] && landing_deliverable($page))) $page = null;
+if ($page && !$lpAdmin && !landing_live($page)) $page = null;
 
 header('Cache-Control: private, no-cache');
 header('X-Content-Type-Options: nosniff');
@@ -38,7 +39,7 @@ if (!$page) {
     exit;
 }
 
-$isDraft = !$page['published'] || !landing_deliverable($page);
+$isDraft = !landing_live($page);
 $token = (string) ($_GET['t'] ?? '');
 
 /* ---------- the file ---------- */
@@ -73,6 +74,36 @@ if ($lpAction === 'download') {
     header('Content-Disposition: attachment; filename="' . $ascii . '"; filename*=UTF-8\'\'' . rawurlencode($name));
     header('Cache-Control: private, no-store');
     readfile($abs);
+    exit;
+}
+
+/* ---------- back from Stripe Checkout ----------
+ * The session id in the address is only a reference: the session itself is
+ * fetched from Stripe, and only Stripe's answer decides whether it was paid. */
+if ($lpAction === 'paid') {
+    $sid = (string) ($_GET['session_id'] ?? '');
+    $sess = null;
+    if (preg_match('/^cs_[A-Za-z0-9_]+$/', $sid)) {
+        [$sok, , $sdata] = stripe_http('GET', '/v1/checkout/sessions/' . $sid);
+        if ($sok && (string) ($sdata['metadata']['page'] ?? '') === $page['slug']) $sess = $sdata;
+    }
+    if (!$sess) { header('Location: ' . landing_path($page['slug']) . '?expired=1#form', true, 303); exit; }
+    $r = stripe_complete($sess);
+    if ($r['ok']) {
+        header('Location: ' . landing_path($page['slug'], 'thanks') . '?t=' . rawurlencode($r['token']) . ($r['emailed'] || !$r['first'] ? '&e=1' : ''), true, 303);
+        exit;
+    }
+    if (($sess['status'] ?? '') !== 'complete') { header('Location: ' . landing_path($page['slug']) . '?cancelled=1#form', true, 303); exit; }
+    // Complete but not yet paid: a bank payment that takes a few days. The webhook finishes it.
+    lp_document($page, 'Payment processing', function () use ($page, $isDraft) {
+        lp_intro($page, $isDraft); ?>
+        <aside class="lp-card lp-done" aria-live="polite">
+          <h2>Thank you. Your payment is processing.</h2>
+          <div class="lp-rule" style="margin:16px auto 18px"></div>
+          <p>Some payment methods take a little while to clear. As soon as it does, we'll email you the link.</p>
+          <a class="lp-back" href="/">Visit erikakpage.com</a>
+        </aside>
+    <?php });
     exit;
 }
 
@@ -116,6 +147,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$errs && !$lpAdmin && leads_recent_from(lead_ip_hash(), 3600) >= LANDING_RATE_PER_HOUR) {
         $errs['_'] = 'We\'ve had a lot of requests from your connection. Please try again in an hour, or call us.';
     }
+    if (!$errs && $page['price_cents'] > 0) {
+        // A paid page: keep the lead as "payment pending", then off to Stripe.
+        if (!stripe_ready()) $errs['_'] = 'Payments aren\'t switched on for this page yet. Please get in touch instead.';
+        else {
+            $res = landing_capture($page, $vals, ['state' => 'pending', 'amount' => $page['price_cents'], 'billing' => $page['billing'], 'started' => date('Y-m-d H:i:s')]);
+            [$go, $perr] = $res['id'] > 0 ? stripe_checkout($page, $res['id'], $vals['email']) : ['', 'the lead could not be saved'];
+            if ($go !== '') { header('Location: ' . $go, true, 303); exit; }
+            if ($res['id'] > 0) stripe_lead_pay($res['id'], ['state' => 'failed', 'error' => mb_substr($perr, 0, 300)]);
+            $errs['_'] = 'We couldn\'t open the secure payment page just now. Please try again in a minute.';
+        }
+    }
     if (!$errs) {
         $res = landing_capture($page, $vals);
         header('Location: ' . landing_path($page['slug'], 'thanks') . '?t=' . rawurlencode($res['token']) . ($res['emailed'] ? '&e=1' : ''), true, 303);
@@ -129,6 +171,7 @@ lp_document($page, $page['title'], function () use ($page, $vals, $errs, $isDraf
     <aside class="lp-card" id="form">
       <?php if ($page['bottom_title'] !== ''): ?><h2><?= esc($page['bottom_title']) ?></h2><div class="lp-rule"></div><?php endif; ?>
       <?php if (isset($_GET['expired'])): ?><div class="lp-errors">That download link has expired or isn't valid. Fill in the form again for a fresh one.</div><?php endif; ?>
+      <?php if (isset($_GET['cancelled'])): ?><div class="lp-errors" style="background:#F7F2EF;border-color:rgba(69,50,48,.2);color:#6b5550">Payment cancelled. Nothing was charged; you can try again below.</div><?php endif; ?>
       <?php if (isset($_GET['sent'])): ?><div class="lp-errors" style="background:#EEF6EC;border-color:#9CC493;color:#3E6B36">Thank you, your request has been received.</div><?php endif; ?>
       <?php if ($errs): ?><div class="lp-errors" role="alert"><?= isset($errs['_']) ? esc($errs['_']) : 'Please check the ' . (count($errs) === 1 ? 'answer' : count($errs) . ' answers') . ' marked below.' ?></div><?php endif; ?>
       <form method="post" action="<?= esc(landing_path($page['slug'])) ?>" id="lp-form">
@@ -137,14 +180,19 @@ lp_document($page, $page['title'], function () use ($page, $vals, $errs, $isDraf
         <?php foreach ($page['fields'] as $f) echo lp_question($f, $vals[$f['id']] ?? ($f['type'] === 'checkbox' ? [] : ''), $errs[$f['id']] ?? null); ?>
         <div class="lp-hp" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <input type="hidden" name="_t" value="<?= time() ?>">
+        <?php if ($page['price_cents'] > 0): ?>
+          <div class="lp-total"><span>Total</span><span class="lp-dots" aria-hidden="true"></span><b><?= esc(stripe_price_label($page['price_cents'], $page['billing'])) ?></b></div>
+          <?php if ($page['billing'] !== 'once'): ?><p class="lp-billing">Billed every <?= $page['billing'] === 'month' ? 'month' : 'year' ?> until you cancel.</p><?php endif; ?>
+        <?php endif; ?>
         <button class="lp-btn" type="submit" id="lp-send"><?= esc($page['cta']) ?></button>
+        <?php if ($page['price_cents'] > 0): ?><p class="lp-secure"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Secure payment by Stripe. You'll get the download right after.</p><?php endif; ?>
         <?php if ($page['consent'] !== ''): ?><p class="lp-consent"><?= esc($page['consent']) ?></p><?php endif; ?>
       </form>
     </aside>
     <script>
     (function(){
       var f=document.getElementById('lp-form'),b=document.getElementById('lp-send');
-      f.addEventListener('submit',function(){ setTimeout(function(){ b.disabled=true; b.textContent='Sending…'; },0); });
+      f.addEventListener('submit',function(){ setTimeout(function(){ b.disabled=true; b.textContent=<?= $page['price_cents'] > 0 ? "'Opening secure checkout…'" : "'Sending…'" ?>; },0); });
       var bad=f.querySelector('.lp-bad .lp-input, .lp-bad input');
       if(bad){ bad.focus({preventScroll:true}); bad.closest('.lp-field').scrollIntoView({block:'center'}); }
     })();
@@ -212,7 +260,7 @@ function lp_intro(array $page, bool $isDraft): void { ?>
 
 /** The whole document around a page's content. */
 function lp_document(?array $page, string $title, callable $body): void {
-    $isDraft = $page && (!$page['published'] || !landing_deliverable($page));
+    $isDraft = $page && !landing_live($page);
     $index = $page && $page['indexable'] && !$isDraft;
     $desc = $page ? mb_substr(trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '</p>'], [' ', ' '], $page['desc'])))), 0, 155) : '';
     $url = $page ? abs_url(landing_path($page['slug'])) : '';
@@ -241,7 +289,7 @@ function lp_document(?array $page, string $title, callable $body): void {
   <a class="lp-brand" href="/">Erika<span>K</span>Page</a>
   <?php if ($phone !== ''): ?><a class="lp-phone" href="tel:<?= esc(preg_replace('/[^0-9+]/', '', $phone)) ?>"><?= esc($phone) ?></a><?php endif; ?>
 </div></header>
-<?php if ($isDraft): ?><div class="lp-draft"><b>Draft</b> · only you can see this page, because you're logged in to the admin.<?= $page && !landing_deliverable($page) ? ' It has no file to hand over yet.' : '' ?> <a href="/admin.php?page=landing-pages&amp;edit=<?= esc(rawurlencode($page['slug'])) ?>" style="text-decoration:underline">Edit it</a></div><?php endif; ?>
+<?php if ($isDraft): ?><div class="lp-draft"><b>Draft</b> · only you can see this page, because you're logged in to the admin.<?= $page && !landing_deliverable($page) ? ' It has no file to hand over yet.' : '' ?><?= $page && !landing_payable($page) ? ' It has a price, but Stripe isn\'t set up yet (Payments / Stripe).' : '' ?> <a href="/admin.php?page=landing-pages&amp;edit=<?= esc(rawurlencode($page['slug'])) ?>" style="text-decoration:underline">Edit it</a></div><?php endif; ?>
 <main class="lp-main"><?php if ($page): ?><div class="lp-wrap lp-grid"><?php endif; ?>
 <?php $body(); ?>
 <?php if ($page): ?></div><?php endif; ?></main>

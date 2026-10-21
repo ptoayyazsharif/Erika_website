@@ -407,7 +407,8 @@ email and in Lofty.
   `assets/css/landing.css`, `landing-pages.php` (defaults; the admin's saved copy wins,
   like posts and products).
 - **QA**: `QA_USER=… QA_PASS=… tools/check-landing/run.sh` (local only). A local SMTP
-  catcher and a fake Lofty, then two Playwright rounds (59 checks): editor, publish rules,
+  catcher, a fake Lofty and a fake Stripe, then three Playwright rounds (round 3 is the paywall).
+  Rounds 1–2 (59 checks): editor, publish rules,
   public page, server-side validation, byte-identical download, phone layout, Leads, CSV,
   Lofty failure + retry, tampered/forged links, private folder, the question builder,
   unpublish/duplicate/delete, script in a question. It backs up and restores the local
@@ -415,6 +416,42 @@ email and in Lofty.
 - **Words on a page are the owner's or Erika's.** The 1039 Mariners Ct page copies her Stan
   page word for word; the consent line and thank-you text are ours, in plain terms, and
   editable — flag them for her.
+
+### The Stripe paywall (from 21 Oct 2026)
+
+The owner's instruction (21 Oct 2026, with a screenshot of Erika's Stan product "The Modern Agent
+Success Blueprint", $99.99): "add stripe paywall a bit simple no over engineering like stan store;
+Erika can just add API keys and webhook… add subscriptions as well." Built in `lib/stripe.php`,
+no Stripe library (three API calls with curl).
+- **Setup is two pastes** in admin → **Payments / Stripe**: the secret key (`sk_live_…`, or
+  `sk_test_…` to try it with card 4242 4242 4242 4242) and the webhook's signing secret
+  (`whsec_…`). The screen shows the endpoint, `https://erikakpage.com/stripe-webhook.php`, and
+  the six events to tick. "Save & test" reads `/v1/balance`. A publishable key (`pk_…`) is refused
+  with an explanation. Stored as settings `stripe.secret` and `stripe.whsec`.
+- **A page's price**: editor step 3, "Set price" (blank = free), billed once, monthly or yearly.
+  Minimum $0.50 (Stripe's). Saved as `price_cents` and `billing` on the page.
+- **A paid page is only visible while Stripe is set up** (`landing_live()` = published + has its
+  file + payable). Without keys it hides, and the list says "Hidden · needs Stripe".
+- **The flow**: the form keeps the lead as "payment pending" (no emails yet) → Stripe Checkout
+  (the price is set server-side; the lead id travels as `client_reference_id` and in the
+  metadata) → `/page/<address>/paid?session_id=…`. That route fetches the session from Stripe
+  and never trusts the URL; the page must match the metadata → thanks + download. Cancel brings
+  them back with "Nothing was charged."
+- **Exactly once**: `stripe_complete()` flips the lead's `"state":"pending"` to paid with one
+  guarded `UPDATE … WHERE meta LIKE '%"state":"pending"%'`. Whichever arrives first, the return
+  trip or the webhook, sends the emails (the buyer always gets the link by email; the owner gets
+  "New sale") and the Lofty lead; the other changes nothing.
+- **The webhook** (`stripe-webhook.php`) checks the signature (HMAC of `t.payload`, 5 minutes'
+  tolerance). It completes sales when the buyer closed the tab, marks expired or failed checkouts
+  ("Left checkout" / "Payment failed"), and keeps subscriptions' status (`sub_status`, canceled)
+  on the lead. Leads show Paid / Subscribed / Payment pending, link to the payment in Stripe's
+  dashboard, and the CSV has a Payment column.
+- **Subscriptions** are Checkout `mode=subscription` with an inline recurring price. Access is the
+  same 30-day signed link as a one-off. Cancelling doesn't revoke it yet: if Erika sells ongoing
+  access (a members' area), that's the next step.
+- `stripe.api_base` is a hidden setting for the QA fake only (`tools/check-landing/stripe_mock.py`).
+- Stripe sends buyers back to the **site address** (`global.site-url`), so the QA run points that
+  at the local server (run.sh does it; the database is restored afterwards).
 
 ## Research articles and podcast episodes
 
@@ -591,7 +628,7 @@ check there and a row here.
 | Admin round-trip keeps `audio_note` too | proven 5 Oct 2026 on a throwaway copy with a test login (see SESSION-LOG) |
 | **No picture on two articles**; no cover tile repeats its own article's body picture (whole blog, every run) | the same signing photo was on two articles four times, and two more were shared — the owner called it lazy (7 Oct 2026) |
 | Short link answers **301** to the article (with `#guide` only when there is a guide) | a 404 after an admin save; a `#guide` anchor on an article with no guide |
-| Landing pages (`tools/check-landing/run.sh`, 59 checks in a browser) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
+| Landing pages (`tools/check-landing/run.sh`: rounds 1–2, 59 checks; round 3, the Stripe paywall, 54 checks against a fake Stripe) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
 | **Live**: byte-compare every upload; confirm pages by completeness (`</html>`, >150 KB), not status | see the host's holding page below |
 
 ## Deploying, and the environment
@@ -691,10 +728,14 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
-- **Owner: put the 1039 Mariners Ct page live** (admin → Landing pages → the page): upload
-  the property photo (1920×1080) and `1039 Mariners Merged.pdf`, press Publish, then send
-  one test lead and check it arrives in your email, in Lofty and under Leads. Erika should
-  read the consent line and the thank-you text, which are ours, not hers.
+- **The 1039 Mariners Ct page is live** (published by the owner by 21 Oct). Send one test lead
+  and check it arrives in your email, in Lofty and under Leads. Erika should read the consent
+  line and the thank-you text, which are ours, not hers.
+- **Stripe paywall built (21 Oct), waiting on keys**: Erika pastes her secret key and webhook
+  secret under Payments / Stripe (try `sk_test_` first), then sets a price on a landing page.
+  Do one real test purchase in test mode before switching to the live key. Abandoned checkouts
+  stay as "Payment pending" leads and are not sent to Lofty or emailed; whether she wants them
+  in Lofty for follow-up is her call.
 - **Leads from now on are kept in the admin** (Leads), from every form on the site. Lofty
   only receives them while CRM / Lofty is switched on with a key; whether it is on the live
   site isn't known from here.

@@ -141,6 +141,8 @@ function landing_clean(array $p): ?array {
         'crm_source'   => $t($p['crm_source'] ?? '') ?: 'Website – Landing Page',
         'crm_tags'     => $t($p['crm_tags'] ?? '') ?: 'Website, Landing Page',
         'crm_type'     => isset(LANDING_LEAD_TYPES[$type]) ? $type : 0,
+        'price_cents'  => max(0, (int) ($p['price_cents'] ?? 0)),
+        'billing'      => isset(STRIPE_BILLING[$p['billing'] ?? '']) ? (string) $p['billing'] : 'once',
         'indexable'    => !empty($p['indexable']),
         'published'    => !empty($p['published']),
         'updated'      => preg_match('/^\d{4}-\d{2}-\d{2}/', (string) ($p['updated'] ?? '')) ? substr((string) $p['updated'], 0, 10) : '',
@@ -150,6 +152,16 @@ function landing_clean(array $p): ?array {
 /** Has this page got something to hand over? A page is only ever live when it has. */
 function landing_deliverable(array $p): bool {
     return $p['deliver'] === 'url' ? $p['url'] !== '' : ($p['file'] !== '' && is_file(landing_abs($p['file'])));
+}
+
+/** Is a paid page able to take money? A free page always is. */
+function landing_payable(array $p): bool {
+    return $p['price_cents'] === 0 || stripe_ready();
+}
+
+/** Can visitors see it: published, with something to hand over, and (if it has a price) Stripe set up. */
+function landing_live(array $p): bool {
+    return $p['published'] && landing_deliverable($p) && landing_payable($p);
 }
 
 function landing_removed(): array {
@@ -184,7 +196,7 @@ function landing_all(bool $drafts = false): array {
         $out[$c['slug']] = $c;
     }
     // A published page with no file behind it would collect details for nothing.
-    if (!$drafts) $out = array_filter($out, fn($p) => $p['published'] && landing_deliverable($p));
+    if (!$drafts) $out = array_filter($out, 'landing_live');
     return array_values($out);
 }
 
@@ -207,10 +219,10 @@ function landing_path(string $slug, string $action = ''): string {
     return '/page/' . $slug . ($action !== '' ? '/' . $action : '');
 }
 
-/** "/page/<slug>[/thanks|/download]" -> [slug, action], or null for any other path. */
+/** "/page/<slug>[/thanks|/download|/paid]" -> [slug, action], or null for any other path. */
 function landing_route(string $path): ?array {
     $path = trim(parse_url($path, PHP_URL_PATH) ?? '', '/');
-    if (!preg_match('#^page/([a-z0-9][a-z0-9\-]*)(?:/(thanks|download))?$#', $path, $m)) return null;
+    if (!preg_match('#^page/([a-z0-9][a-z0-9\-]*)(?:/(thanks|download|paid))?$#', $path, $m)) return null;
     return [$m[1], $m[2] ?? ''];
 }
 
@@ -352,13 +364,13 @@ function lead_insert(array $l): int {
 
 function lead_update(int $id, array $cols): void {
     if ($id <= 0 || !$cols) return;
-    $allowed = ['email_ok', 'email_detail', 'crm_ok', 'crm_detail'];
+    $allowed = ['email_ok', 'email_detail', 'crm_ok', 'crm_detail', 'meta'];
     $set = [];
     $vals = [];
     foreach ($cols as $k => $v) {
         if (!in_array($k, $allowed, true)) continue;
         $set[] = "$k = ?";
-        $vals[] = is_bool($v) ? (int) $v : (is_string($v) ? mb_substr($v, 0, 500) : $v);
+        $vals[] = is_bool($v) ? (int) $v : (is_string($v) && $k !== 'meta' ? mb_substr($v, 0, 500) : $v);
     }
     if (!$set) return;
     $vals[] = $id;
@@ -599,41 +611,59 @@ function landing_phone(array $p, array $vals): string {
 }
 
 /**
- * Keep the lead, tell the owner, tell Lofty, and send the visitor their link.
- * Returns ['id' => lead id, 'token' => download token, 'emailed' => bool].
+ * Keep the lead; on a free page, also tell the owner, tell Lofty and send the
+ * visitor their link. On a paid page ($pay set) the lead is only kept, marked
+ * "payment pending": the rest happens once Stripe says it's paid (stripe_complete).
+ * Returns ['id' => lead id, 'token' => download token ('' while unpaid), 'emailed' => bool].
  */
-function landing_capture(array $p, array $vals): array {
+function landing_capture(array $p, array $vals, array $pay = []): array {
     $rows = landing_rows($p, $vals);
-    $url = abs_url(landing_path($p['slug']));
-    $phone = landing_phone($p, $vals);
-    $label = 'Landing page: ' . $p['title'];
     $answers = [];
     foreach ($rows as $k => $v) $answers[] = [rtrim((string) $k), $v];
-    $crm = landing_crm($p);
-
-    $id = lead_insert([
+    $meta = ['crm' => landing_crm($p), 'form' => 'Landing page: ' . $p['title']];
+    if ($pay) $meta['pay'] = $pay;
+    $lead = [
         'kind' => 'landing', 'source_key' => 'page:' . $p['slug'], 'source_label' => $p['title'],
-        'page_url' => landing_path($p['slug']), 'name' => $vals['name'], 'email' => $vals['email'], 'phone' => $phone,
-        'answers' => $answers, 'meta' => ['crm' => $crm, 'form' => $label], 'ip_hash' => lead_ip_hash(),
-    ]);
+        'page_url' => landing_path($p['slug']), 'name' => $vals['name'], 'email' => $vals['email'], 'phone' => landing_phone($p, $vals),
+        'answers' => $answers, 'meta' => $meta, 'ip_hash' => lead_ip_hash(),
+    ];
+    $id = lead_insert($lead);
+    if ($pay) return ['id' => $id, 'token' => '', 'emailed' => false];
     $token = landing_token($p['slug'], $id);
+    $res = landing_notify($p, ['id' => $id] + $lead, $token, false);
+    return ['id' => $id, 'token' => $token, 'emailed' => $res['emailed']];
+}
+
+/**
+ * Send what a lead sets off: the visitor's link (always for a sale), Lofty, and
+ * the owner's email; then record how each went. $sale is "Paid $99" for a sale.
+ */
+function landing_notify(array $p, array $lead, string $token, bool $isSale, string $sale = ''): array {
+    $rows = [];
+    foreach ((array) $lead['answers'] as $a) if (is_array($a) && count($a) === 2) $rows[$a[0]] = $a[1];
+    if ($sale !== '') $rows['Payment'] = $sale;
+    $url = abs_url(landing_path($p['slug']));
+    $label = 'Landing page: ' . $p['title'];
+    $name = (string) $lead['name'];
+    $email = (string) $lead['email'];
     $link = abs_url(landing_path($p['slug'], 'download')) . '?t=' . $token;
 
-    // The visitor's copy first: it's what they asked for.
+    // The visitor's copy first: it's what they asked for (and, for a sale, paid for).
     $emailed = false;
     $visitorNote = 'Download link: not emailed to the visitor (switched off for this page).';
-    if ($p['email_lead']) {
-        [$emailed, $vd] = landing_email_visitor($p, $vals['email'], $vals['name'], $link);
+    if ($p['email_lead'] || $isSale) {
+        [$emailed, $vd] = landing_email_visitor($p, $email, $name, $link);
         $visitorNote = $emailed ? 'Download link emailed to the visitor.' : 'Download link could not be emailed to the visitor: ' . $vd;
     }
 
-    [$crmOk, $crmDetail] = lead_push_lofty(['name' => $vals['name'], 'email' => $vals['email'], 'phone' => $phone], $crm, $label, $url, $rows);
+    $crm = landing_crm($p);
+    [$crmOk, $crmDetail] = lead_push_lofty(['name' => $name, 'email' => $email, 'phone' => (string) $lead['phone']], $crm, $label, $url, $rows);
     $crmNote = $crmOk === null ? 'Lofty: not sent (' . rtrim($crmDetail, '.') . ').' : ($crmOk ? 'Lofty: lead created (' . $crmDetail . ').' : 'Lofty: FAILED (' . $crmDetail . '). Retry it from Leads in the admin.');
 
-    [$mailOk, $mailDetail] = lead_notify_owner('New lead from ' . $p['title'], $p['title'], $url, $rows, $vals['email'], $vals['name'], [$visitorNote, $crmNote]);
+    [$mailOk, $mailDetail] = lead_notify_owner(($isSale ? 'New sale: ' : 'New lead from ') . $p['title'], $p['title'], $url, $rows, $email, $name, [$visitorNote, $crmNote]);
 
-    lead_update($id, ['email_ok' => $mailOk, 'email_detail' => $mailDetail . ' · ' . $visitorNote, 'crm_ok' => $crmOk, 'crm_detail' => $crmDetail]);
-    return ['id' => $id, 'token' => $token, 'emailed' => $emailed];
+    lead_update((int) $lead['id'], ['email_ok' => $mailOk, 'email_detail' => $mailDetail . ' · ' . $visitorNote, 'crm_ok' => $crmOk, 'crm_detail' => $crmDetail]);
+    return ['emailed' => $emailed];
 }
 
 /* ---------- a submission from any other form on the site (submit.php) ---------- */

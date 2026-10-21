@@ -98,3 +98,10 @@ select.lp-input{padding-right:40px;cursor:pointer;background-image:url("data:ima
 }
 @media(max-width:900px){.lp-intro:not(:has(.lp-hero)){padding-top:32px}}
 @media(prefers-reduced-motion:reduce){.lp-btn,.lp-input{transition:none}}
+
+/* Paid pages (Stripe): the total above the button, as on Stan */
+.lp-total{display:flex;align-items:baseline;gap:10px;margin:22px 0 6px;font-size:15px;color:var(--ink);font-weight:600}
+.lp-total .lp-dots{flex:1;border-bottom:1.5px dashed var(--line);transform:translateY(-4px)}
+.lp-total b{font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;color:var(--merlot-ink);white-space:nowrap}
+.lp-billing{margin:0 0 4px;font-size:13px;color:var(--body);text-align:right}
+.lp-secure{display:flex;gap:7px;align-items:center;justify-content:center;margin:12px 0 0;font-size:12.5px;color:var(--body)}

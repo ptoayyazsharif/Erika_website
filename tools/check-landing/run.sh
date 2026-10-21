@@ -12,9 +12,13 @@
 #         forged links refused; uploads/private refused; a new page built with the
 #         question builder (reorder, an empty dropdown refused, typed work kept);
 #         a link page; unpublish, duplicate, delete; script in a question not run.
+#   e2e3  the Stripe paywall: the setup screen, a paid page from the editor, a sale end
+#         to end, cancel, a replayed return link, the closed-tab case finished by the
+#         webhook (once), bad and replayed signatures, forged return links, a monthly
+#         subscription and its cancellation, and paid pages hiding when keys go.
 #
-# Emails go to a local SMTP catcher (port 8025) and Lofty to a fake endpoint (8799),
-# so nothing leaves the machine. The local SQLite database is backed up first and
+# Emails go to a local SMTP catcher (port 8025), Lofty to a fake endpoint (8799) and
+# Stripe to a fake API (8798, stripe_mock.py), so nothing leaves the machine. The local SQLite database is backed up first and
 # put back afterwards, along with the Email and Lofty settings it had.
 # Needs: the local server (php -S 127.0.0.1:8000 router.php), ffmpeg, network for
 # one pip install. Never point it at the live site.
@@ -52,13 +56,16 @@ trap cleanup EXIT
 python3 -m venv "$QA_DIR/venv" >/dev/null && "$QA_DIR/venv/bin/pip" -q install aiosmtpd >/dev/null 2>&1
 "$QA_DIR/venv/bin/python" -I "$HERE/smtp_sink.py" "$QA_DIR/mails.jsonl" > "$QA_DIR/smtp.log" 2>&1 & PIDS+=($!)
 python3 -I "$HERE/lofty_mock.py" "$QA_DIR/lofty.jsonl" > "$QA_DIR/lofty.log" 2>&1 & PIDS+=($!)
+python3 -I "$HERE/stripe_mock.py" "$QA_DIR/stripe.jsonl" > "$QA_DIR/stripe.log" 2>&1 & PIDS+=($!)
 sleep 1.5
 
 php -r '
 require getenv("SITE") . "/cms.php";
 foreach (["smtp.host"=>"127.0.0.1","smtp.port"=>"8025","smtp.secure"=>"none","smtp.user"=>"","smtp.to"=>"owner@example.test",
           "smtp.from"=>"site@example.test","lofty.enabled"=>"1","lofty.key"=>"qa-key","lofty.endpoint"=>"http://127.0.0.1:8799/v1.0/leads",
-          "landing.pages"=>"","landing.removed"=>""] as $k=>$v) set_setting($k,$v);
+          "landing.pages"=>"","landing.removed"=>"","stripe.secret"=>"","stripe.whsec"=>"",
+          "stripe.api_base"=>"http://127.0.0.1:8798","stripe.last_event"=>""] as $k=>$v) set_setting($k,$v);
+content_set("global.site-url", "http://127.0.0.1:8000");   // Stripe sends the buyer back to the site address
 foreach (leads_list([], 10000) as $l) lead_delete((int) $l["id"]);'
 
 ffmpeg -v error -y -f lavfi -i "testsrc2=size=1920x1080" -frames:v 1 -q:v 3 "$QA_DIR/house.jpg"
@@ -69,5 +76,6 @@ export NODE_PATH=/opt/node22/lib/node_modules
 rc=0
 node "$HERE/e2e1.mjs" || rc=1
 node "$HERE/e2e2.mjs" || rc=1
+node "$HERE/e2e3.mjs" || rc=1
 echo "--- emails caught: $(wc -l < "$QA_DIR/mails.jsonl")   Lofty calls: $(wc -l < "$QA_DIR/lofty.jsonl")   screenshots: $QA_DIR/shots"
 exit $rc

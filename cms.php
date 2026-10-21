@@ -1330,3 +1330,4 @@ function handle_upload(array $file): array {
 /* ---------- landing pages and leads (lib/landing.php) ---------- */
 
 require_once __DIR__ . '/lib/landing.php';
+require_once __DIR__ . '/lib/stripe.php';
