@@ -25,6 +25,11 @@
  * the same signed download link as a one-off purchase.
  */
 
+/** How long a checkout stays open. Stripe's default is 24 hours; closing it after one hour
+    means an abandoned checkout reaches Lofty (tagged "Abandoned checkout") while it's fresh.
+    Stripe accepts 30 minutes to 24 hours. */
+const STRIPE_CHECKOUT_MINUTES = 60;
+
 /** Stripe's smallest charge in US dollars, in cents. */
 const STRIPE_MIN_CENTS = 50;
 
@@ -119,6 +124,7 @@ function stripe_checkout(array $p, int $leadId, string $email): array {
         // {CHECKOUT_SESSION_ID} is filled in by Stripe; the braces must reach it unencoded-in-meaning.
         'success_url' => abs_url(landing_path($p['slug'], 'paid')) . '?session_id={CHECKOUT_SESSION_ID}',
         'cancel_url' => abs_url(landing_path($p['slug'])) . '?cancelled=1#form',
+        'expires_at' => time() + STRIPE_CHECKOUT_MINUTES * 60,
     ];
     $params[$sub ? 'subscription_data' : 'payment_intent_data'] = ['metadata' => $meta];
     [$ok, , $data, $err] = stripe_http('POST', '/v1/checkout/sessions', $params);
@@ -179,6 +185,48 @@ function stripe_complete(array $session): array {
     return ['ok' => true, 'token' => $token, 'emailed' => $emailed, 'first' => $first];
 }
 
+/**
+ * Move a pending lead to another payment state, once: true only for the call that
+ * made the change (Stripe retries events, and two may race).
+ */
+function stripe_flip(int $leadId, array $changes): bool {
+    $l = lead_get($leadId);
+    if (!$l || (($l['meta']['pay']['state'] ?? '') !== 'pending')) return false;
+    $meta = $l['meta'];
+    $meta['pay'] = array_merge((array) $meta['pay'], $changes);
+    try {
+        $st = db()->prepare('UPDATE leads SET meta = ? WHERE id = ? AND meta LIKE ?');
+        $st->execute([json_encode($meta, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $leadId, '%"state":"pending"%']);
+        return $st->rowCount() === 1;
+    } catch (Throwable $e) { return false; }
+}
+
+/**
+ * Send a checkout that never got paid to Lofty, so it can be followed up: the
+ * page's own Lofty settings, plus the tag "Abandoned checkout" (or "Payment
+ * failed") and a line saying what happened. Returns [ok|null, detail].
+ * Respects the page's "Send these leads to Lofty" switch unless $force.
+ */
+function stripe_lofty_unpaid(int $leadId, bool $force = false): array {
+    $l = lead_get($leadId);
+    if (!$l) return [false, 'No such lead.'];
+    $pay = (array) ($l['meta']['pay'] ?? []);
+    $p = landing_one(substr((string) $l['source_key'], 5), true);
+    $crm = $p ? landing_crm($p) : (array) ($l['meta']['crm'] ?? []);
+    if ($force) $crm['on'] = true;   // the Leads screen's "Send to Lofty again"
+    $tag = ($pay['state'] ?? '') === 'failed' ? 'Payment failed' : 'Abandoned checkout';
+    $crm['tags'] = array_values(array_unique(array_merge((array) ($crm['tags'] ?? []), [$tag])));
+    $rows = [];
+    foreach ((array) $l['answers'] as $a) if (is_array($a) && count($a) === 2) $rows[$a[0]] = $a[1];
+    $rows['Checkout'] = ($tag === 'Payment failed' ? 'Payment failed: ' : 'Left without paying: ')
+        . stripe_price_label((int) ($pay['amount'] ?? 0), (string) ($pay['billing'] ?? 'once'))
+        . ' (started ' . date('M j, g:i a', strtotime((string) ($pay['started'] ?? 'now')) ?: time()) . ')';
+    $label = (string) ($l['meta']['form'] ?? $l['source_label']) . ' (' . strtolower($tag) . ')';
+    [$ok, $detail] = lead_push_lofty($l, $crm, $label, abs_url((string) $l['page_url']), $rows);
+    lead_update($leadId, ['crm_ok' => $ok, 'crm_detail' => $detail . ' · tagged ' . $tag]);
+    return [$ok, $detail];
+}
+
 /* ---------- the webhook ---------- */
 
 /** Verify Stripe's signature header against the raw body. Five minutes' tolerance, as Stripe's own libraries use. */
@@ -221,12 +269,10 @@ function stripe_handle_event(array $ev): string {
         case 'checkout.session.async_payment_failed':
         case 'checkout.session.expired':
             $id = (int) ($obj['client_reference_id'] ?? 0);
-            $l = $id ? lead_get($id) : null;
-            if ($l && (($l['meta']['pay']['state'] ?? '') === 'pending')) {
-                stripe_lead_pay($id, ['state' => $type === 'checkout.session.expired' ? 'abandoned' : 'failed']);
-                return 'marked ' . ($type === 'checkout.session.expired' ? 'abandoned' : 'failed');
-            }
-            return 'nothing to change';
+            $state = $type === 'checkout.session.expired' ? 'abandoned' : 'failed';
+            if (!$id || !stripe_flip($id, ['state' => $state, 'ended_at' => date('Y-m-d H:i:s')])) return 'nothing to change';
+            [$ok] = stripe_lofty_unpaid($id);
+            return 'marked ' . $state . ($ok ? ', sent to Lofty' : ($ok === null ? ', Lofty not sent' : ', Lofty failed'));
         case 'customer.subscription.updated':
         case 'customer.subscription.deleted':
             $l = stripe_lead_by_sub((string) ($obj['id'] ?? ''));

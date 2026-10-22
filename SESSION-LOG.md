@@ -7,6 +7,27 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-22 — Abandoned checkouts go to Lofty
+
+**Asked.** "Add abandoned checkouts to Lofty too please."
+**Done.**
+- A checkout now closes after an hour (`expires_at`; Stripe's default is 24 hours), so the
+  follow-up is fresh. When Stripe reports it expired (or an async payment failed), the lead
+  moves from pending exactly once (`stripe_flip()`) and goes to Lofty with the page's settings
+  plus the tag "Abandoned checkout" / "Payment failed" and what they were buying
+  (`stripe_lofty_unpaid()`). No emails. Retrying from Leads keeps the tag.
+- The Payments / Stripe screen explains it.
+**QA.** Round 3 grew to 64 checks:
+- nothing goes to Lofty while the checkout is open;
+- expiry sends one lead, with the page's tags plus "Abandoned checkout", the answers and "Left
+  without paying: $99.99"; Stripe's retry sends nothing; the buyer gets no email;
+- a failed payment is tagged "Payment failed"; a buyer who paid is never sent as abandoned;
+- Leads shows "Left checkout" and "In Lofty"; the checkout request carries a one-hour `expires_at`.
+All three rounds ALL PASS. The one-time state change also passes on MariaDB 10.11. Deployed 3 files,
+0 failures; live webhook, admin and the Mariners page checked.
+
+---
+
 ## 2026-10-21 (evening) — Stripe paywall for landing pages (one-time and subscriptions)
 
 **Asked.** "Let's add a Stripe paywall, a bit simple, no over-engineering, like Stan Store; Erika

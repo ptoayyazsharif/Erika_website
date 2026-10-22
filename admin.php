@@ -713,6 +713,7 @@ details.sec>summary small{color:#8a746f;font-weight:400;font-size:12px;margin-le
             <button name="do_stripe" value="test" style="background:#8F6B2E">Save &amp; test connection</button>
           </div>
         </form>
+        <p class="hint" style="margin:16px 0 0;font-size:12.5px"><b>Abandoned checkouts</b>: a checkout stays open for <?= STRIPE_CHECKOUT_MINUTES ?> minutes. If it isn't paid by then, Stripe tells the webhook, and the lead goes to Lofty tagged <b>Abandoned checkout</b> (or <b>Payment failed</b>), with what they were buying, so you can follow up. Uses the webhook above and the page's own Lofty settings.</p>
         <?php if (setting('stripe.last_event') !== ''): ?><p class="hint" style="margin:16px 0 0;font-size:12.5px">Last webhook received: <?= esc(setting('stripe.last_event')) ?></p><?php endif; ?>
       </div>
 

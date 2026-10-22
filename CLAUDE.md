@@ -446,6 +446,14 @@ no Stripe library (three API calls with curl).
   ("Left checkout" / "Payment failed"), and keeps subscriptions' status (`sub_status`, canceled)
   on the lead. Leads show Paid / Subscribed / Payment pending, link to the payment in Stripe's
   dashboard, and the CSV has a Payment column.
+- **Abandoned checkouts go to Lofty** (the owner, 22 Oct 2026). A checkout closes after
+  `STRIPE_CHECKOUT_MINUTES` (60; Stripe's default is 24 hours) via `expires_at`. Stripe then sends
+  `checkout.session.expired` (or `async_payment_failed`). `stripe_flip()` moves the lead from
+  pending exactly once, and `stripe_lofty_unpaid()` sends it with the page's Lofty settings plus
+  the tag **Abandoned checkout** (or **Payment failed**) and a "Checkout: Left without paying:
+  $99.99 (started …)" line. No email to anyone. Nothing is sent while the checkout is open, and a
+  lead that paid is never sent as abandoned. "Send to Lofty again" on such a lead keeps the tag.
+  It needs the webhook: without it, abandoned leads stay "Payment pending" in the admin.
 - **Subscriptions** are Checkout `mode=subscription` with an inline recurring price. Access is the
   same 30-day signed link as a one-off. Cancelling doesn't revoke it yet: if Erika sells ongoing
   access (a members' area), that's the next step.
@@ -628,7 +636,7 @@ check there and a row here.
 | Admin round-trip keeps `audio_note` too | proven 5 Oct 2026 on a throwaway copy with a test login (see SESSION-LOG) |
 | **No picture on two articles**; no cover tile repeats its own article's body picture (whole blog, every run) | the same signing photo was on two articles four times, and two more were shared — the owner called it lazy (7 Oct 2026) |
 | Short link answers **301** to the article (with `#guide` only when there is a guide) | a 404 after an admin save; a `#guide` anchor on an article with no guide |
-| Landing pages (`tools/check-landing/run.sh`: rounds 1–2, 59 checks; round 3, the Stripe paywall, 54 checks against a fake Stripe) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
+| Landing pages (`tools/check-landing/run.sh`: rounds 1–2, 59 checks; round 3, the Stripe paywall, 64 checks against a fake Stripe) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
 | **Live**: byte-compare every upload; confirm pages by completeness (`</html>`, >150 KB), not status | see the host's holding page below |
 
 ## Deploying, and the environment
@@ -733,9 +741,8 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   line and the thank-you text, which are ours, not hers.
 - **Stripe paywall built (21 Oct), waiting on keys**: Erika pastes her secret key and webhook
   secret under Payments / Stripe (try `sk_test_` first), then sets a price on a landing page.
-  Do one real test purchase in test mode before switching to the live key. Abandoned checkouts
-  stay as "Payment pending" leads and are not sent to Lofty or emailed; whether she wants them
-  in Lofty for follow-up is her call.
+  Do one real test purchase in test mode before switching to the live key, and one abandoned
+  checkout (wait an hour) to see it arrive in Lofty tagged "Abandoned checkout".
 - **Leads from now on are kept in the admin** (Leads), from every form on the site. Lofty
   only receives them while CRM / Lofty is switched on with a key; whether it is on the live
   site isn't known from here.

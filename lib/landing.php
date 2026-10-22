@@ -700,6 +700,7 @@ function lead_retry_lofty(int $id): array {
         if ($p) $crm = landing_crm($p);
     }
     $crm['on'] = true;   // asking to retry is asking to send
+    if (in_array($l['meta']['pay']['state'] ?? '', ['abandoned', 'failed'], true)) return stripe_lofty_unpaid($id, true);
     $rows = [];
     foreach ($l['answers'] as $a) if (is_array($a) && count($a) === 2) $rows[$a[0]] = $a[1];
     [$ok, $detail] = lead_push_lofty($l, $crm, (string) ($l['meta']['form'] ?? $l['source_label']), abs_url((string) $l['page_url']), $rows);
