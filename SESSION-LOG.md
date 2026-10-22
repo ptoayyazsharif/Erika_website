@@ -7,6 +7,28 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-22 (night) — 1896 Alcovy Bluff Way investor-package page, as a draft
+
+**Asked.** "Make a page for this one address as well like … the 1039 Mariners Court Investor
+Package … but don't publish it yet: 1896 Alcovy Bluff Way, Lawrenceville, GA 30045."
+**Done.**
+- `landing-pages.php`: new page `1896-alcovy-bluff-way` (`/page/1896-alcovy-bluff-way`),
+  **unpublished**. "Get the 1896 Alcovy Bluff Way Investor Package", the Mariners page's
+  button, six questions, consent line, thank-you text and Lofty settings (Investor lead
+  type; source "Website – 1896 Alcovy Bluff Way"). The file it expects is
+  "1896 Alcovy Bluff Way Investor Package.pdf".
+- Only the address came with the request, and the address appears nowhere in `ceo_erika` or
+  on her Stan store. So the description is the address and "Investment Opportunity", with no
+  beds, baths or size, and there's no photo yet.
+- Checked locally: 404 for visitors; a logged-in admin sees it with the Draft banner ("no file
+  to hand over yet"); it's in the admin list; desktop and phone screenshots look right.
+  Deployed: live, it answers 404 to visitors, and the Mariners page still answers 200.
+**Open.** The owner adds the photo, the PDF and the property details (beds, baths, size), then
+publishes. The access agreement says "offered AS-IS" and "contact the occupants", copied from
+Mariners: confirm both are true of this house.
+
+---
+
 ## 2026-10-22 (later) — 50-year mortgage article; podcast episode 9; YouTube episode 4
 
 **Asked.** "Now do today's blog and next episode please."

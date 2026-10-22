@@ -144,7 +144,9 @@ Their short links: `/closing-costs-guide`, `/hidden-value`, `/landlord-guide`.
 Landing pages (`/page/<address>`, see *Landing pages and leads*): `1039-mariners-court`
 (the 1039 Mariners Ct investor package, Stone Mountain) is deployed as a **draft**: it
 goes live when the owner uploads the photo and `1039 Mariners Merged.pdf` in the admin
-and presses Publish.
+and presses Publish. `1896-alcovy-bluff-way` (the same package for 1896 Alcovy Bluff Way,
+Lawrenceville, 22 Oct) is a **draft** on purpose ("don't publish it yet"): it needs the photo,
+the PDF and its beds / baths / size, which came with nothing but the address.
 
 Every article is narrated in Erika's cloned voice and goes out as an episode of the
 **Erika Explains** podcast on RSS.com — the owner uploads; see *Podcast* below.
@@ -741,6 +743,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
   figures are from July 2026."
+- **1896 Alcovy Bluff Way page: draft, waiting on the owner** (22 Oct). Upload the photo and the
+  investor-package PDF, add beds / baths / size to the description, confirm the copied
+  "AS-IS" and "occupants" lines fit this house, then Publish when told to.
 - **The 1039 Mariners Ct page is live** (published by the owner by 21 Oct). Send one test lead
   and check it arrives in your email, in Lofty and under Leads. Erika should read the consent
   line and the thank-you text, which are ours, not hers.
