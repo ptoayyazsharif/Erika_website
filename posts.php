@@ -25,6 +25,108 @@
 return [
 
     [
+        // Researched around her video trump-50-year-mortgage (November 2025), re-checked on
+        // 22 Oct 2026: the proposal stalled in January 2026 (Politico via NASCUS), and the
+        // Qualified Mortgage rule (12 CFR 1026.43) and Fannie Mae's Selling Guide still cap
+        // terms at 30 years. NPR for the announcement and a Realtor.com example. Every fact
+        // is listed with its source in tools/research/fifty-year-mortgage-explained.md.
+        'slug'           => 'fifty-year-mortgage-explained',
+        'title'          => 'A 50-year mortgage? Here&rsquo;s what it would really cost.',
+        'seo_title'      => 'The 50-Year Mortgage, Explained: Lower Payment, Far More Interest, and Where the Idea Stands',
+        'seo_desc'       => 'A 50-year mortgage would lower the monthly payment and nearly double the interest. What it would cost, why you can’t get one today, and what to do instead.',
+        'excerpt'        => 'Imagine carrying your mortgage into your eighties. A 50-year loan would lower the payment and nearly double the interest. Here&rsquo;s the math, and where the idea stands now.',
+        'date'           => '2026-10-22',
+        'updated'        => '2026-10-22',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['50-year mortgage', 'mortgage', 'first-time homebuyer', 'home affordability', 'qualified mortgage', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/fifty-year-mortgage-explained-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: A 50-year mortgage? Here&rsquo;s what it would really cost.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/fifty-year-mortgage-explained.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => '50-year',
+        'audio_secs'     => 301,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Can I get a 50-year mortgage today?',
+                'a' => 'Not a mainstream one. As of October 2026 the idea announced in November 2025 hasn&rsquo;t become a product: a Qualified Mortgage can&rsquo;t have a term over 30 years, and Fannie Mae buys loans with terms up to 30 years.',
+            ],
+            [
+                'q' => 'How much would a 50-year mortgage save each month?',
+                'a' => 'Less than most people expect. On $300,000 at 7% (an illustration, same rate for both), the payment drops from about $1,996 to about $1,805, roughly $191 a month, while total interest rises from about $418,500 to about $783,000.',
+            ],
+            [
+                'q' => 'Why does a longer mortgage build equity so slowly?',
+                'a' => 'Early payments are mostly interest. In the same illustration, ten years of payments on the 50-year loan pay off about $9,500 of the balance, against about $42,600 on the 30-year loan.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Imagine carrying your mortgage into your eighties. Sounds extreme? But what if you could cut your monthly payment right now?</p>
+
+<p>That was the pitch when the idea of a 50-year mortgage hit the news last November. Yes, five-zero. Half a century of payments. Let me explain what it would really cost, and where the idea stands today.</p>
+
+<h2>Where the idea came from</h2>
+
+<p>In November 2025 the President said he wanted the federal government to back a 50-year mortgage option for homebuyers, a plan the Federal Housing Finance Agency&rsquo;s director, Bill Pulte, called &ldquo;a complete game changer.&rdquo; <a href="https://www.npr.org/2025/11/12/nx-s1-5604384/50-year-mortgage-trump-housing-explainer" target="_blank" rel="noopener">[1]</a></p>
+
+<p>Why then? Because with high home prices and high interest rates, the traditional 30-year mortgage just isn&rsquo;t cutting it for a lot of buyers, especially first-timers and younger families. That&rsquo;s what I said at the time.</p>
+
+<h2>Where it stands now</h2>
+
+<p>In January 2026, asked whether 50-year mortgages were still on the table, Pulte told reporters: &ldquo;I think we have other priorities.&rdquo; <a href="https://www.nascus.org/2026/01/15/pulte-backs-away-from-50-year-mortgage/" target="_blank" rel="noopener">[2]</a></p>
+
+<p>And the rules behind almost every home loan still stop at 30 years. Under the federal Ability-to-Repay rule, a Qualified Mortgage is one &ldquo;for which the loan term does not exceed 30 years.&rdquo; <a href="https://www.ecfr.gov/current/title-12/section-1026.43" target="_blank" rel="noopener">[3]</a> Fannie Mae&rsquo;s Selling Guide says Fannie Mae &ldquo;purchases or securitizes loans that have original terms up to 30 years.&rdquo; <a href="https://selling-guide.fanniemae.com/sel/b2-1.5-02/loan-eligibility" target="_blank" rel="noopener">[4]</a></p>
+
+<p>So as of October 2026, a 50-year mortgage isn&rsquo;t something you can walk into a lender and get. But the question behind it, what a longer loan really costs, is still worth answering.</p>
+
+<h2>Now here&rsquo;s the important part: the math</h2>
+
+<p>Here&rsquo;s the trade-off. Lower monthly payment, yes. But more total interest, absolutely, and slower equity buildup, which means it could take longer to actually own anything, if that&rsquo;s important to you.</p>
+
+<p>Let&rsquo;s put numbers on it. Take a $300,000 loan at 7%. That&rsquo;s an illustration, not a rate quote, and it assumes the same rate for both loans. Principal and interest only:</p>
+
+<ul>
+<li><strong>30 years:</strong> about $1,996 a month. Total interest: about $418,500.</li>
+<li><strong>50 years:</strong> about $1,805 a month. Total interest: about $783,000.</li>
+</ul>
+
+<p>That&rsquo;s about $191 a month less, for about $364,500 more in interest. And in real life the gap would likely be wider: a lender would want a higher rate for a longer loan. When NPR ran its own example, a Realtor.com economist put the saving at &ldquo;at most about $250 per month&rdquo; and the extra interest at 86%, and made the same point about the rate. <a href="https://www.npr.org/2025/11/12/nx-s1-5604384/50-year-mortgage-trump-housing-explainer" target="_blank" rel="noopener">[1]</a></p>
+
+[[img:assets/photos/17/b33-couple-running-mortgage-numbers.jpg|A young couple going over figures with a calculator at the kitchen table|Photo by <a href="https://www.pexels.com/@mikhail-nilov" rel="nofollow noopener" target="_blank">Mikhail Nilov</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Equity is the part people miss</h2>
+
+<p>Early payments on any mortgage are mostly interest. On a 50-year loan, that stretches out. In the same illustration, ten years of payments pay off about $42,600 of the 30-year loan, and about $9,500 of the 50-year one.</p>
+
+<p>That&rsquo;s why I talked about longer commitments, more debt, and the risk of being house poor for longer. For sellers and investors, it might increase demand, because more people may qualify. But we&rsquo;d have to watch for market inflation.</p>
+
+<h2>What to do instead</h2>
+
+<p>This isn&rsquo;t just about buying a home. It&rsquo;s about understanding the real cost of money over time. Your mortgage is more than a payment. It&rsquo;s a wealth strategy, if it&rsquo;s done correctly.</p>
+
+<p>So before you stretch the term, run the numbers: the payment, the total interest, and how fast you&rsquo;re building equity. If you want to run them together, <a href="/contact">reach out to me</a>.</p>
+
+<p>So that&rsquo;s the 50-year mortgage, explained.</p>
+
+<p><em>This article explains how mortgage terms generally work. It isn&rsquo;t financial advice, a loan offer or a rate quote: the figures above are an illustration. Erika K. Page is a real estate agent with Axen Realty, not a lender.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>NPR, <a href="https://www.npr.org/2025/11/12/nx-s1-5604384/50-year-mortgage-trump-housing-explainer" target="_blank" rel="noopener">3 questions about Trump&rsquo;s 50-year mortgage plan</a> (November 12, 2025).</li>
+<li>Politico, as republished by NASCUS, <a href="https://www.nascus.org/2026/01/15/pulte-backs-away-from-50-year-mortgage/" target="_blank" rel="noopener">Pulte backs away from 50-year mortgage</a> (January 15, 2026).</li>
+<li>Code of Federal Regulations, <a href="https://www.ecfr.gov/current/title-12/section-1026.43" target="_blank" rel="noopener">12 CFR 1026.43, Minimum standards for transactions secured by a dwelling</a> (Regulation Z).</li>
+<li>Fannie Mae, Selling Guide, <a href="https://selling-guide.fanniemae.com/sel/b2-1.5-02/loan-eligibility" target="_blank" rel="noopener">B2-1.5-02, Loan Eligibility</a>.</li>
+<li>Erika K. Page, video on the 50-year mortgage (November 2025), her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her reel DcbXCobtMCq ("You can own the building and not own an inch
         // of the ground it's on") and its caption. MARTA's 2012 TOD board briefing, the Atlanta
         // Land Trust FAQs, Fannie Mae's Selling Guide B2-3-03 and 24 CFR 203.37. Every fact is

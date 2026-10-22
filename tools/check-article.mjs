@@ -104,11 +104,19 @@ async function realPage(page, url, mustSee) {
   return null;
 }
 
+// Lazy pictures only load when they come into view. Scrolling the window isn't enough:
+// the site's pages scroll inside their own container, so on 22 Oct 2026 (the 20th
+// article) the oldest /blog card sat below everything the window scroll reached and
+// never loaded. Bring each picture into view itself, then ask any still waiting to load.
 async function loadLazy(page) {
   await page.evaluate(async () => {
     for (let y = 0; y < document.body.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); }
-    window.scrollTo(0, 0);
+    for (const i of document.images) { if (i.offsetWidth > 0 && !i.complete) { i.scrollIntoView({ block: 'center' }); await new Promise(r => setTimeout(r, 80)); } }
+    for (const i of document.images) if (!i.complete && i.loading === 'lazy') i.loading = 'eager';
   });
+  // and wait for them to finish (the local server serves one request at a time)
+  await page.waitForFunction(() => [...document.images].filter(i => i.offsetWidth > 0).every(i => i.complete), null, { timeout: 20000 }).catch(() => {});
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
 }
 

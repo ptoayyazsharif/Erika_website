@@ -130,6 +130,10 @@ def digits(hyp):
             tail = re.search(r"[.,?!;:]*$", parts[j - 1][0]).group(0)
             if j < len(parts) and norm(parts[j][0]) == "percent":
                 tail = "%" + re.search(r"[.,?!;:]*$", parts[j][0]).group(0); j += 1
+            elif j < len(parts) and norm(parts[j][0]) == "plus" and not tail:
+                # "24+ years" is read "twenty-four plus years": without this the captions
+                # showed "24+ plus years" (cash is king, 22 Oct 2026).
+                tail = "+" + re.search(r"[.,?!;:]*$", parts[j][0]).group(0); j += 1
             elif j < len(parts) and norm(parts[j][0]) in ("dollars", "dollar"):
                 text, tail = "$" + text, re.search(r"[.,?!;:]*$", parts[j][0]).group(0); j += 1
             text += tail

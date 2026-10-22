@@ -135,6 +135,7 @@ Google AI Studio is still outstanding.
 | `buying-a-hud-home` | Buying | `/hud-homes` | none — researched around her closing-day reel ("first-time homebuyer who scored an incredible foreclosure deal", 19 Oct): HUD Homestore and its FAQ — listing periods, owner-occupant rules, repair codes, Good Neighbor Next Door. The reel never says HUD, so the article never says her client bought one |
 | `listing-photos-and-drones` | Selling | `/listing-photos` | none — researched around her reel with her photographer, Jonathan Martinez (20 Oct): NAR's 2025 Profile (via Virginia REALTORS), Code of Ethics Article 12 ("a true picture", images), FAA Part 107 (Remote Pilot Certificate, registration, Remote ID). Her "25,000 buyers" line left out |
 | `ground-leases-explained` | Investing | `/ground-lease` | none — researched around her reel "You can own the building and not own an inch of the ground it's on" (`DcbXCobtMCq`, 21 Oct): MARTA's 2012 TOD board briefing (One Atlantic Center, Lindbergh), Atlanta Land Trust FAQs, Fannie Mae B2-3-03 (lease ≥ 5 years past the loan), 24 CFR 203.37 (FHA). Her "free checklist" offer left out (no checklist in her files) |
+| `fifty-year-mortgage-explained` | Buying | `/50-year` | none — researched around her November 2025 video `trump-50-year-mortgage`, **re-checked** (22 Oct): the proposal stalled in January 2026 (Politico via NASCUS: "other priorities"), 12 CFR 1026.43 (QM term ≤ 30 years), Fannie Mae B2-1.5-02 (terms up to 30 years), NPR. Our own illustration: $300,000 at 7% (labelled). 5-minute episode (short source); the voice is told "Pultee" so it says Pulte right |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -336,6 +337,8 @@ Started with the first article and episode 1 (closing costs). Outputs go to `exp
   `Question`) needs the same `--numbered-label` here, or the captions show "1." where the
   voice says "Question one" (20 Oct 2026).
 - The description carries the podcast links, Apple Podcasts first, then Spotify.
+- "24+" is read "twenty-four plus": `digits()` folds a following "plus" into "+", or the
+  captions say "24+ plus years" (cash is king, 22 Oct 2026).
 - Settings every time: playlist "Erika Explains" set as a podcast; not made for kids;
   **altered or synthetic content: Yes** (an AI clone of a real person's voice); Education;
   English captions from the .srt.
@@ -637,6 +640,7 @@ check there and a row here.
 | **No picture on two articles**; no cover tile repeats its own article's body picture (whole blog, every run) | the same signing photo was on two articles four times, and two more were shared — the owner called it lazy (7 Oct 2026) |
 | Short link answers **301** to the article (with `#guide` only when there is a guide) | a 404 after an admin save; a `#guide` anchor on an article with no guide |
 | Landing pages (`tools/check-landing/run.sh`: rounds 1–2, 59 checks; round 3, the Stripe paywall, 64 checks against a fake Stripe) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
+| `/blog` pictures: every picture is scrolled into view and waited for (`loadLazy`) | the pages scroll inside their own container, so scrolling the window never reached the oldest card once there were 20 articles; it stayed unloaded and failed every article's run (22 Oct 2026) |
 | **Live**: byte-compare every upload; confirm pages by completeness (`</html>`, >150 KB), not status | see the host's holding page below |
 
 ## Deploying, and the environment
@@ -729,9 +733,10 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1–8 were handed over on 12–21 Oct (closing costs, owning vs investing, know
-  your house, cash is king, homestead, relocating, restaurant space, open house). Next is 9:
-  your bank is not your best option (NEXA / Andrew #1).
+  Episodes 1–9 were handed over on 12–22 Oct (closing costs, owning vs investing, know
+  your house, cash is king, homestead, relocating, restaurant space, open house, bank vs
+  broker). Next is 10: the rollback rate. NEXA / Andrew episodes carry the lender disclosure in
+  the description (`handover.py --note`, 22 Oct).
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
   step 8). Episode 1's description should carry "Recorded September 29, 2026; the market
@@ -761,8 +766,8 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `photos.php` says) or a real photo (the owner, 20 Oct)?
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
-  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–3
-  handed over (19–21 Oct; 3 needs `--numbered-label Reason`); next is 4 (cash is king), then
+  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–4
+  handed over (19–22 Oct; 3 needs `--numbered-label Reason`); next is 5 (homestead), then
   every episode in date order. Erika has to verify her YouTube
   account. Ask the owner whether Erika has a
   Google Business Profile, and whether her Instagram bio should point to the blog.
@@ -776,6 +781,10 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the
   voice did misread them, re-record the episode (it is on RSS.com, so the owner swaps the file).
   The captions show the text's figures.
+- **For Erika to review:** the 50-year mortgage article and episode (22 Oct). Her November 2025
+  video's lines are quoted; what happened since (it stalled in January 2026; QM and Fannie Mae
+  still cap at 30 years) and the $300,000-at-7% illustration are ours, labelled. Her European
+  Commission line and the Escaluxe close are left out.
 - **For Erika to review:** the ground-lease article and episode (21 Oct). Her reel's lines are
   quoted; MARTA, the Atlanta Land Trust, Fannie Mae and FHA facts are researched. **Her reel
   promises "my free checklist" to anyone who comments GROUND**; no such checklist is in her

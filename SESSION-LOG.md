@@ -7,6 +7,38 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-22 (later) — 50-year mortgage article; podcast episode 9; YouTube episode 4
+
+**Asked.** "Now do today's blog and next episode please."
+**Done.**
+- **Article** `fifty-year-mortgage-explained` (Buying, `/50-year`) from her November 2025 video,
+  re-checked first. The idea stalled: in January 2026 Pulte said "I think we have other priorities"
+  (Politico via NASCUS). The rules still cap terms at 30 years: 12 CFR 1026.43(e)(2)(ii) and
+  Fannie Mae B2-1.5-02. NPR covers the November announcement and a Realtor.com example. Our own
+  illustration ($300,000 at 7%, same rate): $191 a month less, about $364,500 more interest,
+  $9,500 vs $42,600 paid down in ten years. Research table in
+  `tools/research/fifty-year-mortgage-explained.md`.
+- Photos B33 (couple with a calculator, Mikhail Nilov) and B34 (calculator on purchase papers,
+  RDNE); cover, podcast art, YouTube thumbnail.
+- **Episode**: 777 words, 301 s, -19.6 LUFS. The first take said "Poult" for Pulte, so the
+  script spells it "Pultee" and it was re-recorded; all 15 figures and dates checked in the
+  transcript.
+- **Hand-overs**:
+  - podcast episode 9 (bank vs broker), with the NEXA / Andrew lender disclosure added through
+    `handover.py --note`;
+  - YouTube episode 4 (cash is king).
+**Fixed on the way.**
+- `check-article.mjs`: the oldest `/blog` card (closing costs) failed "pictures loaded" for every
+  article. The page scrolls inside its own container, and today's 20th article pushed that card
+  below anything the window scroll reached. `loadLazy` now scrolls each picture into view, turns
+  stragglers eager and waits for them all. `--all`: ALL PASS locally; the new article passes
+  live too.
+- YouTube captions said "24+ plus years" where the voice reads "twenty-four plus":
+  `digits()` now folds "plus" into the figure.
+- Deploy: 15 files, 0 failures.
+
+---
+
 ## 2026-10-22 — Abandoned checkouts go to Lofty
 
 **Asked.** "Add abandoned checkouts to Lofty too please."

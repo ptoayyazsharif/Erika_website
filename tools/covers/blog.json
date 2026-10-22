@@ -177,5 +177,15 @@
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/b32-vacant-lot-beside-building.jpg",
     "refPos": "50% 70%"
+  },
+  {
+    "slug": "fifty-year-mortgage-explained",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "A 50-year mortgage? Here’s what it would really cost.",
+    "sub": "Your mortgage is more than a payment. It’s a wealth strategy if done correctly.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b34-calculator-on-purchase-papers.jpg",
+    "refPos": "70% 30%"
   }
 ]

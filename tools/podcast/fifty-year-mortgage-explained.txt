@@ -1,0 +1,65 @@
+# Erika Explains — podcast episode script
+# Article: /blog/fifty-year-mortgage-explained
+# Facts: every one is in tools/research/fifty-year-mortgage-explained.md.
+# Her lines are from her video trump-50-year-mortgage (November 2025); its dated claims were
+# re-checked on 22 Oct 2026 and are told as what happened since.
+# "Pultee" is spelled for the voice: Bill Pulte says it PUL-tee.
+# Left out on purpose: her European Commission line, today's average rate, the Escaluxe close.
+#
+# voice: stability=0.38 similarity=0.8 style=0.22 speaker_boost=1
+
+Hey, it's Erika. Welcome back to Erika Explains.
+
+Imagine carrying your mortgage into your eighties. Sounds extreme? But what if you could cut your monthly payment right now?
+
+That was the pitch when the idea of a fifty-year mortgage hit the news last November. Yes... five, zero. Half a century of payments.
+
+So today I want to walk you through what a fifty-year mortgage would really cost you. And where the idea actually stands now, because a lot has happened since.
+
+Let me explain.
+
+Back in November of twenty twenty-five, the President said he wanted the federal government to back a fifty-year mortgage option for homebuyers. The director of the Federal Housing Finance Agency, Bill Pultee, called it a complete game changer.
+
+Why then? Well, because with high home prices and high interest rates, the traditional thirty-year mortgage just isn't cutting it for a lot of buyers. Especially first-timers and younger families. That's what I said at the time.
+
+So where does it stand now?
+
+In January of twenty twenty-six, reporters asked Pultee whether fifty-year mortgages were still on the table. And he said, I think we have other priorities.
+
+And here's the thing. The rules behind almost every home loan in this country still stop at thirty years. Under the federal ability-to-repay rule, a qualified mortgage is one where the loan term doesn't exceed thirty years. And Fannie Mae's own guide says it buys loans with original terms up to thirty years.
+
+So as of October twenty twenty-six, a fifty-year mortgage isn't something you can walk into a lender and get. But the question behind it... what does a longer loan really cost you... that's still worth answering. So let's answer it.
+
+Now here's the important part. The math.
+
+Here's the trade-off. Lower monthly payment, yes. But more total interest, absolutely. And slower equity buildup, which means it could take longer to actually own anything, if that's important to you.
+
+Let's put real numbers on it. Say you borrow three hundred thousand dollars at seven percent. Now, that's just an illustration. It's not a rate quote. And I'm using the same rate for both loans, so we're comparing apples to apples. Principal and interest only.
+
+On a thirty-year loan, your payment is about one thousand, nine hundred and ninety-six dollars a month. And over the life of the loan, you pay about four hundred and eighteen thousand, five hundred dollars in interest.
+
+On a fifty-year loan, the payment is about one thousand, eight hundred and five dollars a month. And the interest? About seven hundred and eighty-three thousand dollars.
+
+So think about that. You save about a hundred and ninety-one dollars a month... and you pay about three hundred and sixty-four thousand, five hundred dollars more in interest.
+
+And in real life, the gap would probably be even wider. A lender would want a higher rate for a longer loan. When N P R ran its own example, an economist at Realtor dot com put the monthly saving at about two hundred and fifty dollars at most, and the extra interest at eighty-six percent. And he made that same point about the rate.
+
+Now let's talk about the part people miss. Equity.
+
+On any mortgage, your early payments are mostly interest. On a fifty-year loan, that just stretches out. In that same illustration, after ten years of payments, you've paid off about forty-two thousand, six hundred dollars on the thirty-year loan. On the fifty-year loan? About nine thousand, five hundred.
+
+Ten years of payments... and you've barely touched the balance.
+
+That's why I talked about longer commitments, more debt, and the risk of being house poor for longer.
+
+And if you're a seller or an investor, a longer loan might increase demand, because more people may qualify. But we'd have to watch for market inflation.
+
+So what do you do instead?
+
+This isn't just about buying a home. It's about understanding the real cost of money over time. Your mortgage is more than a payment. It's a wealth strategy, if it's done correctly.
+
+So before you stretch the term on anything, run the numbers. The payment, the total interest, and how fast you're actually building equity. And if you want to run those numbers together, reach out to me. I've put links to every source in the show notes.
+
+Quick note. This episode explains how mortgage terms generally work. It isn't financial advice, a loan offer, or a rate quote. The numbers are an illustration. And I'm a real estate agent with Axen Realty, not a lender.
+
+So that's the fifty-year mortgage, explained. I'm Erika Page. Thanks for listening, and I'll talk to you next time.
