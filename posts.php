@@ -25,6 +25,121 @@
 return [
 
     [
+        // Researched around her three "what do you wish you knew in your first year of real
+        // estate?" reels (DcrGxmuCqHx, DcoGkAvih2-, DcqrYpwCsfR) and her mentor video
+        // (erika-page-axen-mentor-remake). The license steps are from the Georgia Real Estate
+        // Commission's own pages and the PSI candidate bulletin (7/1/2026). Her "12 to 17
+        // touches" figure is left out: no source. Every fact is listed with its source in
+        // tools/research/what-the-real-estate-class-wont-teach-you.md.
+        'slug'           => 'what-the-real-estate-class-wont-teach-you',
+        'title'          => 'What the real estate class won&rsquo;t teach you.',
+        'seo_title'      => 'Getting a Georgia Real Estate License: The Official Steps, and What the Class Won’t Teach You',
+        'seo_desc'       => 'How to get a real estate license in Georgia, step by step from the Commission’s own rules, and what your first year really takes: prospecting, follow-up, a mentor.',
+        'excerpt'        => 'If you took the real estate class, you already know: it didn&rsquo;t teach you how to be a real estate agent. Here are Georgia&rsquo;s license steps, and what nobody teaches you.',
+        'date'           => '2026-10-23',
+        'updated'        => '2026-10-23',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'lifestyle',
+        'tags'           => ['real estate license', 'new real estate agent', 'Georgia Real Estate Commission', 'prospecting', 'mentorship', 'real estate career'],
+        'cover'          => 'assets/photos/17/what-the-real-estate-class-wont-teach-you-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: What the real estate class won&rsquo;t teach you.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/what-the-real-estate-class-wont-teach-you.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'new-agent',
+        'audio_secs'     => 356,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'How do I get a real estate license in Georgia?',
+                'a' => 'Be at least 18 with a high school diploma or equivalent, complete the 75-hour Salesperson Prelicense Course at a school the Georgia Real Estate Commission approves, bring your criminal history (GCIC) report to the PSI test center, pass the PSI exam, and apply for your license. To work, a broker has to sponsor you.',
+            ],
+            [
+                'q' => 'How long do I have to apply after passing the Georgia exam?',
+                'a' => 'Apply within three months of the exam date. Between three and twelve months the fee to activate doubles, and after twelve months you have to retake the exam (but not the prelicense course).',
+            ],
+            [
+                'q' => 'What does a new Georgia agent have to do in the first year?',
+                'a' => 'Complete a 25-hour Salesperson Postlicense course approved by the Commission. If you don&rsquo;t finish it in your first year, the license lapses. After that, active licensees take 36 hours of continuing education every four years, including 3 hours on license law.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>&ldquo;If you took the real estate class, you already know that didn&rsquo;t teach you anything about&hellip; how to be a real estate agent.&rdquo;</p>
+
+<p>I said that in a reel, answering a question I get all the time: what do you wish you&rsquo;d known in your first year? So let me explain. First, what Georgia actually asks of you to get the license. Then the part the class leaves out.</p>
+
+<h2>Getting the license in Georgia: the official steps</h2>
+
+<p>Here&rsquo;s what the Georgia Real Estate Commission lists for a salesperson&rsquo;s license <a href="https://grec.state.ga.us/obtaining-a-license/real-estate/" target="_blank" rel="noopener">[1]</a>:</p>
+
+<ul>
+<li><strong>Age and education:</strong> at least 18, and a high school graduate or the holder of a certificate of equivalency.</li>
+<li><strong>The course:</strong> the 75-hour Salesperson Prelicense Course at a school the Commission approves. (Certain college or law-school coursework can count instead.)</li>
+<li><strong>A background check:</strong> you bring your criminal history, the Georgia Crime Information Center (GCIC) report, to the PSI test center before you&rsquo;re licensed. If it shows a conviction, the Commission investigates and decides.</li>
+<li><strong>The exam:</strong> administered by PSI and approved by the Commission.</li>
+<li><strong>A broker:</strong> to work, you activate your license with a broker, using the Sponsoring Broker Statement that the broker signs.</li>
+</ul>
+
+<p>Two timing rules catch people. Apply within three months of your exam date: after that the fee to activate doubles, and after twelve months you retake the exam. And you can&rsquo;t start working the day you pass. The Commission&rsquo;s answer is that &ldquo;you may not begin brokerage activity until your broker receives your wall certificate and pocket card from the Commission.&rdquo; <a href="https://grec.state.ga.us/licensed-professionals/faq/real-estate/" target="_blank" rel="noopener">[2]</a></p>
+
+[[img:assets/photos/17/b35-studying-for-the-license.jpg|A woman studying at her kitchen table with textbooks, a notebook and a laptop|Photo by <a href="https://www.pexels.com/@karola-g" rel="nofollow noopener" target="_blank">Karola G</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>What the exam actually tests</h2>
+
+<p>PSI publishes the outline <a href="https://test-takers.psiexams.com/api/content/bulletin/4678" target="_blank" rel="noopener">[4]</a>. The national part covers property ownership, land use, valuation, financing, contracts, agency, disclosures, property management, transfer of title, the practice of real estate and the math. Contracts are the biggest share, 19% of the salesperson exam. The Georgia part covers state laws and rules, real estate practice in Georgia, and finance and closing.</p>
+
+<p>It even covers the rules around reaching people: fair housing advertising, Do-Not-Call compliance, social media. What you won&rsquo;t find is a section on how to find your first client. That&rsquo;s the rules of the road. It&rsquo;s not how to drive.</p>
+
+<h2>Your first year has its own homework</h2>
+
+<ul>
+<li><strong>A second course.</strong> &ldquo;Salespersons must take a 25 hour Salespersons Postlicense course in their first year of licensure.&rdquo; Miss it, and the license lapses. <a href="https://grec.state.ga.us/obtaining-a-license/real-estate/" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>Then continuing education:</strong> 36 hours every four-year renewal, including 3 hours on license law. <a href="https://grec.state.ga.us/licensed-professionals/education-requirements/real-estate/" target="_blank" rel="noopener">[3]</a></li>
+<li><strong>One broker at a time,</strong> with narrow exceptions. <a href="https://grec.state.ga.us/licensed-professionals/faq/real-estate/" target="_blank" rel="noopener">[2]</a></li>
+<li><strong>Your advertising isn&rsquo;t only yours.</strong> Even as an independent contractor, &ldquo;all advertising must be in the name of and approved by the broker.&rdquo; <a href="https://grec.state.ga.us/licensed-professionals/faq/real-estate/" target="_blank" rel="noopener">[2]</a></li>
+<li><strong>Referral gifts.</strong> May you pay a fee or give a gift to someone who refers a prospect to you? The Commission&rsquo;s answer: &ldquo;No, unless that person is a real estate licensee.&rdquo; <a href="https://grec.state.ga.us/licensed-professionals/faq/real-estate/" target="_blank" rel="noopener">[2]</a></li>
+<li><strong>Read your agreement.</strong> The terms of your independent contractor agreement with your broker are a matter of negotiation. If you don&rsquo;t understand or don&rsquo;t agree with something, talk to the broker before you sign. <a href="https://grec.state.ga.us/licensed-professionals/faq/real-estate/" target="_blank" rel="noopener">[2]</a></li>
+</ul>
+
+<h2>Now here&rsquo;s the important part: what nobody teaches you</h2>
+
+<p><strong>How to prospect.</strong> &ldquo;I wasted about a year just trying to learn prospecting.&rdquo; If someone had given me the one-twos of it, &ldquo;it would&rsquo;ve saved me a lot of time and a lot of money.&rdquo;</p>
+
+<p><strong>Follow-up and consistency.</strong> &ldquo;It&rsquo;s not about chasing the lead sources that everyone else is doing. It&rsquo;s about doing business your way and understanding the power of the follow-up and the consistency.&rdquo; So many people never get to the point of getting that business, and then they find out the client went with somebody else. That was probably one of the most valuable things I learned early on.</p>
+
+<p><strong>Finding your own leads.</strong> &ldquo;If you can create your own leads, if you can find leads, then you solve ninety-nine percent of the problem.&rdquo; And having a mentor to walk you through that is one of the most critical things.</p>
+
+[[img:assets/photos/17/b36-mentor-and-new-agent.jpg|Two women at a desk going over papers together, both smiling|Photo by <a href="https://www.pexels.com/@edmond-dantes" rel="nofollow noopener" target="_blank">Edmond Dant&egrave;s</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>What a mentor is for</h2>
+
+<p>I&rsquo;ve been in this business 24+ years, and one thing I know for sure: &ldquo;success in real estate is not accidental. It comes from structure, consistency, confidence, and having the right guidance early.&rdquo;</p>
+
+<p>When I mentor an agent, we focus on the things that move a business forward: &ldquo;systems, lead generation, follow-up, contracts, client conversations, time management, accountability, and the mindset required to build a business, not just hold a license.&rdquo;</p>
+
+<p>&ldquo;You don&rsquo;t have to know everything yet. That&rsquo;s what mentorship is for. But you do need to be willing to show up, follow through, and grow.&rdquo;</p>
+
+<p>If you&rsquo;re licensed, or about to be, and you want that kind of guidance, <a href="/contact">reach out to me</a>.</p>
+
+<p>So that&rsquo;s what the real estate class won&rsquo;t teach you, explained.</p>
+
+<p><em>This article explains how Georgia licensing generally works, from the Commission&rsquo;s own pages as of October 2026. It isn&rsquo;t legal advice. Requirements and fees change: confirm them with the Georgia Real Estate Commission before you enroll. Erika K. Page is a real estate agent with Axen Realty.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Georgia Real Estate Commission, <a href="https://grec.state.ga.us/obtaining-a-license/real-estate/" target="_blank" rel="noopener">Obtaining a License: Real Estate (Salesperson)</a>.</li>
+<li>Georgia Real Estate Commission, <a href="https://grec.state.ga.us/licensed-professionals/faq/real-estate/" target="_blank" rel="noopener">Frequently Asked Questions: Real Estate</a>.</li>
+<li>Georgia Real Estate Commission, <a href="https://grec.state.ga.us/licensed-professionals/education-requirements/real-estate/" target="_blank" rel="noopener">Education Requirements: Real Estate</a>.</li>
+<li>PSI Services, <a href="https://test-takers.psiexams.com/api/content/bulletin/4678" target="_blank" rel="noopener">Georgia Real Estate Commission Candidate Information Bulletin</a> (July 1, 2026).</li>
+<li>Erika K. Page, reels on her first year in real estate and her mentor video, her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her video trump-50-year-mortgage (November 2025), re-checked on
         // 22 Oct 2026: the proposal stalled in January 2026 (Politico via NASCUS), and the
         // Qualified Mortgage rule (12 CFR 1026.43) and Fannie Mae's Selling Guide still cap

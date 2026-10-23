@@ -187,5 +187,15 @@
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/b34-calculator-on-purchase-papers.jpg",
     "refPos": "70% 30%"
+  },
+  {
+    "slug": "what-the-real-estate-class-wont-teach-you",
+    "template": "bold",
+    "eyebrow": "Lifestyle",
+    "line": "What the real estate class won’t teach you.",
+    "sub": "Success in real estate is not accidental.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b37-agent-on-the-phone-with-notes.jpg",
+    "refPos": "40% 40%"
   }
 ]

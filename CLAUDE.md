@@ -136,6 +136,7 @@ Google AI Studio is still outstanding.
 | `listing-photos-and-drones` | Selling | `/listing-photos` | none — researched around her reel with her photographer, Jonathan Martinez (20 Oct): NAR's 2025 Profile (via Virginia REALTORS), Code of Ethics Article 12 ("a true picture", images), FAA Part 107 (Remote Pilot Certificate, registration, Remote ID). Her "25,000 buyers" line left out |
 | `ground-leases-explained` | Investing | `/ground-lease` | none — researched around her reel "You can own the building and not own an inch of the ground it's on" (`DcbXCobtMCq`, 21 Oct): MARTA's 2012 TOD board briefing (One Atlantic Center, Lindbergh), Atlanta Land Trust FAQs, Fannie Mae B2-3-03 (lease ≥ 5 years past the loan), 24 CFR 203.37 (FHA). Her "free checklist" offer left out (no checklist in her files) |
 | `fifty-year-mortgage-explained` | Buying | `/50-year` | none — researched around her November 2025 video `trump-50-year-mortgage`, **re-checked** (22 Oct): the proposal stalled in January 2026 (Politico via NASCUS: "other priorities"), 12 CFR 1026.43 (QM term ≤ 30 years), Fannie Mae B2-1.5-02 (terms up to 30 years), NPR. Our own illustration: $300,000 at 7% (labelled). 5-minute episode (short source); the voice is told "Pultee" so it says Pulte right |
+| `what-the-real-estate-class-wont-teach-you` | Lifestyle | `/new-agent` | none — her three "first year in real estate" reels (`DcrGxmuCqHx`, `DcoGkAvih2-`, `DcqrYpwCsfR`) and her mentor video (23 Oct), with Georgia's licence steps from GREC (licence page, FAQ, education rules) and PSI's candidate bulletin (7/1/2026). Her "12–17 touches" figure left out (no source). Call to action: her mentoring, via `/contact` |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -509,6 +510,8 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
    a source, leave the fact out — the relocation notes list three facts dropped this
    way. The Census Bureau's own data API now needs a key; Census Reporter shows the
    same ACS figures.
+   GREC's own pages (grec.state.ga.us, licensing and FAQ) answer curl as a browser, and PSI's
+   candidate bulletin is a PDF from `test-takers.psiexams.com/api/content/bulletin/4678` (23 Oct).
    Read the source text itself, not a search snippet. **Search results disagreed on
    SB 33**: one headline read "Georgia rejects property tax caps". Reading the pages
    showed the broader caps failed and SB 33 passed. Resolve every conflict at the source.
@@ -746,9 +749,10 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1–9 were handed over on 12–22 Oct (closing costs, owning vs investing, know
+  Episodes 1–10 were handed over on 12–23 Oct (closing costs, owning vs investing, know
   your house, cash is king, homestead, relocating, restaurant space, open house, bank vs
-  broker). Next is 10: the rollback rate. NEXA / Andrew episodes carry the lender disclosure in
+  broker, rollback rate). Next is 11: stairs (12 Oct), then Fannie Mae 620 (NEXA, `--note`
+  with the lender disclosure). NEXA / Andrew episodes carry the lender disclosure in
   the description (`handover.py --note`, 22 Oct).
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
@@ -785,9 +789,10 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `photos.php` says) or a real photo (the owner, 20 Oct)?
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
-  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–4
-  handed over (19–22 Oct; 3 needs `--numbered-label Reason`); next is 5 (homestead), then
-  every episode in date order. Erika has to verify her YouTube
+  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–5
+  handed over (19–23 Oct; 3 needs `--numbered-label Reason`); next is 6 (relocating), then
+  every episode in date order. From 5 on they are podcast-script episodes: `episode.py` aligns
+  with the script and makes no chapters; pass `--note "Recorded <date>."`. Erika has to verify her YouTube
   account. Ask the owner whether Erika has a
   Google Business Profile, and whether her Instagram bio should point to the blog.
 - **New pages proposed by Erika's AI review (19 Oct; `ceo_erika` `business/conversion-pathways`),
@@ -800,6 +805,15 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the
   voice did misread them, re-record the episode (it is on RSS.com, so the owner swaps the file).
   The captions show the text's figures.
+- **For Erika to review:** the new-agent article and episode (23 Oct). Her reels and mentor video
+  are quoted; the licence steps are GREC's and PSI's. ★ Re-check them (and the bulletin's date)
+  before re-using: licensing rules change. Her "12–17 touches, agents quit after 2" figure is left
+  out (no source). Is mentoring something she offers to agents outside Axen?
+- **For the owner: Erika's bird-dog reel `DbyPKNCCNFJ`** (on her Instagram) says she
+  compensates the people who bring her deals ("you thank them financially… And I have about
+  three"). GREC's FAQ says a licensee may not pay a fee or give a gift for a referral unless the
+  person is licensed (License Law 43-40-25(a)(17)). It may be about her capital work rather than
+  brokerage, but she should check it with Axen's broker, and it isn't used on the site.
 - **For Erika to review:** the 50-year mortgage article and episode (22 Oct). Her November 2025
   video's lines are quoted; what happened since (it stalled in January 2026; QM and Fannie Mae
   still cap at 30 years) and the $300,000-at-7% illustration are ours, labelled. Her European

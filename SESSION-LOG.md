@@ -7,6 +7,57 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-23 (later) — "What the real estate class won't teach you"; podcast episode 10; YouTube episode 5
+
+**Asked.** "Now do today's blog and next episode please."
+**Done.**
+- **Picking the material.**
+  - `follow-the-gps` and `versus-competition`, the unused transcripts named in her notes, are
+    mindset pieces, not real estate.
+  - Earnest money and title insurance (reel `Da-nHRdCAh8`, title part 2) are already in the
+    closing-costs article.
+  - **Her bird-dog reel `DbyPKNCCNFJ` was rejected.** She says she compensates her bird dogs,
+    and GREC's FAQ says a licensee may not pay a fee or give a gift to an unlicensed person for
+    a referral (License Law 43-40-25(a)(17)). Flagged to the owner; the reel is already public on
+    her Instagram.
+  - Used instead: her three "what do you wish you knew in your first year of real estate?"
+    reels (`DcrGxmuCqHx`, `DcoGkAvih2-`, `DcqrYpwCsfR`) and her mentor video
+    (`erika-page-axen-mentor-remake`).
+- **Article** `what-the-real-estate-class-wont-teach-you` (Lifestyle, `/new-agent`).
+  - Georgia's salesperson-licence steps from GREC (licence page, FAQ, education rules) and PSI's
+    candidate bulletin (7/1/2026): 18+, high school, 75-hour course, GCIC report, PSI exam, a
+    sponsoring broker, apply within three months, no work until the broker has the wall
+    certificate and pocket card.
+  - What the exam outline covers (contracts 19%; Do-Not-Call and social media, but no section on
+    finding clients).
+  - The first year: 25-hour postlicense course or the licence lapses; 36 hours CE with 3 of
+    license law; one broker; broker-approved advertising; no referral gifts to unlicensed people;
+    negotiate the contractor agreement.
+  - Then her lessons (prospecting, follow-up and consistency, own leads, a mentor) and her mentor
+    video's lines. Call to action: reach out to her (`/contact`).
+  - Her "12–17 touches / quits after 2" figure is left out (no source; her compliance note says
+    cut, don't caption). AI Erika and the fees are left out too.
+  - Research table: `tools/research/what-the-real-estate-class-wont-teach-you.md`.
+- Photos B35 (studying, Karola G), B36 (mentor and agent, Edmond Dantès), B37 (agent on the phone,
+  RDNE; the cover tile); cover, podcast art, YouTube thumbnail.
+- **Episode** (`tools/podcast/what-the-real-estate-class-wont-teach-you.txt`): 929 words, 356 s,
+  -19.6 LUFS. Audited for flourishes before recording ("A whole year.", "the part that decides
+  whether you make it", "this one surprises people" taken out). The full transcript matches: every
+  figure right.
+- **Checks:** `check-article.mjs`: ALL PASS locally and live, plus the `/new-agent` 301 against the
+  origin. The MP3 and cover are byte-identical over HTTP.
+- **Hand-overs:**
+  - **Podcast episode 10** (rollback rate). Its dated lines are all 2026 and still true.
+  - **YouTube episode 5** (homestead), with `--note "Recorded October 5, 2026."`. It is the first
+    YouTube video from a podcast script rather than a read-aloud article. `episode.py` aligns the
+    captions with the script, and there are no chapters (as designed). The listen-back shows only
+    the transcriber's "Erica" and one extra "of" at 3:34.
+**Open.**
+- For Erika: the new article and episode.
+- For the owner: the bird-dog reel.
+
+---
+
 ## 2026-10-23 — A real receipt for buyers; paid checkouts settle without the webhook
 
 **Asked.** The owner made a test purchase with a test key (no webhook yet). The buyer got the
