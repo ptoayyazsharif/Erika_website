@@ -179,10 +179,112 @@ function stripe_complete(array $session): array {
     $token = landing_token($slug, $leadId);
     $emailed = false;
     if ($first) {
+        // What the buyer's receipt needs (card, Stripe's receipt, the invoice): best effort,
+        // so a slow answer from Stripe never holds back the download.
+        $det = stripe_receipt_details($session);
+        if ($det) stripe_lead_pay($leadId, $det);
         $p = landing_one($slug, true);
-        if ($p) $emailed = landing_notify($p, $l, $token, true, 'Paid ' . stripe_price_label((int) $now['amount'], (string) ($now['billing'] ?? 'once')))['emailed'];
+        if ($p) $emailed = landing_notify($p, lead_get($leadId) ?: $l, $token, true, stripe_sale_line(array_merge($now, $det)))['emailed'];
     }
     return ['ok' => true, 'token' => $token, 'emailed' => $emailed, 'first' => $first];
+}
+
+/* ---------- the receipt ---------- */
+
+/** The order number a buyer can quote: EKP-00042 (the lead's id). */
+function stripe_order_no(int $leadId): string {
+    return 'EKP-' . str_pad((string) $leadId, 5, '0', STR_PAD_LEFT);
+}
+
+/** "Paid $99.99 · Visa •••• 4242" for the owner's email and Lofty. */
+function stripe_sale_line(array $pay): string {
+    return 'Paid ' . stripe_price_label((int) ($pay['amount'] ?? 0), (string) ($pay['billing'] ?? 'once'))
+        . (!empty($pay['card']) ? ' · ' . $pay['card'] : '')
+        . (empty($pay['live']) ? ' · TEST MODE, no real money' : '');
+}
+
+/**
+ * Ask Stripe for what a receipt shows: the card, Stripe's own receipt page, how the
+ * charge reads on a card statement and, for a subscription, the invoice. Only fields
+ * that every Stripe API version has. Returns the pieces it found ([] if none).
+ */
+function stripe_receipt_details(array $session): array {
+    $charge = null;
+    $out = [];
+    $pi = is_string($session['payment_intent'] ?? null) ? $session['payment_intent'] : '';
+    if (preg_match('/^pi_[A-Za-z0-9]+$/', $pi)) {
+        [$ok, , $d] = stripe_http('GET', '/v1/payment_intents/' . $pi, ['expand' => ['latest_charge']]);
+        if ($ok && is_array($d['latest_charge'] ?? null)) $charge = $d['latest_charge'];
+    }
+    $cus = is_string($session['customer'] ?? null) ? $session['customer'] : '';
+    if (!$charge && preg_match('/^cus_[A-Za-z0-9]+$/', $cus)) {
+        // A subscription's first payment: the customer's newest charge.
+        [$ok, , $d] = stripe_http('GET', '/v1/charges', ['customer' => $cus, 'limit' => 1]);
+        if ($ok && is_array($d['data'][0] ?? null)) $charge = $d['data'][0];
+    }
+    if ($charge) {
+        $card = (array) ($charge['payment_method_details']['card'] ?? []);
+        if (!empty($card['last4'])) {
+            $brands = ['visa' => 'Visa', 'mastercard' => 'Mastercard', 'amex' => 'American Express', 'discover' => 'Discover', 'jcb' => 'JCB', 'diners' => 'Diners Club', 'unionpay' => 'UnionPay'];
+            $b = (string) ($card['brand'] ?? '');
+            $wallet = (string) ($card['wallet']['type'] ?? '');
+            $out['card'] = ($brands[$b] ?? ucfirst($b ?: 'Card')) . ' •••• ' . $card['last4']
+                . ($wallet === 'apple_pay' ? ' (Apple Pay)' : ($wallet === 'google_pay' ? ' (Google Pay)' : ''));
+        } elseif (!empty($charge['payment_method_details']['type'])) {
+            $out['card'] = ucwords(str_replace('_', ' ', (string) $charge['payment_method_details']['type']));
+        }
+        foreach (['receipt_url' => 'receipt_url', 'calculated_statement_descriptor' => 'descriptor'] as $k => $as) {
+            if (!empty($charge[$k]) && is_string($charge[$k])) $out[$as] = $charge[$k];
+        }
+    }
+    $inv = is_string($session['invoice'] ?? null) ? $session['invoice'] : '';
+    if (preg_match('/^in_[A-Za-z0-9]+$/', $inv)) {
+        [$ok, , $d] = stripe_http('GET', '/v1/invoices/' . $inv);
+        if ($ok) {
+            foreach (['number' => 'invoice_no', 'hosted_invoice_url' => 'invoice_url', 'invoice_pdf' => 'invoice_pdf'] as $k => $as) {
+                if (!empty($d[$k]) && is_string($d[$k])) $out[$as] = $d[$k];
+            }
+        }
+    }
+    return $out;
+}
+
+/* ---------- without the webhook: check pending payments with Stripe ---------- */
+
+/**
+ * Ask Stripe about checkouts still marked "payment pending": a buyer who paid and
+ * closed the tab before coming back gets their receipt and download, and an expired
+ * checkout goes to Lofty as abandoned, just as the webhook would do. Run from the
+ * Leads screen, at most once every ten minutes per lead; the webhook makes it
+ * unnecessary, but it costs nothing when there's nothing pending.
+ * Returns how many leads changed.
+ */
+function stripe_reconcile(int $max = 10): int {
+    if (!stripe_ready()) return 0;
+    try {
+        leads_table();
+        $st = db()->prepare('SELECT * FROM leads WHERE meta LIKE ? AND created >= ? ORDER BY id DESC LIMIT 40');
+        $st->execute(['%"state":"pending"%', date('Y-m-d H:i:s', time() - 3 * 86400)]);
+        $rows = $st->fetchAll();
+    } catch (Throwable $e) { return 0; }
+    $changed = 0;
+    foreach ($rows as $r) {
+        if ($max-- <= 0) break;
+        $l = lead_decode($r);
+        $pay = (array) ($l['meta']['pay'] ?? []);
+        $sid = (string) ($pay['session'] ?? '');
+        if (!preg_match('/^cs_[A-Za-z0-9_]+$/', $sid)) continue;
+        if (!empty($pay['checked']) && strtotime((string) $pay['checked']) > time() - 600) continue;
+        stripe_lead_pay((int) $l['id'], ['checked' => date('Y-m-d H:i:s')]);
+        [$ok, , $sess] = stripe_http('GET', '/v1/checkout/sessions/' . $sid);
+        if (!$ok || !is_array($sess)) continue;
+        if (stripe_complete($sess)['first']) { $changed++; continue; }
+        if (($sess['status'] ?? '') === 'expired' && stripe_flip((int) $l['id'], ['state' => 'abandoned', 'ended_at' => date('Y-m-d H:i:s')])) {
+            stripe_lofty_unpaid((int) $l['id']);
+            $changed++;
+        }
+    }
+    return $changed;
 }
 
 /**

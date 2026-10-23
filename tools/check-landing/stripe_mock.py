@@ -8,6 +8,10 @@
   GET  /pay/<id>                    "Stripe Checkout": a Pay link and a Cancel link
   GET  /pay/<id>/ok                 pays the session and sends the buyer to success_url
   GET  /pay/<id>/paid-only          pays it without sending the buyer back (the closed-tab case)
+  GET  /pay/<id>/expire             lets the checkout run out (status "expired")
+  GET  /v1/payment_intents/<id>     with expand[]=latest_charge, the charge (card, receipt_url)
+  GET  /v1/charges?customer=<id>    a subscription's first charge
+  GET  /v1/invoices/<id>            a subscription's first invoice (number, hosted page, PDF)
 
 The test key is sk_test_qa123. Nothing here talks to the real Stripe.
 """
@@ -18,6 +22,14 @@ from urllib.parse import parse_qsl, urlparse
 LOG = sys.argv[1]
 KEY = "sk_test_qa123"
 SESS = {}
+CHARGES = {}   # payment intent or customer -> charge
+
+
+def charge():
+    cid = "ch_" + secrets.token_hex(8)
+    return {"id": cid, "object": "charge", "receipt_url": "https://pay.stripe.com/receipts/qa/" + cid,
+            "calculated_statement_descriptor": "ERIKAKPAGE.COM",
+            "payment_method_details": {"type": "card", "card": {"brand": "visa", "last4": "4242", "wallet": None}}}
 
 
 def form(body):
@@ -74,8 +86,11 @@ class H(BaseHTTPRequestHandler):
         s["customer"] = "cus_" + secrets.token_hex(6)
         if s["_sub"]:
             s["subscription"] = "sub_" + secrets.token_hex(8)
+            s["invoice"] = "in_" + secrets.token_hex(8)
+            CHARGES[s["customer"]] = charge()
         else:
             s["payment_intent"] = "pi_" + secrets.token_hex(8)
+            CHARGES[s["payment_intent"]] = charge()
 
     def do_GET(self):
         p = urlparse(self.path).path
@@ -84,6 +99,26 @@ class H(BaseHTTPRequestHandler):
             if self.authed():
                 self.send(200, {"object": "balance", "available": []})
             return
+        q = dict(parse_qsl(urlparse(self.path).query))
+        if p.startswith("/v1/payment_intents/"):
+            if not self.authed():
+                return
+            ch = CHARGES.get(parts[-1])
+            if not ch:
+                return self.send(404, {"error": {"message": "No such payment_intent"}})
+            expanded = any(k.startswith("expand") and v == "latest_charge" for k, v in q.items())
+            return self.send(200, {"id": parts[-1], "object": "payment_intent", "latest_charge": ch if expanded else ch["id"]})
+        if p == "/v1/charges":
+            if not self.authed():
+                return
+            ch = CHARGES.get(q.get("customer", ""))
+            return self.send(200, {"object": "list", "data": [ch] if ch else []})
+        if p.startswith("/v1/invoices/"):
+            if not self.authed():
+                return
+            iid = parts[-1]
+            return self.send(200, {"id": iid, "object": "invoice", "number": "QA-0001",
+                                   "hosted_invoice_url": "https://invoice.stripe.com/i/qa/" + iid, "invoice_pdf": "https://pay.stripe.com/invoice/qa/" + iid + "/pdf"})
         if p.startswith("/v1/checkout/sessions/"):
             if not self.authed():
                 return
@@ -99,6 +134,9 @@ class H(BaseHTTPRequestHandler):
             if parts[2] == "ok":
                 self.pay(sid)
                 return self.send(303, loc=s["success_url"].replace("{CHECKOUT_SESSION_ID}", sid))
+            if parts[2] == "expire":
+                s["status"] = "expired"
+                return self.send(200, {"ok": True})
             if parts[2] == "paid-only":
                 self.pay(sid)
                 return self.send(200, {k: v for k, v in s.items() if not k.startswith("_")})

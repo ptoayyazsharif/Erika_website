@@ -114,18 +114,22 @@ if ($lpAction === 'thanks') {
     $dl = landing_path($page['slug'], 'download') . '?t=' . rawurlencode($token);
     $size = ($page['deliver'] === 'file' && $page['file'] !== '' && is_file(landing_abs($page['file']))) ? filesize(landing_abs($page['file'])) : 0;
     $emailed = isset($_GET['e']);
-    lp_document($page, $page['thanks_title'], function () use ($page, $dl, $size, $emailed, $isDraft) {
+    $lead = lead_get((int) $ok['lead']);
+    $pay = $lead ? (array) ($lead['meta']['pay'] ?? []) : [];
+    $paid = ($pay['state'] ?? '') === 'paid';
+    lp_document($page, $page['thanks_title'], function () use ($page, $dl, $size, $emailed, $isDraft, $lead, $pay, $paid) {
         lp_intro($page, $isDraft); ?>
         <aside class="lp-card lp-done" aria-live="polite">
           <div class="lp-tick" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
           <h2><?= esc($page['thanks_title']) ?></h2>
           <div class="lp-rule" style="margin:16px auto 18px"></div>
+          <?php if ($paid): ?><p class="lp-paid">Payment received: <b><?= esc(stripe_price_label((int) ($pay['amount'] ?? 0), (string) ($pay['billing'] ?? 'once'))) ?></b> · <span style="white-space:nowrap">Order <?= esc(stripe_order_no((int) $lead['id'])) ?></span><?= empty($pay['live']) ? ' · <span style="white-space:nowrap">test mode</span>' : '' ?></p><?php endif; ?>
           <?php if ($page['thanks_text'] !== ''): ?><p><?= esc($page['thanks_text']) ?></p><?php endif; ?>
           <p style="margin-top:22px"><a class="lp-btn lp-btn-gold" href="<?= esc($dl) ?>" id="lp-download"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg><?= $page['deliver'] === 'url' ? 'Open it now' : 'Download now' ?></a></p>
           <?php if ($page['deliver'] === 'file' && $page['file_name'] !== ''): ?>
             <div class="lp-file"><?= esc($page['file_name']) ?><?= $size ? ' · ' . esc(landing_size($size)) : '' ?></div>
           <?php endif; ?>
-          <p class="lp-note"><?= $emailed ? 'We\'ve also emailed you this link. ' : '' ?>The link works for <?= LANDING_LINK_DAYS ?> days.</p>
+          <p class="lp-note"><?= $emailed ? ($paid ? 'Your receipt and this link are in your email. ' : 'We\'ve also emailed you this link. ') : '' ?>The link works for <?= LANDING_LINK_DAYS ?> days.</p>
           <a class="lp-back" href="/">Visit erikakpage.com</a>
         </aside>
     <?php });

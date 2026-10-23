@@ -1022,7 +1022,7 @@ function set_setting(string $k, string $v): void {
  * It goes to the Email / Forms recipient, or to $to when given (a landing page
  * sending a visitor their download link).
  */
-function send_mail(string $subject, string $htmlBody, string $textBody, string $replyTo = '', string $replyName = '', string $to = ''): array {
+function send_mail(string $subject, string $htmlBody, string $textBody, string $replyTo = '', string $replyName = '', string $to = '', string $fromName = ''): array {
     $host = setting('smtp.host');
     if ($to === '') $to = setting('smtp.to');
     if ($host === '' || $to === '') {
@@ -1048,7 +1048,7 @@ function send_mail(string $subject, string $htmlBody, string $textBody, string $
             $mail->Password = setting('smtp.pass');
         }
         $fromEmail = setting('smtp.from', $user ?: $to);
-        $mail->setFrom($fromEmail, setting('smtp.from_name', 'ErikaKPage Website'));
+        $mail->setFrom($fromEmail, $fromName !== '' ? $fromName : setting('smtp.from_name', 'ErikaKPage Website'));
         foreach (array_filter(array_map('trim', explode(',', $to))) as $rcpt) $mail->addAddress($rcpt);
         if ($replyTo !== '' && filter_var($replyTo, FILTER_VALIDATE_EMAIL)) $mail->addReplyTo($replyTo, $replyName);
         $mail->CharSet = 'UTF-8';

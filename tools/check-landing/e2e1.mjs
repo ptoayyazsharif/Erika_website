@@ -23,7 +23,7 @@ ok(await a.locator('text=Landing pages').count() > 0, 'admin sidebar has Landing
 // the list
 await a.goto(B + '/admin.php?page=landing-pages');
 ok(await a.locator('text=Get the 1039 Mariners Court Investor Package').count() === 1, 'Mariners page listed');
-ok(await a.locator('text=Draft · needs its file').count() === 1, 'Mariners shows "needs its file"');
+ok(await a.locator('tr:has-text("1039 Mariners") >> text=Draft · needs its file').count() === 1, 'Mariners shows "needs its file"');
 await a.screenshot({ path: shots + '/admin-list.png', fullPage: true });
 
 // the editor

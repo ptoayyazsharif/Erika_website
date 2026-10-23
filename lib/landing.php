@@ -469,8 +469,8 @@ function lead_split_name(string $name): array {
  * Email the owner about a lead (to the Email / Forms recipient). Returns [ok, detail].
  * $rows: label => value, in the order to show them.
  */
-function lead_notify_owner(string $headline, string $sourceLabel, string $pageUrl, array $rows, string $replyEmail, string $replyName, array $footer = []): array {
-    $subject = 'New lead: ' . $sourceLabel . ($replyName !== '' ? ' — ' . $replyName : '');
+function lead_notify_owner(string $headline, string $sourceLabel, string $pageUrl, array $rows, string $replyEmail, string $replyName, array $footer = [], string $subject = ''): array {
+    if ($subject === '') $subject = 'New lead: ' . $sourceLabel . ($replyName !== '' ? ' — ' . $replyName : '');
     $text = [$headline, str_repeat('-', 40), 'From: ' . $sourceLabel, 'Page: ' . $pageUrl, ''];
     $html = '';
     foreach ($rows as $label => $val) {
@@ -540,8 +540,101 @@ function landing_email_visitor(array $p, string $email, string $name, string $li
         . '<span style="word-break:break-all">' . esc($link) . '</span></p>'
         . '<p style="margin-top:24px">Erika K. Page<br><span style="color:#8a746f">Axen Realty</span></p></div>';
     // Replies go to the owner, not to the website's sending address.
-    [$ok, $err] = send_mail('Your ' . ($p['deliver'] === 'url' ? 'link' : 'download') . ': ' . $p['title'], $html, $text, setting('smtp.to') !== '' ? explode(',', setting('smtp.to'))[0] : '', 'Erika K. Page', $email);
+    [$ok, $err] = send_mail('Your ' . ($p['deliver'] === 'url' ? 'link' : 'download') . ': ' . $p['title'], $html, $text, landing_reply_to(), 'Erika K. Page', $email, 'Erika K. Page');
     return [$ok, $ok ? 'link emailed to ' . $email : $err];
+}
+
+/** Where a visitor's reply goes: the owner's first notification address. */
+function landing_reply_to(): string {
+    return setting('smtp.to') !== '' ? trim(explode(',', setting('smtp.to'))[0]) : '';
+}
+
+/** "October 23, 2026" in Metro Atlanta's time, from a stored server timestamp. */
+function landing_local_date(string $ts): string {
+    try {
+        $d = new DateTime($ts !== '' ? $ts : 'now');
+        $d->setTimezone(new DateTimeZone('America/New_York'));
+        return $d->format('F j, Y');
+    } catch (Throwable $e) { return date('F j, Y'); }
+}
+
+/**
+ * The buyer's email after a paid page: thank you, the download, and a receipt
+ * (order number, item, amount, date, card, Stripe's own receipt or invoice).
+ * Replies go to the owner. A test-mode purchase says so at the top.
+ */
+function landing_email_receipt(array $p, array $lead, string $link): array {
+    $pay = (array) ($lead['meta']['pay'] ?? []);
+    $email = (string) $lead['email'];
+    [$first] = lead_split_name((string) $lead['name']);
+    $test = empty($pay['live']);
+    $billing = (string) ($pay['billing'] ?? 'once');
+    $amount = stripe_price_label((int) ($pay['amount'] ?? 0));
+    $order = stripe_order_no((int) $lead['id']);
+    $date = landing_local_date((string) ($pay['paid_at'] ?? ''));
+    $isUrl = $p['deliver'] === 'url';
+    $every = $billing === 'month' ? 'month' : ($billing === 'year' ? 'year' : '');
+    $reply = landing_reply_to();
+
+    $rows = [
+        ['Order number', $order],
+        ['Date', $date],
+        ['Item', $p['title']],
+        ['Billing', $every ? 'Subscription, renews every ' . $every : 'One-time payment'],
+        ['Amount paid', $amount . ' USD'],
+    ];
+    if (!empty($pay['card'])) $rows[] = ['Paid with', (string) $pay['card']];
+    if (!empty($pay['invoice_no'])) $rows[] = ['Invoice', (string) $pay['invoice_no']];
+    if (!empty($pay['descriptor'])) $rows[] = ['On your statement', (string) $pay['descriptor']];
+    $official = (string) ($pay['invoice_url'] ?? '') ?: (string) ($pay['receipt_url'] ?? '');
+    $officialLabel = !empty($pay['invoice_url']) ? 'View or download your invoice' : 'View your official receipt';
+
+    $t = [];
+    if ($test) $t[] = "TEST PURCHASE: this was made in Stripe's test mode. No real money was charged.\n";
+    $t[] = ($first !== '' ? "Hi $first," : 'Hello,');
+    $t[] = '';
+    $t[] = "Thank you for your purchase. Your payment went through, and " . ($isUrl ? 'your link is' : 'your download is') . ' ready:';
+    $t[] = $link;
+    $t[] = 'The link works for ' . LANDING_LINK_DAYS . ' days. If it runs out, reply to this email and we will send you a fresh one.';
+    $t[] = '';
+    $t[] = 'RECEIPT';
+    foreach ($rows as [$k, $v]) $t[] = $k . ': ' . $v;
+    if ($official !== '') $t[] = $officialLabel . ': ' . $official;
+    if ($every) { $t[] = ''; $t[] = "Your subscription renews automatically every $every at $amount until you cancel. To cancel, reply to this email before your next renewal date."; }
+    $t[] = '';
+    $t[] = 'Questions about your order? Just reply to this email.';
+    $t[] = '';
+    $t[] = 'Erika K. Page';
+    $t[] = 'Axen Realty';
+    $t[] = 'https://erikakpage.com';
+
+    $c = 'font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#453230';
+    $tr = '';
+    foreach ($rows as $i => [$k, $v]) {
+        $line = $i ? 'border-top:1px solid #EFE5DD;' : '';
+        $tr .= '<tr><td style="' . $line . 'padding:9px 12px 9px 0;color:#8a746f;font-size:13px;white-space:nowrap;vertical-align:top">' . esc($k) . '</td>'
+             . '<td style="' . $line . 'padding:9px 0;font-size:14px;text-align:right;' . ($k === 'Amount paid' ? 'font-weight:700' : '') . '">' . esc($v) . '</td></tr>';
+    }
+    $html = '<div style="' . $c . ';max-width:560px;line-height:1.6;margin:0 auto">'
+        . ($test ? '<div style="background:#F7EEDC;color:#7a5a24;font-size:13px;padding:10px 14px;margin:0 0 18px;border-left:3px solid #C9A063"><b>Test purchase.</b> This was made in Stripe\'s test mode. No real money was charged.</div>' : '')
+        . '<p style="font-family:Georgia,serif;font-size:22px;color:#453230;margin:0 0 18px">Erika<span style="color:#B05E51">K</span>Page</p>'
+        . '<p style="margin:0 0 6px">' . esc($first !== '' ? "Hi $first," : 'Hello,') . '</p>'
+        . '<p style="margin:0 0 4px">Thank you for your purchase. Your payment went through, and ' . ($isUrl ? 'your link is' : 'your download is') . ' ready.</p>'
+        . '<p style="margin:24px 0"><a href="' . esc($link) . '" style="background:#B05E51;color:#fff;padding:14px 26px;text-decoration:none;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px;display:inline-block">'
+        . ($isUrl ? 'Open it' : 'Download') . '</a></p>'
+        . '<p style="font-size:13px;color:#8a746f;margin:0 0 26px">The link works for ' . LANDING_LINK_DAYS . ' days. If it runs out, reply to this email and we\'ll send you a fresh one. If the button doesn\'t work, copy this address into your browser:<br><span style="word-break:break-all">' . esc($link) . '</span></p>'
+        . '<div style="border:1px solid #E6D8CE;border-top:3px solid #C9A063;padding:16px 20px;background:#FCFAF8">'
+        . '<p style="margin:0 0 6px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9C4A3E;font-weight:700">Receipt</p>'
+        . '<table role="presentation" style="width:100%;border-collapse:collapse">' . $tr . '</table>'
+        . ($official !== '' ? '<p style="margin:12px 0 0;font-size:13px"><a href="' . esc($official) . '" style="color:#9C4A3E">' . esc($officialLabel) . ' →</a></p>' : '')
+        . '</div>'
+        . ($every ? '<p style="font-size:13px;margin:18px 0 0">Your subscription renews automatically every ' . $every . ' at ' . esc($amount) . ' until you cancel. To cancel, reply to this email before your next renewal date.</p>' : '')
+        . '<p style="margin:22px 0 0">Questions about your order? Just reply to this email.</p>'
+        . '<p style="margin-top:22px">Erika K. Page<br><span style="color:#8a746f">Axen Realty · <a href="https://erikakpage.com" style="color:#8a746f">erikakpage.com</a></span></p></div>';
+
+    $subject = ($test ? '[TEST] ' : '') . 'Your receipt and ' . ($isUrl ? 'link' : 'download') . ': ' . $p['title'];
+    [$ok, $err] = send_mail($subject, $html, implode("\n", $t), $reply, 'Erika K. Page', $email, 'Erika K. Page');
+    return [$ok, $ok ? 'receipt and link emailed to ' . $email : $err];
 }
 
 /* ---------- a submission from a landing page ---------- */
@@ -651,7 +744,10 @@ function landing_notify(array $p, array $lead, string $token, bool $isSale, stri
     // The visitor's copy first: it's what they asked for (and, for a sale, paid for).
     $emailed = false;
     $visitorNote = 'Download link: not emailed to the visitor (switched off for this page).';
-    if ($p['email_lead'] || $isSale) {
+    if ($isSale) {
+        [$emailed, $vd] = landing_email_receipt($p, $lead, $link);
+        $visitorNote = $emailed ? 'Receipt and download link emailed to the buyer.' : 'Receipt and link could not be emailed to the buyer: ' . $vd;
+    } elseif ($p['email_lead']) {
         [$emailed, $vd] = landing_email_visitor($p, $email, $name, $link);
         $visitorNote = $emailed ? 'Download link emailed to the visitor.' : 'Download link could not be emailed to the visitor: ' . $vd;
     }
@@ -660,7 +756,13 @@ function landing_notify(array $p, array $lead, string $token, bool $isSale, stri
     [$crmOk, $crmDetail] = lead_push_lofty(['name' => $name, 'email' => $email, 'phone' => (string) $lead['phone']], $crm, $label, $url, $rows);
     $crmNote = $crmOk === null ? 'Lofty: not sent (' . rtrim($crmDetail, '.') . ').' : ($crmOk ? 'Lofty: lead created (' . $crmDetail . ').' : 'Lofty: FAILED (' . $crmDetail . '). Retry it from Leads in the admin.');
 
-    [$mailOk, $mailDetail] = lead_notify_owner(($isSale ? 'New sale: ' : 'New lead from ') . $p['title'], $p['title'], $url, $rows, $email, $name, [$visitorNote, $crmNote]);
+    $subject = '';
+    if ($isSale) {
+        $pay = (array) ($lead['meta']['pay'] ?? []);
+        $rows = ['Order' => stripe_order_no((int) $lead['id'])] + $rows;
+        $subject = (empty($pay['live']) ? '[TEST] ' : '') . 'New sale: ' . $p['title'] . ' (' . stripe_price_label((int) ($pay['amount'] ?? 0), (string) ($pay['billing'] ?? 'once')) . ')' . ($name !== '' ? ' — ' . $name : '');
+    }
+    [$mailOk, $mailDetail] = lead_notify_owner(($isSale ? 'New sale: ' : 'New lead from ') . $p['title'], $p['title'], $url, $rows, $email, $name, [$visitorNote, $crmNote], $subject);
 
     lead_update((int) $lead['id'], ['email_ok' => $mailOk, 'email_detail' => $mailDetail . ' · ' . $visitorNote, 'crm_ok' => $crmOk, 'crm_detail' => $crmDetail]);
     return ['emailed' => $emailed];
@@ -688,6 +790,22 @@ function lead_record_form(string $pageId, string $formName, string $pagePath, ar
         'email_ok' => $mailOk, 'email_detail' => $mailOk ? 'emailed to ' . setting('smtp.to') : $mailErr,
         'crm_ok' => $crmOk, 'crm_detail' => $crmDetail,
     ]);
+}
+
+/**
+ * Email a landing-page lead their file again, with a fresh 30-day link: the receipt
+ * for a sale, the plain download email otherwise. Returns [ok, detail].
+ */
+function lead_resend_visitor(int $id): array {
+    $l = lead_get($id);
+    if (!$l || $l['kind'] !== 'landing') return [false, 'Only landing-page leads have a file to send.'];
+    $p = landing_one(substr((string) $l['source_key'], 5), true);
+    if (!$p) return [false, 'Its landing page no longer exists.'];
+    if (!landing_deliverable($p)) return [false, 'Its landing page has no file or link to hand over.'];
+    $pay = (array) ($l['meta']['pay'] ?? []);
+    if ($pay && ($pay['state'] ?? '') !== 'paid') return [false, 'This checkout was never paid.'];
+    $link = abs_url(landing_path($p['slug'], 'download')) . '?t=' . landing_token($p['slug'], $id);
+    return $pay ? landing_email_receipt($p, $l, $link) : landing_email_visitor($p, (string) $l['email'], (string) $l['name'], $link);
 }
 
 /** Send a stored lead to Lofty again (the Leads screen's Retry). Returns [ok|null, detail]. */

@@ -7,6 +7,58 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-23 — A real receipt for buyers; paid checkouts settle without the webhook
+
+**Asked.** The owner made a test purchase with a test key (no webhook yet). The buyer got the
+plain free-download email ("Your download: Test Digital Product", from "ErikaKPage Website").
+"Is it okay for the customer to receive this plain email after they purchased something? No
+receipt for payment details, right? Please add more thought into it."
+**Done.**
+- **The buyer's email is now a receipt** (`landing_email_receipt()`, `lib/landing.php`).
+  - Subject "Your receipt and download: <item>", with "[TEST] " in front in test mode, and a
+    "Test purchase, no real money was charged" note at the top.
+  - It comes from **"Erika K. Page"**, not "ErikaKPage Website"; the free email does too
+    (`send_mail()` takes a sender name). Replies go to the owner.
+  - It has the download button, the 30-day note and "reply and we'll send a fresh one".
+  - A receipt box: order number **EKP-00042** (the lead's id), date (Atlanta time), item,
+    billing, amount paid in USD, the card ("Visa •••• 4242"), how it reads on the card
+    statement, and a link to **Stripe's own receipt** (or, for a subscription, the invoice
+    number and its hosted invoice).
+  - For a subscription: "renews automatically every month at $X until you cancel. To cancel,
+    reply to this email."
+  - The details come from Stripe after payment (`stripe_receipt_details()`: the payment
+    intent's charge, or the customer's charge and the invoice for a subscription). Only fields
+    every API version has. Best effort: if Stripe is slow, the receipt goes without the card.
+- **The owner's sale email:** "[TEST] New sale: <item> ($99.99) — <name>", with the order
+  number and "Paid $99.99 · Visa •••• 4242".
+- **The thank-you page** shows "Payment received: $99.99 · Order EKP-… (· test mode)" and "Your
+  receipt and this link are in your email."
+- **Without the webhook a paid buyer could get nothing.** If they closed the tab before
+  Stripe sent them back, the lead stayed "Payment pending" and no email went. Now opening
+  **Leads** asks Stripe about pending checkouts (`stripe_reconcile()`: last 3 days, each at most
+  every 10 minutes, 10 per visit). A paid one gets its receipt and download; an expired one goes
+  to Lofty as abandoned. The webhook still does this at once and is still the setup.
+- **Leads, a sale:** the order number, card, test-mode flag and "The buyer's receipt ↗". New
+  button **"Email the receipt again"** (or "Email the link again" for a free lead) sends a fresh
+  30-day link.
+- **QA** (`tools/check-landing/`): the fake Stripe answers the new calls and can let a
+  checkout expire; the SMTP catcher keeps the From header and the HTML. Round 3 checks the
+  receipt (both kinds), the owner's email, the thank-you page, settling from Leads (paid and
+  expired, and nothing twice) and the resend. **143 checks, all pass** (SQLite). Round 1's
+  "needs its file" check now looks at the Mariners row, since Alcovy is a second draft.
+- Deployed: `cms.php`, `landing.php`, `lib/{landing,admin-landing,stripe}.php`,
+  `assets/css/landing.css`. Live: Mariners 200, Alcovy still 404, the admin and an article
+  complete, the CSS byte-identical.
+**Open (owner / Erika).**
+- Add the webhook (steps in the reply); until then, open Leads after a sale.
+- In Stripe: business name, support email and statement descriptor (Settings → Public
+  details); turn on Stripe's own "Successful payments" and "Refunds" emails if wanted (live mode
+  only).
+- A refund policy: none is in her files. Decide one before selling.
+- Before selling a subscription: the Stripe customer portal for self-serve cancelling.
+
+---
+
 ## 2026-10-22 (night) — 1896 Alcovy Bluff Way investor-package page, as a draft
 
 **Asked.** "Make a page for this one address as well like … the 1039 Mariners Court Investor

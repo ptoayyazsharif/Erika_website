@@ -459,6 +459,17 @@ no Stripe library (three API calls with curl).
   $99.99 (started …)" line. No email to anyone. Nothing is sent while the checkout is open, and a
   lead that paid is never sent as abandoned. "Send to Lofty again" on such a lead keeps the tag.
   It needs the webhook: without it, abandoned leads stay "Payment pending" in the admin.
+- **The buyer's email is a receipt** (23 Oct 2026; the owner: "is it okay for the customer to
+  receive this plain email… no receipt?"). `landing_email_receipt()` sends "Your receipt and
+  download" from "Erika K. Page", with the order number (`stripe_order_no()`, EKP- plus the
+  lead's id), date, item, billing, amount, card, statement line and Stripe's own receipt or
+  invoice link (`stripe_receipt_details()`, fetched once after payment), and "[TEST]" plus a
+  test-mode note when the key is a test key. The owner's email is "[TEST] New sale: <item>
+  ($99.99) — <name>". The thank-you page shows the payment and order number. Leads → a sale →
+  **Email the receipt again**.
+- **Without the webhook, Leads settles pending checkouts** (`stripe_reconcile()`, on each visit
+  to Leads): a buyer who paid and closed the tab gets the receipt when someone opens Leads, not
+  never. The webhook does it at once, so keep asking for it.
 - **Subscriptions** are Checkout `mode=subscription` with an inline recurring price. Access is the
   same 30-day signed link as a one-off. Cancelling doesn't revoke it yet: if Erika sells ongoing
   access (a members' area), that's the next step.
@@ -641,7 +652,7 @@ check there and a row here.
 | Admin round-trip keeps `audio_note` too | proven 5 Oct 2026 on a throwaway copy with a test login (see SESSION-LOG) |
 | **No picture on two articles**; no cover tile repeats its own article's body picture (whole blog, every run) | the same signing photo was on two articles four times, and two more were shared — the owner called it lazy (7 Oct 2026) |
 | Short link answers **301** to the article (with `#guide` only when there is a guide) | a 404 after an admin save; a `#guide` anchor on an article with no guide |
-| Landing pages (`tools/check-landing/run.sh`: rounds 1–2, 59 checks; round 3, the Stripe paywall, 64 checks against a fake Stripe) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
+| Landing pages (`tools/check-landing/run.sh`: rounds 1–2, 59 checks; round 3, the Stripe paywall, 84 checks against a fake Stripe, including the buyer's receipt, settling from Leads and the resend) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
 | `/blog` pictures: every picture is scrolled into view and waited for (`loadLazy`) | the pages scroll inside their own container, so scrolling the window never reached the oldest card once there were 20 articles; it stayed unloaded and failed every article's run (22 Oct 2026) |
 | **Live**: byte-compare every upload; confirm pages by completeness (`</html>`, >150 KB), not status | see the host's holding page below |
 
@@ -749,10 +760,13 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **The 1039 Mariners Ct page is live** (published by the owner by 21 Oct). Send one test lead
   and check it arrives in your email, in Lofty and under Leads. Erika should read the consent
   line and the thank-you text, which are ours, not hers.
-- **Stripe paywall built (21 Oct), waiting on keys**: Erika pastes her secret key and webhook
-  secret under Payments / Stripe (try `sk_test_` first), then sets a price on a landing page.
-  Do one real test purchase in test mode before switching to the live key, and one abandoned
-  checkout (wait an hour) to see it arrive in Lofty tagged "Abandoned checkout".
+- **Stripe paywall: test key in, test sale worked (22 Oct), no webhook yet.** Receipt email
+  added 23 Oct. Still to do: add the webhook (until then, open Leads after a sale); one more
+  test purchase to see the new receipt; one abandoned checkout (wait an hour) to see it arrive
+  in Lofty tagged "Abandoned checkout"; in Stripe, set the public business name, support
+  email and statement descriptor. **Erika decides a refund policy** before selling (none is in
+  her files). **Before selling a subscription**, turn on Stripe's customer portal so buyers can
+  cancel online; the receipt says "reply to cancel" for now. Then switch to the live key.
 - **Leads from now on are kept in the admin** (Leads), from every form on the site. Lofty
   only receives them while CRM / Lofty is switched on with a key; whether it is on the live
   site isn't known from here.

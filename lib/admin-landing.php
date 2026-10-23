@@ -105,6 +105,12 @@ function landing_admin_early(string $cur): void {
             header('Location: admin.php?page=leads&lead=' . $id);
             exit;
         }
+        if ($_POST['do_lead'] === 'resend') {
+            [$ok, $detail] = lead_resend_visitor($id);
+            lpa_flash($ok ? 'Sent: ' . $detail . '.' : 'Not sent: ' . $detail, !$ok);
+            header('Location: admin.php?page=leads&lead=' . $id);
+            exit;
+        }
         if ($_POST['do_lead'] === 'delete') {
             lead_delete($id);
             lpa_flash('Lead deleted.');
@@ -705,6 +711,8 @@ function lpa_when(string $dt): string {
 }
 
 function lpa_view_leads(): void {
+    // Without the webhook, this is where a paid-but-never-returned checkout gets finished.
+    $settled = stripe_reconcile();
     $f = lpa_filters();
     $per = 50;
     $pg = max(1, (int) ($_GET['p'] ?? 1));
@@ -726,6 +734,7 @@ function lpa_view_leads(): void {
       <div class="lpa-stat"><b><?= $today ?></b><span>Last 24 hours</span></div>
       <div class="lpa-stat"><b><?= count($sources) ?></b><span>Sources</span></div>
     </div>
+    <?php if ($settled): ?><div class="ok"><?= $settled ?> checkout<?= $settled === 1 ? '' : 's' ?> settled with Stripe just now (paid ones got their receipt and download; expired ones went to Lofty as abandoned).</div><?php endif; ?>
     <?php if (!setting('smtp.host') || !setting('smtp.to')): ?><div class="err">Email isn't set up yet, so leads are only being kept here. Set it up under <a href="admin.php?page=email">Email / Forms</a>.</div><?php endif; ?>
     <form class="lpa-filter" method="get">
       <input type="hidden" name="page" value="leads">
@@ -790,6 +799,8 @@ function lpa_view_lead(int $id): void {
         <dt>Lofty</dt><dd><?= $l['crm_ok'] === null ? 'Not sent' : ((int) $l['crm_ok'] ? 'Lead created' : '<b style="color:#A33A2F">Failed</b>') ?><?= $l['crm_detail'] ? '<br><small style="color:#8a746f">' . esc((string) $l['crm_detail']) . '</small>' : '' ?></dd>
         <?php $pay = (array) ($l['meta']['pay'] ?? []); if ($pay): $dash = 'https://dashboard.stripe.com/' . (empty($pay['live']) ? 'test/' : ''); ?>
           <dt>Payment</dt><dd><?= esc(($pc = stripe_lead_chip($l)) ? $pc[1] : (string) ($pay['state'] ?? '')) ?><?= !empty($pay['paid_at']) ? ' · ' . esc(date('M j, Y g:i a', strtotime((string) $pay['paid_at']))) : '' ?>
+            <?php if (($pay['state'] ?? '') === 'paid'): ?><br><small>Order <?= esc(stripe_order_no((int) $l['id'])) ?><?= !empty($pay['card']) ? ' · ' . esc((string) $pay['card']) : '' ?><?= empty($pay['live']) ? ' · <b style="color:#8F6B2E">test mode</b>' : '' ?></small><?php endif; ?>
+            <?php if (!empty($pay['receipt_url']) || !empty($pay['invoice_url'])): ?><br><small><a href="<?= esc((string) ($pay['invoice_url'] ?? '') ?: (string) $pay['receipt_url']) ?>" target="_blank">The buyer's <?= !empty($pay['invoice_url']) ? 'invoice' : 'receipt' ?> ↗</a></small><?php endif; ?>
             <?php if (!empty($pay['intent'])): ?><br><small><a href="<?= esc($dash . 'payments/' . $pay['intent']) ?>" target="_blank">See it in Stripe ↗</a></small><?php endif; ?>
             <?php if (!empty($pay['sub'])): ?><br><small><a href="<?= esc($dash . 'subscriptions/' . $pay['sub']) ?>" target="_blank">Subscription in Stripe ↗</a><?= !empty($pay['sub_period_end']) ? ' · current period ends ' . esc((string) $pay['sub_period_end']) : '' ?><?= ($pay['sub_cancel_at_end'] ?? '') === '1' ? ' · cancels then' : '' ?></small><?php endif; ?>
             <?php if (!empty($pay['error'])): ?><br><small style="color:#A33A2F"><?= esc((string) $pay['error']) ?></small><?php endif; ?></dd>
@@ -799,6 +810,7 @@ function lpa_view_lead(int $id): void {
       <form method="post" style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
         <input type="hidden" name="csrf" value="<?= csrf_token() ?>"><input type="hidden" name="lead_id" value="<?= (int) $l['id'] ?>">
         <?php if ((int) $l['crm_ok'] !== 1): ?><button class="lpa-btn gold" name="do_lead" value="retry" <?= lofty_enabled() ? '' : 'disabled title="Switch Lofty on under CRM / Lofty first"' ?>>Send to Lofty<?= $l['crm_ok'] !== null ? ' again' : '' ?></button><?php endif; ?>
+        <?php if ($l['kind'] === 'landing' && (!$pay || ($pay['state'] ?? '') === 'paid')): ?><button class="lpa-btn" name="do_lead" value="resend" onclick="return confirm('Email <?= esc((string) $l['email']) ?> a fresh <?= $pay ? 'receipt and download link' : 'download link' ?>?')"><?= $pay ? 'Email the receipt again' : 'Email the link again' ?></button><?php endif; ?>
         <button class="lpa-btn danger" name="do_lead" value="delete" onclick="return confirm('Delete this lead from the website? It stays in your email and in Lofty.')">Delete lead</button>
       </form>
     </div>

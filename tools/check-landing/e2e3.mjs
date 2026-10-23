@@ -15,6 +15,7 @@ const ok = (c, m, d = '') => { console.log((c ? 'PASS ' : 'FAIL ') + m + (d ? ' 
 const lines = f => fs.existsSync(f) ? fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(JSON.parse) : [];
 const mails = () => lines(S + '/mails.jsonl');
 const stripeLog = () => lines(S + '/stripe.jsonl');
+const loftyFor0 = email => lines(S + '/lofty.jsonl').filter(x => (x.body.emails || []).includes(email));
 const sign = (body, t = Math.floor(Date.now() / 1000), secret = WHSEC) =>
   `t=${t},v1=${crypto.createHmac('sha256', secret).update(`${t}.${body}`).digest('hex')}`;
 
@@ -94,9 +95,22 @@ const dl = await v.locator('#lp-download').getAttribute('href');
 const r = await v.request.get(B + dl, { maxRedirects: 0 });
 ok(r.status() === 303 && r.headers()['location'] === 'https://example.com/agent-blueprint', 'the download opens the page\'s link');
 await new Promise(res => setTimeout(res, 800));
+ok(await v.locator('.lp-paid:has-text("Payment received: $99.99")').count() === 1 && await v.locator('.lp-paid:has-text("Order EKP-")').count() === 1, 'thank-you page: payment received, amount and order number');
+ok(await v.locator('text=Your receipt and this link are in your email').count() === 1, 'thank-you page says the receipt is in their email');
+await v.screenshot({ path: shots + '/stripe-thanks.png', fullPage: true });
 let after = mails().slice(before);
-ok(after.filter(m => m.subject.startsWith('Your link: The Modern Agent')).length === 1, 'buyer gets their link by email, once');
-ok(after.filter(m => m.subject.includes('New lead: The Modern Agent') && /New sale/.test(m.text) && /Payment: Paid \$99\.99/.test(m.text)).length === 1, 'owner gets one "New sale" email with the payment');
+const rcpt = after.filter(m => m.to.includes('pat@example.test'));
+ok(rcpt.length === 1 && rcpt[0].subject === '[TEST] Your receipt and link: The Modern Agent Success Blueprint', 'buyer gets one receipt email, marked [TEST] in test mode', rcpt[0] && rcpt[0].subject);
+const rt = rcpt[0] ? rcpt[0].text : '';
+ok(/Order number: EKP-\d{5}/.test(rt) && /Amount paid: \$99\.99 USD/.test(rt) && /Billing: One-time payment/.test(rt) && /Item: The Modern Agent Success Blueprint/.test(rt) && /Date: [A-Z][a-z]+ \d{1,2}, \d{4}/.test(rt), 'receipt: order number, item, billing, amount, date', rt.slice(0, 400));
+ok(/Paid with: Visa •••• 4242/.test(rt) && /On your statement: ERIKAKPAGE\.COM/.test(rt) && /View your official receipt: https:\/\/pay\.stripe\.com\/receipts\/qa\/ch_/.test(rt), 'receipt: card, statement line, Stripe\'s own receipt');
+ok(/TEST PURCHASE/.test(rt) && /thanks\?t=|\/download\?t=/.test(rt) && /reply to this email/.test(rt), 'receipt: test notice, the download link, "reply to this email"');
+ok(rcpt[0] && /^"?Erika K\. Page"? </.test(rcpt[0].from_hdr) && rcpt[0].reply_to.includes('owner@example.test'), 'receipt comes from "Erika K. Page" and replies go to the owner', rcpt[0] && rcpt[0].from_hdr + ' / ' + rcpt[0].reply_to);
+ok(rcpt[0] && /Receipt/.test(rcpt[0].html) && /Visa •••• 4242/.test(rcpt[0].html) && /Test purchase/.test(rcpt[0].html), 'receipt HTML carries the same details');
+if (rcpt[0]) fs.writeFileSync(shots + '/receipt-email.html', rcpt[0].html);
+const own = after.filter(m => m.to.includes('owner@example.test'));
+ok(own.length === 1 && /^\[TEST\] New sale: The Modern Agent Success Blueprint \(\$99\.99\) — Pat Payer$/.test(own[0].subject), 'owner gets one "[TEST] New sale … ($99.99) — name" email', own[0] && own[0].subject);
+ok(own[0] && /Order: EKP-\d{5}/.test(own[0].text) && /Payment: Paid \$99\.99 · Visa •••• 4242 · TEST MODE/.test(own[0].text) && /Receipt and download link emailed to the buyer/.test(own[0].text), 'owner email: order, payment with card, the buyer was emailed', own[0] && own[0].text.slice(0, 500));
 
 // the return link again (a refresh, a bookmark): the download again, no second round of emails
 await v.goto(B + '/page/agent-blueprint/paid?session_id=' + patSid);
@@ -152,6 +166,9 @@ ok(req.mode === 'subscription' && req['line_items[0][price_data][recurring][inte
 ok(req['subscription_data[metadata][lead]'] === req.client_reference_id && !('payment_intent_data[metadata][lead]' in req), 'subscription carries the lead in its own metadata');
 await v.click('#pay'); await v.waitForLoadState();
 ok(/\/page\/mastermind\/thanks\?t=/.test(v.url()), 'subscriber gets the download');
+await new Promise(res => setTimeout(res, 500));
+const subMail = mails().filter(m => m.to.includes('sam@example.test') && /Agent Mastermind/.test(m.subject));
+ok(subMail.length === 1 && /Billing: Subscription, renews every month/.test(subMail[0].text) && /Amount paid: \$29 USD/.test(subMail[0].text) && /Invoice: QA-0001/.test(subMail[0].text) && /View or download your invoice: https:\/\/invoice\.stripe\.com/.test(subMail[0].text) && /renews automatically every month at \$29 until you cancel/.test(subMail[0].text), 'subscription receipt: renews monthly, invoice number and link, how to cancel', subMail[0] && subMail[0].text.slice(0, 600));
 await a.goto(B + '/admin.php?page=leads');
 ok(await a.locator('tr:has-text("Sam Subscriber") .chip.ok:has-text("Subscribed $29 / month")').count() === 1, 'Leads: "Subscribed $29 / month"');
 await a.click('text=Sam Subscriber'); await a.waitForLoadState();
@@ -164,8 +181,38 @@ ok((await w.text()).trim() === 'subscription canceled', 'webhook records the can
 await a.goto(B + '/admin.php?page=leads');
 ok(await a.locator('tr:has-text("Sam Subscriber") .chip.bad:has-text("canceled")').count() === 1, 'Leads: subscription shows canceled');
 
+/* ---------- no webhook: the Leads screen settles pending checkouts with Stripe ---------- */
+await fillAndSend('Rita Return', 'rita@example.test');
+const ritaSid = v.url().split('/pay/')[1];
+await v.request.get('http://127.0.0.1:8798/pay/' + ritaSid + '/paid-only');   // paid, never came back, no webhook
+await fillAndSend('Eve Expired', 'eve@example.test');
+const eveSid = v.url().split('/pay/')[1];
+await v.request.get('http://127.0.0.1:8798/pay/' + eveSid + '/expire');
+ok(!mails().some(m => m.to.includes('rita@example.test')), 'before anyone looks, the closed-tab buyer has nothing (no webhook)');
+await a.goto(B + '/admin.php?page=leads');
+ok(await a.locator('.ok:has-text("2 checkouts settled with Stripe")').count() === 1, 'opening Leads settles both with Stripe', await a.locator('.ok').first().textContent().catch(() => ''));
+await new Promise(res => setTimeout(res, 500));
+const rita = mails().filter(m => m.to.includes('rita@example.test'));
+ok(rita.length === 1 && /Your receipt and link/.test(rita[0].subject), 'the paid one gets the receipt and download');
+ok(await a.locator('tr:has-text("Rita Return") .chip.ok:has-text("Paid $99.99")').count() === 1, 'and shows Paid');
+ok(await a.locator('tr:has-text("Eve Expired") .chip:has-text("Left checkout")').count() === 1 && loftyFor0('eve@example.test').some(x => x.body.tags.includes('Abandoned checkout')), 'the expired one is "Left checkout" and in Lofty as abandoned');
+ok(!mails().some(m => m.to.includes('eve@example.test')), 'the expired one gets no email');
+await a.reload();
+ok(await a.locator('.ok:has-text("settled")').count() === 0 && mails().filter(m => m.to.includes('rita@example.test')).length === 1, 'opening Leads again settles nothing twice');
+
 /* ---------- Leads ---------- */
 ok(await a.locator('tr:has-text("Pat Payer") .chip.ok:has-text("Paid $99.99")').count() === 1, 'Leads: "Paid $99.99"');
+await a.click('text=Pat Payer'); await a.waitForLoadState();
+ok(await a.locator('small:has-text("Order EKP-")').count() === 1 && await a.locator('small:has-text("Visa •••• 4242")').count() === 1 && await a.locator('a:has-text("The buyer\'s receipt")').count() === 1, 'lead detail: order number, card, link to the buyer\'s receipt');
+await a.screenshot({ path: shots + '/stripe-lead.png', fullPage: true });
+const patBefore = mails().filter(m => m.to.includes('pat@example.test')).length;
+await a.click('button:has-text("Email the receipt again")'); await a.waitForLoadState();
+await new Promise(res => setTimeout(res, 500));
+const patMails = mails().filter(m => m.to.includes('pat@example.test'));
+ok(await a.locator('.flash:has-text("receipt and link emailed to pat@example.test")').count() === 1 && patMails.length === patBefore + 1 && /Order number: EKP-/.test(patMails.at(-1).text), '"Email the receipt again" sends a fresh receipt');
+const fresh = (patMails.at(-1).text.match(/https?:\/\/\S+\/download\?t=\S+/) || [''])[0];
+ok(fresh !== '' && (await v.request.get(fresh, { maxRedirects: 0 })).status() === 303, 'and its link opens the download');
+await a.goto(B + '/admin.php?page=leads');
 ok(await a.locator('tr:has-text("Casey Cancel") .chip:has-text("Payment pending")').count() === 1, 'Leads: the cancelled checkout shows "Payment pending"');
 await a.screenshot({ path: shots + '/stripe-leads.png', fullPage: true });
 const expEv = JSON.stringify({ id: 'evt_qa3', object: 'event', type: 'checkout.session.expired', livemode: false, data: { object: { id: 'cs_x', client_reference_id: stripeLog().find(x => x.customer_email === 'cancel@example.test').client_reference_id } } });
