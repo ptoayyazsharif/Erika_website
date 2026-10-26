@@ -197,5 +197,15 @@
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/b37-agent-on-the-phone-with-notes.jpg",
     "refPos": "40% 40%"
+  },
+  {
+    "slug": "the-week-before-closing",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "The week before closing: what to check before you sign.",
+    "sub": "The house is beautiful… but the experience is what she’ll remember.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b40-checking-an-email-on-her-phone.jpg",
+    "refPos": "55% 40%"
   }
 ]

@@ -7,6 +7,62 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-26 — "The week before closing"; podcast episode 11; YouTube episode 6; a fresh container
+
+**Asked.** "Now do today's blog and next episode please."
+**The container had been replaced.**
+- The checkout was an old commit (f0e589e) with no CLAUDE.md; fast-forwarded to `origin/main`
+  (d424c6a).
+- `ceo_erika` was missing. It is attached as `ptoayyazsharif/ceo_erika` (it moved to `CEO_Erika`);
+  cloned and registered.
+- **Its `main` lacked the blog records pushed on 21–23 Oct**: they had gone to a side branch
+  (`claude/erika-ai-memory-system-73dbz0`). Merged into `ceo_erika` `main`. The CHANGELOG conflict
+  kept both sides; PERSONA.md and system-prompt.md were rebuilt.
+- Rebuilt locally:
+  - `config.local.php` (SQLite), then `/setup.php` (admin `tester`);
+  - the brand fonts (`node tools/build-guide.mjs --fonts-only`, new);
+  - `/tmp/pdfvenv` (fonttools, pypdf).
+- **The first cover rendered in a fallback serif**: Fraunces and Archivo weren't installed. Fixed:
+  - `blog.js` now refuses to render until `fc-match` finds both;
+  - `build-guide.mjs --fonts-only` installs them without rebuilding a guide.
+- Nine tools named a Chromium build that no longer exists (`chromium-1194`). They now use
+  `/opt/pw-browsers/chromium`. The landing QA passes in this container (143 checks).
+**Done.**
+- **Topic choice.** The unused recordings left are mostly mindset pieces. `who-pays-for-closing-costs`
+  is already used in the closing-costs article ("different and negotiable every single time").
+  Used instead: her closing-day reel `Dce4h7rJ52a`, a first-time buyer on her final walkthrough
+  with Erika ("My hand was held. I was educated."; caption: "the experience is what she'll
+  remember").
+- **Article** `the-week-before-closing` (Buying, `/closing-week`):
+  - the Closing Disclosure: five pages, received at least three business days before closing
+    (12 CFR 1026.19(f)(1)(ii)); only APR, loan product or a prepayment penalty restart the wait
+    (f)(2)(ii); other changes get a corrected disclosure at or before closing (f)(2)(i);
+  - the final walkthrough and seller credits (CFPB *Close the deal*);
+  - wire fraud: two trusted people, call-back, wire recall, ic3.gov (the CFPB's archived scams
+    post; its 2015–2017 figures left out);
+  - what to bring and your rights at the table, and after closing (CFPB checklist, 2019).
+  - The client is not named (she names herself on camera; the caption names her).
+  - Research table: `tools/research/the-week-before-closing.md`.
+- Photos B38 (walkthrough, RDNE), B39 (signing, Kampus; a different photo from A1), B40 (phone,
+  Vitaly Gariev; the cover tile). One signing shot was rejected: its legible text was a business
+  "capex" form.
+- **Episode:** 860 words, 315 s, -19.8 LUFS. "Here's something people don't always know" was cut
+  before recording; the full transcript matches.
+- **Checks:** ALL PASS locally and live, plus `/closing-week` against the origin; the MP3 and cover
+  are byte-identical.
+- **Hand-overs:**
+  - **Podcast episode 11** (stairs).
+  - **YouTube episode 6** (relocating, `--note "Recorded October 9, 2026."`). Its listen-back
+    caught a caption reading "14,000, 801." for "fourteen thousand, eight hundred and one".
+    `digits()` now keeps a number going past a comma after thousand/million. No handed-over video
+    had the pattern; stairs, trades, ground lease and 50-year do, and now render right.
+**Open.**
+- For Erika: the new article and episode.
+- The `ceo_erika` STATUS.md website section is updated. The VA's command center
+  (https://erika-command-center-pi.vercel.app) wasn't changed from here; see its README.
+
+---
+
 ## 2026-10-23 (later) — "What the real estate class won't teach you"; podcast episode 10; YouTube episode 5
 
 **Asked.** "Now do today's blog and next episode please."

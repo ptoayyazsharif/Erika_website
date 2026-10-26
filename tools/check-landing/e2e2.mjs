@@ -7,7 +7,7 @@ let fails = 0;
 const ok = (c, m, d = '') => { console.log((c ? 'PASS ' : 'FAIL ') + m + (d ? '  — ' + d : '')); if (!c) fails++; };
 const lines = f => fs.existsSync(f) ? fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(JSON.parse) : [];
 
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
 const a = await ctx.newPage();
 const jsErrors = []; a.on('pageerror', e => jsErrors.push(e.message));

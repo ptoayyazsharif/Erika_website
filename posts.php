@@ -25,6 +25,119 @@
 return [
 
     [
+        // Researched around her closing-day reel Dce4h7rJ52a (+ caption): a first-time buyer on
+        // her final walkthrough with Erika ("My hand was held. I was educated."). The client is
+        // not named here. The closing-week facts are the CFPB's (Close the deal, What is a Closing
+        // Disclosure?, the closing checklist, the mortgage-closing-scams advice) and 12 CFR
+        // 1026.19(f). Every fact is listed with its source in tools/research/the-week-before-closing.md.
+        'slug'           => 'the-week-before-closing',
+        'title'          => 'The week before closing: what to check before you sign.',
+        'seo_title'      => 'The Week Before Closing: Your Closing Disclosure, the Final Walkthrough and Wire Fraud',
+        'seo_desc'       => 'What happens the week before you close on a home: the 3-day Closing Disclosure rule, the final walkthrough, how to avoid wire fraud, and what to bring to the table.',
+        'excerpt'        => 'A first-time buyer told me, on her final walkthrough: &ldquo;My hand was held. I was educated.&rdquo; Here&rsquo;s what that last week before closing looks like, and what to check before you sign.',
+        'date'           => '2026-10-26',
+        'updated'        => '2026-10-26',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['closing', 'Closing Disclosure', 'final walkthrough', 'wire fraud', 'first-time homebuyer', 'Metro Atlanta'],
+        'cover'          => 'assets/photos/17/the-week-before-closing-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: The week before closing: what to check before you sign.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@silverkblack" rel="nofollow noopener" target="_blank">Vitaly Gariev</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/the-week-before-closing.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'closing-week',
+        'audio_secs'     => 315,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'When do I get my Closing Disclosure?',
+                'a' => 'Your lender has to make sure you receive it at least three business days before you close on the loan, so you have time to compare it with your Loan Estimate and ask questions.',
+            ],
+            [
+                'q' => 'Can a change to my Closing Disclosure delay closing?',
+                'a' => 'Only certain changes restart the three-business-day wait: the APR becomes inaccurate, the loan product changes, or a prepayment penalty is added. Other changes get a corrected disclosure without a new waiting period.',
+            ],
+            [
+                'q' => 'What if I get an email changing the wiring instructions?',
+                'a' => 'Treat it as a likely scam. Don&rsquo;t use any phone number or link in the email; call a person you already trust (your agent or settlement agent) at a number you saved earlier. If money has already gone, call your bank for a wire recall right away and report it at ic3.gov.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>&ldquo;Another client filled with joy, and this one is not about the house. It&rsquo;s how she was treated getting it.&rdquo;</p>
+
+<p>That&rsquo;s how I introduced a reel of a first-time buyer, on her final walkthrough with me. What she said was: &ldquo;My hand was held. I was educated. Very professional people.&rdquo; The house is beautiful, but the experience is what she&rsquo;ll remember.</p>
+
+<p>So let me explain the part where being educated matters most: the last week before closing. What arrives, what to check, and what to never do.</p>
+
+<h2>Three business days with your Closing Disclosure</h2>
+
+<p>The Closing Disclosure is a five-page form with the final details of your loan: the loan terms, your projected monthly payments, and what you&rsquo;ll pay in fees and other costs to get the mortgage. <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-a-closing-disclosure-en-1983/" target="_blank" rel="noopener">[2]</a></p>
+
+<p>Your lender has to make sure you receive it no later than three business days before you close. <a href="https://www.ecfr.gov/current/title-12/section-1026.19" target="_blank" rel="noopener">[3]</a> Use those days. Put it next to your most recent Loan Estimate. The CFPB&rsquo;s checklist points you to the table at the top of page three, because by law, only certain costs can change. <a href="https://www.consumerfinance.gov/owning-a-home/resources/checklist_mortgage_closing.pdf" target="_blank" rel="noopener">[4]</a> Ask your loan officer:</p>
+
+<ul>
+<li>Are the loan type, interest rate, monthly payment and other key terms what I expected?</li>
+<li>Are there fees I don&rsquo;t understand, or that changed significantly?</li>
+<li>Do I have an escrow account, and do I understand how it works?</li>
+</ul>
+
+<p>If something changes after that, you get a corrected disclosure, at or before closing. But only three kinds of change start a new three-business-day wait: the APR becomes inaccurate, the loan product changes, or a prepayment penalty is added. <a href="https://www.ecfr.gov/current/title-12/section-1026.19" target="_blank" rel="noopener">[3]</a></p>
+
+<h2>The final walkthrough</h2>
+
+<p>&ldquo;Before you sign any papers, do a final walk-through of the home.&rdquo; Make sure everything you and the seller agreed would be repaired has been repaired, and anything the seller agreed to leave in the house is in place. If it isn&rsquo;t, contact the seller right away to discuss it. <a href="https://www.consumerfinance.gov/owning-a-home/close/close-the-deal/" target="_blank" rel="noopener">[1]</a></p>
+
+<p>Things can change a little in those last days. If the seller hasn&rsquo;t fixed something they agreed to fix, they might give you money toward your closing costs instead, a seller credit, rather than make the repair before closing. <a href="https://www.consumerfinance.gov/owning-a-home/close/close-the-deal/" target="_blank" rel="noopener">[1]</a></p>
+
+[[img:assets/photos/17/b38-final-walkthrough-kitchen.jpg|A couple looking around the kitchen of a house before closing|Photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Now here&rsquo;s the important part: your money</h2>
+
+<p>Your down payment and closing costs are a tempting target. The scam works like this: someone gets into the email of a real estate or settlement agent, watches for a closing, then emails the buyer &ldquo;new&rdquo; wiring instructions. The email can look exactly like a real conversation with your agent. <a href="https://www.consumerfinance.gov/about-us/blog/mortgage-closing-scams-how-protect-yourself-and-your-closing-funds/" target="_blank" rel="noopener">[5]</a> The CFPB&rsquo;s advice:</p>
+
+<ul>
+<li><strong>Before closing,</strong> pick two people you trust, like your agent and your settlement agent, and save their phone numbers. Talk through how the money moves, in person or by phone.</li>
+<li><strong>Before you wire anything,</strong> confirm the instructions, including the account name and number, by calling one of them at the number you already saved. Never follow instructions in an email.</li>
+<li><strong>Don&rsquo;t use phone numbers or links in an email,</strong> and don&rsquo;t email your financial information.</li>
+<li><strong>If it happens,</strong> call your bank or wire company immediately and ask for a wire recall, then file a complaint with the FBI at <a href="https://www.ic3.gov" target="_blank" rel="noopener">ic3.gov</a>.</li>
+</ul>
+
+<h2>At the closing table</h2>
+
+<p>Bring your ID, your cashier&rsquo;s check or proof of your wire, your Closing Disclosure to compare one more time, your list of people to call, and your co-borrower. <a href="https://www.consumerfinance.gov/owning-a-home/resources/checklist_mortgage_closing.pdf" target="_blank" rel="noopener">[4]</a></p>
+
+<p>Then take your time. You have the right to review every document, whoever requires it. If something looks different from what you were told, ask. Questions about the sale go to your agent or the settlement agent; questions about the loan go to your lender. And don&rsquo;t ever sign blank documents. <a href="https://www.consumerfinance.gov/owning-a-home/close/close-the-deal/" target="_blank" rel="noopener">[1]</a></p>
+
+<p>You aren&rsquo;t committed until you&rsquo;ve signed. You can walk away at closing, but you might lose your deposit, and breaking the purchase contract can have other consequences. So know what your contract says before you walk in. <a href="https://www.consumerfinance.gov/owning-a-home/close/close-the-deal/" target="_blank" rel="noopener">[1]</a></p>
+
+[[img:assets/photos/17/b39-signing-at-the-closing-table.jpg|A hand with a pen over papers at a table|Photo by <a href="https://www.pexels.com/@kampus" rel="nofollow noopener" target="_blank">Kampus Production</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>After you get the keys</h2>
+
+<p>Save your whole closing packet, exactly as you got it. Change your address with your bank, the post office and the DMV. And look at your homeowner&rsquo;s insurance again: does it cover floods? <a href="https://www.consumerfinance.gov/owning-a-home/resources/checklist_mortgage_closing.pdf" target="_blank" rel="noopener">[4]</a></p>
+
+<p>That&rsquo;s what real estate should feel like: guided, supported, and cared for from start to finish. If you&rsquo;re buying, <a href="/contact">reach out to me</a>.</p>
+
+<p>So that&rsquo;s the week before closing, explained.</p>
+
+<p><em>This article explains how closing generally works under federal mortgage rules, from the Consumer Financial Protection Bureau&rsquo;s guidance. It isn&rsquo;t legal or financial advice: your purchase contract and your lender set the details. Erika K. Page is a real estate agent with Axen Realty.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/owning-a-home/close/close-the-deal/" target="_blank" rel="noopener">Close the deal</a> (August 21, 2025).</li>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-a-closing-disclosure-en-1983/" target="_blank" rel="noopener">What is a Closing Disclosure?</a></li>
+<li>Code of Federal Regulations, <a href="https://www.ecfr.gov/current/title-12/section-1026.19" target="_blank" rel="noopener">12 CFR 1026.19, Certain mortgage and variable-rate transactions</a> (Regulation Z).</li>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/owning-a-home/resources/checklist_mortgage_closing.pdf" target="_blank" rel="noopener">Your mortgage closing checklist</a> (2019).</li>
+<li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/about-us/blog/mortgage-closing-scams-how-protect-yourself-and-your-closing-funds/" target="_blank" rel="noopener">Mortgage closing scams: how to protect yourself and your closing funds</a>.</li>
+<li>Erika K. Page, closing-day reel with a first-time buyer, her own words and her client&rsquo;s.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her three "what do you wish you knew in your first year of real
         // estate?" reels (DcrGxmuCqHx, DcoGkAvih2-, DcqrYpwCsfR) and her mentor video
         // (erika-page-axen-mentor-remake). The license steps are from the Georgia Real Estate

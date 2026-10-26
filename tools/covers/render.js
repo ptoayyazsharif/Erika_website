@@ -12,7 +12,7 @@ const { chromium } = require('playwright-core');
 const fs = require('fs');
 const path = require('path');
 
-const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium';
 const specs = JSON.parse(fs.readFileSync(path.join(__dirname, 'covers.json'), 'utf8'));
 const OUT = path.join(__dirname, '..', '..', 'assets', 'photos', '15');
 

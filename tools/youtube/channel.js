@@ -34,7 +34,7 @@ let pw;
 try { pw = require('playwright'); } catch (e) { pw = require('playwright-core'); }
 
 const ROOT = path.join(__dirname, '..', '..');
-const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium';
 const OUT = process.argv[2] || path.join(ROOT, 'exports', 'youtube', 'channel');
 const SHOW = path.join(ROOT, 'tools', 'podcast', 'art', 'show.jpg');
 const FONT = 'file://' + path.join(__dirname, 'fonts', 'PlayfairDisplay-latin.woff2');

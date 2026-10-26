@@ -137,6 +137,7 @@ Google AI Studio is still outstanding.
 | `ground-leases-explained` | Investing | `/ground-lease` | none — researched around her reel "You can own the building and not own an inch of the ground it's on" (`DcbXCobtMCq`, 21 Oct): MARTA's 2012 TOD board briefing (One Atlantic Center, Lindbergh), Atlanta Land Trust FAQs, Fannie Mae B2-3-03 (lease ≥ 5 years past the loan), 24 CFR 203.37 (FHA). Her "free checklist" offer left out (no checklist in her files) |
 | `fifty-year-mortgage-explained` | Buying | `/50-year` | none — researched around her November 2025 video `trump-50-year-mortgage`, **re-checked** (22 Oct): the proposal stalled in January 2026 (Politico via NASCUS: "other priorities"), 12 CFR 1026.43 (QM term ≤ 30 years), Fannie Mae B2-1.5-02 (terms up to 30 years), NPR. Our own illustration: $300,000 at 7% (labelled). 5-minute episode (short source); the voice is told "Pultee" so it says Pulte right |
 | `what-the-real-estate-class-wont-teach-you` | Lifestyle | `/new-agent` | none — her three "first year in real estate" reels (`DcrGxmuCqHx`, `DcoGkAvih2-`, `DcqrYpwCsfR`) and her mentor video (23 Oct), with Georgia's licence steps from GREC (licence page, FAQ, education rules) and PSI's candidate bulletin (7/1/2026). Her "12–17 touches" figure left out (no source). Call to action: her mentoring, via `/contact` |
+| `the-week-before-closing` | Buying | `/closing-week` | none — her closing-day reel `Dce4h7rJ52a` (a first-time buyer on her final walkthrough with Erika; client not named), with the CFPB's *Close the deal*, *What is a Closing Disclosure?*, closing checklist and closing-scams advice, and 12 CFR 1026.19(f) (26 Oct) |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -340,6 +341,8 @@ Started with the first article and episode 1 (closing costs). Outputs go to `exp
   `Question`) needs the same `--numbered-label` here, or the captions show "1." where the
   voice says "Question one" (20 Oct 2026).
 - The description carries the podcast links, Apple Podcasts first, then Spotify.
+- A comma after "thousand" or "million" is inside the number: a script's "fourteen thousand, eight
+  hundred and one" captioned as "14,000, 801." until 26 Oct; `digits()` now keeps the run going.
 - "24+" is read "twenty-four plus": `digits()` folds a following "plus" into "+", or the
   captions say "24+ plus years" (cash is king, 22 Oct 2026).
 - Settings every time: playlist "Erika Explains" set as a podcast; not made for kids;
@@ -661,6 +664,22 @@ check there and a row here.
 
 ## Deploying, and the environment
 
+**A fresh container** (26 Oct 2026: the checkout was an old commit, `ceo_erika` was gone, and the
+first cover rendered in Times). Before any work:
+1. `git fetch origin main && git merge --ff-only origin/main` (the hook only reads what's there).
+2. `ceo_erika`: `add_repo` owner `ptoayyazsharif`, repo `ceo_erika` (it moved to `CEO_Erika`);
+   clone it to `/home/user/ceo_erika` and `register_repo_root`. **Its default branch is `main`, and
+   the blog records go there**: push `HEAD:main` after `git fetch origin main` and a merge. On
+   26 Oct its `main` was missing the 21–23 Oct records, which had gone only to a side branch.
+3. The local site: `printf "<?php\nreturn ['driver' => 'sqlite'];\n" > config.local.php`, start
+   `php -S 127.0.0.1:8000 router.php`, POST `/setup.php` once (admin `tester` / `qa-local-2026`, for
+   `tools/check-landing/run.sh`).
+4. `python3 -m venv /tmp/pdfvenv && /tmp/pdfvenv/bin/pip install fonttools pypdf`, then
+   `node tools/build-guide.mjs --fonts-only`. **The covers need Fraunces and Archivo installed**;
+   `blog.js` now refuses to run without them.
+5. Chromium is `/opt/pw-browsers/chromium` (a symlink to the current build). Every tool uses that
+   path; build-numbered paths (`chromium-1194`) broke when the image changed.
+
 - `CPANEL_USER=… CPANEL_TOKEN=… tools/deploy.sh <files…>` uploads, creates
   directories, and confirms each file's size from a fresh listing.
   The listing now asks for hidden files (`show_hidden=1`); without it a `.htaccess` upload
@@ -749,10 +768,10 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1–10 were handed over on 12–23 Oct (closing costs, owning vs investing, know
+  Episodes 1–11 were handed over on 12–26 Oct (closing costs, owning vs investing, know
   your house, cash is king, homestead, relocating, restaurant space, open house, bank vs
-  broker, rollback rate). Next is 11: stairs (12 Oct), then Fannie Mae 620 (NEXA, `--note`
-  with the lender disclosure). NEXA / Andrew episodes carry the lender disclosure in
+  broker, rollback rate, stairs). Next is 12: Fannie Mae 620 (NEXA, `--note` with the lender
+  disclosure), then 13: Wall Street. NEXA / Andrew episodes carry the lender disclosure in
   the description (`handover.py --note`, 22 Oct).
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
@@ -789,8 +808,8 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `photos.php` says) or a real photo (the owner, 20 Oct)?
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
-  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–5
-  handed over (19–23 Oct; 3 needs `--numbered-label Reason`); next is 6 (relocating), then
+  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–6
+  handed over (19–26 Oct; 3 needs `--numbered-label Reason`); next is 7 (restaurant space), then
   every episode in date order. From 5 on they are podcast-script episodes: `episode.py` aligns
   with the script and makes no chapters; pass `--note "Recorded <date>."`. Erika has to verify her YouTube
   account. Ask the owner whether Erika has a
@@ -805,6 +824,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the
   voice did misread them, re-record the episode (it is on RSS.com, so the owner swaps the file).
   The captions show the text's figures.
+- **For Erika to review:** the closing-week article and episode (26 Oct). Her reel's lines and her
+  client's ("My hand was held. I was educated.") are quoted; the client isn't named. Everything
+  else is the CFPB's and Regulation Z's.
 - **For Erika to review:** the new-agent article and episode (23 Oct). Her reels and mentor video
   are quoted; the licence steps are GREC's and PSI's. ★ Re-check them (and the bulletin's date)
   before re-using: licensing rules change. Her "12–17 touches, agents quit after 2" figure is left

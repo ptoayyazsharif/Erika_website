@@ -19,7 +19,7 @@ const loftyFor0 = email => lines(S + '/lofty.jsonl').filter(x => (x.body.emails 
 const sign = (body, t = Math.floor(Date.now() / 1000), secret = WHSEC) =>
   `t=${t},v1=${crypto.createHmac('sha256', secret).update(`${t}.${body}`).digest('hex')}`;
 
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
 const a = await (await browser.newContext({ viewport: { width: 1440, height: 1000 } })).newPage();
 const jsErrors = []; a.on('pageerror', e => jsErrors.push(e.message));
 a.on('dialog', d => d.accept());

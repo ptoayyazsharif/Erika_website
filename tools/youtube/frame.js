@@ -17,7 +17,7 @@ let pw;
 try { pw = require('playwright'); } catch (e) { pw = require('playwright-core'); }
 
 const ROOT = path.join(__dirname, '..', '..');
-const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium';
 const C = { ink: '#453230', cream: '#FBF7F3', gold: '#C9A15E', merlotDeep: '#B05E51' };
 const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const url = p => 'file://' + (path.isAbsolute(p) ? p : path.join(ROOT, p));

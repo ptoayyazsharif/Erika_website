@@ -98,7 +98,11 @@ def digits(hyp):
             w = "one" if j == k and norm(parts[j][0]) == "a" else norm(parts[j][0])     # "a hundred and eighty"
             if isnum(w) or (w in ("and", "point") and j + 1 < len(parts) and isnum(parts[j + 1][0]) and run):
                 run.append(w); j += 1
-                if re.search(r"[.,?!;:]$", parts[j - 1][0]):
+                # A comma after "thousand" or "million" is inside the number ("fourteen thousand,
+                # eight hundred and one" is 14,801; the captions once showed "14,000, 801").
+                inside = (parts[j - 1][0].endswith(",") and SCALES.get(w, 0) >= 1000
+                          and j < len(parts) and isnum(parts[j][0]))
+                if re.search(r"[.,?!;:]$", parts[j - 1][0]) and not inside:
                     break
             else:
                 break

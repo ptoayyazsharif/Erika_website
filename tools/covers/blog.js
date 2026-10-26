@@ -31,7 +31,7 @@ let pw;
 try { pw = require('playwright'); } catch (e) { pw = require('playwright-core'); }
 
 const ROOT = path.join(__dirname, '..', '..');
-const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium';
 const W = 1600, H = 1000;
 /* Templates that are not 1600x1000. Podcast episode art must be square: RSS.com
    refuses anything under 1024x1024, and Apple asks for 1400 to 3000. 1400 is as
@@ -260,6 +260,19 @@ async function render(browser, spec, template, outFile) {
   const specs = JSON.parse(fs.readFileSync(path.join(__dirname, 'blog.json'), 'utf8'))
     .filter(s => !slug || s.slug === slug);
   if (!specs.length) { console.error(`no entry in blog.json for "${slug}"`); process.exit(1); }
+
+  /* The templates name Fraunces and Archivo but don't load them: Chromium finds them through
+     fontconfig. In a fresh container they aren't installed, and Chromium quietly falls back to
+     a generic serif (26 Oct 2026: a cover rendered in Times). Refuse instead.
+     `node tools/build-guide.mjs --fonts-only` installs both. */
+  for (const fam of ['Fraunces', 'Archivo']) {
+    let got = '';
+    try { got = require('child_process').execFileSync('fc-match', [fam], { encoding: 'utf8' }); } catch (e) {}
+    if (!got.startsWith(fam)) {
+      console.error(`${fam} isn't installed (fc-match gives "${got.trim()}"). Run: node tools/build-guide.mjs --fonts-only`);
+      process.exit(1);
+    }
+  }
 
   const browser = await pw.chromium.launch({ executablePath: fs.existsSync(CHROME) ? CHROME : undefined });
   let failed = 0;

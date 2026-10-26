@@ -6,7 +6,7 @@ const shots = S + '/shots'; fs.mkdirSync(shots, { recursive: true });
 let fails = 0;
 const ok = (c, m, d = '') => { console.log((c ? 'PASS ' : 'FAIL ') + m + (d ? '  — ' + d : '')); if (!c) fails++; };
 
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
 const admin = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const a = await admin.newPage();
 const jsErrors = [];

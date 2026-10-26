@@ -36,7 +36,7 @@ const require = createRequire(import.meta.url);
 let pw;
 try { pw = require('playwright'); } catch { pw = require('playwright-core'); }
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium';
 const CA = process.env.CA_BUNDLE || '/root/.ccr/ca-bundle.crt';
 
 const args = process.argv.slice(2);

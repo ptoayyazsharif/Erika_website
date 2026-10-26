@@ -3,6 +3,8 @@
  * Build a downloadable guide PDF from its HTML source.
  *
  *     node tools/build-guide.mjs [name]      (default: closing-costs-101)
+ *     node tools/build-guide.mjs --fonts-only    install the brand fonts and stop (the
+ *                                                 covers need them too: tools/covers/blog.js)
  *
  * Source  : tools/guides/<name>.html
  * Output  : assets/guides/<name>.pdf
@@ -217,6 +219,7 @@ print(json.dumps(out))
 
 /* ---------- run ---------- */
 
+if (process.argv.includes('--fonts-only')) { buildFonts(); process.exit(0); }
 if (!existsSync(SRC)) fail(`no source at ${path.relative(ROOT, SRC)}`);
 console.log(`\n  Building ${NAME}\n`);
 buildFonts();
