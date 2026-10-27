@@ -7,6 +7,61 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-27 — Her edited videos into ceo_erika; "On septic?"; podcast episode 12; YouTube episode 7
+
+**Asked.** "Let's do a blog and next episode for today as well. Also the new videos from the edit
+repo, do add those to Erika CEO brain as well so it's always updated and knows Erika's every update."
+**Her videos into the brain (`ceo_erika`).**
+- `Video_Edting_Erika` attached and cloned. A plain clone broke (5 GB); a blobless clone works:
+  `--depth 1 --filter=blob:limit=2m`, then `git fetch --depth=1500 --filter=blob:none` for dates.
+- New `ceo_erika/scripts/sync_video_edits.py <video repo>`. For every project with final captions
+  it writes `intake/edits/<project>.md` (dates, deliveries, README, post copy, what is said) and
+  `INDEX.md`, and prints NEW and CHANGED ones. Mined status lives in `intake/edits/mined.tsv`.
+- 57 edits (5 Aug to 26 Oct) copied. The 14 October edits are mined into 6 new notes and
+  `business/arc-gaming`:
+  - `identity/certified-property-manager`: "I am a certified property manager";
+  - `patterns/in-service-not-servants`: "we are in service… but we're not servants";
+  - `voice/no-notes`, `voice/ai-needs-an-ai-operator`, `preferences/home-cooked-meals`;
+  - `domain/septic-peak-design-flow`.
+  The cruise, missing-iPhone and podcast-launch edits were already in memory; Wisdom from a
+  Founder is her AI avatar. 43 August–September edits are copied but not yet mined.
+- `ceo_erika` CLAUDE.md §1 step 5: every session runs the sync and mines what's new.
+**The article** `septic-systems-explained` (Buying, `/septic`): "On septic? Ask how many people it
+was built for."
+- Built from her new "Septic Info" edit (26 Oct): her explainer only. The property manager on her
+  call isn't quoted or named.
+- Facts from the Georgia DPH *Manual for On-Site Sewage Management Systems* (June 2026, 283 pages,
+  incl. Rules 511-3-1) and the EPA:
+  - flow by bedrooms, on peak flow;
+  - the design basis 75 gpcd × 2 per bedroom = 150 gallons per bedroom (her "150 per bedroom",
+    confirmed);
+  - tank 1,000 gallons for 1–4 bedrooms, +250 each over four, +50% with a grinder;
+  - the bedroom definition; additions must be permitted and inspected; work on the lot can void
+    the approval;
+  - a rooming house at 60 gallons a bed; the county permit; county performance evaluations;
+  - EPA: inspect every 3 years, pump every 3–5, the drainfield.
+- dph.georgia.gov's HTML pages answered 404 and rules.sos.ga.gov 403, but the manual's PDF
+  downloads. I first wrote the manual's URL as `media/92626`; it was `92616`. Corrected before
+  publishing, and three section labels in the notes were corrected after checking the headings.
+- Photos B41–B43 (pumping-truck stock was foreign and rejected). The cover's first sub-line left
+  "is." alone on a line, so another of her lines was used.
+- **Episode:** 830 words, 308 s, -19.5 LUFS; "and it's pretty clear" cut before recording. The
+  transcript matches every figure.
+- **Checks:** ALL PASS locally and live, plus `/septic` against the origin; the MP3 and cover are
+  byte-identical.
+**Hand-overs.**
+- **Podcast episode 12** (Fannie Mae 620, NEXA) with the lender disclosure and "Recorded October
+  13, 2026" in `--note`. Its "right now" line was re-checked: Selling Guide B3-5.1-01 is still the
+  4/22/2026 version and still says "A minimum credit score is not required for DU loan casefiles."
+- **YouTube episode 7** (restaurant space, "Recorded October 9, 2026."); a clean listen-back.
+**Open.**
+- For Erika: the septic article and episode. It quotes a video she may not have posted yet (the
+  team is waiting on her about the manager's voice).
+- 43 earlier edits to mine.
+- The command center still can't be synced from here (no key).
+
+---
+
 ## 2026-10-26 — "The week before closing"; podcast episode 11; YouTube episode 6; a fresh container
 
 **Asked.** "Now do today's blog and next episode please."

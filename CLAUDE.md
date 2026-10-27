@@ -138,6 +138,7 @@ Google AI Studio is still outstanding.
 | `fifty-year-mortgage-explained` | Buying | `/50-year` | none — researched around her November 2025 video `trump-50-year-mortgage`, **re-checked** (22 Oct): the proposal stalled in January 2026 (Politico via NASCUS: "other priorities"), 12 CFR 1026.43 (QM term ≤ 30 years), Fannie Mae B2-1.5-02 (terms up to 30 years), NPR. Our own illustration: $300,000 at 7% (labelled). 5-minute episode (short source); the voice is told "Pultee" so it says Pulte right |
 | `what-the-real-estate-class-wont-teach-you` | Lifestyle | `/new-agent` | none — her three "first year in real estate" reels (`DcrGxmuCqHx`, `DcoGkAvih2-`, `DcqrYpwCsfR`) and her mentor video (23 Oct), with Georgia's licence steps from GREC (licence page, FAQ, education rules) and PSI's candidate bulletin (7/1/2026). Her "12–17 touches" figure left out (no source). Call to action: her mentoring, via `/contact` |
 | `the-week-before-closing` | Buying | `/closing-week` | none — her closing-day reel `Dce4h7rJ52a` (a first-time buyer on her final walkthrough with Erika; client not named), with the CFPB's *Close the deal*, *What is a Closing Disclosure?*, closing checklist and closing-scams advice, and 12 CFR 1026.19(f) (26 Oct) |
+| `septic-systems-explained` | Buying | `/septic` | none — her "Septic Info" edit (26 Oct; `ceo_erika` `intake/edits/septic-info.md`), her explainer only, with Georgia DPH's *Manual for On-Site Sewage Management Systems* (June 2026; `dph.georgia.gov/media/92616/download`) and the EPA (27 Oct) |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -169,7 +170,10 @@ Every article is narrated in Erika's cloned voice and goes out as an episode of 
 
 1. **Pick the material** from `ceo_erika` (transcripts in `intake/transcripts/video/`,
    reels in `intake/reels/erika-ig/_analysis/*.stt.json`, her written captions in
-   `intake/reels/erika-ig/index.json`). Check the blog note there first so you don't
+   `intake/reels/erika-ig/index.json`, and **her newest edited videos in `intake/edits/`**:
+   run `scripts/sync_video_edits.py` there first, see its CLAUDE.md §1 step 5; 27 Oct). By late
+   October the older transcripts were nearly used up, and the edits are where her new material is.
+   An edit may hold a third party (a property manager, a client): quote only her lines. Check the blog note there first so you don't
    reuse recordings. Prefer a topic where she speaks at length; a 180-word clip is not
    an article, and one a guide already used is a repeat.
 2. **Write it in her voice and to her rules** (they are in `ceo_erika/memory/voice/`
@@ -667,17 +671,22 @@ check there and a row here.
 **A fresh container** (26 Oct 2026: the checkout was an old commit, `ceo_erika` was gone, and the
 first cover rendered in Times). Before any work:
 1. `git fetch origin main && git merge --ff-only origin/main` (the hook only reads what's there).
-2. `ceo_erika`: `add_repo` owner `ptoayyazsharif`, repo `ceo_erika` (it moved to `CEO_Erika`);
+2. `Video_Edting_Erika` (her video edits, read-only here): `add_repo` it, then clone **blobless**
+   (`git clone --depth 1 --filter=blob:limit=2m https://github.com/ptoayyazsharif/video_edting_erika
+   /home/user/video_edting_erika`; a full clone broke at 5 GB on 27 Oct) and
+   `git fetch --depth=1500 --filter=blob:none origin main` for the dates. Then run
+   `ceo_erika/scripts/sync_video_edits.py` on it (step 3's repo).
+3. `ceo_erika`: `add_repo` owner `ptoayyazsharif`, repo `ceo_erika` (it moved to `CEO_Erika`);
    clone it to `/home/user/ceo_erika` and `register_repo_root`. **Its default branch is `main`, and
    the blog records go there**: push `HEAD:main` after `git fetch origin main` and a merge. On
    26 Oct its `main` was missing the 21–23 Oct records, which had gone only to a side branch.
-3. The local site: `printf "<?php\nreturn ['driver' => 'sqlite'];\n" > config.local.php`, start
+4. The local site: `printf "<?php\nreturn ['driver' => 'sqlite'];\n" > config.local.php`, start
    `php -S 127.0.0.1:8000 router.php`, POST `/setup.php` once (admin `tester` / `qa-local-2026`, for
    `tools/check-landing/run.sh`).
-4. `python3 -m venv /tmp/pdfvenv && /tmp/pdfvenv/bin/pip install fonttools pypdf`, then
+5. `python3 -m venv /tmp/pdfvenv && /tmp/pdfvenv/bin/pip install fonttools pypdf`, then
    `node tools/build-guide.mjs --fonts-only`. **The covers need Fraunces and Archivo installed**;
    `blog.js` now refuses to run without them.
-5. Chromium is `/opt/pw-browsers/chromium` (a symlink to the current build). Every tool uses that
+6. Chromium is `/opt/pw-browsers/chromium` (a symlink to the current build). Every tool uses that
    path; build-numbered paths (`chromium-1194`) broke when the image changed.
 
 - `CPANEL_USER=… CPANEL_TOKEN=… tools/deploy.sh <files…>` uploads, creates
@@ -768,10 +777,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1–11 were handed over on 12–26 Oct (closing costs, owning vs investing, know
+  Episodes 1–12 were handed over on 12–27 Oct (closing costs, owning vs investing, know
   your house, cash is king, homestead, relocating, restaurant space, open house, bank vs
-  broker, rollback rate, stairs). Next is 12: Fannie Mae 620 (NEXA, `--note` with the lender
-  disclosure), then 13: Wall Street. NEXA / Andrew episodes carry the lender disclosure in
+  broker, rollback rate, stairs, Fannie Mae 620). Next is 13: Wall Street, then 14: trades. NEXA / Andrew episodes carry the lender disclosure in
   the description (`handover.py --note`, 22 Oct).
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
@@ -808,8 +816,8 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `photos.php` says) or a real photo (the owner, 20 Oct)?
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
-  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–6
-  handed over (19–26 Oct; 3 needs `--numbered-label Reason`); next is 7 (restaurant space), then
+  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–7
+  handed over (19–27 Oct; 3 needs `--numbered-label Reason`); next is 8 (open house), then
   every episode in date order. From 5 on they are podcast-script episodes: `episode.py` aligns
   with the script and makes no chapters; pass `--note "Recorded <date>."`. Erika has to verify her YouTube
   account. Ask the owner whether Erika has a
@@ -824,6 +832,11 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the
   voice did misread them, re-record the episode (it is on RSS.com, so the owner swaps the file).
   The captions show the text's figures.
+- **For Erika to review:** the septic article and episode (27 Oct). Her explainer lines from the
+  "Septic Info" edit are quoted; the edit itself is waiting on her (the property manager's voice is
+  in it), so the article may quote a video not yet posted. Georgia's figures are DPH's manual.
+- **`ceo_erika` `intake/edits/`: 43 August–September edits are copied but not yet mined** into
+  memory (`INDEX.md`, `mined.tsv`). Mine a few each session.
 - **For Erika to review:** the closing-week article and episode (26 Oct). Her reel's lines and her
   client's ("My hand was held. I was educated.") are quoted; the client isn't named. Everything
   else is the CFPB's and Regulation Z's.

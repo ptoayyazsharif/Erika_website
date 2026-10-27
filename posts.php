@@ -25,6 +25,105 @@
 return [
 
     [
+        // Researched around her video "Septic Info" (Video_Edting_Erika, edited 26 Oct 2026; in
+        // ceo_erika intake/edits/septic-info.md): her explainer lines only. The property manager
+        // on her call is not quoted or named. Georgia's rules and design figures are from the
+        // Department of Public Health's Manual for On-Site Sewage Management Systems (June 2026),
+        // the upkeep from the EPA. Every fact is listed in tools/research/septic-systems-explained.md.
+        'slug'           => 'septic-systems-explained',
+        'title'          => 'On septic? Ask how many people it was built for.',
+        'seo_title'      => 'Septic Systems Explained: Peak Design Flow, Bedrooms and What Georgia Buyers and Investors Should Check',
+        'seo_desc'       => 'A septic system is sized for a number of bedrooms, not for whoever moves in. What Georgia’s rules say, what to check before you buy, and why it matters to investors.',
+        'excerpt'        => 'A rental I looked at had a note: &ldquo;Due to the septic system, call first for details.&rdquo; The answer was four people, on a big house. Here&rsquo;s what a septic system is built for, and what to check.',
+        'date'           => '2026-10-27',
+        'updated'        => '2026-10-27',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['septic system', 'peak design flow', 'home inspection', 'real estate investing', 'rental property', 'Georgia'],
+        'cover'          => 'assets/photos/17/septic-systems-explained-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: On septic? Ask how many people it was built for.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@quang-vuong-724225078" rel="nofollow noopener" target="_blank">Quang Vuong</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/septic-systems-explained.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'septic',
+        'audio_secs'     => 308,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'What is peak design flow?',
+                'a' => 'The most wastewater a septic system is designed to handle in a day. In Georgia, a home&rsquo;s system is sized by its number of bedrooms, and the design assumes two people per bedroom and 150 gallons per bedroom per day.',
+            ],
+            [
+                'q' => 'Can I add bedrooms to a house on septic?',
+                'a' => 'Not without checking the system first. Georgia sizes residential systems by bedrooms, and repairs, replacements or additions to an existing system must be permitted and inspected by the county health department.',
+            ],
+            [
+                'q' => 'How often should a septic tank be pumped?',
+                'a' => 'The EPA says a typical household tank is pumped every three to five years and the system inspected at least every three years; systems with pumps or float switches, generally once a year.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>A rental I was looking at had a note in it: due to the septic system, call first for details. &ldquo;You wouldn&rsquo;t see this as a customer, but as an agent I can see the private notes.&rdquo;</p>
+
+<p>When I finally got the answer, the limit was four people. On a big house, I think five bedrooms. So let me explain what a septic system is really built for, and what to check before you buy, or rent, a home that has one.</p>
+
+<h2>A septic system has a rating</h2>
+
+<p>&ldquo;A lot of people don&rsquo;t realize that the septic system that goes with the house, it has a rating for the number of people that it can support.&rdquo; Everything goes there: &ldquo;all sink water comes through the septic system, bath water comes through the septic system, toilet paper.&rdquo; And problems can be in two places: &ldquo;at the actual tank&rdquo; or &ldquo;at the field lines.&rdquo;</p>
+
+<p>Georgia&rsquo;s rules come from the Department of Public Health&rsquo;s Manual for On-Site Sewage Management Systems. For a house, the sewage flow is based on the number of bedrooms, and the calculations are made on peak flow, &ldquo;not on long term averages.&rdquo; <a href="https://dph.georgia.gov/media/92616/download" target="_blank" rel="noopener">[1]</a></p>
+
+<h2>Peak design flow, and the 150 gallons</h2>
+
+<p>The name for that rating is the peak design flow. In my video I said it&rsquo;s usually 150 gallons per bedroom, and that&rsquo;s the number Georgia&rsquo;s manual designs around: it assumes &ldquo;a home generates 75 gpcd with two people per bedroom or 150 gallons per bedroom per day.&rdquo; (gpcd is gallons per person per day.) <a href="https://dph.georgia.gov/media/92616/download" target="_blank" rel="noopener">[1]</a></p>
+
+<p>The tank is sized by bedrooms too. For a single-family home, it&rsquo;s 1,000 gallons for one, two, three or four bedrooms, plus 250 gallons for each bedroom over four, and 50% more if there&rsquo;s a garbage grinder. <a href="https://dph.georgia.gov/media/92616/download" target="_blank" rel="noopener">[1]</a></p>
+
+<p>So the rating is about the house as it was permitted. The manual defines a bedroom as &ldquo;any room that is intended primarily for sleeping purposes, as shown on the building plan.&rdquo; <a href="https://dph.georgia.gov/media/92616/download" target="_blank" rel="noopener">[1]</a> And a system that&rsquo;s old, or hasn&rsquo;t been maintained, may not keep up even with that.</p>
+
+[[img:assets/photos/17/b41-house-on-a-big-lawn.jpg|A white house set back on a big lawn, with trees|Photo by <a href="https://www.pexels.com/@dianne-60973" rel="nofollow noopener" target="_blank">Dianne</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Now here&rsquo;s the important part, investors</h2>
+
+<p>I&rsquo;ve had investors want to add bedrooms to put more people in. &ldquo;Well, you might not be able to do that. If you have a septic system.&rdquo;</p>
+
+<p>Under Georgia&rsquo;s rules, &ldquo;repairs, replacement, or additions to existing systems must be permitted and inspected.&rdquo; And grading, digging or construction on the lot after the system&rsquo;s final inspection, if it may affect the system, voids the approval. <a href="https://dph.georgia.gov/media/92616/download" target="_blank" rel="noopener">[1]</a></p>
+
+<p>A rooming house is rated differently from a family home, too. In the manual&rsquo;s flow schedule, a rooming house with no meals is figured at 60 gallons per bed. <a href="https://dph.georgia.gov/media/92616/download" target="_blank" rel="noopener">[1]</a> And that&rsquo;s before occupancy laws, which are a whole separate question.</p>
+
+<h2>What to check before you buy</h2>
+
+<ul>
+<li><strong>The permit and the records.</strong> A septic system needs a construction permit from the county health department before it&rsquo;s installed, and the application lists the number of bedrooms. <a href="https://dph.georgia.gov/media/92616/download" target="_blank" rel="noopener">[1]</a> My tip: &ldquo;you can just Google it and you can see the drawing for the field lines and where your septic system is for your house.&rdquo; It usually takes a little digging on your county&rsquo;s website.</li>
+<li><strong>An evaluation.</strong> County boards of health are routinely asked to do performance evaluations of existing systems, based on the installation inspection records, the maintenance records and a look at the site. <a href="https://dph.georgia.gov/media/92616/download" target="_blank" rel="noopener">[1]</a></li>
+<li><strong>The maintenance history.</strong> The EPA says a typical household system should be inspected at least every three years and the tank pumped every three to five; systems with pumps or float switches, generally once a year. <a href="https://www.epa.gov/septic/how-care-your-septic-system" target="_blank" rel="noopener">[2]</a></li>
+</ul>
+
+[[img:assets/photos/17/b42-inspector-at-the-door.jpg|An inspector with a clipboard at a front door|Photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Living with one</h2>
+
+<p>&ldquo;If you go over capacity in your household, have your septic checked and cleaned more.&rdquo; And go easy on it. All the water a household sends down its pipes ends up in the septic system, so the EPA suggests spreading laundry through the week rather than doing it all in one day. Don&rsquo;t park or drive on the drainfield, and keep tree roots away from it. <a href="https://www.epa.gov/septic/how-care-your-septic-system" target="_blank" rel="noopener">[2]</a></p>
+
+<p>Buying or investing in a home with a septic system? <a href="/contact">Reach out to me</a>.</p>
+
+<p>Who knew there was something interesting about the septic system? I knew. So that&rsquo;s septic systems, explained.</p>
+
+<p><em>This article explains how septic systems generally work and what Georgia&rsquo;s rules say, from the Department of Public Health&rsquo;s manual. It isn&rsquo;t legal or engineering advice: your county health department and a licensed septic professional have the final word on any system. Erika K. Page is a real estate agent with Axen Realty.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Georgia Department of Public Health, <a href="https://dph.georgia.gov/media/92616/download" target="_blank" rel="noopener">Manual for On-Site Sewage Management Systems</a> (June 2026), including the On-Site Sewage Management Systems Rules, Chapter 511-3-1.</li>
+<li>U.S. Environmental Protection Agency, <a href="https://www.epa.gov/septic/how-care-your-septic-system" target="_blank" rel="noopener">How to Care for Your Septic System</a> (updated August 17, 2026).</li>
+<li>Erika K. Page, video &ldquo;Septic Info&rdquo; (October 2026), her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her closing-day reel Dce4h7rJ52a (+ caption): a first-time buyer on
         // her final walkthrough with Erika ("My hand was held. I was educated."). The client is
         // not named here. The closing-week facts are the CFPB's (Close the deal, What is a Closing

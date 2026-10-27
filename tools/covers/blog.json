@@ -207,5 +207,15 @@
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/b40-checking-an-email-on-her-phone.jpg",
     "refPos": "55% 40%"
+  },
+  {
+    "slug": "septic-systems-explained",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "On septic? Ask how many people it was built for.",
+    "sub": "It has a rating for the number of people that it can support.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b43-house-behind-a-wide-lawn.jpg",
+    "refPos": "70% 60%"
   }
 ]

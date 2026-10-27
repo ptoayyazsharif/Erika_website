@@ -1,0 +1,69 @@
+# Erika Explains — podcast episode script
+# Article: /blog/septic-systems-explained
+# Facts: every one is in tools/research/septic-systems-explained.md.
+# Her lines are from her video "Septic Info" (edited 26 Oct 2026): her explainer only, not the call.
+# Left out on purpose: the property manager's words, siting details, occupancy laws.
+#
+# voice: stability=0.38 similarity=0.8 style=0.22 speaker_boost=1
+
+Hey, it's Erika. Welcome back to Erika Explains.
+
+So I was looking at a rental, and there was a note in it. Due to the septic system, call first for details.
+
+Now, you wouldn't see this as a customer. But as an agent, I can see the private notes.
+
+And when I finally got the answer... the limit was four people. On a big house. I think it's a five-bedroom house.
+
+So today, let me explain what a septic system is really built for. And what to check before you buy, or rent, a home that has one.
+
+Let me explain.
+
+A lot of people don't realize that the septic system that goes with the house has a rating for the number of people that it can support.
+
+Because think about it. All the sink water comes through the septic system. The bath water. The toilet paper. Everything.
+
+And when there's a problem, it can be in two places. At the actual tank... or at the field lines.
+
+Here in Georgia, the rules come from the Department of Public Health. They have a manual for these systems. For a house, the sewage flow is based on the number of bedrooms. And the math is done on peak flow, not on long-term averages.
+
+So the name for that rating is the peak design flow.
+
+In my video, I said it's usually a hundred and fifty gallons per bedroom. And that's the number Georgia's manual designs around. It assumes a home puts out seventy-five gallons per person, per day, with two people per bedroom. So, a hundred and fifty gallons per bedroom, per day.
+
+The tank is sized by bedrooms too. For a single-family home, it's a thousand gallons for one, two, three or four bedrooms. Then two hundred and fifty more gallons for each bedroom over four. And fifty percent more if there's a garbage disposal grinding things up.
+
+So that rating is about the house as it was permitted. The manual even defines a bedroom. It's any room that's meant mainly for sleeping, as shown on the building plan.
+
+And if the system is old, or it hasn't been maintained over the years... it may not keep up, even with that.
+
+Now here's the important part. Investors, this one's for you.
+
+I've had investors come and add more bedrooms, to put more people in. Well... you might not be able to do that. If you have a septic system.
+
+Under Georgia's rules, repairs, replacement or additions to an existing system have to be permitted and inspected. And if grading, digging or construction on the lot after the final inspection could affect the system, that voids the approval.
+
+And a rooming house is rated differently from a family home. In the manual's flow schedule, a rooming house with no meals is figured at sixty gallons per bed.
+
+And that's before occupancy laws, which are a whole other conversation.
+
+So what do you check before you buy?
+
+Start with the permit and the records. A septic system needs a construction permit from the county health department before it goes in. And the application lists the number of bedrooms.
+
+And here's my little tip. You can just Google it. Usually you've gotta do a little bit of digging on your county's website, but you can see the drawing for the field lines, and where the septic system is for the house.
+
+Next, an evaluation. County boards of health are routinely asked to evaluate existing systems. They look at the inspection records from when it was installed, the maintenance records, and the site itself.
+
+And ask for the maintenance history. The E P A says a typical household system should be inspected at least every three years, and the tank pumped every three to five years. If the system has pumps or float switches, it's generally once a year.
+
+And once you live with one? If you go over capacity in your household, have your septic checked and cleaned more.
+
+Go easy on it, too. All the water you send down the pipes ends up in the septic system. So the E P A suggests spreading your laundry out through the week, instead of doing it all in one day. Don't park or drive on the drainfield. And keep tree roots away from it.
+
+So if you're buying or investing in a home with a septic system, reach out to me. I've put links to every source in the show notes.
+
+Quick note. This episode explains how septic systems generally work, and what Georgia's rules say, from the Department of Public Health's manual. It isn't legal or engineering advice. Your county health department and a licensed septic professional have the final word on any system. And I'm a real estate agent with Axen Realty.
+
+Who knew there was something interesting about the septic system? I knew.
+
+So that's septic systems, explained. I'm Erika Page. Thanks for listening, and I'll talk to you next time.
