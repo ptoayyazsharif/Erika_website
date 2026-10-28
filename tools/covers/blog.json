@@ -217,5 +217,15 @@
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/b43-house-behind-a-wide-lawn.jpg",
     "refPos": "70% 60%"
+  },
+  {
+    "slug": "sight-unseen",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "Never set foot in it? Don’t send the money yet.",
+    "sub": "It can happen, but it’s rare.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b46-reading-a-listing-on-a-laptop.jpg",
+    "refPos": "50% 40%"
   }
 ]

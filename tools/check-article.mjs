@@ -65,8 +65,8 @@ function sourceLinks(body) {
 // (403/405) is retried once as a browser before it's reported.
 const BROWSER_UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 function linkStatus(u) {
-  const get = ua => {
-    const a = ['-sS', '-L', '--max-time', '40', '-A', ua, '-o', '/dev/null', '-w', '%{http_code}', u];
+  const get = (ua, url = u) => {
+    const a = ['-sS', '-L', '--max-time', '40', '-A', ua, '-o', '/dev/null', '-w', '%{http_code}', url];
     if (fs.existsSync(CA)) a.unshift('--cacert', CA);
     try { return execFileSync('curl', a, { encoding: 'utf8' }).trim(); } catch { return '000'; }
   };
@@ -83,6 +83,13 @@ function linkStatus(u) {
     execFileSync('sleep', ['5']);
     const again = get(BROWSER_UA);
     if (/^[23]/.test(again)) code = again;
+  }
+  // A 404 from a host whose own home page 404s too is the host refusing this container,
+  // not a dead link: every FTC host (ftc.gov, consumer.gov, bulkorder.ftc.gov) answered a
+  // 1,301-byte "Page Not Found" to curl on 28 Oct 2026, while WebFetch read the same PDF.
+  if (code === '404') {
+    const home = get(BROWSER_UA, new URL(u).origin + '/');
+    if (home === '404') code = 'blocked';
   }
   return code;
 }
@@ -259,6 +266,7 @@ for (const slug of slugs) {
       const c = linkStatus(u);
       if (c === '403' || c === '405') warn('source link refuses non-browser requests (open it by hand once)', `${c} ${u}`);
       else if (c === '429') warn('source site is rate-limiting the checker (open it by hand once)', `${c} ${u}`);
+      else if (c === 'blocked') warn('source host refuses this container (its home page 404s too; open the link by hand once)', u);
       else if (!/^[23]/.test(c)) bad.push(`${c} ${u}`);
     }
     report(!bad.length, `every source link answers (${links.length} checked)`, bad.join(', '));

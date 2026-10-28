@@ -25,6 +25,107 @@
 return [
 
     [
+        // Researched around her video "Respect your time" (part 1; Video_Edting_Erika, edited
+        // 21 Sep 2026; ceo_erika intake/edits/respect-your-time.md and domain/virtual-tours): her
+        // lines on virtual tours. Her mentee and the mentee's clients are not described. She says
+        // "twenty-six years" on camera; written copy says 24+ (the brand rule). The scam facts are
+        // the FTC's handout and Georgia's Attorney General. Sources: tools/research/sight-unseen.md.
+        'slug'           => 'sight-unseen',
+        'title'          => 'Never set foot in it? Don&rsquo;t send the money yet.',
+        'seo_title'      => 'Renting or Buying Sight Unseen: Virtual Tours, Rental Scams and How to Protect Your Money',
+        'seo_desc'       => 'Virtual tours are real, but paying for a place you’ve never seen is rare and risky. The FTC’s rental-scam warning signs, and what to do if you already paid.',
+        'excerpt'        => 'Have I done virtual tours? I absolutely have. But it&rsquo;s extremely rare for someone to pay real money for a place they&rsquo;ve never set foot in, and scammers count on the people who do.',
+        'date'           => '2026-10-28',
+        'updated'        => '2026-10-28',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['virtual tour', 'rental scams', 'renting', 'wire fraud', 'relocating', 'Georgia'],
+        'cover'          => 'assets/photos/17/sight-unseen-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Never set foot in it? Don&rsquo;t send the money yet.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@mart-production" rel="nofollow noopener" target="_blank">MART PRODUCTION</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/sight-unseen.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'sight-unseen',
+        'audio_secs'     => 252,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Is it safe to rent a place without seeing it?',
+                'a' => 'The FTC&rsquo;s advice is to look at the apartment or house before you sign a lease or pay: visit in person, or ask someone you trust to see it for you and check that it&rsquo;s really for rent and matches the ad.',
+            ],
+            [
+                'q' => 'How do I spot a rental scam?',
+                'a' => 'Rent much lower than others nearby, pressure to decide quickly, and a demand to pay only by cash, gift card, cryptocurrency or a wire service. The FTC says anyone who demands those payment methods is a scammer.',
+            ],
+            [
+                'q' => 'What should I do if I already sent money?',
+                'a' => 'Contact your bank or the wire company right away and ask them to reverse it, file a report at IC3.gov, and report it to local police, the Georgia Attorney General&rsquo;s Consumer Protection Division and the FTC at ReportFraud.ftc.gov.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>Have I ever done a virtual tour? &ldquo;I absolutely have.&rdquo;</p>
+
+<p>&ldquo;I&rsquo;m not saying that virtual tours don&rsquo;t exist. I&rsquo;m not saying that it doesn&rsquo;t happen.&rdquo; But in my 24+ years, &ldquo;it&rsquo;s extremely, extremely rare for somebody to pay the real money that they need in a rental apartment, in a rental home, or even in buying a home in a property they&rsquo;ve never set foot in.&rdquo;</p>
+
+<p>So let me explain why that matters, and how to protect your money when you can&rsquo;t be there in person.</p>
+
+<h2>Virtual tours are real, and rare</h2>
+
+<p>&ldquo;Now, does it exist? Yes, it exists. COVID taught us that, right? It can happen, but it&rsquo;s rare.&rdquo;</p>
+
+<p>And here&rsquo;s what usually happens. You do four virtual tours, &ldquo;and then even the one that they like, they&rsquo;re still gonna say, &lsquo;Okay, great, I wanna come see it.&rsquo;&rdquo; A video tour is a good way to narrow things down. It&rsquo;s rarely where someone hands over the money.</p>
+
+[[img:assets/photos/17/b44-virtual-tour-on-a-phone.jpg|A phone showing a living room on a video tour|Photo by <a href="https://www.pexels.com/@jakubzerdzicki" rel="nofollow noopener" target="_blank">Jakub Zerdzicki</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Now here&rsquo;s the important part: the place you can&rsquo;t see</h2>
+
+<p>Scammers count on people paying for places they haven&rsquo;t seen. In the Federal Trade Commission&rsquo;s words, &ldquo;Scammers make up listings for places that aren&rsquo;t for rent or don&rsquo;t exist. They want to get your money before you figure out the listing is fake.&rdquo; They may also try to get your Social Security or bank account number, to steal your identity. <a href="https://www.bulkorder.ftc.gov/sites/bulkorder.ftc.gov/files/publications/1061a_rentalscamsexplained-508_0.pdf" target="_blank" rel="noopener">[1]</a></p>
+
+<h2>Before you sign a lease or pay</h2>
+
+<p>The FTC&rsquo;s four steps <a href="https://www.bulkorder.ftc.gov/sites/bulkorder.ftc.gov/files/publications/1061a_rentalscamsexplained-508_0.pdf" target="_blank" rel="noopener">[1]</a>:</p>
+
+<ul>
+<li><strong>Look at it.</strong> &ldquo;Visit in person. If you can&rsquo;t go, ask someone you trust to see it for you.&rdquo; They can check that it&rsquo;s really for rent and matches the ad.</li>
+<li><strong>Compare the price.</strong> Rent much lower than others in the area could be a sign of a scam. &ldquo;And if someone says you have to decide quickly to get a great deal, walk away.&rdquo;</li>
+<li><strong>Search online.</strong> Look up the owner or rental company with words like &ldquo;complaint,&rdquo; &ldquo;review&rdquo; or &ldquo;scam,&rdquo; and see what other people say.</li>
+<li><strong>Be careful how you pay.</strong> Don&rsquo;t send money if a landlord says you can only pay with cash, a gift card, cryptocurrency or a wire transfer service. &ldquo;Anyone who demands that you pay these ways is a scammer.&rdquo; Paying those ways &ldquo;is like sending cash,&rdquo; and once it&rsquo;s sent, it&rsquo;s hard to get back.</li>
+</ul>
+
+[[img:assets/photos/17/b45-house-for-rent-sign.jpg|A House for Rent sign on a lawn, three people behind it|Photo by <a href="https://www.pexels.com/@ivan-s" rel="nofollow noopener" target="_blank">Ivan S</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>If you already sent money</h2>
+
+<p>Move fast. Georgia&rsquo;s Attorney General says to contact the financial provider, money transfer company or gift card company immediately <a href="https://consumer.georgia.gov/scams-what-do-if-youve-lost-money-scam" target="_blank" rel="noopener">[2]</a>:</p>
+
+<ul>
+<li><strong>A wire through your bank:</strong> report it and ask them to reverse it, then file a report at IC3.gov right away. If it was in the last three to four days, also reach out to the FBI field office, which may be able to work with the bank to reverse the wire.</li>
+<li><strong>A wire through a company like Western Union or MoneyGram:</strong> tell them it was a fraudulent transfer and ask them to reverse it, and file at IC3.gov.</li>
+<li><strong>A money transfer app or a card:</strong> report it to the app&rsquo;s company or the card issuer and ask them to reverse it.</li>
+<li><strong>Then report it</strong> to local law enforcement, the Georgia Attorney General&rsquo;s Consumer Protection Division and the FTC at ReportFraud.ftc.gov.</li>
+</ul>
+
+<h2>When you really can&rsquo;t be there</h2>
+
+<p>Moving from another state, or buying an investment you can&rsquo;t fly in for? That&rsquo;s when someone you trust on the ground matters most. If you&rsquo;re buying or renting in Metro Atlanta and can&rsquo;t be here yet, <a href="/contact">reach out to me</a>.</p>
+
+<p>So that&rsquo;s renting or buying sight unseen, explained.</p>
+
+<p><em>This article explains general consumer guidance from the Federal Trade Commission and Georgia&rsquo;s Attorney General. It isn&rsquo;t legal advice. Erika K. Page is a real estate agent with Axen Realty.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Federal Trade Commission (consumer.gov), <a href="https://www.bulkorder.ftc.gov/sites/bulkorder.ftc.gov/files/publications/1061a_rentalscamsexplained-508_0.pdf" target="_blank" rel="noopener">Rental Scams Explained</a> (August 2024).</li>
+<li>Georgia Attorney General&rsquo;s Consumer Protection Division, <a href="https://consumer.georgia.gov/scams-what-do-if-youve-lost-money-scam" target="_blank" rel="noopener">What to Do if You&rsquo;ve Lost Money in a Scam</a>.</li>
+<li>Erika K. Page, video on virtual tours (&ldquo;Respect your time&rdquo;, September 2026), her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her video "Septic Info" (Video_Edting_Erika, edited 26 Oct 2026; in
         // ceo_erika intake/edits/septic-info.md): her explainer lines only. The property manager
         // on her call is not quoted or named. Georgia's rules and design figures are from the
