@@ -1128,7 +1128,7 @@ HTML,
         'seo_desc'       => 'From January 7, 2027, investors with 350+ homes can&rsquo;t buy most single-family homes. What the law does, what it doesn&rsquo;t, and why Atlanta should care.',
         'excerpt'        => 'Earlier this year I told you Wall Street could be your next-door neighbor. Now there&rsquo;s a federal law about it. Starting January 7, 2027, the biggest investors can&rsquo;t buy most single-family homes. Here&rsquo;s what it does, what it doesn&rsquo;t, and why Metro Atlanta in particular should pay attention.',
         'date'           => '2026-10-14',
-        'updated'        => '2026-10-14',
+        'updated'        => '2026-10-28',
         'author'         => 'Erika K. Page',
         'cat'            => 'buying',
         'tags'           => ['institutional investors', 'housing law', 'first-time buyer', 'single-family rentals', 'Metro Atlanta', 'ROAD to Housing Act'],
@@ -1222,6 +1222,8 @@ HTML,
 
 <p>So that&rsquo;s the Wall Street homebuying ban, explained.</p>
 
+<p><strong>Update, October 28, 2026:</strong> On October 22, 2026, the Treasury Department issued proposed regulations to implement Section 1001. They are a proposal, not final rules: the public can comment within 30 days after they&rsquo;re published in the Federal Register. The ban itself still begins on January 7, 2027. <a href="https://home.treasury.gov/news/press-releases/sb0665" target="_blank" rel="noopener">[8]</a></p>
+
 <p><em>This article explains what the law says. It isn&rsquo;t legal or financial advice, and regulations under it may add detail. Check the current rules before you rely on them.</em></p>
 
 <h2>Sources</h2>
@@ -1234,6 +1236,7 @@ HTML,
 <li>National Low Income Housing Coalition, <a href="https://nlihc.org/resource/gao-releases-report-institutional-investments-single-family-rental-housing" target="_blank" rel="noopener">GAO Releases Report on Institutional Investments in Single-Family Rental Housing</a> (May 28, 2024).</li>
 <li>Urban Institute, Laurie Goodman, <a href="https://www.urban.org/urban-wire/will-regulating-large-institutional-investors-actually-make-housing-more-affordable" target="_blank" rel="noopener">Will Regulating Large Institutional Investors Actually Make Housing More Affordable?</a> (January 26, 2026).</li>
 <li>Erika K. Page, her &ldquo;Banning Wall Street homebuying&rdquo; video (2026), her own words.</li>
+<li>U.S. Department of the Treasury, <a href="https://home.treasury.gov/news/press-releases/sb0665" target="_blank" rel="noopener">The Trump Administration is Making Homeownership More Affordable</a> (press release on the proposed regulations, October 22, 2026).</li>
 </ol>
 HTML,
     ],

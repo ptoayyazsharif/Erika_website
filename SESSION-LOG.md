@@ -7,6 +7,44 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-28 — "Never set foot in it?"; podcast episode 13 (with a Treasury update); YouTube episode 8
+
+**Asked.** "Now do today's blog and next episode please."
+**Her videos into the brain.** The video repo had nothing newer than this morning (58 edits, none
+new). `voice-options` was mined (nothing new); `respect-your-time` is marked used.
+**The article** `sight-unseen` (Buying, `/sight-unseen`): "Never set foot in it? Don't send the
+money yet."
+- From her "Respect your time" edit (part 1, 21 Sep): her general lines on virtual tours only ("I
+  absolutely have"; "extremely, extremely rare… never set foot in"; "COVID taught us that… It can
+  happen, but it's rare"; four tours and "I wanna come see it"). The mentee and her two clients
+  aren't described. Her on-camera "twenty-six years" is "24+ years" in the article; the script
+  says neither.
+- Facts: the FTC's *Rental Scams Explained* (Aug 2024): what a rental scam is, the four steps,
+  "Anyone who demands that you pay these ways is a scammer". Georgia AG's lost-money page: bank or
+  wire company, IC3.gov, the FBI field office within three to four days, and where to report.
+- Photos B44–B46; Bold cover with her line "It can happen, but it's rare."
+- **Episode:** 793 words, 252 s, -19.9 LUFS. The full transcript matches the script.
+**Failed, and what was done**
+- **`check-article` failed the FTC handout with a 404**, but the link is good: every FTC host
+  (ftc.gov's home page included) answers this container a 1,301-byte "Page Not Found", and WebFetch
+  downloaded the same 208.8 KB PDF. The checker now treats a 404 whose host's home page also 404s
+  as a WARN ("host refuses this container"). A real dead link on a working host still fails.
+**Podcast episode 13** (Wall Street). Its ★ facts were re-checked first: on 22 Oct Treasury
+issued **proposed** regulations under Sec. 1001 (press release sb0665: an NPRM, 30 days of comment
+after Federal Register publication; the ban still begins 7 Jan 2027). The episode's "the rules
+written under it may add more detail" is still true. The article got a dated update paragraph and
+source 8 (`updated` 28 Oct, deployed, seen live); the research notes got the rows. The episode
+description says "Recorded October 14, 2026" plus the update. Search results also called it
+"Phase 1"; not in the release as read, so not used.
+**YouTube episode 8** (open house, "Recorded October 9, 2026."): listen-back clean (Erica/Erika,
+wanna, use/used only).
+**Passed.** `check-article --all` locally (FTC WARN only); live for `sight-unseen` and the Wall
+Street update; the MP3, cover and a body picture byte-identical live.
+**Open.** For Erika: the sight-unseen article. Next: podcast 14 (trades), YouTube 9 (bank vs
+broker, NEXA disclosure). NEXA / Andrew: October 2 of 2; November's two still due.
+
+---
+
 ## 2026-10-27 — Her edited videos into ceo_erika; "On septic?"; podcast episode 12; YouTube episode 7
 
 **Asked.** "Let's do a blog and next episode for today as well. Also the new videos from the edit

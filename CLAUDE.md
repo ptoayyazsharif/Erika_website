@@ -139,6 +139,7 @@ Google AI Studio is still outstanding.
 | `what-the-real-estate-class-wont-teach-you` | Lifestyle | `/new-agent` | none — her three "first year in real estate" reels (`DcrGxmuCqHx`, `DcoGkAvih2-`, `DcqrYpwCsfR`) and her mentor video (23 Oct), with Georgia's licence steps from GREC (licence page, FAQ, education rules) and PSI's candidate bulletin (7/1/2026). Her "12–17 touches" figure left out (no source). Call to action: her mentoring, via `/contact` |
 | `the-week-before-closing` | Buying | `/closing-week` | none — her closing-day reel `Dce4h7rJ52a` (a first-time buyer on her final walkthrough with Erika; client not named), with the CFPB's *Close the deal*, *What is a Closing Disclosure?*, closing checklist and closing-scams advice, and 12 CFR 1026.19(f) (26 Oct) |
 | `septic-systems-explained` | Buying | `/septic` | none — her "Septic Info" edit (26 Oct; `ceo_erika` `intake/edits/septic-info.md`), her explainer only, with Georgia DPH's *Manual for On-Site Sewage Management Systems* (June 2026; `dph.georgia.gov/media/92616/download`) and the EPA (27 Oct) |
+| `sight-unseen` | Buying | `/sight-unseen` | none — her general virtual-tour lines from the "Respect your time" edit (part 1; the mentee and her clients left out), with the FTC's *Rental Scams Explained* (Aug 2024) and Georgia AG's *What to Do if You've Lost Money in a Scam* (28 Oct) |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -506,7 +507,8 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
      states, and say so in the text ("analyses of the law expect…").
    Many official and news sites answer 403 to anything that isn't a browser (BLS,
    Census Reporter, Fulton's assessor, ARC, the regional transit authority, 11Alive,
-   sos.ga.gov, atlantaga.gov, dph.georgia.gov, and WABE from 7 Oct). Official PDFs
+   sos.ga.gov, atlantaga.gov, dph.georgia.gov, and WABE from 7 Oct). Every FTC host answers a fake
+   404 to anything from this container (28 Oct); WebFetch reads their PDFs. Official PDFs
    often download fine with `curl -A "Mozilla/5.0 …"`: save them to a fresh scratch
    folder and read them with the venv's pypdf (`python -I`). That route gave the Fulton
    and GNR health-department documents, the Gwinnett fire CO leaflet and GDOT's TADA
@@ -664,6 +666,7 @@ check there and a row here.
 | Short link answers **301** to the article (with `#guide` only when there is a guide) | a 404 after an admin save; a `#guide` anchor on an article with no guide |
 | Landing pages (`tools/check-landing/run.sh`: rounds 1–2, 59 checks; round 3, the Stripe paywall, 84 checks against a fake Stripe, including the buyer's receipt, settling from Leads and the resend) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
 | `/blog` pictures: every picture is scrolled into view and waited for (`loadLazy`) | the pages scroll inside their own container, so scrolling the window never reached the oldest card once there were 20 articles; it stayed unloaded and failed every article's run (22 Oct 2026) |
+| A source link that 404s while its host's home page 404s too is a WARN ("host refuses this container"), not a FAIL; read it once with WebFetch | every FTC host (ftc.gov, consumer.gov, bulkorder.ftc.gov) answers this container a 1,301-byte "Page Not Found", though WebFetch read the same PDF (28 Oct 2026) |
 | **Live**: byte-compare every upload; confirm pages by completeness (`</html>`, >150 KB), not status | see the host's holding page below |
 
 ## Deploying, and the environment
@@ -777,9 +780,11 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1–12 were handed over on 12–27 Oct (closing costs, owning vs investing, know
+  Episodes 1–13 were handed over on 12–28 Oct (closing costs, owning vs investing, know
   your house, cash is king, homestead, relocating, restaurant space, open house, bank vs
-  broker, rollback rate, stairs, Fannie Mae 620). Next is 13: Wall Street, then 14: trades. NEXA / Andrew episodes carry the lender disclosure in
+  broker, rollback rate, stairs, Fannie Mae 620, Wall Street). Next is 14: trades, then 15: weekend.
+  Wall Street's description carries Treasury's 22 Oct proposed rules; ★ when they're final, update
+  the article again. NEXA / Andrew episodes carry the lender disclosure in
   the description (`handover.py --note`, 22 Oct).
   Hand each next one over with the levelled MP3, its square art from
   `tools/podcast/art/`, title, description, keywords and the field settings (*Publishing*
@@ -816,8 +821,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `photos.php` says) or a real photo (the owner, 20 Oct)?
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
-  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–7
-  handed over (19–27 Oct; 3 needs `--numbered-label Reason`); next is 8 (open house), then
+  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–8
+  handed over (19–28 Oct; 3 needs `--numbered-label Reason`); next is 9 (bank vs broker, NEXA:
+  carry the lender disclosure), then
   every episode in date order. From 5 on they are podcast-script episodes: `episode.py` aligns
   with the script and makes no chapters; pass `--note "Recorded <date>."`. Erika has to verify her YouTube
   account. Ask the owner whether Erika has a
@@ -832,6 +838,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the
   voice did misread them, re-record the episode (it is on RSS.com, so the owner swaps the file).
   The captions show the text's figures.
+- **For Erika to review:** the sight-unseen article and episode (28 Oct). Her virtual-tour lines
+  from "Respect your time" are quoted ("twenty-six years" becomes 24+ in writing); the mentee and
+  her clients are left out. The scam steps are the FTC's and Georgia's Attorney General's.
 - **For Erika to review:** the septic article and episode (27 Oct). Her explainer lines from the
   "Septic Info" edit are quoted; the edit itself is waiting on her (the property manager's voice is
   in it), so the article may quote a video not yet posted. Georgia's figures are DPH's manual.

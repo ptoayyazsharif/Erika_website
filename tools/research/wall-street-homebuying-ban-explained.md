@@ -69,3 +69,19 @@ the Bipartisan Policy Center answered 403.
   source read.
 - **Political framing.** The article states what was signed, what passed and what the law
   says, nothing about who deserves credit.
+
+## Re-checked 28 October 2026 (before podcast episode 13 went out)
+
+| # | Source | Type | URL | Read |
+|---|---|---|---|---|
+| 8 | U.S. Treasury press release, "The Trump Administration is Making Homeownership More Affordable" (22 Oct 2026) ★ | official, federal | https://home.treasury.gov/news/press-releases/sb0665 | WebFetch 28 Oct |
+
+| Claim as used | Src | Words in the source |
+|---|---|---|
+| Treasury issued proposed regulations on 22 Oct 2026 to implement Sec. 1001 ★ | 8 | "issued proposed regulations to make homeownership more affordable" / "implement Section 1001 of the 21st Century ROAD to Housing Act" / "Today's NPRM" |
+| Comments within 30 days of Federal Register publication ★ | 8 | "within 30 days after publication in the Federal Register" |
+| The ban still begins 7 Jan 2027 ★ | 8 | "Beginning on January 7, 2027, a large institutional investor generally may not purchase" |
+
+The episode (recorded 14 Oct) says "the rules written under it may add more detail": still true;
+the episode description carries the update. Search results also called this "Phase 1" of a phased
+rulemaking; that wasn't in the release as read, so it's left out. ★ Re-check when the rules are final.
