@@ -40,21 +40,45 @@
      colour is the thing that says this section is different. --}}
 <div class="rule rule-iridescent">Getting in</div>
 
-<div class="card card-raised" data-enter>
-    <p class="eyebrow">Private beta</p>
-    <p class="small muted" style="margin:var(--s-3) 0 var(--s-5)">
-        {{ config('escalate.copy.not_launched') }}
+{{-- Follows the “Invite only” switch in Settings → Who gets in, so the front
+     door and the lock agree. Untick it and this page stops telling people to
+     apply and wait; tick it and the private-beta framing comes back. Without
+     this the page went on advertising a closed beta while registration was
+     open to anybody who found /register. --}}
+@if (config('escalate.beta.invite_only'))
+    <div class="card card-raised" data-enter>
+        <p class="eyebrow">Private beta</p>
+        <p class="small muted" style="margin:var(--s-3) 0 var(--s-5)">
+            {{ config('escalate.copy.not_launched') }}
+        </p>
+
+        <a class="btn btn-full" href="{{ route('apply') }}">Request private access</a>
+
+        <p class="small faint" style="margin:var(--s-4) 0 0">
+            Spots are limited. We are after good feedback, not big numbers.
+        </p>
+    </div>
+
+    <p class="small muted center" style="margin-top:var(--s-6)">
+        Already have an account? <a href="{{ route('login') }}">Sign in</a>
+        · <a href="{{ route('register') }}">I have an invite code</a>
     </p>
+@else
+    <div class="card card-raised" data-enter>
+        <p class="eyebrow">Free to start</p>
+        <p class="small muted" style="margin:var(--s-3) 0 var(--s-5)">
+            {{ config('escalate.copy.open_signup') }}
+        </p>
 
-    <a class="btn btn-full" href="{{ route('apply') }}">Request private access</a>
+        <a class="btn btn-full" href="{{ route('register') }}">Create your account</a>
 
-    <p class="small faint" style="margin:var(--s-4) 0 0">
-        Spots are limited. We are after good feedback, not big numbers.
+        <p class="small faint" style="margin:var(--s-4) 0 0">
+            You will confirm your email before anything is written for you.
+        </p>
+    </div>
+
+    <p class="small muted center" style="margin-top:var(--s-6)">
+        Already have an account? <a href="{{ route('login') }}">Sign in</a>
     </p>
-</div>
-
-<p class="small muted center" style="margin-top:var(--s-6)">
-    Already have an account? <a href="{{ route('login') }}">Sign in</a>
-    · <a href="{{ route('register') }}">{{ config('escalate.beta.invite_only') ? 'I have an invite code' : 'Create one' }}</a>
-</p>
+@endif
 @endsection

@@ -333,6 +333,11 @@ return [
 
         'not_launched' => env('COPY_NOT_LAUNCHED', 'Escalate hasn’t been publicly launched yet. We’re inviting a small group of founding testers to experience it first and help shape what it becomes.'),
 
+        // Shown in place of the line above once “Invite only” is switched off.
+        // Two strings rather than one edited back and forth, so closing signup
+        // again does not mean rewriting the page.
+        'open_signup' => env('COPY_OPEN_SIGNUP', 'Escalate is free to start. Create an account, confirm your email, and write your first story today.'),
+
         'questions_intro' => env('COPY_QUESTIONS_INTRO', 'Five quick questions. There are no right answers—we’re looking for a diverse group of thoughtful testers who will actually use Escalate and tell us what they think.'),
 
         /*

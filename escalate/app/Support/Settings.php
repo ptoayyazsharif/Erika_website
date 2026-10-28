@@ -268,7 +268,8 @@ class Settings
 
             'Words on the public pages' => [
                 'escalate.copy.intro' => ['type' => 'text', 'label' => 'What Escalate is, in one sentence', 'help' => 'The first thing anybody reads on the landing page.'],
-                'escalate.copy.not_launched' => ['type' => 'text', 'label' => 'Why they cannot just sign up', 'help' => 'Sits above the button on the landing page.'],
+                'escalate.copy.not_launched' => ['type' => 'text', 'label' => 'Why they cannot just sign up', 'help' => 'Sits above the button on the landing page while “Invite only” is on.'],
+                'escalate.copy.open_signup' => ['type' => 'text', 'label' => 'The invitation to sign up', 'help' => 'Replaces the line above once “Invite only” is switched off.'],
                 'escalate.copy.questions_intro' => ['type' => 'text', 'label' => 'Above the five questions', 'help' => 'The first thing anybody reads on the application form.'],
                 'escalate.copy.outreach' => ['type' => 'text', 'label' => 'The message you send people', 'help' => 'Not shown to anybody in the app — kept here so there is one copy of it, and shown on the Invites screen to paste from.'],
             ],
