@@ -7,6 +7,24 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-29 (evening) — VA services page deployed
+
+**Asked.** The owner sent the cPanel user and key to deploy.
+
+**Done.** Before uploading, compared the live sizes of the root PHP files, every `lib/` file and the
+landing stylesheets with `main`: everything matched except the VA files themselves, so nothing older
+was underneath them. Uploaded with `tools/deploy.sh`: `landing.php`, `landing-pages.php`,
+`lib/landing.php`, `lib/landing-va.php`, `lib/admin-landing.php`, `assets/css/landing-va.css`, the
+PDF, its cover and the two cut-out WebPs. FAILURES: 0.
+
+**Passed.** Each static file byte-compared over HTTP; `/page/va-services` answers 404 to a visitor
+(it is a draft); `/page/1039-mariners-court` still renders in full.
+
+**Open.** The owner publishes it in the admin (no admin login here) and sends one test lead. Rotate
+the cPanel key: it was pasted into chat again.
+
+---
+
 ## 2026-10-29 (later) — VA services page and VA Wish List redesigned
 
 **Asked.** The owner rejected the first page and PDF as dated ("do some research then design it… find some

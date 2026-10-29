@@ -873,12 +873,11 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   email and statement descriptor. **Erika decides a refund policy** before selling (none is in
   her files). **Before selling a subscription**, turn on Stripe's customer portal so buyers can
   cancel online; the receipt says "reply to cancel" for now. Then switch to the live key.
-- **Owner: deploy and publish the VA services page** (29 Oct, redesigned the same day): upload
-  `landing-pages.php`, `landing.php`, `lib/landing.php`, `lib/landing-va.php`, `lib/admin-landing.php`,
-  `assets/css/landing-va.css`, `assets/guides/va-wish-list.pdf`, `assets/guides/va-wish-list-cover.webp`
-  and `assets/photos/01/a7-pink-suit-cutout-520.webp` / `-900.webp`
-  (`tools/deploy.sh`, needs the cPanel keys), then admin → Landing pages → VA Services → Publish,
-  and send one test lead. Ask Erika: may the page name Dot.kode, and what is the service called?
+- **Owner: publish the VA services page** (deployed 29 Oct with the redesign; every file confirmed
+  by size, the static files byte-compared over HTTP; `/page/va-services` answers 404 to visitors
+  until it is published, and the 1039 Mariners Ct page still renders). Admin → Landing pages →
+  VA Services → Publish, then send one test lead and check Leads, your email and Lofty. Ask Erika:
+  may the page name Dot.kode, what is the service called, and is the "What does a VA cost?" answer right?
 - **Leads from now on are kept in the admin** (Leads), from every form on the site. Lofty
   only receives them while CRM / Lofty is switched on with a key; whether it is on the live
   site isn't known from here.
