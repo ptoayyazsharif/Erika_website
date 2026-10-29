@@ -64,7 +64,7 @@ brand", "Open applications") has nowhere to point.
 ### 3. No application form
 
 The 5 questions exist only in Erika's document. No model, no route, no admin
-screen. This is the first item under "IMPORTANT NOTES FOR MARC".
+screen. This is the first item in the document's important notes for the team.
 
 ### 4. Nothing sends an email except password reset and verification
 
