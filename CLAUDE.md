@@ -140,6 +140,7 @@ Google AI Studio is still outstanding.
 | `the-week-before-closing` | Buying | `/closing-week` | none — her closing-day reel `Dce4h7rJ52a` (a first-time buyer on her final walkthrough with Erika; client not named), with the CFPB's *Close the deal*, *What is a Closing Disclosure?*, closing checklist and closing-scams advice, and 12 CFR 1026.19(f) (26 Oct) |
 | `septic-systems-explained` | Buying | `/septic` | none — her "Septic Info" edit (26 Oct; `ceo_erika` `intake/edits/septic-info.md`), her explainer only, with Georgia DPH's *Manual for On-Site Sewage Management Systems* (June 2026; `dph.georgia.gov/media/92616/download`) and the EPA (27 Oct) |
 | `sight-unseen` | Buying | `/sight-unseen` | none — her general virtual-tour lines from the "Respect your time" edit (part 1; the mentee and her clients left out), with the FTC's *Rental Scams Explained* (Aug 2024) and Georgia AG's *What to Do if You've Lost Money in a Scam* (28 Oct) |
+| `security-deposits-in-georgia` | Buying | `/deposit` | none — her list of what an agent does for a tenant and "I am a certified property manager" (her `mentee-first-deal` edit; the mentee and fee left out), with DCA's *Georgia Landlord-Tenant Handbook* (revised 8-29-24) for every rule (29 Oct) |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -667,6 +668,7 @@ check there and a row here.
 | Landing pages (`tools/check-landing/run.sh`: rounds 1–2, 59 checks; round 3, the Stripe paywall, 84 checks against a fake Stripe, including the buyer's receipt, settling from Leads and the resend) | a lead-capture page is only as good as the file reaching the right person: a forged or old link must not open it, the private folder must refuse direct requests, and an incomplete question must not be lost from the editor (it was, until 20 Oct 2026) |
 | `/blog` pictures: every picture is scrolled into view and waited for (`loadLazy`) | the pages scroll inside their own container, so scrolling the window never reached the oldest card once there were 20 articles; it stayed unloaded and failed every article's run (22 Oct 2026) |
 | A source link that 404s while its host's home page 404s too is a WARN ("host refuses this container"), not a FAIL; read it once with WebFetch | every FTC host (ftc.gov, consumer.gov, bulkorder.ftc.gov) answers this container a 1,301-byte "Page Not Found", though WebFetch read the same PDF (28 Oct 2026) |
+| No `<video src>` in any page's HTML: videos carry `data-src` and get `src` only when on screen | every page is in every response, so the Speaking page's two autoplay uploads (5.5 MB) went out with every page; phones fetched them from `/`, `/blog` and articles: 1,063 requests, 2.5 GB in October (29 Oct 2026) |
 | **Live**: byte-compare every upload; confirm pages by completeness (`</html>`, >150 KB), not status | see the host's holding page below |
 
 ## Deploying, and the environment
@@ -767,6 +769,28 @@ first cover rendered in Times). Before any work:
 - **Environment:** don't set `TMPDIR` to the scratchpad when launching Chromium; it
   crashes (SIGTRAP) with the long profile path.
 
+## Speed — what made the site slow (29 Oct 2026)
+
+The owner: "as we are posting more and more the website is getting slow". Measured first:
+- **The server isn't it**: PHP adds 0.1–0.15 s a page (same as a static file otherwise); the
+  account sits far under its limits (1 core, 512 MB, 20 PHP processes: `ResourceUsage/get_usages`
+  through the cPanel API).
+- **The page isn't it either, in Chrome**: a phone-speed load reaches its largest picture in about
+  2.1 s live (Google's "good" is under 2.5). The HTML is every page at once (about 286 KB, 54 KB
+  compressed); the blog list adds about 1 KB per article.
+- **The access log was the answer.** `~/logs/erikakpage.com-ssl_log-<Mon>-<Year>.gz` downloads
+  through cPanel's `/download?skipencode=1&file=…` (Host `cpanel.erikakpage.com`). It showed the
+  Speaking page's two uploaded videos fetched 1,063 times from `/`, `/blog` and articles (iPhones,
+  Facebook's in-app browser): 2.5 GB of 5.5 GB in October. Fixed in `media_tag()` and
+  `index.php`; `check-article.mjs` now fails on any `<video src>`.
+- The 1039 Mariners Ct page served its 1.86 MB PNG as the picture and the link preview (Facebook
+  fetched it 368 times, 0.75 GB). `landing.php` now uses the WebP ladder and
+  `img_share_copy()` (a 1200-wide JPEG in `assets/rimg/og/`, made once on the host).
+- Uploaded videos have no poster frame unless one is made: `ffmpeg -ss 1 -i <video> -frames:v 1
+  -c:v libwebp -quality 72 <name>.poster.webp`, uploaded beside it in `uploads/` (`video_poster()`).
+- Much of the remaining traffic is ours (HeadlessChrome and curl from the checks), GoDaddy's
+  uptime monitor, and AI crawlers. GoDaddy also injects its own `wsimg.com` scripts (22 KB).
+
 ## Content model gotcha
 
 `posts.php` and `products.php` are only the **defaults**. Once anyone saves the Blog
@@ -780,9 +804,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **NEXA / Andrew series: 2 of 2 for October, done** (bank vs broker 10 Oct; Fannie Mae
   620 on 13 Oct). Next due in November. See *NEXA / Andrew series*.
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
-  Episodes 1–13 were handed over on 12–28 Oct (closing costs, owning vs investing, know
+  Episodes 1–14 were handed over on 12–29 Oct (closing costs, owning vs investing, know
   your house, cash is king, homestead, relocating, restaurant space, open house, bank vs
-  broker, rollback rate, stairs, Fannie Mae 620, Wall Street). Next is 14: trades, then 15: weekend.
+  broker, rollback rate, stairs, Fannie Mae 620, Wall Street, trades). Next is 15: weekend, then 16: HUD homes.
   Wall Street's description carries Treasury's 22 Oct proposed rules; ★ when they're final, update
   the article again. NEXA / Andrew episodes carry the lender disclosure in
   the description (`handover.py --note`, 22 Oct).
@@ -821,9 +845,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   `photos.php` says) or a real photo (the owner, 20 Oct)?
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
-  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–8
-  handed over (19–28 Oct; 3 needs `--numbered-label Reason`); next is 9 (bank vs broker, NEXA:
-  carry the lender disclosure), then
+  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–9
+  handed over (19–29 Oct; 3 needs `--numbered-label Reason`); next is 10 (rollback rate), 11 (stairs),
+  then 12 (Fannie Mae 620, NEXA: pass the lender disclosure with `--disclosure`, not `--note`), then
   every episode in date order. From 5 on they are podcast-script episodes: `episode.py` aligns
   with the script and makes no chapters; pass `--note "Recorded <date>."`. Erika has to verify her YouTube
   account. Ask the owner whether Erika has a
@@ -838,6 +862,13 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the
   voice did misread them, re-record the episode (it is on RSS.com, so the owner swaps the file).
   The captions show the text's figures.
+- **For Erika to review:** the security-deposits article and episode (29 Oct). Her list from the
+  mentee video is quoted ("not just open doors", "I am a certified property manager"); every
+  Georgia rule is DCA's handbook. ★ Re-check when DCA revises the handbook.
+- **Speed (29 Oct), for the owner:** Speaking's 1920×1080 upload is 3.6 MB for a 342-px-wide
+  box; a 720p copy would be about a third of that. And Facebook keeps the old 1.86 MB preview for
+  the 1039 Mariners Ct link until it re-scrapes: paste the link once into Facebook's Sharing
+  Debugger and press "Scrape again".
 - **For Erika to review:** the sight-unseen article and episode (28 Oct). Her virtual-tour lines
   from "Respect your time" are quoted ("twenty-six years" becomes 24+ in writing); the mentee and
   her clients are left out. The scam steps are the FTC's and Georgia's Attorney General's.

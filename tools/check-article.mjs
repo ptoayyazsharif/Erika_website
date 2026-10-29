@@ -204,6 +204,12 @@ for (const slug of slugs) {
   });
   report(!literal.length, 'no HTML entities showing as text (page, title, share tags)', literal.join(' '));
 
+  // Every page is in every response, so a <video src> anywhere is downloaded on every visit:
+  // the Speaking page's 5.5 MB of autoplay video went out with each blog page until 29 Oct
+  // 2026. Videos carry data-src and get their src only when on screen (media_tag()).
+  const eagerVideos = [...html.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<video\b[^>]*\ssrc="([^"]+)"/g)].map(m => m[1]);
+  report(!eagerVideos.length, 'no video loads before it is on screen (data-src, not src)', eagerVideos.join(', '));
+
   const meta = await page.evaluate(() => ({
     og: document.querySelector('meta[property="og:image"]')?.content || '',
     tw: document.querySelector('meta[name="twitter:image"]')?.content || '',

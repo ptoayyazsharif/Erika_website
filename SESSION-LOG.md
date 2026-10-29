@@ -7,6 +7,55 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-29 — The site's speed; "Want your deposit back?"; podcast episode 14; YouTube episode 9
+
+**Asked.** "Post an article for today and give me the next episode… check why the website is very
+slow… as we are posting more and more the website is getting slow… fix this first."
+**Speed: measured, then fixed.**
+- Server: PHP adds 0.1–0.15 s over a static file; the account is far under its CPU, memory and
+  process limits (cPanel `ResourceUsage`). Not the cause.
+- Chrome at phone speed (4× CPU, slow network): largest picture in about 2.1 s live. The HTML is
+  all 29 pages at once (286 KB, 54 KB compressed), growing about 1 KB per article. Not the cause.
+- **The access log was.** The October log (downloaded through cPanel) showed 5.5 GB of bandwidth,
+  2.5 GB of it the Speaking page's two uploaded autoplay videos (3.6 MB + 1.9 MB), fetched 1,063
+  times with `/`, `/blog` and articles as the referrer: phones (Safari, Facebook's in-app browser)
+  downloading them on every page, because every page carries every other page. Fixed:
+  `media_tag()` writes `data-src` and `preload="none"`; `index.php` gives a video its `src` only
+  while it's on screen and pauses it when it leaves. Posters made for both uploads (ffmpeg) and
+  put beside them.
+- **The 1039 Mariners Ct page** showed its 1.86 MB PNG as the picture and the link preview:
+  Facebook fetched it 368 times (0.75 GB). Now the WebP ladder (56 KB at 1200 wide) and a
+  1200-wide JPEG preview (129 KB), made once by the new `img_share_copy()`.
+- Verified live in a browser: no video requests on `/`, `/blog` or articles; on `/speaking` each
+  loads when scrolled to and pauses when you leave. `check-article.mjs` gained a check that fails
+  on any `<video src>` (shown failing on the old `cms.php`, passing on the new).
+- Landing QA (all rounds) and `check-article --all`: pass locally after the change.
+**The article** `security-deposits-in-georgia` (Buying, `/deposit`): "Want your deposit back? It
+starts on move-in day."
+- Her material is running out (her notes say so; her commercial edits repeat the restaurant
+  article; the Smyrna tour repeats the stairs article). Her `mentee-first-deal` edit lists what an
+  agent does for a tenant ("negotiate the lease… the move-in move-out inspection… not just open
+  doors") and "I am a certified property manager". The mentee and the fee are left out.
+- Every rule is from DCA's *Georgia Landlord-Tenant Handbook* (revised 8-29-24): two months' rent
+  cap; escrow and the move-in list for landlords with more than ten units or an agent; the
+  move-out list in three business days, the tenant's five; deductions vs wear and tear; 30 days;
+  last known address and 90 days; three times plus fees.
+- Photos B47–B49. The checker failed the empty-room photo for being both the cover tile and a body
+  picture; it's the cover tile only now. The cover's sub-line is her own words ("…not just open
+  doors."), shortened so the square art doesn't leave "doors." alone.
+- **Episode:** 1,164 words, 383 s, -19.6 LUFS; "wave" corrected to "waive", "great example" and
+  "management company" corrected before recording. The transcript matches the script.
+**Hand-overs.**
+- **Podcast episode 14** (trades), "Recorded October 15, 2026" and the BLS May 2025 date in the
+  note. Its dated lines still hold (May 2026 wages come out next spring).
+- **YouTube episode 9** (bank vs broker, NEXA). `--note` puts its text on the video frame, and the
+  lender disclosure overflowed it; `episode.py` has a new `--disclosure` that goes in the
+  description only. Listen-back clean.
+**Open.** The owner: re-scrape the 1039 Mariners Ct link in Facebook's Sharing Debugger; consider a
+720p copy of the Speaking video. Erika: the deposits article. NEXA / Andrew: November's two due.
+
+---
+
 ## 2026-10-28 — "Never set foot in it?"; podcast episode 13 (with a Treasury update); YouTube episode 8
 
 **Asked.** "Now do today's blog and next episode please."
