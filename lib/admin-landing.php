@@ -207,7 +207,7 @@ function landing_admin_early(string $cur): void {
         'thanks_title' => $_POST['lp_thanks_title'] ?? '', 'thanks_text' => $_POST['lp_thanks_text'] ?? '',
         'consent' => $_POST['lp_consent'] ?? '',
         'email_lead' => !empty($_POST['lp_email_lead']), 'crm_on' => !empty($_POST['lp_crm_on']),
-        'crm_source' => $_POST['lp_crm_source'] ?? '', 'crm_tags' => $_POST['lp_crm_tags'] ?? '',
+        'brand' => $_POST['lp_brand'] ?? '', 'crm_source' => $_POST['lp_crm_source'] ?? '', 'crm_tags' => $_POST['lp_crm_tags'] ?? '',
         'crm_type' => (int) ($_POST['lp_crm_type'] ?? 0), 'indexable' => !empty($_POST['lp_indexable']),
         'price_cents' => $priceCents, 'billing' => $_POST['lp_billing'] ?? 'once',
         'published' => $act === 'publish', 'updated' => date('Y-m-d'),
@@ -530,6 +530,7 @@ function lpa_view_editor(string $slug): void {
           <div style="height:1px;background:rgba(69,50,48,.1);margin:16px 0"></div>
           <label class="tog"><input type="checkbox" name="lp_crm_on" value="1" <?= $p['crm_on'] ? 'checked' : '' ?>> <span>Send these leads to Lofty<?= lofty_enabled() ? '' : ' <small style="color:#A33A2F">(Lofty is switched off under CRM / Lofty, so nothing is sent yet)</small>' ?></span></label>
           <div class="two">
+            <div class="fld"><label>Line under her name</label><input type="text" name="lp_brand" value="<?= esc($p['brand']) ?>" placeholder="Axen Realty"></div>
             <div class="fld"><label>Lofty source</label><input type="text" name="lp_crm_source" value="<?= esc($p['crm_source']) ?>"></div>
             <div class="fld"><label>Lofty lead type</label><select name="lp_crm_type"><?php foreach (LANDING_LEAD_TYPES as $id => $lbl): ?><option value="<?= $id ?>" <?= $p['crm_type'] === $id ? 'selected' : '' ?>><?= esc($lbl) ?></option><?php endforeach; ?></select></div>
           </div>
@@ -552,7 +553,7 @@ function lpa_view_editor(string $slug): void {
           <header class="lp-top"><div class="lp-wrap"><span class="lp-brand">Erika<span>K</span>Page</span><span class="lp-phone"><?= esc(cms('global.phone')) ?></span></div></header>
           <figure class="lp-hero" id="pv-hero" <?= $p['image'] === '' ? 'hidden' : '' ?>><img id="pv-img" src="<?= esc($p['image'] !== '' ? asset_url($p['image']) : '') ?>" alt=""></figure>
           <div class="pv-pad">
-            <div class="lp-eyebrow">Erika K. Page · Axen Realty</div>
+            <div class="lp-eyebrow">Erika K. Page · <?= esc($p['brand']) ?></div>
             <h1 class="lp-title" id="pv-title"></h1>
             <div class="lp-rule"></div>
             <div class="lp-desc" id="pv-desc"></div>

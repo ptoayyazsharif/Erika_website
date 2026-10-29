@@ -258,7 +258,7 @@ function lp_intro(array $page, bool $isDraft): void { ?>
               $hv = img_variants($page['image']); ?>
         <figure class="lp-hero"><img src="<?= esc(asset_url($page['image'])) ?>"<?= $hv['srcset'] !== '' ? ' srcset="' . $hv['srcset'] . '" sizes="(max-width: 900px) 100vw, 620px"' : '' ?> alt="<?= esc($page['image_alt'] ?: $page['title']) ?>" width="<?= $hv['w'] ?: 1600 ?>" height="<?= $hv['h'] ?: 900 ?>" fetchpriority="high"></figure>
       <?php endif; ?>
-      <div class="lp-eyebrow">Erika K. Page · Axen Realty</div>
+      <div class="lp-eyebrow">Erika K. Page · <?= esc($page['brand']) ?></div>
       <h1 class="lp-title"><?= esc($page['title']) ?></h1>
       <div class="lp-rule"></div>
       <div class="lp-desc"><?= $page['desc'] ?></div>

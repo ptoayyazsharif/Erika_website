@@ -127,6 +127,9 @@ function landing_clean(array $p): ?array {
         'image'        => gallery_safe_src((string) ($p['image'] ?? '')),
         'image_alt'    => $t($p['image_alt'] ?? ''),
         'bottom_title' => $t($p['bottom_title'] ?? ''),
+        // The line under her name (eyebrow, emails, receipts). Axen Realty for real estate pages;
+        // something else for an offer that isn't brokerage business (VA services, 29 Oct 2026).
+        'brand'        => $t($p['brand'] ?? '') ?: 'Axen Realty',
         'cta'          => $t($p['cta'] ?? '') ?: 'Send it to me',
         'fields'       => $fields,
         'deliver'      => $deliver,
@@ -530,7 +533,7 @@ function landing_email_visitor(array $p, string $email, string $name, string $li
     [$first] = lead_split_name($name);
     $hello = $first !== '' ? 'Hi ' . $first . ',' : 'Hello,';
     $what = $p['deliver'] === 'url' ? 'Here is your link' : 'Here is your download';
-    $text = "$hello\n\n$what for \"{$p['title']}\":\n$link\n\nThe link works for " . LANDING_LINK_DAYS . " days.\n\nErika K. Page\nAxen Realty";
+    $text = "$hello\n\n$what for \"{$p['title']}\":\n$link\n\nThe link works for " . LANDING_LINK_DAYS . " days.\n\nErika K. Page\n" . $p['brand'];
     $html = '<div style="font-family:system-ui,Arial,sans-serif;color:#453230;max-width:560px;line-height:1.6">'
         . '<p style="font-family:Georgia,serif;font-size:22px;color:#453230;margin:0 0 6px">Erika<span style="color:#B05E51">K</span>Page</p>'
         . '<p>' . esc($hello) . '</p><p>' . esc($what) . ' for <b>' . esc($p['title']) . '</b>.</p>'
@@ -538,7 +541,7 @@ function landing_email_visitor(array $p, string $email, string $name, string $li
         . esc($p['deliver'] === 'url' ? 'Open it' : 'Download') . '</a></p>'
         . '<p style="font-size:13px;color:#8a746f">The link works for ' . LANDING_LINK_DAYS . ' days. If the button doesn\'t work, copy this address into your browser:<br>'
         . '<span style="word-break:break-all">' . esc($link) . '</span></p>'
-        . '<p style="margin-top:24px">Erika K. Page<br><span style="color:#8a746f">Axen Realty</span></p></div>';
+        . '<p style="margin-top:24px">Erika K. Page<br><span style="color:#8a746f">' . esc($p['brand']) . '</span></p></div>';
     // Replies go to the owner, not to the website's sending address.
     [$ok, $err] = send_mail('Your ' . ($p['deliver'] === 'url' ? 'link' : 'download') . ': ' . $p['title'], $html, $text, landing_reply_to(), 'Erika K. Page', $email, 'Erika K. Page');
     return [$ok, $ok ? 'link emailed to ' . $email : $err];
@@ -605,7 +608,7 @@ function landing_email_receipt(array $p, array $lead, string $link): array {
     $t[] = 'Questions about your order? Just reply to this email.';
     $t[] = '';
     $t[] = 'Erika K. Page';
-    $t[] = 'Axen Realty';
+    $t[] = $p['brand'];
     $t[] = 'https://erikakpage.com';
 
     $c = 'font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#453230';
@@ -630,7 +633,7 @@ function landing_email_receipt(array $p, array $lead, string $link): array {
         . '</div>'
         . ($every ? '<p style="font-size:13px;margin:18px 0 0">Your subscription renews automatically every ' . $every . ' at ' . esc($amount) . ' until you cancel. To cancel, reply to this email before your next renewal date.</p>' : '')
         . '<p style="margin:22px 0 0">Questions about your order? Just reply to this email.</p>'
-        . '<p style="margin-top:22px">Erika K. Page<br><span style="color:#8a746f">Axen Realty · <a href="https://erikakpage.com" style="color:#8a746f">erikakpage.com</a></span></p></div>';
+        . '<p style="margin-top:22px">Erika K. Page<br><span style="color:#8a746f">' . esc($p['brand']) . ' · <a href="https://erikakpage.com" style="color:#8a746f">erikakpage.com</a></span></p></div>';
 
     $subject = ($test ? '[TEST] ' : '') . 'Your receipt and ' . ($isUrl ? 'link' : 'download') . ': ' . $p['title'];
     [$ok, $err] = send_mail($subject, $html, implode("\n", $t), $reply, 'Erika K. Page', $email, 'Erika K. Page');

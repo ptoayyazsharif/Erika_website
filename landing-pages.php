@@ -90,4 +90,51 @@ return [
         'published'    => false,
         'updated'      => '2026-10-22',
     ],
+
+    // VA services (Erika through her VA, 29 Oct 2026: "she wants to promote VA services as well …
+    // a landing/splash page on her website for lead capture and promotion"). The quotes are hers
+    // ("You need a VA", 23–24 Oct; her meeting of 27 Oct). The services come from the team's VA
+    // services flyer, without its brand (Dot.kode) until Erika confirms how it relates to her, and
+    // never NSOL BPO. No prices. The download is the VA Wish List (tools/guides/va-wish-list.html),
+    // a public PDF, so the page can go live the moment it is published.
+    [
+        'slug'         => 'va-services',
+        'title'        => 'Need a VA? Get the VA Wish List',
+        'desc'         => '<p><strong>&ldquo;My amazing virtual assistant is taking my eventually list, my checklist, my to-do list, and turning it into a to-done list.&rdquo;</strong></p>'
+                        . '<p>Busy entrepreneur, real estate agent, business owner, medical office, or just busy? Tell me what&rsquo;s on your plate and get my free VA Wish List: everything a virtual assistant can take off it, from your calendar and leads to your listings, social media, video editing and phones.</p>'
+                        . '<p>AI is amazing, but AI needs an AI operator. One 10-minute conversation with my VA and you can have 50 things done. Don&rsquo;t wait: it is cost efficient, and it is amazing to just know that things are being done.</p>'
+                        . '<p><strong>Prefer to talk? Call (678) 404-1562.</strong></p>',
+        'image'        => '',
+        'image_alt'    => 'Erika K. Page: VA services',
+        'brand'        => 'VA Services',
+        'bottom_title' => 'VA Services',
+        'cta'          => 'Send Me the VA Wish List',
+        'fields'       => [
+            ['id' => 'mobile', 'type' => 'phone', 'label' => 'Mobile Number', 'required' => true],
+            ['id' => 'who', 'type' => 'select', 'label' => 'What best describes you?', 'required' => true,
+             'options' => ['Real estate agent or team', 'Small business owner', 'Medical office', 'Busy professional or parent', 'Something else']],
+            ['id' => 'tasks', 'type' => 'checkbox', 'label' => 'What would you hand off first?', 'required' => false,
+             'options' => ['Calendar and inbox', 'Lead follow-up and client communication', 'Listing and transaction coordination', 'MLS, database and CRM', 'Social media and video editing', 'Marketing support', 'Research and data entry', 'Admin tasks', 'Answering calls and setting appointments', 'Cold calling', 'Medical billing', 'Website, profiles and automations', 'Household and personal errands']],
+            ['id' => 'hours', 'type' => 'select', 'label' => 'How much help do you think you need?', 'required' => true,
+             'options' => ['A few hours a week', '10–20 hours a week', '20–40 hours a week', 'Full-time', 'Not sure yet']],
+            ['id' => 'start', 'type' => 'select', 'label' => 'When would you like to start?', 'required' => true,
+             'options' => ['Right away', 'Within 30 days', 'Just exploring']],
+            ['id' => 'notes', 'type' => 'textarea', 'label' => 'Anything else I should know?', 'required' => false],
+        ],
+        'deliver'      => 'url',
+        'url'          => 'https://erikakpage.com/assets/guides/va-wish-list.pdf',
+        'file'         => '',
+        'file_name'    => 'The VA Wish List',
+        'thanks_title' => 'Your VA Wish List is ready.',
+        'thanks_text'  => 'Open it below, tick what you would hand off, and we will reach out to talk it through. Can\'t wait? Call (678) 404-1562.',
+        'consent'      => 'By sending this form you agree that Erika K. Page and her team may contact you about virtual assistant and call center services by phone, text or email.',
+        'email_lead'   => true,
+        'crm_on'       => true,
+        'crm_source'   => 'Website – VA Services',
+        'crm_tags'     => 'Website, Landing Page, VA Services',
+        'crm_type'     => 0,
+        'indexable'    => true,
+        'published'    => false,
+        'updated'      => '2026-10-29',
+    ],
 ];
