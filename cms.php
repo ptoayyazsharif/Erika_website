@@ -411,8 +411,13 @@ function media_tag(string $v, string $alt = '', bool $eager = false, string $slo
         $dimAttr = $m['w'] > 0 ? ' width="' . $m['w'] . '" height="' . $m['h'] . '"' : '';
         $poster  = video_poster($v);
         $posterAttr = $poster !== '' ? ' poster="' . esc(asset_url($poster)) . '"' : '';
-        return '<video src="' . esc(asset_url($v)) . '"' . $dimAttr . $posterAttr
-            . ' autoplay muted loop playsinline preload="metadata"' . $styleAttr . '></video>';
+        // The whole site is one document, so every page's videos are in every
+        // response. With src + autoplay, phones fetched them all on any visit: the
+        // two Speaking-page videos (5.5 MB) went out with every blog page until
+        // 29 Oct 2026. The address waits in data-src; index.php gives it to the
+        // video only while the video is on screen, and pauses it when it leaves.
+        return '<video data-src="' . esc(asset_url($v)) . '"' . $dimAttr . $posterAttr
+            . ' muted loop playsinline preload="none"' . $styleAttr . '></video>';
     }
 
     [$sizes, $cap] = SLOT_SIZES[$slot] ?? SLOT_SIZES['half'];

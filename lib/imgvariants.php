@@ -68,3 +68,30 @@ function img_load(string $path, string $mime) {
         default      => false,
     };
 }
+
+/**
+ * A JPEG copy for link previews (og:image), at most 1200 wide, written once to
+ * assets/rimg/og/<path>.jpg. Facebook and others don't reliably take WebP, and
+ * an uploaded PNG photo can be megabytes. Returns the copy's path relative to
+ * the site root, or '' when it can't be made (the caller keeps the original).
+ */
+function img_share_copy(string $root, string $rel): string {
+    $rel = ltrim($rel, '/');
+    $out = IMG_OUT_ROOT . '/og/' . $rel . '.jpg';
+    $src = $root . '/' . $rel;
+    if (is_file("$root/$out") && @filemtime("$root/$out") >= @filemtime($src)) return $out;
+    if (!function_exists('imagejpeg') || !($info = @getimagesize($src))) return '';
+    [$w0, $h0] = $info;
+    $im = img_load($src, $info['mime']);
+    if (!$im) return '';
+    $w = min(1200, $w0);
+    $h = max(1, (int) round($h0 * ($w / $w0)));
+    $dst = imagecreatetruecolor($w, $h);
+    imagefill($dst, 0, 0, imagecolorallocate($dst, 255, 255, 255));   // JPEG has no transparency
+    imagecopyresampled($dst, $im, 0, 0, 0, 0, $w, $h, $w0, $h0);
+    imagedestroy($im);
+    if (!is_dir(dirname("$root/$out"))) @mkdir(dirname("$root/$out"), 0775, true);
+    $ok = @imagejpeg($dst, "$root/$out", 82);
+    imagedestroy($dst);
+    return $ok ? $out : '';
+}

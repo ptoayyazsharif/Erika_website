@@ -25,6 +25,115 @@
 return [
 
     [
+        // Researched around her video "mentee-first-deal" (Video_Edting_Erika, edited 9-10 Oct
+        // 2026; ceo_erika intake/edits/mentee-first-deal.md and identity/certified-property-manager):
+        // her list of what an agent does for a tenant. The mentee, her client and her fee are not
+        // described. Every Georgia rule is from DCA's Georgia Landlord-Tenant Handbook (revised
+        // 8-29-24). Sources: tools/research/security-deposits-in-georgia.md.
+        'slug'           => 'security-deposits-in-georgia',
+        'title'          => 'Want your deposit back? It starts on move-in day.',
+        'seo_title'      => 'Security Deposits in Georgia, Explained: Move-In Lists, Move-Out Inspections and the 30-Day Rule',
+        'seo_desc'       => 'Georgia caps a security deposit at two months’ rent and gives landlords 30 days to return it. What to do at move-in and move-out to get yours back.',
+        'excerpt'        => 'Helping a tenant isn&rsquo;t just opening doors. The move-in inspection, the move-out list and Georgia&rsquo;s 30-day rule decide whether your security deposit comes back, so here&rsquo;s how they work.',
+        'date'           => '2026-10-29',
+        'updated'        => '2026-10-29',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['security deposit', 'renting', 'landlord', 'move-in inspection', 'tenant rights', 'Georgia'],
+        'cover'          => 'assets/photos/17/security-deposits-in-georgia-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Want your deposit back? It starts on move-in day.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@peter-vang-2157328093" rel="nofollow noopener" target="_blank">Peter Vang</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/security-deposits-in-georgia.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'deposit',
+        'audio_secs'     => 383,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'How long does a Georgia landlord have to return a security deposit?',
+                'a' => 'Thirty days after the lease ends or you move out, whichever is later. If the landlord keeps any of it for damage, they must send you, within those 30 days, a list of the damage, its estimated cost and any refund of the difference.',
+            ],
+            [
+                'q' => 'How much can a landlord charge for a security deposit in Georgia?',
+                'a' => 'No more than two months&rsquo; rent, according to the Georgia Department of Community Affairs&rsquo; Landlord-Tenant Handbook.',
+            ],
+            [
+                'q' => 'Can a landlord keep my deposit for normal wear and tear?',
+                'a' => 'No. Normal wear and tear from ordinary use can&rsquo;t be deducted. Damage, unpaid rent or late charges, unpaid pet fees, unpaid utilities that were yours under the lease, and losses from ending the lease early can be.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>When a newer agent I mentor got her first tenant deal, I reminded her what the job really is. &ldquo;She needed to negotiate the lease. She needed to do the move-in move-out inspection.&rdquo; She needed to show the properties, make sure the client understood everything, and &ldquo;make sure that&hellip; whoever was leasing the home actually owned the home.&rdquo; Because &ldquo;there&rsquo;s things that we have to do when we&rsquo;re helping tenants, not just open doors.&rdquo;</p>
+
+<p>In fact, I am a certified property manager. And one item on that list decides whether a renter gets their security deposit back: the inspection, at move-in and at move-out.</p>
+
+<p>So let me explain how security deposits work in Georgia, and what to do on day one so you&rsquo;re not arguing about it on the last day.</p>
+
+<h2>How much, and where it&rsquo;s kept</h2>
+
+<p>Everything here comes from the Georgia Department of Community Affairs&rsquo; <a href="https://dca.georgia.gov/document/manuals/georgia-landlord-tenant-handbook/download" target="_blank" rel="noopener">Landlord-Tenant Handbook</a>, revised August 29, 2024. <a href="https://dca.georgia.gov/document/manuals/georgia-landlord-tenant-handbook/download" target="_blank" rel="noopener">[1]</a></p>
+
+<ul>
+<li><strong>The limit.</strong> A landlord can&rsquo;t require a security deposit of more than two months&rsquo; rent.</li>
+<li><strong>Where it&rsquo;s held.</strong> Landlords who own more than ten rental units, or who use a management agent, must keep deposits in a bank escrow account used only for security deposits (or post a bond with the superior court clerk), and tell you in writing where it is.</li>
+<li><strong>What isn&rsquo;t a security deposit.</strong> Application fees, and deposits to hold an apartment until the lease is signed, aren&rsquo;t security deposits and usually aren&rsquo;t refundable. A pet deposit may be refundable or a separate non-refundable fee, depending on the lease.</li>
+<li><strong>If the home is sold.</strong> The old owner must transfer your deposit to the new owner or refund it to you.</li>
+</ul>
+
+<p>And a lease can&rsquo;t take any of this away. The handbook lists a lease that says the landlord doesn&rsquo;t have to follow Georgia security deposit law as a violation of the law.</p>
+
+[[img:assets/photos/17/b47-keys-and-moving-boxes.jpg|Keys handed over beside moving boxes|Photo by <a href="https://www.pexels.com/@gustavo-fring" rel="nofollow noopener" target="_blank">Gustavo Fring</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Now here&rsquo;s the important part: the move-in list</h2>
+
+<p>If your landlord owns more than ten units or uses a management agent, they must give you a complete list of the damage that&rsquo;s already there <em>before</em> they accept your deposit. You get to inspect the unit to check that the list is accurate. You both sign it, and you keep a copy. That list is what stops you being charged, when you leave, for damage that was there when you arrived. <a href="https://dca.georgia.gov/document/manuals/georgia-landlord-tenant-handbook/download" target="_blank" rel="noopener">[1]</a></p>
+
+<p>Two more things from the handbook. If you want something repaired, get the landlord to agree to it in writing. And a landlord isn&rsquo;t responsible for repairing problems that were obvious during the move-in walk-through, unless they make the unit unsafe or uninhabitable. So inspect it thoroughly, and ask for repairs at move-in.</p>
+
+<p>You should also receive the name and address of the property owner or their authorized agent. (And if you&rsquo;re renting from far away, read <a href="/blog/sight-unseen">what to check before you send money for a place you haven&rsquo;t seen</a>.)</p>
+
+[[img:assets/photos/17/b48-walk-through-with-a-clipboard.jpg|Two people reading a clipboard in an empty kitchen with moving boxes|Photo by <a href="https://www.pexels.com/@ivan-s" rel="nofollow noopener" target="_blank">Ivan S</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Moving out: the other list</h2>
+
+<p>For those same landlords, within three business days after the lease ends (or a reasonable time after they find you&rsquo;ve left), the landlord must inspect the unit and list all the damage with an estimated dollar value, sign it and give it to you. You may inspect the unit within five business days after the lease ends. Then you sign the list, or write down the items you disagree with. <a href="https://dca.georgia.gov/document/manuals/georgia-landlord-tenant-handbook/download" target="_blank" rel="noopener">[1]</a></p>
+
+<p>Read it carefully. If you agree with the damage on the move-out list, you can&rsquo;t contest the landlord keeping the deposit to cover it. It&rsquo;s best to be there for the inspection.</p>
+
+<p><strong>What can come out of the deposit:</strong> damage by you, your household, pets or guests, whether on purpose, by accident or through carelessness; unpaid rent or late charges; unpaid pet fees; unpaid utilities that were yours under the lease; and damage to the landlord from ending the lease early.</p>
+
+<p><strong>What can&rsquo;t:</strong> normal wear and tear from ordinary use. And a repair is valued on the condition when you moved in. The handbook&rsquo;s example: ruin a ten-year-old carpet, and you&rsquo;re charged for a ten-year-old carpet, not a new one.</p>
+
+<h2>The 30 days</h2>
+
+<p>Every landlord in Georgia, however many units they own, must return the deposit within 30 days after the lease ends or you leave, whichever is later. If they keep any of it for damage, they must send you, within those 30 days, the damage, its estimated cost and a refund of the difference. <a href="https://dca.georgia.gov/document/manuals/georgia-landlord-tenant-handbook/download" target="_blank" rel="noopener">[1]</a></p>
+
+<p>It&rsquo;s mailed to your last known address, even if that&rsquo;s the place you just left. If it comes back undeliverable and the landlord can&rsquo;t find you after a reasonable effort, the deposit belongs to the landlord 90 days after it was mailed. So make sure your landlord has your new address.</p>
+
+<p>If a landlord won&rsquo;t refund it, you can sue in the county where the landlord (or their designated agent) lives, for the deposit, interest, attorney fees and filing costs. You can only recover amounts for damage you disagreed with on the move-out list. And a landlord who owns more than ten units or uses a management agent can owe three times the amount withheld, plus attorney fees, unless it was a mistake they tried to avoid.</p>
+
+<h2>If you&rsquo;re the landlord</h2>
+
+<p>The same rules are your checklist: a deposit of no more than two months&rsquo; rent; the escrow account and written notice if you own more than ten units or use a management agent; a signed move-in list before you take the deposit; the move-out list within three business days; and the deposit, or the itemized damage, back within 30 days.</p>
+
+<p>Renting in Metro Atlanta, or leasing out a home? <a href="/contact">Reach out to me</a>.</p>
+
+<p>So that&rsquo;s security deposits in Georgia, explained.</p>
+
+<p><em>This article explains general Georgia landlord-tenant rules from the Department of Community Affairs&rsquo; handbook, which says it may not be up to date on the law. It isn&rsquo;t legal advice; check the current law for your situation. Erika K. Page is a real estate agent with Axen Realty.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>Georgia Department of Community Affairs, <a href="https://dca.georgia.gov/document/manuals/georgia-landlord-tenant-handbook/download" target="_blank" rel="noopener">Georgia Landlord-Tenant Handbook</a> (revised August 29, 2024).</li>
+<li>Erika K. Page, video on a mentee&rsquo;s first tenant deal (October 2026), her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her video "Respect your time" (part 1; Video_Edting_Erika, edited
         // 21 Sep 2026; ceo_erika intake/edits/respect-your-time.md and domain/virtual-tours): her
         // lines on virtual tours. Her mentee and the mentee's clients are not described. She says

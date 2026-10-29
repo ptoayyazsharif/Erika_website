@@ -2663,6 +2663,25 @@ window.addEventListener('popstate',function(e){
   }
   render(start);
 })();
+/* Videos load only when seen (see media_tag() in cms.php). A video on a hidden
+   page is display:none and never intersects, so it is never downloaded; one on
+   the showing page starts when it scrolls near the screen and pauses when it
+   leaves. */
+(function(){
+  var vids=document.querySelectorAll('video[data-src]');
+  function wake(v){
+    if(!v.getAttribute('src')){v.src=v.dataset.src;}
+    var p=v.play();if(p&&p.catch)p.catch(function(){});
+  }
+  if(!('IntersectionObserver' in window)){vids.forEach(wake);return;}
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting)wake(e.target);
+      else if(e.target.getAttribute('src'))e.target.pause();
+    });
+  },{rootMargin:'200px 0px'});
+  vids.forEach(function(v){io.observe(v)});
+})();
 
 /* ---------- mobile nav ---------- */
 burger.addEventListener('click',function(){

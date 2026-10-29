@@ -34,3 +34,8 @@ stella-demo/api/config.local.php
 
 # UI tour screenshots — regenerate, do not version (4.6MB of PNGs)
 /docs/screens/
+
+# Picture copies the server makes from admin uploads (WebP ladder, link-preview JPEGs); like
+# uploads/ itself, they live on the host only
+assets/rimg/*/uploads/
+assets/rimg/og/

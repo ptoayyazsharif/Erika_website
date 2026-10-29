@@ -266,6 +266,7 @@ def main():
     ap.add_argument("slug")
     ap.add_argument("--episode", type=int, help="its RSS.com episode number (episodes go out in article-date order)")
     ap.add_argument("--note", default="", help="a line above the link, e.g. the recording date")
+    ap.add_argument("--disclosure", default="", help="description only, not on the frame: e.g. the NEXA / Andrew lender disclosure (29 Oct 2026: it overflowed the frame as a --note)")
     ap.add_argument("--numbered-label", default="", help="the label narrate.py was given (a read-aloud episode whose headings are \"1. …\")")
     ap.add_argument("--frame-only", action="store_true")
     a = ap.parse_args()
@@ -339,6 +340,8 @@ def write_upload(p, a, ch, episode, path):
                 if episode else "This episode is narrated with an AI voice trained on Erika's own. The words are hers.")
     if a.note:
         desc.append(a.note)
+    if a.disclosure:
+        desc += ["", a.disclosure]
     desc += ["", "This explains how things generally work. It isn't legal, tax or financial advice.",
              "Erika K. Page, Axen Realty. Equal Housing Opportunity.", "", "#ErikaExplains #MetroAtlanta #GeorgiaRealEstate"]
     yt_title = (title.rstrip(".") + " | Erika Explains" + (f" Ep. {a.episode}" if a.episode else ""))[:100]

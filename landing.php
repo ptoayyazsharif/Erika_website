@@ -253,7 +253,10 @@ function lp_question(array $f, $val, ?string $err): string {
 function lp_intro(array $page, bool $isDraft): void { ?>
     <section class="lp-intro">
       <?php if ($page['image'] !== ''): ?>
-        <figure class="lp-hero"><img src="<?= esc(asset_url($page['image'])) ?>" alt="<?= esc($page['image_alt'] ?: $page['title']) ?>" width="1600" height="900" fetchpriority="high"></figure>
+        <?php // The WebP ladder, not the upload itself: 1039 Mariners Ct's picture is a
+              // 1.86 MB PNG, and its 1200-wide copy is 56 KB (29 Oct 2026).
+              $hv = img_variants($page['image']); ?>
+        <figure class="lp-hero"><img src="<?= esc(asset_url($page['image'])) ?>"<?= $hv['srcset'] !== '' ? ' srcset="' . $hv['srcset'] . '" sizes="(max-width: 900px) 100vw, 620px"' : '' ?> alt="<?= esc($page['image_alt'] ?: $page['title']) ?>" width="<?= $hv['w'] ?: 1600 ?>" height="<?= $hv['h'] ?: 900 ?>" fetchpriority="high"></figure>
       <?php endif; ?>
       <div class="lp-eyebrow">Erika K. Page · Axen Realty</div>
       <h1 class="lp-title"><?= esc($page['title']) ?></h1>
@@ -268,7 +271,13 @@ function lp_document(?array $page, string $title, callable $body): void {
     $index = $page && $page['indexable'] && !$isDraft;
     $desc = $page ? mb_substr(trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '</p>'], [' ', ' '], $page['desc'])))), 0, 155) : '';
     $url = $page ? abs_url(landing_path($page['slug'])) : '';
-    $img = $page && $page['image'] !== '' ? abs_url(asset_url($page['image'])) : '';
+    // Facebook fetched the 1.86 MB original 368 times in October for link previews;
+    // a 1200-wide JPEG copy, built once, does the same job.
+    $img = '';
+    if ($page && $page['image'] !== '') {
+        require_once __DIR__ . '/lib/imgvariants.php';
+        $img = abs_url(asset_url(img_share_copy(__DIR__, $page['image']) ?: $page['image']));
+    }
     $phone = cms('global.phone');
     $css = '/assets/css/landing.css?v=' . @filemtime(__DIR__ . '/assets/css/landing.css');
     ?><!DOCTYPE html>

@@ -227,5 +227,15 @@
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/b46-reading-a-listing-on-a-laptop.jpg",
     "refPos": "50% 40%"
+  },
+  {
+    "slug": "security-deposits-in-georgia",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "Want your deposit back? It starts on move-in day.",
+    "sub": "…not just open doors.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b49-empty-rental-living-room.jpg",
+    "refPos": "50% 50%"
   }
 ]
