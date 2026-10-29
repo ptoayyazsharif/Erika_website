@@ -53,6 +53,10 @@ starts on move-in day."
   description only. Listen-back clean.
 **Open.** The owner: re-scrape the 1039 Mariners Ct link in Facebook's Sharing Debugger; consider a
 720p copy of the Speaking video. Erika: the deposits article. NEXA / Andrew: November's two due.
+**Missed, and fixed.** The turn ended on "the live check is still running" without the hand-over;
+the owner asked for it ("always provide everything… never ever miss it"). Sent in full, and the
+rule is now in CLAUDE.md *Hand-overs*: the last reply of a publishing turn is the complete hand-over,
+even while a check is pending.
 
 ---
 

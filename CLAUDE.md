@@ -44,6 +44,17 @@ hand-over is complete only when **the reply itself** carries every field, laid o
 A field that sits at the end of a long paragraph, or only inside a zip or `upload.md`,
 counts as missing.
 
+**Said again, 29 Oct 2026** ("where are today's blog url and title and new episode, all other
+info… always provide everything, never ever miss it"). That day's turn ended on "the live check
+is still running" with no hand-over in the reply. So:
+- **The last reply of a turn that published anything is the hand-over.** It goes out complete
+  even while a check is still running (say which check is pending, then send its result in a
+  follow-up). Never end a turn on a status line alone.
+- Every day's reply carries, in this order: **the article** (title, link, short link, what it
+  covers, what's for Erika to review), **the podcast episode** (every field below), **the
+  YouTube video** (every field below), anything else that was fixed, the NEXA / Andrew count.
+- Before sending, check the reply against this list, field by field.
+
 - **Podcast episode (RSS.com):** run `python3 tools/podcast/handover.py <slug> --episode <n>
   [--note "Recorded …"]` and copy its whole block into the reply:
   - the MP3 (levelled) and the square art, both attached;
