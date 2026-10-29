@@ -51,6 +51,9 @@ const LANDING_FILE_TYPES = [
 ];
 
 /** How long a download link stays good after the form is sent. */
+/** Page designs. '' is the standard page; 'va' is the long VA services page (29 Oct 2026). */
+const LANDING_LAYOUTS = ['' => 'Standard (picture, text and form side by side)', 'va' => 'VA services (long page, three-step form)'];
+
 const LANDING_LINK_DAYS = 30;
 
 /** Submissions accepted from one address in an hour, before the form refuses more. */
@@ -130,6 +133,8 @@ function landing_clean(array $p): ?array {
         // The line under her name (eyebrow, emails, receipts). Axen Realty for real estate pages;
         // something else for an offer that isn't brokerage business (VA services, 29 Oct 2026).
         'brand'        => $t($p['brand'] ?? '') ?: 'Axen Realty',
+        // 'va' = the long VA services page (lib/landing-va.php); '' = the standard two-column page.
+        'layout'       => isset(LANDING_LAYOUTS[(string) ($p['layout'] ?? '')]) ? (string) $p['layout'] : '',
         'cta'          => $t($p['cta'] ?? '') ?: 'Send it to me',
         'fields'       => $fields,
         'deliver'      => $deliver,

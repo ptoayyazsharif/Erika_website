@@ -7,6 +7,45 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-29 (later) — VA services page and VA Wish List redesigned
+
+**Asked.** The owner rejected the first page and PDF as dated ("do some research then design it… find some
+design skills"). Then: use the pink-suit photo, Erika likes it.
+
+**Research.** BELAY's VA landing page (outcome headline, proof beside it, services as cards, a short
+sequence, the form late); studies on form length (short forms for a lead magnet; a long form converts
+better split into steps, contact details last). The design follows the artifact-design guidance: a
+token palette from the subject (her pink suit: espresso, dusty rose, gold), the site's Fraunces with
+its italic for the one bold moment ("to-~~do~~ … *to-done*"), one orchestrated animation.
+
+**Done**
+- A **page design option** (`layout`), with `va` = `lib/landing-va.php` + `assets/css/landing-va.css`:
+  hero with her cut-out in a dusty-pink arch, an animated "to-done" board and her "10-minute
+  conversation" line; who it's for; a services grid; her "to-done list" quote; three steps; the
+  form beside the PDF's cover; six questions; a close; a sticky phone bar. **Three-step form**: what
+  you'd hand off (chips) → how much help → where to send it. Thank-you page in the same style.
+- The PDF rebuilt as a **4-page worksheet**: cover with her photo; tick + hours for every task; your
+  first five; how to start. `build-guide.mjs` now installs Fraunces Italic.
+- Page settings: layout `va`, the pink-suit photo (also the link preview), button "Get the Free VA
+  Wish List".
+
+**Passed.** Desktop 1440 and phone 390: no sideways scroll, no console errors; an end-to-end lead
+through all three steps on a phone reached the thank-you page and Leads with every answer;
+`tools/check-landing/run.sh` **ALL PASS** (rounds 1–3). PDF build: no clipping, no font fallback,
+every page's text present, 1.1 MB.
+
+**Failed, then fixed.** The headline rendered dark on dark and the closing button's text vanished:
+`landing.css`'s `.lp h1` and `.lp a{color:inherit}` beat bare classes (now prefixed, and noted in
+CLAUDE.md). On phones the quote bubble covered her face (it now sits above the picture). The
+thank-you card's text was light on white. A test click on `text=Medical office` hit the "who it's
+for" line instead of the chip (test fixed; noted).
+
+**Open.** Deploy (cPanel keys) and publish; one live test lead; Erika to OK the words. The "What does
+a VA cost?" answer says it depends on the hours and is settled on the call: check that is how she
+prices it.
+
+---
+
 ## 2026-10-29 — VA services landing page and the VA Wish List
 
 **Asked.** Erika, through her VA: promote VA services too, with a landing/splash page on her site for

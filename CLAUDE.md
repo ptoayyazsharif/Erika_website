@@ -169,6 +169,13 @@ lead capture for her VA / call center services, delivering the free **VA Wish Li
 Its words are hers ("You need a VA", her 27 Oct meeting); the services come from the team's VA
 flyer, **without the Dot.kode name** until Erika confirms how it relates to her; NSOL BPO is never
 named. Its line under her name reads "VA Services", not Axen Realty.
+**Redesigned the same day** (the owner: "is this how you design a landing page… do some research then
+design it"): it uses its own design, `layout: 'va'` (`lib/landing-va.php`, `assets/css/landing-va.css`):
+an espresso hero with Erika's cut-out in a dusty-pink arch and an animated "to-done" board, a services
+grid, her quote, three steps, a **three-step form** (taps first, contact details last), questions and
+a sticky phone bar. The PDF was redone too: a 4-page worksheet (tick, note the hours, pick five).
+**The photo is the pink-suit one: Erika likes it** (her VA, 29 Oct); the cut-out is
+`a7-pink-suit-cutout-{520,900}.webp` (from `tools/podcast/art/erika-cutout.png`).
 
 Every article is narrated in Erika's cloned voice and goes out as an episode of the
 **Erika Explains** podcast on RSS.com — the owner uploads; see *Podcast* below.
@@ -445,6 +452,21 @@ email and in Lofty.
   Lofty failure + retry, tampered/forged links, private folder, the question builder,
   unpublish/duplicate/delete, script in a question. It backs up and restores the local
   database. Passed on SQLite and on MariaDB 10.11 (20 Oct 2026).
+- **Page designs** (`layout`, "Page design" in the editor; `LANDING_LAYOUTS`): '' is the standard
+  two-column page; `va` is the long VA services page (29 Oct 2026). A design is a renderer in its own
+  `lib/landing-<name>.php` plus its own stylesheet, loaded after `landing.css`; the questions, button,
+  consent and lead handling stay the shared ones, so a new design never forks the lead capture. Its
+  form splits the page's questions into steps (`va_steps()`: checkboxes and the first dropdown, then
+  the other dropdowns, then name / email / phone / notes); without JavaScript every step shows at once,
+  and after a server-side error the step holding the first error opens. Dropdowns render as radio
+  chips with the same name and values, so `landing_validate()` is unchanged. The admin's live preview
+  still shows the standard look.
+  - **Two traps for a new design's CSS**: `landing.css` styles `.lp h1, .lp h2` (colour, line height)
+    and `.lp a{color:inherit}`, which beat a bare class. Prefix the design's headings and button links
+    (`.va .va-h1`, `.va a.va-btn`), or the headline comes out dark on dark and a button's text vanishes
+    (both happened on 29 Oct).
+  - **Testing**: Playwright's `text=Medical office` matches that phrase anywhere on the page (it found
+    the "who it's for" line first); target the control (`#form .va-chip:has-text("…")`).
 - **The line under her name is per page** (`brand`, "Line under her name" in the editor; default
   Axen Realty). It shows in the eyebrow, the visitor's email and the receipt. An offer that isn't
   brokerage business (VA services) sets its own, because Erika asked not to dilute her Axen
@@ -851,8 +873,10 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   email and statement descriptor. **Erika decides a refund policy** before selling (none is in
   her files). **Before selling a subscription**, turn on Stripe's customer portal so buyers can
   cancel online; the receipt says "reply to cancel" for now. Then switch to the live key.
-- **Owner: deploy and publish the VA services page** (29 Oct): upload `landing-pages.php`,
-  `landing.php`, `lib/landing.php`, `lib/admin-landing.php` and `assets/guides/va-wish-list.pdf`
+- **Owner: deploy and publish the VA services page** (29 Oct, redesigned the same day): upload
+  `landing-pages.php`, `landing.php`, `lib/landing.php`, `lib/landing-va.php`, `lib/admin-landing.php`,
+  `assets/css/landing-va.css`, `assets/guides/va-wish-list.pdf`, `assets/guides/va-wish-list-cover.webp`
+  and `assets/photos/01/a7-pink-suit-cutout-520.webp` / `-900.webp`
   (`tools/deploy.sh`, needs the cPanel keys), then admin → Landing pages → VA Services → Publish,
   and send one test lead. Ask Erika: may the page name Dot.kode, and what is the service called?
 - **Leads from now on are kept in the admin** (Leads), from every form on the site. Lofty

@@ -3,121 +3,245 @@
 <head>
 <meta charset="utf-8">
 <title>The VA Wish List — Erika K. Page</title>
-<link rel="stylesheet" href="guide.css">
 <!--
   Source for assets/guides/va-wish-list.pdf.   Build: node tools/build-guide.mjs va-wish-list
 
   The free download behind the VA services landing page (/page/va-services), asked for by Erika
-  through her VA on 29 Oct 2026 ("she wants to promote VA services as well … a landing/splash page
-  on her website for lead capture and promotion").
+  through her VA on 29 Oct 2026. Redesigned the same day, with the page, after the owner rejected
+  the first version as dated: it is now a worksheet (tick the task, note the hours it costs you,
+  pick your first five), in the page's colours, with the photo Erika likes (her pink suit).
 
   Quoted lines are hers: the "You need a VA" video (Video_Edting_Erika/projects/va-you-need,
   23–24 Oct 2026) and her meeting of 27 Oct 2026 (ceo_erika intake/transcripts). The services, their
   one-line descriptions, the social media list and the tools come from the team's VA services flyer
-  (sent again by the VA on 29 Oct; ceo_erika memory/business/va-services-flyer), plus the call-center
-  offers named on 27 Oct. No prices. The flyer's brand (Dot.kode) and its email and website are left
-  out until Erika confirms how it relates to her; NSOL BPO is never named (her rule).
+  (ceo_erika memory/business/va-services-flyer), plus the call-center offers named on 27 Oct. No
+  prices. The flyer's brand (Dot.kode) is left out until Erika confirms how it relates to her;
+  NSOL BPO is never named (her rule).
+
+  Fonts are the site's (Fraunces, Archivo), installed by the build as static instances; the italic
+  comes from Fraunces' own italic file.
 -->
+<style>
+:root{
+  --esp:#2A1B1A; --esp-2:#3B2825; --esp-3:#4A3430;
+  --paper:#FFFCFA; --sand:#F8EFEA; --rose:#DDB0A8; --rose-soft:#F4E2DC; --rose-ink:#A65B50;
+  --gold:#D8B275; --gold-ink:#8F6B2E; --text:#4B3B37; --muted:#7E6B65; --line:rgba(42,27,26,.13);
+}
+@page{ size:8.5in 11in; margin:0; }
+*{ margin:0; padding:0; box-sizing:border-box; }
+html,body{ background:#fff; }
+body{ font-family:'Archivo',sans-serif; font-size:10.5pt; line-height:1.5; color:var(--text);
+      -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+h1,h2,h3,.serif{ font-family:'Fraunces',serif; font-weight:400; color:var(--esp); line-height:1.05; }
+em{ font-family:'Fraunces',serif; font-style:italic; font-weight:400; }
+b,strong{ font-weight:600; color:var(--esp); }
+
+.pg{ width:8.5in; height:11in; padding:0.7in 0.72in 0.75in; background:var(--paper); position:relative; overflow:hidden; page-break-after:always; }
+.pg:last-child{ page-break-after:auto; }
+.pg-num{ position:absolute; left:0.72in; right:0.72in; bottom:0.38in; display:flex; justify-content:space-between;
+         font-size:7.5pt; letter-spacing:.14em; text-transform:uppercase; font-weight:600; color:var(--muted); }
+.pg-num b{ color:var(--rose-ink); }
+.eyebrow{ font-size:8pt; letter-spacing:.18em; text-transform:uppercase; font-weight:700; color:var(--rose-ink); margin-bottom:0.12in; }
+
+/* ---------- cover ---------- */
+.cover{ background:var(--esp); color:rgba(255,252,250,.82); padding:0.72in; }
+.cover .top{ display:flex; justify-content:space-between; align-items:center; font-size:8.5pt; letter-spacing:.16em; text-transform:uppercase; font-weight:600; }
+.cover .brand{ font-family:'Fraunces',serif; font-size:15pt; letter-spacing:0; text-transform:none; font-weight:400; color:var(--paper); }
+.cover .brand span{ color:var(--gold); }
+.cover .pill{ background:var(--gold); color:var(--esp); padding:0.05in 0.14in; border-radius:99px; }
+.cover h1{ color:var(--paper); font-size:68pt; line-height:.92; letter-spacing:-.025em; margin-top:0.72in; }
+.cover h1 em{ color:var(--gold); }
+.cover .sub{ font-family:'Fraunces',serif; font-size:19pt; line-height:1.2; color:rgba(255,252,250,.9); margin-top:0.26in; max-width:4.6in; }
+.cover .sub s{ text-decoration-color:var(--rose); text-decoration-thickness:2px; color:rgba(255,252,250,.55); }
+.cover .sub em{ color:var(--gold); }
+.cover .inside{ position:absolute; left:0.72in; bottom:1.25in; width:3.3in; list-style:none; }
+.cover .inside li{ display:flex; gap:0.12in; align-items:flex-start; font-size:10pt; padding:0.07in 0; border-top:1px solid rgba(255,252,250,.14); color:rgba(255,252,250,.85); }
+.cover .inside li:last-child{ border-bottom:1px solid rgba(255,252,250,.14); }
+.cover .inside .k{ font-family:'Fraunces',serif; color:var(--gold); width:0.2in; flex:none; }
+.cover .arch{ position:absolute; right:0.55in; bottom:0; width:3.45in; height:5.5in; border-radius:2in 2in 0 0;
+              background:linear-gradient(180deg,#E4BCB4 0%,var(--rose) 60%,#CF9E95 100%); }
+.cover .cut{ position:absolute; right:0.2in; bottom:0; height:6.6in; }
+.cover .who{ position:absolute; right:3.75in; bottom:0.55in; text-align:right; display:none; }
+.cover .foot{ position:absolute; left:0.72in; bottom:0.5in; font-size:8.5pt; color:rgba(255,252,250,.7); }
+.cover .foot b{ color:var(--paper); font-family:'Fraunces',serif; font-weight:400; font-size:11pt; display:block; margin-bottom:0.02in; }
+
+/* ---------- worksheet ---------- */
+h2.sec{ font-size:30pt; letter-spacing:-.02em; margin-bottom:0.14in; }
+h2.sec em{ color:var(--rose-ink); }
+.lede{ font-size:11.5pt; line-height:1.55; max-width:6.2in; color:var(--text); }
+.quote{ margin:0.26in 0 0.24in; padding:0.24in 0.3in; background:var(--esp); border-radius:0.2in; color:var(--paper);
+        font-family:'Fraunces',serif; font-size:15pt; line-height:1.3; }
+.quote em{ color:var(--gold); }
+.quote cite{ display:block; font:600 7.5pt 'Archivo',sans-serif; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-top:0.1in; font-style:normal; }
+.how{ display:grid; grid-template-columns:repeat(3,1fr); gap:0.14in; margin-bottom:0.3in; }
+.how div{ background:var(--sand); border-radius:0.16in; padding:0.16in 0.18in; }
+.how .n{ display:inline-grid; place-items:center; width:0.3in; height:0.3in; border-radius:50%; background:var(--esp); color:var(--gold); font-family:'Fraunces',serif; font-size:11pt; margin-bottom:0.08in; }
+.how b{ display:block; font-family:'Fraunces',serif; font-weight:400; font-size:13pt; margin-bottom:0.03in; }
+.how p{ font-size:9pt; line-height:1.45; }
+
+.group{ margin-bottom:0.22in; }
+.ghead{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1.5px solid var(--esp); padding-bottom:0.06in; }
+.ghead h3{ font-size:17pt; }
+.ghead span{ font-size:7pt; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.row{ display:grid; grid-template-columns:0.3in 1fr 1.05in; align-items:center; gap:0.1in; padding:0.085in 0; border-bottom:1px solid var(--line); }
+.box{ width:0.19in; height:0.19in; border:1.5px solid var(--rose-ink); border-radius:0.04in; }
+.row .t b{ font-size:10.5pt; display:block; line-height:1.25; }
+.row .t span{ font-size:8.5pt; color:var(--muted); line-height:1.3; }
+.row .t.solo b{ font-weight:500; font-size:10pt; color:var(--text); }
+.hrs{ height:0.26in; border:1px solid var(--line); border-radius:0.06in; background:var(--sand); position:relative; }
+.hrs::after{ content:"hrs/wk"; position:absolute; right:0.07in; top:50%; transform:translateY(-50%); font-size:6.5pt; letter-spacing:.06em; color:var(--muted); }
+.two{ display:grid; grid-template-columns:1fr 1fr; gap:0 0.3in; }
+.tile{ background:var(--rose-soft); border-radius:0.2in; padding:0.22in 0.26in; margin-top:0.08in; }
+.tile .serif{ font-size:13.5pt; line-height:1.3; }
+.tile cite{ display:block; font:700 7pt 'Archivo',sans-serif; letter-spacing:.16em; text-transform:uppercase; color:var(--rose-ink); margin-top:0.08in; font-style:normal; }
+.total{ display:flex; justify-content:space-between; align-items:center; margin-top:0.24in; padding:0.2in 0.26in; background:var(--esp); border-radius:0.2in; color:var(--paper); }
+.total .serif{ color:var(--paper); font-size:16pt; }
+.total .serif em{ color:var(--gold); }
+.total .big{ width:1.5in; height:0.46in; border-radius:0.1in; background:var(--esp-3); position:relative; }
+.total .big::after{ content:"hours a week"; position:absolute; right:0.1in; bottom:0.06in; font-size:7pt; color:rgba(255,252,250,.6); }
+.tools{ margin-top:0.18in; font-size:9pt; color:var(--muted); }
+.tools b{ color:var(--esp); }
+
+/* ---------- plan ---------- */
+.five{ list-style:none; margin:0.12in 0 0.3in; }
+.five li{ display:grid; grid-template-columns:0.42in 1fr 1.05in; gap:0.12in; align-items:end; padding:0.16in 0 0.08in; border-bottom:1px solid var(--line); }
+.five .n{ font-family:'Fraunces',serif; font-size:24pt; line-height:1; color:var(--rose); }
+.five .ln{ height:0.3in; }
+.next{ display:grid; grid-template-columns:1.25fr 1fr; gap:0.18in; }
+.cta{ background:var(--esp); border-radius:0.24in; padding:0.32in 0.34in; color:rgba(255,252,250,.82); }
+.cta h3{ color:var(--paper); font-size:24pt; line-height:1.02; }
+.cta h3 em{ color:var(--gold); }
+.cta .ph{ display:inline-block; margin-top:0.2in; background:var(--rose-ink); color:#fff; font-weight:600; font-size:13pt; padding:0.12in 0.24in; border-radius:99px; }
+.cta p{ font-size:9.5pt; margin-top:0.16in; line-height:1.5; }
+.cta p em{ color:var(--gold); font-size:11pt; }
+.sidebox{ background:var(--sand); border-radius:0.24in; padding:0.28in 0.28in; }
+.sidebox h3{ font-size:15pt; margin-bottom:0.1in; }
+.sidebox ul{ list-style:none; }
+.sidebox li{ font-size:9.5pt; padding:0.06in 0 0.06in 0.24in; position:relative; line-height:1.4; }
+.sidebox li::before{ content:""; position:absolute; left:0; top:0.09in; width:0.13in; height:0.13in; border-radius:0.03in; background:var(--rose-ink); }
+.fine{ margin-top:0.22in; font-size:8pt; color:var(--muted); }
+</style>
 </head>
 <body>
 
 <!-- ===================== 1 · COVER ===================== -->
-<div class="pg cover" data-must="VA Wish List | Erika K. Page | (678) 404-1562">
-  <div class="cover-band">
-    <p class="eyebrow">Erika Explains&trade;</p>
-    <h1>The VA<br>Wish List</h1>
-    <p class="sub">Turn your eventually list into a to-done list.</p>
-  </div>
-  <div class="cover-body">
-    <p class="cover-by"><b>Erika K. Page</b>
-      Founder, Escaluxe Global<br>
-      Metro Atlanta</p>
-    <ul class="cover-list">
-      <li>What a virtual assistant can take off your plate</li>
-      <li>Your day, your leads, your listings</li>
-      <li>Social media and video editing</li>
-      <li>Phones, call center and medical billing</li>
-      <li>How to start with one short conversation</li>
-    </ul>
-  </div>
-  <div class="cover-foot"><span>erikakpage.com</span><span>Need a VA? Call (678) 404-1562</span></div>
+<div class="pg cover" data-must="VA Wish List | to-done | Erika K. Page | (678) 404-1562">
+  <div class="top"><span class="brand">Erika<span>K</span>Page</span><span class="pill">Free guide</span></div>
+  <h1>The VA<br><em>Wish List</em></h1>
+  <p class="sub">Turn your <s>to-do</s> list into a <em>to-done</em> list.</p>
+  <ol class="inside">
+    <li><span class="k">1</span>Everything a VA can take off your plate</li>
+    <li><span class="k">2</span>The hours each task costs you now</li>
+    <li><span class="k">3</span>Your first five to hand off</li>
+    <li><span class="k">4</span>How to start, with one conversation</li>
+  </ol>
+  <div class="arch"></div>
+  <img class="cut" src="../../assets/photos/01/a7-pink-suit-cutout-900.webp" alt="Erika K. Page">
+  <div class="foot"><b>Erika K. Page</b>erikakpage.com · Need a VA? (678) 404-1562</div>
 </div>
 
-<!-- ===================== 2 · THE IDEA + THE BUSINESS ===================== -->
-<div class="pg" data-must="to-done list | AI needs an AI operator | Calendar and inbox">
-  <p class="eyebrow">The idea</p>
-  <h2 class="sec">From to-do to to-done.</h2>
-  <div class="rule"></div>
-
-  <div class="callout">
-    <p class="q">&ldquo;My amazing virtual assistant is taking my eventually list, my checklist, my
-    to-do list, and turning it into a to-done list.&rdquo;</p>
+<!-- ===================== 2 · HOW TO USE IT + YOUR BUSINESS ===================== -->
+<div class="pg" data-must="what to hand over | Tick it | Calendar and inbox | Admin tasks">
+  <p class="eyebrow">How to use this list</p>
+  <h2 class="sec">Most people never start because they don't know <em>what to hand over.</em></h2>
+  <p class="lede">As Erika says, &ldquo;a confused mind does nothing.&rdquo; So here is everything, in one place. Go through it with a pen.</p>
+  <div class="how">
+    <div><span class="n">1</span><b>Tick it</b><p>Tick every task you would hand off if you could.</p></div>
+    <div><span class="n">2</span><b>Note the hours</b><p>Write down roughly how many hours a week it takes you now.</p></div>
+    <div><span class="n">3</span><b>Pick five</b><p>On the last page, choose the five to hand off first.</p></div>
   </div>
 
-  <p>Busy entrepreneur, real estate agent, business owner, busy mom or busy working professional: a
-  virtual assistant can really make a difference. <strong>AI is amazing, but AI needs an AI
-  operator.</strong> Most people never start because they don&rsquo;t know what to hand over. A
-  confused mind does nothing. So here is the list: <strong>tick what you would hand off.</strong></p>
-
-  <h3 style="font-size:13pt;margin-top:0.1in">Keep your business on track</h3>
-  <ul class="tick" style="margin-top:0.05in">
-    <li><strong>Calendar and inbox management.</strong> Never miss an important date or lead.</li>
-    <li><strong>Lead management and follow-up.</strong> Nurturing leads so you can close more deals.</li>
-    <li><strong>Listing and transaction coordination.</strong> From contract to close.</li>
-    <li><strong>MLS and database management.</strong> Keeping your pipeline clean and updated.</li>
-    <li><strong>Client communication.</strong> Quick replies, happy clients.</li>
-    <li><strong>Research and data entry.</strong> Market research, comps, property information.</li>
-    <li><strong>Marketing support.</strong> Content, email campaigns, flyers.</li>
-    <li><strong>Admin tasks.</strong> Documents, forms, reports.</li>
-  </ul>
-
-  <div class="pg-num"><span>The VA Wish List &middot; Erika K. Page</span><span><b>02</b></span></div>
+  <div class="group">
+    <div class="ghead"><h3>Your business</h3><span>Hand off? · Hours now</span></div>
+    <div class="row"><i class="box"></i><div class="t"><b>Calendar and inbox</b><span>Never miss an important date or lead.</span></div><div class="hrs"></div></div>
+    <div class="row"><i class="box"></i><div class="t"><b>Lead follow-up</b><span>Nurturing leads so you can close more deals.</span></div><div class="hrs"></div></div>
+    <div class="row"><i class="box"></i><div class="t"><b>Listing and transaction coordination</b><span>From contract to close.</span></div><div class="hrs"></div></div>
+    <div class="row"><i class="box"></i><div class="t"><b>MLS and database</b><span>Keeping your pipeline clean and updated.</span></div><div class="hrs"></div></div>
+    <div class="row"><i class="box"></i><div class="t"><b>Client communication</b><span>Quick replies, happy clients.</span></div><div class="hrs"></div></div>
+    <div class="row"><i class="box"></i><div class="t"><b>Research and data entry</b><span>Market research, comps, property information.</span></div><div class="hrs"></div></div>
+    <div class="row"><i class="box"></i><div class="t"><b>Marketing support</b><span>Content, email campaigns, flyers.</span></div><div class="hrs"></div></div>
+    <div class="row"><i class="box"></i><div class="t"><b>Admin tasks</b><span>Documents, forms, reports.</span></div><div class="hrs"></div></div>
+  </div>
+  <div class="pg-num"><span>The VA Wish List · Erika K. Page</span><span><b>02</b></span></div>
 </div>
 
-<!-- ===================== 3 · CONTENT, PHONES, HOW TO START ===================== -->
-<div class="pg" data-must="Social media and video editing | call center | (678) 404-1562">
-  <p class="eyebrow">Beyond the inbox</p>
-  <h2 class="sec">Your content, your phones, your day.</h2>
-  <div class="rule"></div>
-
-  <div class="cards">
-    <div class="card">
-      <p class="k">Social media and video editing</p>
-      <ul class="tick">
-        <li>Reels, TikToks and YouTube Shorts</li>
-        <li>Property tours and market updates</li>
-        <li>Client testimonials, tips and advice</li>
-        <li>Captions, transitions, music, branding</li>
-      </ul>
+<!-- ===================== 3 · CONTENT, PHONES, HOME ===================== -->
+<div class="pg" data-must="Social media | Answering calls | Medical billing | game changer | AI needs an AI operator">
+  <div class="two">
+    <div class="group">
+      <div class="ghead"><h3>Your content</h3><span>Hours now</span></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Social media posting</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Reels, TikToks, YouTube Shorts</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Property tours, market updates</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Testimonials, tips and advice</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Captions, music, branding</b></div><div class="hrs"></div></div>
     </div>
-    <div class="card">
-      <p class="k">Every day</p>
-      <ul class="tick">
-        <li>Check and organize email</li>
-        <li>Review the calendar and plan the day</li>
-        <li>Follow up with leads and clients</li>
-        <li>Update systems and plan ahead</li>
-      </ul>
+    <div class="group">
+      <div class="ghead"><h3>Your phones</h3><span>Hours now</span></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Answering calls</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Setting appointments</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Cold calling</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>CRM management</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Medical billing</b></div><div class="hrs"></div></div>
     </div>
   </div>
-
-  <p style="margin-top:0.1in"><strong>Your phones and your office:</strong> a call center to answer your
-  calls and set appointments, cold calling, CRM management, profiles, websites and automations set
-  up, and medical billing for medical offices.</p>
-
-  <p><strong>The tools:</strong> Lofty, kvCORE, dotloop, Canva, Google Workspace, Mailchimp, Trello,
-  and more.</p>
-
-  <h3 style="font-size:13pt;margin-top:0.1in">How to start</h3>
-  <p>Tick what you would hand off, then call. &ldquo;One 10-minute conversation with my VA and you can
-  have 50 things done.&rdquo; Don&rsquo;t wait: it is cost efficient, and it is amazing to just know
-  that things are being done.</p>
-
-  <div class="callout">
-    <p class="q">Need a VA? Call (678) 404-1562.</p>
+  <div class="two">
+    <div class="group">
+      <div class="ghead"><h3>Your systems</h3><span>Hours now</span></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Profiles and websites set up</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Automations set up</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Updating systems, planning ahead</b></div><div class="hrs"></div></div>
+    </div>
+    <div class="group">
+      <div class="ghead"><h3>Your home</h3><span>Hours now</span></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Household things</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Personal things</b></div><div class="hrs"></div></div>
+      <div class="row"><i class="box"></i><div class="t solo"><b>Something else: ____________</b></div><div class="hrs"></div></div>
+    </div>
   </div>
+  <div class="tile">
+    <p class="serif">&ldquo;Having a VA manage household things, personal things and business things for me is a game changer.&rdquo;</p>
+    <cite>Erika K. Page</cite>
+  </div>
+  <div class="total">
+    <p class="serif">Add up your ticked hours: the time you could <em>get back.</em></p>
+    <div class="big"></div>
+  </div>
+  <p class="tools"><b>&ldquo;AI is amazing, but AI needs an AI operator.&rdquo;</b> A VA works in the tools you already use: Lofty, kvCORE, dotloop, Canva, Google Workspace, Mailchimp, Trello and more.</p>
+  <div class="pg-num"><span>The VA Wish List · Erika K. Page</span><span><b>03</b></span></div>
+</div>
 
-  <div class="pg-num"><span>The VA Wish List &middot; Erika K. Page</span><span><b>03</b></span></div>
+<!-- ===================== 4 · YOUR FIRST FIVE + NEXT STEP ===================== -->
+<div class="pg" data-must="first five | 10-minute conversation | (678) 404-1562">
+  <p class="eyebrow">Your plan</p>
+  <h2 class="sec">Your <em>first five.</em></h2>
+  <p class="lede">Start with the tasks that cost you the most hours, or the ones you dread most. Write them here.</p>
+  <ol class="five">
+    <li><span class="n">1</span><span class="ln"></span><span class="hrs"></span></li>
+    <li><span class="n">2</span><span class="ln"></span><span class="hrs"></span></li>
+    <li><span class="n">3</span><span class="ln"></span><span class="hrs"></span></li>
+    <li><span class="n">4</span><span class="ln"></span><span class="hrs"></span></li>
+    <li><span class="n">5</span><span class="ln"></span><span class="hrs"></span></li>
+  </ol>
+  <div class="next">
+    <div class="cta">
+      <h3>Need a VA?<br>Bring this list to <em>one call.</em></h3>
+      <span class="ph">(678) 404-1562</span>
+      <p><em>&ldquo;One 10-minute conversation with my VA and you can have 50 things done.&rdquo;</em><br>We go through your list together: what to hand off first, and how many hours a week it takes.</p>
+    </div>
+    <div class="sidebox">
+      <h3>Who it's for</h3>
+      <ul>
+        <li>Real estate agents and teams</li>
+        <li>Business owners</li>
+        <li>Medical offices</li>
+        <li>Busy moms and busy working professionals</li>
+      </ul>
+      <p class="fine">&ldquo;Don't wait. It is cost efficient, and it is amazing to just know that things are being done.&rdquo; Erika K. Page</p>
+    </div>
+  </div>
+  <div class="quote">&ldquo;My amazing virtual assistant is taking my eventually list, my checklist, my to-do list, and turning it into a <em>to-done list.</em>&rdquo;<cite>Erika K. Page · erikakpage.com</cite></div>
+  <div class="pg-num"><span>The VA Wish List · Erika K. Page</span><span><b>04</b></span></div>
 </div>
 
 </body>

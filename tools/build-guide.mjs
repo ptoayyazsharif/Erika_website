@@ -53,6 +53,8 @@ const ok   = (msg) => console.log(`  ok    ${msg}`);
 const VARIABLE = {
   Fraunces: 'https://raw.githubusercontent.com/google/fonts/main/ofl/fraunces/Fraunces%5BSOFT%2CWONK%2Copsz%2Cwght%5D.ttf',
   Archivo:  'https://raw.githubusercontent.com/google/fonts/main/ofl/archivo/Archivo%5Bwdth%2Cwght%5D.ttf',
+  // The italic is its own file. Added 29 Oct 2026 for the VA Wish List's "to-done".
+  'Fraunces-Italic': 'https://raw.githubusercontent.com/google/fonts/main/ofl/fraunces/Fraunces-Italic%5BSOFT%2CWONK%2Copsz%2Cwght%5D.ttf',
 };
 const INSTANCES = [
   ['Fraunces', { wght: 600, opsz: 96, SOFT: 0, WONK: 0 }, 'SemiBold', 600],
@@ -60,6 +62,7 @@ const INSTANCES = [
   ['Archivo',  { wght: 400, wdth: 100 },                  'Regular',  400],
   ['Archivo',  { wght: 600, wdth: 100 },                  'SemiBold', 600],
   ['Archivo',  { wght: 700, wdth: 100 },                  'Bold',     700],
+  ['Fraunces', { wght: 400, opsz: 96, SOFT: 0, WONK: 0 }, 'Italic',   400, 'Fraunces-Italic'],
 ];
 
 function buildFonts() {
@@ -72,8 +75,8 @@ function buildFonts() {
     }
   }
 
-  const jobs = INSTANCES.map(([fam, loc, style, wt]) =>
-    ({ src: path.join(WORK, `${fam}-VF.ttf`), loc, out: path.join(WORK, `${fam}-${style}.ttf`), fam, style, wt }));
+  const jobs = INSTANCES.map(([fam, loc, style, wt, srcName]) =>
+    ({ src: path.join(WORK, `${srcName || fam}-VF.ttf`), loc, out: path.join(WORK, `${fam}-${style}.ttf`), fam, style, wt }));
 
   const script = `
 import json, sys
@@ -100,7 +103,8 @@ for j in json.loads(sys.argv[1]):
   execFileSync('fc-cache', ['-f'], { stdio: 'ignore' });
 
   for (const j of jobs) {
-    const got = execFileSync('fc-match', [`${j.fam}:weight=${j.wt === 400 ? 80 : j.wt === 600 ? 180 : 200}`], { encoding: 'utf8' });
+    const q = j.style === 'Italic' ? `${j.fam}:italic` : `${j.fam}:weight=${j.wt === 400 ? 80 : j.wt === 600 ? 180 : 200}`;
+    const got = execFileSync('fc-match', [q], { encoding: 'utf8' });
     if (!got.includes(`${j.fam}-${j.style}`)) fail(`fontconfig resolves ${j.fam} ${j.wt} to "${got.trim()}" instead of ${j.style}`);
   }
   ok(`fonts: ${jobs.length} static weights instanced and installed`);

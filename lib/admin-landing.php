@@ -207,7 +207,7 @@ function landing_admin_early(string $cur): void {
         'thanks_title' => $_POST['lp_thanks_title'] ?? '', 'thanks_text' => $_POST['lp_thanks_text'] ?? '',
         'consent' => $_POST['lp_consent'] ?? '',
         'email_lead' => !empty($_POST['lp_email_lead']), 'crm_on' => !empty($_POST['lp_crm_on']),
-        'brand' => $_POST['lp_brand'] ?? '', 'crm_source' => $_POST['lp_crm_source'] ?? '', 'crm_tags' => $_POST['lp_crm_tags'] ?? '',
+        'brand' => $_POST['lp_brand'] ?? '', 'layout' => $_POST['lp_layout'] ?? '', 'crm_source' => $_POST['lp_crm_source'] ?? '', 'crm_tags' => $_POST['lp_crm_tags'] ?? '',
         'crm_type' => (int) ($_POST['lp_crm_type'] ?? 0), 'indexable' => !empty($_POST['lp_indexable']),
         'price_cents' => $priceCents, 'billing' => $_POST['lp_billing'] ?? 'once',
         'published' => $act === 'publish', 'updated' => date('Y-m-d'),
@@ -535,6 +535,7 @@ function lpa_view_editor(string $slug): void {
             <div class="fld"><label>Lofty lead type</label><select name="lp_crm_type"><?php foreach (LANDING_LEAD_TYPES as $id => $lbl): ?><option value="<?= $id ?>" <?= $p['crm_type'] === $id ? 'selected' : '' ?>><?= esc($lbl) ?></option><?php endforeach; ?></select></div>
           </div>
           <div class="fld"><label>Lofty tags (comma-separated)</label><input type="text" name="lp_crm_tags" value="<?= esc($p['crm_tags']) ?>"></div>
+          <div class="fld"><label>Page design</label><select name="lp_layout"><?php foreach (LANDING_LAYOUTS as $id => $lbl): ?><option value="<?= esc($id) ?>" <?= $p['layout'] === $id ? 'selected' : '' ?>><?= esc($lbl) ?></option><?php endforeach; ?></select><small style="color:#8a746f">The VA services design has its own sections (services, how it works, questions) and a three-step form.</small></div>
         </div>
 
         <div class="savebar">

@@ -104,11 +104,14 @@ return [
                         . '<p>Busy entrepreneur, real estate agent, business owner, medical office, or just busy? Tell me what&rsquo;s on your plate and get my free VA Wish List: everything a virtual assistant can take off it, from your calendar and leads to your listings, social media, video editing and phones.</p>'
                         . '<p>AI is amazing, but AI needs an AI operator. One 10-minute conversation with my VA and you can have 50 things done. Don&rsquo;t wait: it is cost efficient, and it is amazing to just know that things are being done.</p>'
                         . '<p><strong>Prefer to talk? Call (678) 404-1562.</strong></p>',
-        'image'        => '',
-        'image_alt'    => 'Erika K. Page: VA services',
+        // Her pink-suit photo: the one Erika likes (her VA, 29 Oct 2026). Also the link preview.
+        'image'        => 'assets/photos/01/a7-pink-suit-ai.jpg',
+        'image_alt'    => 'Erika K. Page',
+        // The long VA design (lib/landing-va.php), asked for on 29 Oct 2026 after the standard page was rejected.
+        'layout'       => 'va',
         'brand'        => 'VA Services',
-        'bottom_title' => 'VA Services',
-        'cta'          => 'Send Me the VA Wish List',
+        'bottom_title' => 'Get the VA Wish List',
+        'cta'          => 'Get the Free VA Wish List',
         'fields'       => [
             ['id' => 'mobile', 'type' => 'phone', 'label' => 'Mobile Number', 'required' => true],
             ['id' => 'who', 'type' => 'select', 'label' => 'What best describes you?', 'required' => true,

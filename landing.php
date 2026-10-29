@@ -117,8 +117,7 @@ if ($lpAction === 'thanks') {
     $lead = lead_get((int) $ok['lead']);
     $pay = $lead ? (array) ($lead['meta']['pay'] ?? []) : [];
     $paid = ($pay['state'] ?? '') === 'paid';
-    lp_document($page, $page['thanks_title'], function () use ($page, $dl, $size, $emailed, $isDraft, $lead, $pay, $paid) {
-        lp_intro($page, $isDraft); ?>
+    $card = function () use ($page, $dl, $size, $emailed, $lead, $pay, $paid) { ?>
         <aside class="lp-card lp-done" aria-live="polite">
           <div class="lp-tick" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
           <h2><?= esc($page['thanks_title']) ?></h2>
@@ -132,7 +131,16 @@ if ($lpAction === 'thanks') {
           <p class="lp-note"><?= $emailed ? ($paid ? 'Your receipt and this link are in your email. ' : 'We\'ve also emailed you this link. ') : '' ?>The link works for <?= LANDING_LINK_DAYS ?> days.</p>
           <a class="lp-back" href="/">Visit erikakpage.com</a>
         </aside>
-    <?php });
+    <?php };
+    if ($page['layout'] === 'va') {
+        require_once __DIR__ . '/lib/landing-va.php';
+        lp_document($page, $page['thanks_title'], fn() => va_thanks($page, $card), true);
+        exit;
+    }
+    lp_document($page, $page['thanks_title'], function () use ($page, $isDraft, $card) {
+        lp_intro($page, $isDraft);
+        $card();
+    });
     exit;
 }
 
@@ -168,6 +176,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     http_response_code(422);
+}
+
+if ($page['layout'] === 'va') {
+    require_once __DIR__ . '/lib/landing-va.php';
+    lp_document($page, $page['title'], fn() => va_page($page, $vals, $errs, $isDraft), true);
+    exit;
 }
 
 lp_document($page, $page['title'], function () use ($page, $vals, $errs, $isDraft) {
@@ -265,8 +279,8 @@ function lp_intro(array $page, bool $isDraft): void { ?>
     </section>
 <?php }
 
-/** The whole document around a page's content. */
-function lp_document(?array $page, string $title, callable $body): void {
+/** The whole document around a page's content. $full: the body lays out its own full-width sections. */
+function lp_document(?array $page, string $title, callable $body, bool $full = false): void {
     $isDraft = $page && !landing_live($page);
     $index = $page && $page['indexable'] && !$isDraft;
     $desc = $page ? mb_substr(trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '</p>'], [' ', ' '], $page['desc'])))), 0, 155) : '';
@@ -280,6 +294,8 @@ function lp_document(?array $page, string $title, callable $body): void {
     }
     $phone = cms('global.phone');
     $css = '/assets/css/landing.css?v=' . @filemtime(__DIR__ . '/assets/css/landing.css');
+    $va = $page && $page['layout'] === 'va';
+    $vaCss = '/assets/css/landing-va.css?v=' . @filemtime(__DIR__ . '/assets/css/landing-va.css');
     ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -294,18 +310,19 @@ function lp_document(?array $page, string $title, callable $body): void {
 <?php endif; ?>
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23453230'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='17' font-weight='600' text-anchor='middle' fill='%23C9A15E'%3EE%3C/text%3E%3C/svg%3E" rel="icon" type="image/svg+xml">
 <link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&amp;family=Archivo:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&amp;family=Archivo:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 <link href="<?= esc($css) ?>" rel="stylesheet">
+<?php if ($va): ?><link href="<?= esc($vaCss) ?>" rel="stylesheet"><?php endif; ?>
 </head>
-<body class="lp">
+<body class="lp<?= $va ? ' va' : '' ?>">
 <header class="lp-top"><div class="lp-wrap">
   <a class="lp-brand" href="/">Erika<span>K</span>Page</a>
   <?php if ($phone !== ''): ?><a class="lp-phone" href="tel:<?= esc(preg_replace('/[^0-9+]/', '', $phone)) ?>"><?= esc($phone) ?></a><?php endif; ?>
 </div></header>
 <?php if ($isDraft): ?><div class="lp-draft"><b>Draft</b> · only you can see this page, because you're logged in to the admin.<?= $page && !landing_deliverable($page) ? ' It has no file to hand over yet.' : '' ?><?= $page && !landing_payable($page) ? ' It has a price, but Stripe isn\'t set up yet (Payments / Stripe).' : '' ?> <a href="/admin.php?page=landing-pages&amp;edit=<?= esc(rawurlencode($page['slug'])) ?>" style="text-decoration:underline">Edit it</a></div><?php endif; ?>
-<main class="lp-main"><?php if ($page): ?><div class="lp-wrap lp-grid"><?php endif; ?>
+<main class="lp-main"><?php if ($page && !$full): ?><div class="lp-wrap lp-grid"><?php endif; ?>
 <?php $body(); ?>
-<?php if ($page): ?></div><?php endif; ?></main>
+<?php if ($page && !$full): ?></div><?php endif; ?></main>
 <footer class="lp-foot"><div class="lp-wrap">
   <span><b>Erika K. Page</b> · Axen Realty<?= $phone !== '' ? ' · ' . esc($phone) : '' ?></span>
   <span><?= cms_e('global.footer.bottom2') ?></span>
