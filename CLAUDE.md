@@ -705,6 +705,9 @@ first cover rendered in Times). Before any work:
 6. Chromium is `/opt/pw-browsers/chromium` (a symlink to the current build). Every tool uses that
    path; build-numbered paths (`chromium-1194`) broke when the image changed.
 
+- **`check-article.mjs --all` against the live mirror takes over 30 minutes at 24 articles**, the
+  longest a background task may run: on 29 Oct it was stopped on the last article. Run it in two
+  halves (`check-article.mjs <slug> <slug> …`), each in its own background task.
 - `CPANEL_USER=… CPANEL_TOKEN=… tools/deploy.sh <files…>` uploads, creates
   directories, and confirms each file's size from a fresh listing.
   The listing now asks for hidden files (`show_hidden=1`); without it a `.htaccess` upload
