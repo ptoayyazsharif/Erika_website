@@ -57,6 +57,9 @@ starts on move-in day."
 the owner asked for it ("always provide everything… never ever miss it"). Sent in full, and the
 rule is now in CLAUDE.md *Hand-overs*: the last reply of a publishing turn is the complete hand-over,
 even while a check is pending.
+**Live check of every article:** 23 passed live (WARNs only: sites that refuse non-browsers). The run
+hit the 30-minute background limit on the 24th (closing costs), which then passed on its own,
+including the new video check. Lesson in CLAUDE.md: run the live `--all` in two halves.
 
 ---
 
