@@ -163,6 +163,12 @@ goes live when the owner uploads the photo and `1039 Mariners Merged.pdf` in the
 and presses Publish. `1896-alcovy-bluff-way` (the same package for 1896 Alcovy Bluff Way,
 Lawrenceville, 22 Oct) is a **draft** on purpose ("don't publish it yet"): it needs the photo,
 the PDF and its beds / baths / size, which came with nothing but the address.
+`va-services` (**VA services**, 29 Oct 2026, Erika's ask through her VA) is a **draft** too:
+lead capture for her VA / call center services, delivering the free **VA Wish List** PDF
+(`assets/guides/va-wish-list.pdf`, a public file, so the page goes live the moment it's published).
+Its words are hers ("You need a VA", her 27 Oct meeting); the services come from the team's VA
+flyer, **without the Dot.kode name** until Erika confirms how it relates to her; NSOL BPO is never
+named. Its line under her name reads "VA Services", not Axen Realty.
 
 Every article is narrated in Erika's cloned voice and goes out as an episode of the
 **Erika Explains** podcast on RSS.com — the owner uploads; see *Podcast* below.
@@ -439,6 +445,10 @@ email and in Lofty.
   Lofty failure + retry, tampered/forged links, private folder, the question builder,
   unpublish/duplicate/delete, script in a question. It backs up and restores the local
   database. Passed on SQLite and on MariaDB 10.11 (20 Oct 2026).
+- **The line under her name is per page** (`brand`, "Line under her name" in the editor; default
+  Axen Realty). It shows in the eyebrow, the visitor's email and the receipt. An offer that isn't
+  brokerage business (VA services) sets its own, because Erika asked not to dilute her Axen
+  authority with other offers (19 Oct 2026). The site footer keeps Axen Realty (licensee rules).
 - **Words on a page are the owner's or Erika's.** The 1039 Mariners Ct page copies her Stan
   page word for word; the consent line and thank-you text are ours, in plain terms, and
   editable — flag them for her.
@@ -841,6 +851,10 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   email and statement descriptor. **Erika decides a refund policy** before selling (none is in
   her files). **Before selling a subscription**, turn on Stripe's customer portal so buyers can
   cancel online; the receipt says "reply to cancel" for now. Then switch to the live key.
+- **Owner: deploy and publish the VA services page** (29 Oct): upload `landing-pages.php`,
+  `landing.php`, `lib/landing.php`, `lib/admin-landing.php` and `assets/guides/va-wish-list.pdf`
+  (`tools/deploy.sh`, needs the cPanel keys), then admin → Landing pages → VA Services → Publish,
+  and send one test lead. Ask Erika: may the page name Dot.kode, and what is the service called?
 - **Leads from now on are kept in the admin** (Leads), from every form on the site. Lofty
   only receives them while CRM / Lofty is switched on with a key; whether it is on the live
   site isn't known from here.

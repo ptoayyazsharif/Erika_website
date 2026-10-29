@@ -7,6 +7,31 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-29 — VA services landing page and the VA Wish List
+
+**Asked.** Erika, through her VA: promote VA services too, with a landing/splash page on her site for
+lead capture. The VA then sent the team's VA services flyer for detail.
+
+**Done**
+- `landing-pages.php`: new page `va-services` (`/page/va-services`), a **draft**. Her quotes ("You need
+  a VA" video; her 27 Oct meeting); questions on who they are, what they'd hand off first (13 boxes),
+  hours a week and start date; Lofty source "Website – VA Services", tags VA Services; indexable.
+- `tools/guides/va-wish-list.html` → `assets/guides/va-wish-list.pdf` (3 pages, built and checked by
+  `build-guide.mjs`: no clipping, no font fallback, every page's text present, 71 KB). The page
+  delivers it as a link, so no admin upload is needed.
+- **New per-page "line under her name"** (`brand`): the eyebrow, the visitor email and the receipt read
+  "Erika K. Page · VA Services" on this page instead of Axen Realty. Default unchanged.
+- Dot.kode (the flyer's brand, email and website) and NSOL BPO are left out; no prices.
+
+**Passed.** Local render on desktop and phone (no sideways scroll, no JS errors); a test lead reached the
+thank-you page and the Leads table with every answer and the right Lofty source and tags;
+`tools/check-landing/run.sh` **ALL PASS** after the `brand` change (local SQLite, restored afterwards).
+
+**Open.** Deploy (cPanel keys) and publish; one test lead on the live site; Erika to OK the words and
+say whether Dot.kode may be named and what the service is called.
+
+---
+
 ## 2026-10-29 — The site's speed; "Want your deposit back?"; podcast episode 14; YouTube episode 9
 
 **Asked.** "Post an article for today and give me the next episode… check why the website is very
