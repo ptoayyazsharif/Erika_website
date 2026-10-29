@@ -853,6 +853,9 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   Episodes 1–14 were handed over on 12–29 Oct (closing costs, owning vs investing, know
   your house, cash is king, homestead, relocating, restaurant space, open house, bank vs
   broker, rollback rate, stairs, Fannie Mae 620, Wall Street, trades). Next is 15: weekend, then 16: HUD homes.
+  **Episodes 1–14 are live** (checked against the feed, `media.rss.com/erika-explains/feed.xml`, 29 Oct;
+  14 posted that day). Episode 1 carries no episode number in RSS.com: set Season 1, Episode 1.
+  Check the feed, not the hand-over list, before saying what is live.
   Wall Street's description carries Treasury's 22 Oct proposed rules; ★ when they're final, update
   the article again. NEXA / Andrew episodes carry the lender disclosure in
   the description (`handover.py --note`, 22 Oct).
@@ -894,6 +897,10 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   to finish" and "The words are hers", true only of episodes 1–4. Suggested replacement given to
   the owner on 20 Oct (SESSION-LOG). Also: is `a7-pink-suit-ai.jpg` AI-generated (as
   `photos.php` says) or a real photo (the owner, 20 Oct)?
+- **YouTube is connected to the podcast's RSS feed** (the owner, 29 Oct): every episode reaches the
+  channel from RSS.com on its own, so episodes 1–14 are there. Ask the owner before making any more
+  separate YouTube videos with `tools/youtube/episode.py` (1–9 were made); the hand-over's YouTube
+  fields are only needed if they still want those.
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
   traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–9

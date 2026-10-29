@@ -7,6 +7,26 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-29 (night) — podcast status checked at the source; the VA named nowhere
+
+**Asked.** The owner: the command center showed the wrong number of episodes live ("why have you not
+checked with other repos?"); episode 14 went up on RSS.com today; YouTube is connected through the RSS
+feed; show the edited videos too; never name the VA anywhere. Also: her company is Talaris Consulting
+Group, not Polaris.
+
+**Done.** Read the RSS feed: 14 episodes live (Season 1, 2–14 numbered; episode 1 has no number). The
+command center now shows 1–14 live on RSS.com and YouTube, and lists the 60 finished edits from the video
+repo. The VA's names were taken out of every file in the four repos (here: the Escalate launch plan);
+"Polaris" corrected to Talaris Consulting Group in `ceo_erika`.
+
+**Failed, then fixed.** The board's episode statuses had been carried over from the hand-over list, not
+checked; its README now says to check the feed and the video repo on every sync.
+
+**Open.** Set episode 1's number in RSS.com. Ask the owner whether separate YouTube videos are still
+wanted now that the channel takes the feed.
+
+---
+
 ## 2026-10-29 (evening) — VA services page deployed
 
 **Asked.** The owner sent the cPanel user and key to deploy.
