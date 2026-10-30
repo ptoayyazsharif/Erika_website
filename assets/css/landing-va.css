@@ -295,3 +295,29 @@ body.va .lp-brand.va-brand{font-family:var(--display);font-size:21px;letter-spac
   .va-founder-grid{grid-template-columns:1fr;gap:24px;justify-items:start}
   .va-founder-photo{width:120px;height:120px}
 }
+
+/* Desktop hero: the VA's face stays clear (the owner, 30 Oct: "the face is hidden"). The photo sits
+   to the right; the quote and the to-done board stack on the left, over its edge only. */
+@media (min-width:901px){
+  .va-hero-art{justify-content:flex-end}
+  .va-photo{width:min(400px,72%)}
+  .va-board{left:0;right:auto;bottom:6%;width:min(250px,46%)}
+  .va-bubble{left:0;right:auto;top:4%;width:min(240px,46%)}
+}
+@media (min-width:901px) and (max-width:1180px){ .va-bubble{display:none} }
+
+/* the tools we work in: grouped chips */
+.va-tools-sec{padding-block:0 clamp(64px,8vw,104px)}
+.va-toolgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.va-toolgroup{background:#fff;border:1px solid var(--vline);border-radius:18px;padding:20px 22px 22px;min-width:0}
+.va .va-toolgroup h3{font-family:'Archivo',sans-serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--rose-ink);margin:0 0 12px}
+.va-chiplist{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:7px}
+.va-chiplist li{font-size:14px;font-weight:600;padding:6px 12px;border-radius:999px;background:var(--sand);color:var(--esp)}
+.va-toolgroup-ai{background:var(--esp);border-color:var(--esp)}
+.va .va-toolgroup-ai h3{color:var(--gold)}
+.va-toolgroup-ai .va-chiplist li{background:var(--esp-3);color:var(--paper)}
+.va-toolnote{margin:18px 0 0;color:var(--muted);font-size:15px}
+@media (max-width:900px){ .va-toolgrid{grid-template-columns:1fr 1fr} }
+@media (max-width:620px){ .va-toolgrid{grid-template-columns:1fr} }
+.va-tile-more{margin:14px 0 0}
+.va-tile-more a{color:var(--gold);font-weight:600;text-decoration:none}

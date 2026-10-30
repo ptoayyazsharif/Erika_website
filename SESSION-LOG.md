@@ -7,6 +7,28 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-30 (evening) — VA page: the face, more tools, a VA on the PDF
+
+**Asked.** The owner: the to-done board hid the VA's face on desktop; add more tools, from competitors
+(nsolbpo.com and others); the PDF made Erika look like the VA. New Pexels, Pixabay and ElevenLabs keys.
+
+**Done.** Hero: photo to the right, quote and board stacked on the left over its edge (quote hidden at
+901–1180 px). A grouped tools section (9 groups, about 50 tools; real estate tools last), a link to it from
+the tools tile, more services (customer support, project management, invoicing) and industries (law,
+insurance and mortgage, online shops), from NSOL BPO's and other VA companies' pages. PDF: a VA in the
+cover's arch, "Founded by Erika K. Page" small at the foot, "VA Services" on every page, a longer tools
+line. Keys saved to the gitignored `.env` in both repos and tested: Pexels 200, Pixabay 200, ElevenLabs
+key restricted (voices 200, user 401: no user_read; enough to narrate).
+
+**Passed.** Hero looked at 1440, 1180 and 1000 px: the face is clear. No sideways scroll on desktop or phone,
+no console errors; `tools/check-landing/run.sh` ALL PASS; the PDF build passes. Deployed (FAILURES: 0) and
+byte-compared live; the live page carries the tools section and the new lines. No admin-saved fields
+changed this time, so no update script was needed.
+
+**Open.** The domain and the company name (Erika); Erika to read the founder section and the tools.
+
+---
+
 ## 2026-10-30 — The VA page as its own company (Erika's 30 Oct meeting)
 
 **Asked.** The meeting (Google Doc): keep the VA company separate from her real estate world, on its own

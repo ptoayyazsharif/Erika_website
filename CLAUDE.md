@@ -188,6 +188,13 @@ figure), common tools (HubSpot, Salesforce…), a command-center service, no pro
 real estate agents?" question. It signs as its company ("VA Services" until it has a name): header,
 footer (no Axen, no site links), emails. **It is live** (the owner published it by 30 Oct). **Its own
 domain is waiting on Erika's pick**: type it in the editor's "Own domain" once it points at this hosting.
+Later on 30 Oct (the owner): the hero keeps the VA's face clear on desktop (photo right, quote and board
+stacked left over its edge; the quote hides at 901–1180 px), a grouped **"The tools we work in"** section
+(about 50 tools in 9 groups, real estate tools last), more services and industries from competitors'
+pages (customer support, project management, invoicing; law, insurance and mortgage, online shops; NSOL
+BPO itself is never named), and **the PDF cover shows the VA, not Erika** ("Founded by Erika K. Page"
+small at the foot; "VA Services" as the name on every page). **Check a hero by looking at the face**:
+an overlay that sits over a photo's face passes every automated check.
 
 Every article is narrated in Erika's cloned voice and goes out as an episode of the
 **Erika Explains** podcast on RSS.com — the owner uploads; see *Podcast* below.

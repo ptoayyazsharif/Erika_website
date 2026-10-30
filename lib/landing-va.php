@@ -123,7 +123,7 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
 
 <section class="va-who">
   <div class="va-in">
-    <p class="va-who-line">For <b>CPAs</b>, <b>medical and dental offices</b>, <b>salon owners</b>, <b>fashion designers</b>, <b>real estate agents and teams</b>, and every <b>busy business owner</b> and <b>professional</b>.</p>
+    <p class="va-who-line">For <b>CPAs</b>, <b>medical and dental offices</b>, <b>salon owners</b>, <b>fashion designers</b>, <b>law offices</b>, <b>insurance and mortgage pros</b>, <b>online shops</b>, <b>real estate agents and teams</b>, and every <b>busy business owner</b>.</p>
   </div>
 </section>
 
@@ -142,7 +142,8 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
           <li><b>Client communication</b><span>Quick replies, happy clients.</span></li>
           <li><b>Research and data entry</b><span>Research, data and records, kept up to date.</span></li>
           <li><b>Marketing support</b><span>Content, email campaigns, flyers.</span></li>
-          <li><b>Admin tasks</b><span>Documents, forms, reports.</span></li>
+          <li><b>Admin tasks</b><span>Documents, forms, reports, invoicing.</span></li>
+          <li><b>Project management</b><span>Deadlines tracked, projects kept moving.</span></li>
           <li><b>CRM and database</b><span>Your pipeline clean and updated.</span></li>
           <li><b>For real estate teams</b><span>Listing and transaction coordination, from contract to close.</span></li>
         </ul>
@@ -160,6 +161,7 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
         <div class="va-tile-top"><?= va_icon('headset') ?><h3>Your phones and office</h3></div>
         <ul class="va-ticks">
           <li>Answering calls and setting appointments</li>
+          <li>Customer support by phone, email and chat</li>
           <li>Cold calling</li>
           <li>CRM, profiles, websites and automations</li>
           <li>Medical billing for medical and dental offices</li>
@@ -168,7 +170,8 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
       <article class="va-tile va-tile-dark">
         <div class="va-tile-top"><?= va_icon('spark') ?><h3>Your tools</h3></div>
         <p class="va-tile-quote">&ldquo;AI is amazing, but AI needs an AI operator.&rdquo;</p>
-        <ul class="va-tools"><li>HubSpot</li><li>Salesforce</li><li>Google Workspace</li><li>Microsoft 365</li><li>Canva</li><li>Mailchimp</li><li>Trello</li><li>Slack</li></ul>
+        <ul class="va-tools"><li>HubSpot</li><li>Salesforce</li><li>QuickBooks</li><li>Google Workspace</li><li>Microsoft 365</li><li>Asana</li><li>Shopify</li><li>ChatGPT</li></ul>
+        <p class="va-tile-more"><a href="#tools">And 40 more →</a></p>
       </article>
       <article class="va-tile va-tile-rose">
         <div class="va-tile-top"><?= va_icon('home') ?><h3>Your home, too</h3></div>
@@ -190,6 +193,29 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
 
 <?php // "Why I founded this company" (Erika, 30 Oct 2026: "so there is a US person connected to it").
       // Every line in it is hers: the "You need a VA" video (23-24 Oct) and her 27 Oct meeting. ?>
+<?php // The tools, grouped (the owner, 30 Oct: "add some more tools"; Erika, 30 Oct: the common ones,
+      // not real estate software first). Real estate tools stay, last. ?>
+<section class="va-sec va-tools-sec" id="tools">
+  <div class="va-in">
+    <div class="va-head">
+      <p class="va-eyebrow">The tools we work in</p>
+      <h2 class="va-h2">Your tools, already open on our screens.</h2>
+    </div>
+    <div class="va-toolgrid">
+      <div class="va-toolgroup"><h3>CRM and sales</h3><ul class="va-chiplist"><li>HubSpot</li><li>Salesforce</li><li>Zoho CRM</li><li>Pipedrive</li><li>GoHighLevel</li><li>Monday CRM</li></ul></div>
+      <div class="va-toolgroup"><h3>Office and files</h3><ul class="va-chiplist"><li>Google Workspace</li><li>Microsoft 365</li><li>Dropbox</li><li>DocuSign</li><li>Adobe Acrobat</li><li>Notion</li></ul></div>
+      <div class="va-toolgroup"><h3>Projects</h3><ul class="va-chiplist"><li>Asana</li><li>Trello</li><li>ClickUp</li><li>Monday.com</li><li>Airtable</li></ul></div>
+      <div class="va-toolgroup"><h3>Calls and meetings</h3><ul class="va-chiplist"><li>Zoom</li><li>Microsoft Teams</li><li>Slack</li><li>WhatsApp</li><li>Calendly</li><li>Acuity Scheduling</li></ul></div>
+      <div class="va-toolgroup"><h3>Books and payments</h3><ul class="va-chiplist"><li>QuickBooks</li><li>Xero</li><li>FreshBooks</li><li>Stripe</li><li>PayPal</li><li>Square</li></ul></div>
+      <div class="va-toolgroup"><h3>Marketing and social</h3><ul class="va-chiplist"><li>Canva</li><li>Mailchimp</li><li>Constant Contact</li><li>Meta Business Suite</li><li>Hootsuite</li><li>CapCut</li></ul></div>
+      <div class="va-toolgroup"><h3>Websites and stores</h3><ul class="va-chiplist"><li>WordPress</li><li>Shopify</li><li>Wix</li><li>Squarespace</li><li>Etsy</li></ul></div>
+      <div class="va-toolgroup"><h3>Customer support</h3><ul class="va-chiplist"><li>Zendesk</li><li>Freshdesk</li><li>Gorgias</li><li>Intercom</li></ul></div>
+      <div class="va-toolgroup va-toolgroup-ai"><h3>AI, with an operator</h3><ul class="va-chiplist"><li>ChatGPT</li><li>Claude</li><li>Gemini</li><li>Zapier</li><li>Make</li></ul></div>
+    </div>
+    <p class="va-toolnote">Real estate teams too: Lofty, kvCORE, dotloop, SkySlope, Follow Up Boss and the MLS. Don&rsquo;t see yours? Ask on the call.</p>
+  </div>
+</section>
+
 <section class="va-founder">
   <div class="va-in va-founder-grid">
     <figure class="va-founder-photo"><img src="<?= esc(asset_url('assets/photos/01/a7-pink-suit-cutout-520.webp')) ?>" alt="Erika K. Page" width="520" height="782" loading="lazy"></figure>
@@ -282,7 +308,7 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
       <details><summary>What happens after I send the form?</summary><p>You get the list straight away, on the next screen and by email. Then we reach out to talk through what you ticked. Can't wait? Call <?= esc($ph) ?>.</p></details>
       <?php // Her price, 30 Oct 2026: "an average of four to eight … or it can be project based … significantly less expensive than … a US-based assistant". ?>
       <details><summary>What does a VA cost?</summary><p>On average $4 to $8 an hour, or a price for the project. That is significantly less than an assistant based in the US. We go through it on the call, once we know what is on your list.</p></details>
-      <details><summary>Which tools do you work in?</summary><p>The ones you already use: HubSpot, Salesforce, Google Workspace, Microsoft 365, Canva, Mailchimp, Trello, Slack and more.</p></details>
+      <details><summary>Which tools do you work in?</summary><p>The ones you already use: HubSpot, Salesforce, QuickBooks, Google Workspace, Microsoft 365, Asana, Shopify, Canva, Slack, Zoom and more. <a href="#tools">See the full list</a>.</p></details>
       <details><summary>Can you build us a command center?</summary><p>Yes. Your meetings become tasks, questions and dates on one private dashboard, with a switch that hides private details when you share your screen.</p></details>
       <details><summary>I don't know where to start.</summary><p>That is what the list is for. Tick everything you would hand off, then start with the task that costs you the most hours.</p></details>
     </div>
