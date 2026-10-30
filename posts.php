@@ -25,6 +25,116 @@
 return [
 
     [
+        // Researched around her video raw-task-1-changes (ceo_erika intake/transcripts/video; made
+        // during a government shutdown, date not on file): her three points (flood insurance,
+        // IRS transcripts, government-backed loans). Her "FHA is the most common loan" line is
+        // left out (no source read). The current deadline is H.R. 6500 (Dec 11, 2026); the rest is
+        // CRS, HUD's, VA's and the IRS's own shutdown documents, and NAHB for USDA. Sources:
+        // tools/research/government-shutdown-and-your-closing.md.
+        'slug'           => 'government-shutdown-and-your-closing',
+        'title'          => 'Closing soon? A shutdown could slow you down.',
+        'seo_title'      => 'Government Shutdowns and Your Home Closing: Flood Insurance, IRS Transcripts and FHA, VA and USDA Loans',
+        'seo_desc'       => 'Federal funding and flood insurance run to December 11, 2026. What a shutdown did to closings before: flood insurance, IRS transcripts, FHA, VA and USDA loans.',
+        'excerpt'        => 'You&rsquo;re on your way to closing, right? Well, not so fast. Federal funding and the flood insurance program both run to December 11, 2026. Here&rsquo;s what a shutdown has done to closings before, and what to ask your lender now.',
+        'date'           => '2026-10-30',
+        'updated'        => '2026-10-30',
+        'author'         => 'Erika K. Page',
+        'cat'            => 'buying',
+        'tags'           => ['government shutdown', 'flood insurance', 'FHA loan', 'VA loan', 'USDA loan', 'closing'],
+        'cover'          => 'assets/photos/17/government-shutdown-and-your-closing-cover.jpg',
+        'cover_alt'      => 'Erika K. Page beside the headline: Closing soon? A shutdown could slow you down.',
+        'cover_credit'   => 'Inset photo by <a href="https://www.pexels.com/@ben-kelsey-2155337245" rel="nofollow noopener" target="_blank">Ben Kelsey</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>',
+        'audio'          => 'assets/audio/government-shutdown-and-your-closing.mp3',
+        'audio_note'     => 'A podcast episode on this topic, in Erika’s AI voice. The sources are listed at the end of the article.',
+        'guide'          => '',
+        'product'        => '',
+        'short'          => 'shutdown',
+        'audio_secs'     => 327,
+        'published'      => true,
+        'faq' => [
+            [
+                'q' => 'Can I close on a house during a government shutdown?',
+                'a' => 'Often, yes, but it depends on the loan and the property. In past shutdowns FHA kept endorsing most single-family loans and VA kept its loan guaranty running, while USDA committed no new rural housing loans or guarantees. A home in a flood zone that needs a new National Flood Insurance Program policy is where closings have stalled.',
+            ],
+            [
+                'q' => 'What happens to flood insurance if the NFIP lapses?',
+                'a' => 'The authority to write new NFIP policies expires. Policies already in force continue to the end of their one-year term, and private flood insurance can meet the lender&rsquo;s requirement if it meets the conditions in the law. In past lapses, buyers who needed a new NFIP policy in a high-risk flood zone couldn&rsquo;t close until the program was reauthorized.',
+            ],
+            [
+                'q' => 'When does the current federal funding run out?',
+                'a' => 'The stopgap spending bill Congress passed in September 2026 funds the government, and authorizes the flood insurance program, through December 11, 2026, unless Congress acts again before then.',
+            ],
+        ],
+        'body' => <<<'HTML'
+<p>&ldquo;You&rsquo;re on your way to closing, right? Well, not so fast.&rdquo;</p>
+
+<p>I made a video during a government shutdown, because a shutdown &ldquo;could really be impactful on your timeline.&rdquo; Here&rsquo;s why it matters again: the short-term spending bill Congress passed in September keeps the federal government funded, and the National Flood Insurance Program authorized, only through <strong>December 11, 2026</strong>. <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6500enr/html/BILLS-119hr6500enr.htm" target="_blank" rel="noopener">[1]</a> <a href="https://www.nahb.org/blog/2026/09/nfip-extension" target="_blank" rel="noopener">[2]</a> If Congress acts before then, none of this happens. If it doesn&rsquo;t, here&rsquo;s what has slowed closings before.</p>
+
+<p>So if you&rsquo;re closing in December, let me explain.</p>
+
+<h2>First, flood insurance</h2>
+
+<p>In my video I said flood insurance &ldquo;may be suspended,&rdquo; and &ldquo;if the home that you are purchasing is in a flood zone and the lender can&rsquo;t get the flood insurance&hellip; you&rsquo;re not gonna be able to close the loan.&rdquo;</p>
+
+<p>Here&rsquo;s exactly how that works. Federal agencies, federally regulated lenders and the government-sponsored enterprises must require flood insurance on a mortgage they make, guarantee or buy when the home is in a high-risk flood zone (a Special Flood Hazard Area) in a community that takes part in the program. When the National Flood Insurance Program lapses, its authority to write <em>new</em> policies expires. According to the Congressional Research Service, in past lapses &ldquo;borrowers were not able to obtain flood insurance to close, renew, or increase loans secured by property in an SFHA until the NFIP was reauthorized.&rdquo; In June 2010, estimates suggest over 1,400 home sale closings were canceled or delayed each day. <a href="https://www.congress.gov/crs_external_products/IN/PDF/IN10835/IN10835.60.pdf" target="_blank" rel="noopener">[3]</a></p>
+
+<p>It has happened recently, too. The program lapsed from October 1 to November 12, 2025, and again from February 1 to 3, 2026. <a href="https://www.congress.gov/crs_external_products/IN/PDF/IN10835/IN10835.60.pdf" target="_blank" rel="noopener">[3]</a></p>
+
+<p>Two things work in your favor. A policy already in force continues to the end of its one-year term. And private flood insurance can satisfy the requirement if it meets the conditions in the law. <a href="https://www.congress.gov/crs_external_products/IN/PDF/IN10835/IN10835.60.pdf" target="_blank" rel="noopener">[3]</a></p>
+
+[[img:assets/photos/17/b51-house-in-flood-water.jpg|A red house and a camper standing in floodwater|Photo by <a href="https://www.pexels.com/@serge-lavoie-199436141" rel="nofollow noopener" target="_blank">Serge Lavoie</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>Second, the IRS</h2>
+
+<p>I said that on government-backed loans lenders &ldquo;always have to order tax transcripts, and if those offices are closed or slow and can&rsquo;t respond in a timely manner, that&rsquo;s definitely gonna affect your closing timeline.&rdquo;</p>
+
+<p>What happened last time is mixed, so here&rsquo;s both sides. In the 2018&ndash;2019 shutdown, the IRS&rsquo;s Income Verification Express Service, which lenders use to verify a borrower&rsquo;s income, stopped and only restarted on January 7, with a backlog that meant longer than the usual 72 hours. <a href="https://www.irs.gov/newsroom/irs-statement-irs-reopens-ives-some-fee-based-programs" target="_blank" rel="noopener">[4]</a> In the fall 2025 shutdown, the IRS said, &ldquo;The IRS Income Verification Express Service (IVES) will remain available,&rdquo; while its walk-in Taxpayer Assistance Centers closed. <a href="https://www.irs.gov/newsroom/statement-on-irs-operations-limited-during-the-lapse-in-appropriations-regular-tax-deadlines-remain" target="_blank" rel="noopener">[5]</a> So ask your lender whether your income has already been verified.</p>
+
+<h2>Now here&rsquo;s the important part: your loan type</h2>
+
+<p>&ldquo;All of these departments that are either paused, slow, closed, it&rsquo;s going to be impactful when you&rsquo;re trying to get your house over the closing finish line.&rdquo; And each one has handled a shutdown differently.</p>
+
+<ul>
+<li><strong>FHA.</strong> HUD&rsquo;s 2025 shutdown plan says FHA&rsquo;s single-family office &ldquo;will endorse loans,&rdquo; except reverse mortgages (HECMs) and Title I loans. Loans that need an FHA underwriter to look at them can&rsquo;t be finalized during a lapse, and questions for HUD staff may be delayed. <a href="https://www.hud.gov/sites/documents/hudcontingencyplanfinal.pdf" target="_blank" rel="noopener">[6]</a></li>
+<li><strong>VA.</strong> VA&rsquo;s plan keeps its &ldquo;loan guaranty programs&rdquo; running during a lapse. But in the 2013 shutdown, certificates of eligibility and certificates of reasonable value (VA&rsquo;s appraisals) were delayed. <a href="https://department.va.gov/wp-content/uploads/2025/09/2026-VA-Lapse-Plan.pdf" target="_blank" rel="noopener">[7]</a></li>
+<li><strong>USDA.</strong> This one is different. In the 2025 shutdown, &ldquo;no new rural housing loans, grants or loan guarantees will be committed.&rdquo; For Section 502 guaranteed loans only, lenders and borrowers could choose to close if USDA had already issued a valid conditional commitment. <a href="https://www.nahb.org/blog/2025/10/government-shutdown" target="_blank" rel="noopener">[8]</a></li>
+</ul>
+
+[[img:assets/photos/17/b52-signing-papers-by-a-calendar.jpg|A woman signing papers beside a calendar|Photo by <a href="https://www.pexels.com/@rdne" rel="nofollow noopener" target="_blank">RDNE Stock project</a> on <a href="https://www.pexels.com/" rel="nofollow noopener" target="_blank">Pexels</a>]]
+
+<h2>If you&rsquo;re closing in December</h2>
+
+<p>Ask your lender three things now:</p>
+
+<ul>
+<li>Is the home in a Special Flood Hazard Area? If it is, how will the flood insurance be in place by closing, and is private flood insurance an option?</li>
+<li>Has my income already been verified with the IRS?</li>
+<li>Does anything on my loan still need a government office (an FHA underwriter, a VA certificate or appraisal, or a USDA commitment)? If so, when?</li>
+</ul>
+
+<p>Like I said in my video, &ldquo;hopefully this won&rsquo;t impact you.&rdquo; But if you&rsquo;re buying in Metro Atlanta this winter, <a href="/contact">reach out to me</a> and we&rsquo;ll look at your timeline together.</p>
+
+<p>So that&rsquo;s a government shutdown and your closing, explained.</p>
+
+<p><em>This article explains what federal agencies and the Congressional Research Service have published about past shutdowns. Each shutdown can be handled differently, and plans change. It isn&rsquo;t legal or financial advice; confirm the details with your lender. Erika K. Page is a real estate agent with Axen Realty.</em></p>
+
+<h2>Sources</h2>
+
+<ol>
+<li>H.R. 6500, <a href="https://www.govinfo.gov/content/pkg/BILLS-119hr6500enr/html/BILLS-119hr6500enr.htm" target="_blank" rel="noopener">Continuing Appropriations and Extensions Act, 2027</a>, enrolled bill, sections 106 and 139.</li>
+<li>National Association of Home Builders, <a href="https://www.nahb.org/blog/2026/09/nfip-extension" target="_blank" rel="noopener">National Flood Insurance Program Extended Through Dec. 11</a> (September 4, 2026).</li>
+<li>Congressional Research Service, <a href="https://www.congress.gov/crs_external_products/IN/PDF/IN10835/IN10835.60.pdf" target="_blank" rel="noopener">What Happens If the National Flood Insurance Program (NFIP) Lapses?</a> (IN10835, updated February 6, 2026).</li>
+<li>Internal Revenue Service, <a href="https://www.irs.gov/newsroom/irs-statement-irs-reopens-ives-some-fee-based-programs" target="_blank" rel="noopener">IRS reopens IVES, some fee-based programs</a> (January 2019).</li>
+<li>Internal Revenue Service, <a href="https://www.irs.gov/newsroom/statement-on-irs-operations-limited-during-the-lapse-in-appropriations-regular-tax-deadlines-remain" target="_blank" rel="noopener">Statement on IRS operations limited during the lapse in appropriations</a> (October 21, 2025).</li>
+<li>U.S. Department of Housing and Urban Development, <a href="https://www.hud.gov/sites/documents/hudcontingencyplanfinal.pdf" target="_blank" rel="noopener">HUD Contingency Plan for Possible Lapse in Appropriations 2025</a> (October 16, 2025).</li>
+<li>U.S. Department of Veterans Affairs, <a href="https://department.va.gov/wp-content/uploads/2025/09/2026-VA-Lapse-Plan.pdf" target="_blank" rel="noopener">Human Capital Contingency Plan: Agency Operations in the Absence of Appropriations</a> (September 2025).</li>
+<li>National Association of Home Builders, <a href="https://www.nahb.org/blog/2025/10/government-shutdown" target="_blank" rel="noopener">How the Government Shutdown Will Affect Housing</a> (October 1, 2025).</li>
+<li>Erika K. Page, video on a government shutdown and closings, her own words.</li>
+</ol>
+HTML,
+    ],
+
+    [
         // Researched around her video "mentee-first-deal" (Video_Edting_Erika, edited 9-10 Oct
         // 2026; ceo_erika intake/edits/mentee-first-deal.md and identity/certified-property-manager):
         // her list of what an agent does for a tenant. The mentee, her client and her fee are not

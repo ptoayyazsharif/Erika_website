@@ -1,0 +1,67 @@
+# Erika Explains — podcast episode script
+# Article: /blog/government-shutdown-and-your-closing
+# Facts: every one is in tools/research/government-shutdown-and-your-closing.md.
+# Her lines are from her video raw-task-1-changes (made during a government shutdown; date not on
+# file). Left out on purpose: her "most common loan" line (no source), politics, the Escaluxe close.
+#
+# voice: stability=0.38 similarity=0.8 style=0.22 speaker_boost=1
+
+Hey, it's Erika. Welcome back to Erika Explains.
+
+You're on your way to closing, right? Well... not so fast.
+
+I made a video during a government shutdown, because a shutdown could really be impactful on your timeline. And here's why I'm bringing it back up.
+
+The short-term spending bill Congress passed in September keeps the federal government funded, and the National Flood Insurance Program authorized... only through December eleventh, twenty twenty-six.
+
+Now, if Congress acts before then, none of this happens. But if it doesn't, here's what has slowed closings down before.
+
+So if you're closing in December, let me explain.
+
+Let's start with flood insurance.
+
+In my video I said flood insurance may be suspended. And if the home that you are purchasing is in a flood zone, and the lender can't get the flood insurance, you're not gonna be able to close the loan.
+
+Here's how that actually works. Federal agencies, federally regulated lenders and the government-sponsored enterprises have to require flood insurance on a mortgage they make, guarantee or buy... when the home is in a high-risk flood zone, in a community that takes part in the program. The official name for that zone is a Special Flood Hazard Area.
+
+When the National Flood Insurance Program lapses, its authority to write new policies expires. And according to the Congressional Research Service, in past lapses, borrowers in those zones were not able to get flood insurance to close, renew or increase a loan until the program was reauthorized. Back in June, twenty ten, estimates suggest over fourteen hundred home sale closings were canceled or delayed every single day.
+
+And this isn't ancient history. The program lapsed from October first to November twelfth, twenty twenty-five. And again from February first to the third, twenty twenty-six.
+
+Now, two things work in your favor. A policy that's already in force keeps going to the end of its one-year term. And private flood insurance can meet the requirement, if it meets the conditions in the law.
+
+Next, the I R S.
+
+In my video I said that on government-backed loans, lenders always have to order tax transcripts. And if those offices are closed or slow, and can't respond in a timely manner, that's definitely gonna affect your closing timeline.
+
+So what actually happened? It's mixed. So I'll give you both sides.
+
+In the shutdown that ran from December twenty eighteen into January twenty nineteen, the I R S's income verification service, the one lenders use to verify a borrower's income, stopped. It only restarted on January seventh. And with the backlog, it was taking longer than the usual seventy-two hours.
+
+But in the fall twenty twenty-five shutdown, the I R S said that service would remain available. Even while its walk-in taxpayer assistance centers were closed.
+
+So ask your lender whether your income has already been verified.
+
+Now here's the important part. Your loan type.
+
+Like I said in my video, all of these departments that are either paused, slow or closed... it's going to be impactful when you're trying to get your house over the closing finish line. And each one has handled a shutdown differently.
+
+F H A first. The Department of Housing and Urban Development's twenty twenty-five shutdown plan says its single-family office will keep endorsing loans. Except reverse mortgages, and what are called Title One loans. But a loan that needs an F H A underwriter to look at it can't be finalized during a lapse. And questions that need someone at the department may be delayed.
+
+Then V A. The Department of Veterans Affairs keeps its loan guaranty programs running during a lapse. But back in the twenty thirteen shutdown, certificates of eligibility, and V A appraisals, were delayed.
+
+And U S D A. This one's different. In the twenty twenty-five shutdown, the word was that no new rural housing loans, grants or loan guarantees would be committed. Only for guaranteed loans that already had a valid conditional commitment from U S D A could the lender and the buyer choose to go ahead and close.
+
+So if you're closing in December, ask your lender three things now.
+
+Is the home in a Special Flood Hazard Area? And if it is, how will the flood insurance be in place by closing... and is private flood insurance an option?
+
+Has my income already been verified with the I R S?
+
+And does anything on my loan still need a government office? An F H A underwriter, a V A certificate or appraisal, or a U S D A commitment? And if so... when?
+
+Like I said in my video, hopefully this won't impact you. But if you're buying in Metro Atlanta this winter, reach out to me, and we'll look at your timeline together. I've put links to every source in the show notes.
+
+Quick note. This episode explains what federal agencies and the Congressional Research Service have published about past shutdowns. Every shutdown can be handled differently, and plans change. It isn't legal or financial advice, so confirm the details with your lender. And I'm a real estate agent with Axen Realty.
+
+So that's a government shutdown and your closing, explained. I'm Erika Page. Thanks for listening, and I'll talk to you next time.

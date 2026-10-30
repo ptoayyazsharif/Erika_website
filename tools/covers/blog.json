@@ -237,5 +237,15 @@
     "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
     "ref": "assets/photos/17/b49-empty-rental-living-room.jpg",
     "refPos": "50% 50%"
+  },
+  {
+    "slug": "government-shutdown-and-your-closing",
+    "template": "bold",
+    "eyebrow": "Buying",
+    "line": "Closing soon? A shutdown could slow you down.",
+    "sub": "Well, not so fast.",
+    "portrait": "assets/photos/01/a7-pink-suit-ai.jpg",
+    "ref": "assets/photos/17/b50-capitol-dome-and-flag.jpg",
+    "refPos": "30% 50%"
   }
 ]

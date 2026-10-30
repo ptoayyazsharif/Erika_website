@@ -152,6 +152,7 @@ Google AI Studio is still outstanding.
 | `septic-systems-explained` | Buying | `/septic` | none — her "Septic Info" edit (26 Oct; `ceo_erika` `intake/edits/septic-info.md`), her explainer only, with Georgia DPH's *Manual for On-Site Sewage Management Systems* (June 2026; `dph.georgia.gov/media/92616/download`) and the EPA (27 Oct) |
 | `sight-unseen` | Buying | `/sight-unseen` | none — her general virtual-tour lines from the "Respect your time" edit (part 1; the mentee and her clients left out), with the FTC's *Rental Scams Explained* (Aug 2024) and Georgia AG's *What to Do if You've Lost Money in a Scam* (28 Oct) |
 | `security-deposits-in-georgia` | Buying | `/deposit` | none — her list of what an agent does for a tenant and "I am a certified property manager" (her `mentee-first-deal` edit; the mentee and fee left out), with DCA's *Georgia Landlord-Tenant Handbook* (revised 8-29-24) for every rule (29 Oct) |
+| `government-shutdown-and-your-closing` | Buying | `/shutdown` | none — her shutdown video `raw-task-1-changes` (flood insurance, IRS transcripts, government-backed loans), with H.R. 6500 (funding and the NFIP to **Dec 11, 2026** ★), CRS IN10835, HUD's and VA's 2025 lapse plans, the IRS's 2019 and 2025 statements, and NAHB for USDA (30 Oct). Her "FHA is the most common loan" line left out |
 
 Guides (`/digital-products/<slug>`, PDFs in `assets/guides/`, sources in
 `tools/guides/`): `closing-costs-101`, `hidden-value-checklist`, `landlord-rent-guide`.
@@ -552,7 +553,9 @@ and `tools/podcast/georgia-homestead-exemption-explained.txt`. Copy their shape.
    Many official and news sites answer 403 to anything that isn't a browser (BLS,
    Census Reporter, Fulton's assessor, ARC, the regional transit authority, 11Alive,
    sos.ga.gov, atlantaga.gov, dph.georgia.gov, and WABE from 7 Oct). Every FTC host answers a fake
-   404 to anything from this container (28 Oct); WebFetch reads their PDFs. Official PDFs
+   404 to anything from this container (28 Oct); WebFetch reads their PDFs. usda.gov refuses curl
+   and WebFetch alike (30 Oct); congress.gov bill pages refuse WebFetch, but govinfo.gov serves
+   enrolled bills (`/content/pkg/BILLS-119hr<n>enr/html/…`) and CRS PDFs download from congress.gov. Official PDFs
    often download fine with `curl -A "Mozilla/5.0 …"`: save them to a fresh scratch
    folder and read them with the venv's pypdf (`python -I`). That route gave the Fulton
    and GNR health-department documents, the Gwinnett fire CO leaflet and GDOT's TADA
@@ -852,7 +855,7 @@ shipped article in `posts.php`, check whether the admin has saved one (the
 - **Podcast on RSS.com**: the owner started publishing 12 Oct 2026, in date order.
   Episodes 1–14 were handed over on 12–29 Oct (closing costs, owning vs investing, know
   your house, cash is king, homestead, relocating, restaurant space, open house, bank vs
-  broker, rollback rate, stairs, Fannie Mae 620, Wall Street, trades). Next is 15: weekend, then 16: HUD homes.
+  broker, rollback rate, stairs, Fannie Mae 620, Wall Street, trades). Next is 15: weekend (handed over 30 Oct), then 16: HUD homes.
   **Episodes 1–14 are live** (checked against the feed, `media.rss.com/erika-explains/feed.xml`, 29 Oct;
   14 posted that day). Episode 1 carries no episode number in RSS.com: set Season 1, Episode 1.
   Check the feed, not the hand-over list, before saying what is live.
@@ -920,6 +923,12 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   where the text says 20,863, and at 2:42 "one hour" where it says "$1.00", twice each. If the
   voice did misread them, re-record the episode (it is on RSS.com, so the owner swaps the file).
   The captions show the text's figures.
+- **★ The shutdown article (30 Oct) is tied to 11 December 2026.** After that date, or as soon as
+  Congress passes new funding or another stopgap, update its dates (article, FAQ, research notes);
+  re-check the episode's dated lines before it is handed over.
+- **For Erika to review:** the shutdown article and episode (30 Oct). Her video's three points are
+  quoted; what each agency did is from its own documents (USDA from NAHB: usda.gov refuses this
+  container). Her "FHA is the most common loan" line is left out (no source).
 - **For Erika to review:** the security-deposits article and episode (29 Oct). Her list from the
   mentee video is quoted ("not just open doors", "I am a certified property manager"); every
   Georgia rule is DCA's handbook. ★ Re-check when DCA revises the handbook.

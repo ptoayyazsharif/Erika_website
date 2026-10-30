@@ -7,6 +7,39 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-30 — "Closing soon? A shutdown could slow you down."; podcast episode 15
+
+**Asked.** "Now do today's blog and next episode please."
+**First.** `main` was 6 commits ahead (another session: the VA services page, episodes 1–14 checked
+live against the RSS feed, and **YouTube now takes the RSS feed**, so separate YouTube videos are on
+hold until the owner says). Merged. The 29 Oct speed fixes were still live (landing page srcset and
+share JPEG checked). The video repo had no new edits.
+**The article** `government-shutdown-and-your-closing` (Buying, `/shutdown`).
+- Her unused edits all repeat earlier articles (`lease-negotiation`'s list is in the restaurant
+  article). Her older shutdown video `raw-task-1-changes` was unused, and it is timely: H.R. 6500
+  (read as enrolled on govinfo) funds the government and the NFIP only to 11 Dec 2026.
+- Her three points, each set against what the agencies published: flood insurance (CRS IN10835: new
+  policies can't be written in a lapse; past lapses stopped closings in flood zones; lapses Oct–Nov
+  2025 and Feb 2026); IRS transcripts (shown both ways: IVES stopped in 2018–19, "will remain
+  available" in 2025); FHA (HUD's 2025 plan), VA (VA's 2025 plan), USDA (NAHB, Oct 2025: usda.gov
+  refused curl and WebFetch). Her "FHA is the most common loan" line left out (no source).
+- Two claims tightened before publishing: who must require flood insurance (now the CRS's words) and
+  "law" → "bill" (signing not read at an official source). "The one most affected" (USDA) was my
+  word and is gone.
+- Photos B50–B52 (Capitol dome as the cover tile, a flooded house, papers and a calendar).
+- **Episode:** 933 words, 327 s, -19.8 LUFS. The first take's levelling step failed without a
+  message; the second take levelled cleanly. The transcript matches the script.
+- Checks: ALL PASS locally and live; MP3, cover and a body picture byte-identical live.
+**Podcast episode 15** (Atlanta weekend), "Recorded October 16, 2026", plus a line that Phipps
+Plaza's free Friday movies were expected to run through October (the episode says to check the
+schedule).
+**YouTube:** not made today; the channel takes the feed. Asked the owner whether separate videos are
+still wanted.
+**Open.** ★ Update the shutdown article after 11 Dec 2026 or when Congress acts. Erika: review it.
+NEXA / Andrew: November's two start Sunday.
+
+---
+
 ## 2026-10-29 (night) — podcast status checked at the source; the VA named nowhere
 
 **Asked.** The owner: the command center showed the wrong number of episodes live ("why have you not
