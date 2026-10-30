@@ -180,6 +180,14 @@ grid, her quote, three steps, a **three-step form** (taps first, contact details
 a sticky phone bar. The PDF was redone too: a 4-page worksheet (tick, note the hours, pick five).
 **The photo is the pink-suit one: Erika likes it** (her VA, 29 Oct); the cut-out is
 `a7-pink-suit-cutout-{520,900}.webp` (from `tools/podcast/art/erika-cutout.png`).
+**Reworked 30 Oct as its own company** (Erika's meeting; `ceo_erika` `business/va-company-separate`): a
+professional VA's photo in front (`assets/photos/va/`, MART PRODUCTION, Pexels 7709287), Erika small in a
+"Why I founded this company" section built only from her own lines, every industry (CPAs, medical and
+dental offices, salons, fashion designers, real estate too), **$4 to $8 an hour or by the project** (her
+figure), common tools (HubSpot, Salesforce…), a command-center service, no property tours or "only for
+real estate agents?" question. It signs as its company ("VA Services" until it has a name): header,
+footer (no Axen, no site links), emails. **It is live** (the owner published it by 30 Oct). **Its own
+domain is waiting on Erika's pick**: type it in the editor's "Own domain" once it points at this hosting.
 
 Every article is narrated in Erika's cloned voice and goes out as an episode of the
 **Erika Explains** podcast on RSS.com — the owner uploads; see *Podcast* below.
@@ -473,6 +481,20 @@ email and in Lofty.
     (both happened on 29 Oct).
   - **Testing**: Playwright's `text=Medical office` matches that phrase anywhere on the page (it found
     the "who it's for" line first); target the control (`#form .va-chip:has-text("…")`).
+- **A page can have its own domain** (`domain`, "Own domain" in the editor; 30 Oct 2026, for the VA
+  company). Add the domain in cPanel (Domains, pointing at `public_html`), then type it in. On that host
+  `index.php` serves only the page: `/`, `/thanks`, `/download`, `/paid` (`landing_own_domain_slug()`);
+  every other address 301s to `/`, and `admin.php` sends you back to `/`. Emailed links, the canonical,
+  share tags, Stripe's return addresses and the lead's page address use the page's own domain
+  (`landing_url()`, `landing_base()`, `lead_page_url()`); a linked file on this site is handed over from
+  that domain too. The main host comes from the site-address setting (`landing_main_host()`), never from
+  the request.
+- **Changing a page the admin has saved**: the admin's copy wins over `landing-pages.php`, so a code
+  change to its words or questions doesn't show once the owner has saved or published it. On 30 Oct this
+  was done with a one-off script (`tools/migrations/2026-10-30-va-page.php`: token-protected, copies only
+  the named fields from the defaults, keeps Published): uploaded under a random name, dry run, run, then
+  deleted through cPanel's `Fileman::fileop` (`op=unlink`). Check the live page first: a published page
+  means a saved copy.
 - **The line under her name is per page** (`brand`, "Line under her name" in the editor; default
   Axen Realty). It shows in the eyebrow, the visitor's email and the receipt. An offer that isn't
   brokerage business (VA services) sets its own, because Erika asked not to dilute her Axen
@@ -884,11 +906,13 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   email and statement descriptor. **Erika decides a refund policy** before selling (none is in
   her files). **Before selling a subscription**, turn on Stripe's customer portal so buyers can
   cancel online; the receipt says "reply to cancel" for now. Then switch to the live key.
-- **Owner: publish the VA services page** (deployed 29 Oct with the redesign; every file confirmed
-  by size, the static files byte-compared over HTTP; `/page/va-services` answers 404 to visitors
-  until it is published, and the 1039 Mariners Ct page still renders). Admin → Landing pages →
-  VA Services → Publish, then send one test lead and check Leads, your email and Lofty. Ask Erika:
-  may the page name Dot.kode, what is the service called, and is the "What does a VA cost?" answer right?
+- **VA services page: live; its own domain is next** (30 Oct). The owner sends Erika the domain list
+  (available on 30 Oct: hiretodone.com, todoneteam.com, todoneassistants.com, todonevirtual.com,
+  mytodonelist.com, talarisva.com, talarisassistants.com, talarisvirtual.com, talarisconsulting.com;
+  talarisconsultinggroup.com is taken, perhaps hers). Once bought: cPanel → Domains → add it on
+  `public_html`, then admin → Landing pages → VA Services → "Own domain". Also: the company's name (the
+  "VA Services" placeholder is the brand field), and Erika to read the founder section (her quotes,
+  arranged by us) and the tools and command-center lines (ours).
 - **Leads from now on are kept in the admin** (Leads), from every form on the site. Lofty
   only receives them while CRM / Lofty is switched on with a key; whether it is on the live
   site isn't known from here.

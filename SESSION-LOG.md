@@ -7,6 +7,32 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-30 — The VA page as its own company (Erika's 30 Oct meeting)
+
+**Asked.** The meeting (Google Doc): keep the VA company separate from her real estate world, on its own
+domain; a professional VA's picture in front, her photo smaller with "why I founded this company"; one page
+for every industry; no property tours or "only for real estate agents?"; $4–8 an hour or by the project;
+common tools (HubSpot, Salesforce); a list of domains for her to pick.
+
+**Done.** Page reworked (`lib/landing-va.php`, `assets/css/landing-va.css`, `landing-pages.php`); landing
+pages can now have **their own domain** (routing in `index.php`, guard in `admin.php`, own-domain addresses
+in emails, canonical, share tags, Stripe and leads); the VA page signs as its company; PDF lists updated.
+Deployed (15 files, FAILURES: 0; static files byte-compared). The page was already published, so the
+admin's saved copy was brought up to date with a one-off script (dry run, run, deleted: now 404). Domain
+availability checked at the .com registry (RDAP).
+
+**Passed.** Locally: desktop and phone, no sideways scroll, no console errors; own-domain routing on a test
+host (page at `/`, everything else to `/`, the admin sent back, the download from the same host);
+`tools/check-landing/run.sh` **ALL PASS**; the PDF build (no clipping, no fallback). Live: the new page,
+title, photo, founder section, prices and options; no Axen or site links on it; 1039 and /blog still load.
+
+**Failed, then fixed.** An undefined-key warning for pages with no layout (since 29 Oct); the lead's page
+address was "/" on an own domain (now the full address); two PDF rows outside their group and an overflow.
+
+**Open.** Erika picks the domain and the name; then cPanel → Domains and the editor's "Own domain".
+
+---
+
 ## 2026-10-30 (later) — Separate YouTube videos stopped
 
 **Asked.** "No need for separate youtube videos anymore, note it down please."
