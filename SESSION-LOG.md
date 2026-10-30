@@ -7,6 +7,16 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-30 (later) — Separate YouTube videos stopped
+
+**Asked.** "No need for separate youtube videos anymore, note it down please."
+**Done.** CLAUDE.md now says so in every place the YouTube step was: the daily hand-over (no YouTube
+part), the hand-over fields, the social-pack section, the `episode.py` notes (kept for the record)
+and Open items. The channel takes every episode from the podcast's RSS feed. Videos 1–9 were made;
+none after. `ceo_erika` STATUS says the same.
+
+---
+
 ## 2026-10-30 — "Closing soon? A shutdown could slow you down."; podcast episode 15
 
 **Asked.** "Now do today's blog and next episode please."

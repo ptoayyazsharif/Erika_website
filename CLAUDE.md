@@ -51,8 +51,11 @@ is still running" with no hand-over in the reply. So:
   even while a check is still running (say which check is pending, then send its result in a
   follow-up). Never end a turn on a status line alone.
 - Every day's reply carries, in this order: **the article** (title, link, short link, what it
-  covers, what's for Erika to review), **the podcast episode** (every field below), **the
-  YouTube video** (every field below), anything else that was fixed, the NEXA / Andrew count.
+  covers, what's for Erika to review), **the podcast episode** (every field below), anything else
+  that was fixed, the NEXA / Andrew count. (No YouTube video: see the next line.)
+- **No separate YouTube videos any more** (the owner, 30 Oct 2026: "no need for separate youtube
+  videos anymore"). The channel takes every episode from the podcast's RSS feed. Don't run
+  `tools/youtube/episode.py` or send a YouTube zip unless the owner asks again.
 - Before sending, check the reply against this list, field by field.
 
 - **Podcast episode (RSS.com):** run `python3 tools/podcast/handover.py <slug> --episode <n>
@@ -64,9 +67,9 @@ is still running" with no hand-over in the reply. So:
   - **Settings**: Full; Season 1, Episode n; Explicit No; AI content Yes; the place it's
     about; where it's made (the owner's choice);
   - and read its "dated lines" list against today before sending.
-- **YouTube video:** paste the **Title**, **Description** (with chapters and the Apple /
-  Spotify links), **Tags** and **Settings** from `exports/youtube/<slug>/upload.md` into the
-  reply, as well as attaching the zip.
+- **YouTube video:** no longer made (30 Oct 2026). Only if the owner asks for one again: paste
+  the **Title**, **Description**, **Tags** and **Settings** from `exports/youtube/<slug>/upload.md`
+  and attach the zip.
 - **Social pack:** paste the captions, the Google Business post and the posting notes from
   `pack.md` into the reply.
 - **Article:** the link, the short link, what it covers, and what's for Erika to review.
@@ -330,7 +333,8 @@ Started with the first article and episode 1 (closing costs). Outputs go to `exp
   same format in a row on her grid.
 - Five slides is deliberate: each slide is also reused as a story, a static post, or a frame she
   narrates over.
-- **YouTube videos still go out for every episode**, in order, from 19 Oct.
+- ~~YouTube videos for every episode~~: stopped 30 Oct 2026. The channel takes the RSS feed; the
+  owner: "no need for separate youtube videos anymore". Episodes 1–9 were made as videos.
 - **Podcast links: Apple Podcasts first, Spotify second, never Amazon Music**, in any caption
   or card (Apple https://podcasts.apple.com/podcast/id6822448035, Spotify
   https://open.spotify.com/show/1yBRzP6unSx9jrUsofuPs4).
@@ -354,7 +358,8 @@ Started with the first article and episode 1 (closing costs). Outputs go to `exp
 - Look at every slide: the renderer catches overflow and upscaling but not a link wrapping
   mid-word (fixed 19 Oct with `white-space:nowrap`).
 
-**YouTube video**: `python3 tools/youtube/episode.py <slug> --episode <n> [--note "Recorded …"]`
+**YouTube video** (not made since 30 Oct 2026; kept for the record, in case the owner asks again):
+`python3 tools/youtube/episode.py <slug> --episode <n> [--note "Recorded …"]`
 (needs `ELEVENLABS_API_KEY` the first time per recording), then
 `node tools/covers/blog.js <slug> --youtube` for the 1280×720 thumbnail (`tools/youtube/thumbs/`).
 - 1920×1080 MP4: the square art on the left, captions burned into the merlot panel on the
@@ -901,16 +906,12 @@ shipped article in `posts.php`, check whether the admin has saved one (the
   the owner on 20 Oct (SESSION-LOG). Also: is `a7-pink-suit-ai.jpg` AI-generated (as
   `photos.php` says) or a real photo (the owner, 20 Oct)?
 - **YouTube is connected to the podcast's RSS feed** (the owner, 29 Oct): every episode reaches the
-  channel from RSS.com on its own, so episodes 1–14 are there. Ask the owner before making any more
-  separate YouTube videos with `tools/youtube/episode.py` (1–9 were made); the hand-over's YouTube
-  fields are only needed if they still want those.
+  channel from RSS.com on its own. **Separate YouTube videos are stopped** (the owner, 30 Oct: "no need
+  for separate youtube videos anymore"); 1–9 were made. The daily hand-over has no YouTube part.
 - **Social packs and YouTube videos** (from 19 Oct): pack 1 (closing costs) and YouTube
   episode 1 handed over on 19 Oct. **Packs: only the top 6–7 articles** by original reel
-  traction (see the section above), Erika approves each before posting. **YouTube:** episodes 1–9
-  handed over (19–29 Oct; 3 needs `--numbered-label Reason`); next is 10 (rollback rate), 11 (stairs),
-  then 12 (Fannie Mae 620, NEXA: pass the lender disclosure with `--disclosure`, not `--note`), then
-  every episode in date order. From 5 on they are podcast-script episodes: `episode.py` aligns
-  with the script and makes no chapters; pass `--note "Recorded <date>."`. Erika has to verify her YouTube
+  traction (see the section above), Erika approves each before posting. **YouTube videos: stopped 30 Oct** (1–9 were made; the
+  channel takes the RSS feed). Erika has to verify her YouTube
   account. Ask the owner whether Erika has a
   Google Business Profile, and whether her Instagram bio should point to the blog.
 - **New pages proposed by Erika's AI review (19 Oct; `ceo_erika` `business/conversion-pathways`),
