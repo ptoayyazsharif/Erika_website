@@ -48,7 +48,12 @@ if ($lpAction === 'download') {
     if (!$ok) { header('Location: ' . landing_path($page['slug']) . '?expired=1', true, 303); exit; }
     if ($page['deliver'] === 'url' && $page['url'] !== '') {
         lead_downloaded($ok['lead']);
-        header('Location: ' . $page['url'], true, 303);
+        // On its own domain, a file on this site is handed over from that domain too.
+        $go = $page['url'];
+        if ($page['domain'] !== '' && landing_domain_clean((string) parse_url($go, PHP_URL_HOST)) === landing_main_host()) {
+            $go = landing_base($page) . (parse_url($go, PHP_URL_PATH) ?? '/') . (($q = parse_url($go, PHP_URL_QUERY)) ? '?' . $q : '');
+        }
+        header('Location: ' . $go, true, 303);
         exit;
     }
     $abs = $page['file'] !== '' ? landing_abs($page['file']) : '';
@@ -284,13 +289,13 @@ function lp_document(?array $page, string $title, callable $body, bool $full = f
     $isDraft = $page && !landing_live($page);
     $index = $page && $page['indexable'] && !$isDraft;
     $desc = $page ? mb_substr(trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '</p>'], [' ', ' '], $page['desc'])))), 0, 155) : '';
-    $url = $page ? abs_url(landing_path($page['slug'])) : '';
+    $url = $page ? landing_url($page) : '';
     // Facebook fetched the 1.86 MB original 368 times in October for link previews;
     // a 1200-wide JPEG copy, built once, does the same job.
     $img = '';
     if ($page && $page['image'] !== '') {
         require_once __DIR__ . '/lib/imgvariants.php';
-        $img = abs_url(asset_url(img_share_copy(__DIR__, $page['image']) ?: $page['image']));
+        $img = landing_base($page) . asset_url(img_share_copy(__DIR__, $page['image']) ?: $page['image']);
     }
     $phone = cms('global.phone');
     $css = '/assets/css/landing.css?v=' . @filemtime(__DIR__ . '/assets/css/landing.css');
@@ -300,7 +305,7 @@ function lp_document(?array $page, string $title, callable $body, bool $full = f
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= esc($title) ?> · Erika Page</title>
+<title><?= esc($title) ?> · <?= $va ? esc($page['brand']) : 'Erika Page' ?></title>
 <?php if ($desc !== ''): ?><meta name="description" content="<?= esc($desc) ?>"><?php endif; ?>
 <meta name="robots" content="<?= $index ? 'index, follow' : 'noindex, nofollow' ?>">
 <?php if ($url !== ''): ?><link rel="canonical" href="<?= esc($url) ?>">
@@ -316,7 +321,8 @@ function lp_document(?array $page, string $title, callable $body, bool $full = f
 </head>
 <body class="lp<?= $va ? ' va' : '' ?>">
 <header class="lp-top"><div class="lp-wrap">
-  <a class="lp-brand" href="/">Erika<span>K</span>Page</a>
+  <?php if ($va): ?><a class="lp-brand va-brand" href="<?= esc(landing_path($page['slug'])) ?>"><?= esc($page['brand']) ?></a>
+  <?php else: ?><a class="lp-brand" href="/">Erika<span>K</span>Page</a><?php endif; ?>
   <?php if ($phone !== ''): ?><a class="lp-phone" href="tel:<?= esc(preg_replace('/[^0-9+]/', '', $phone)) ?>"><?= esc($phone) ?></a><?php endif; ?>
 </div></header>
 <?php if ($isDraft): ?><div class="lp-draft"><b>Draft</b> · only you can see this page, because you're logged in to the admin.<?= $page && !landing_deliverable($page) ? ' It has no file to hand over yet.' : '' ?><?= $page && !landing_payable($page) ? ' It has a price, but Stripe isn\'t set up yet (Payments / Stripe).' : '' ?> <a href="/admin.php?page=landing-pages&amp;edit=<?= esc(rawurlencode($page['slug'])) ?>" style="text-decoration:underline">Edit it</a></div><?php endif; ?>
@@ -324,8 +330,13 @@ function lp_document(?array $page, string $title, callable $body, bool $full = f
 <?php $body(); ?>
 <?php if ($page && !$full): ?></div><?php endif; ?></main>
 <footer class="lp-foot"><div class="lp-wrap">
+  <?php if ($va): // its own company: no real estate links, licence lines or way into the main site ?>
+  <span><b><?= esc($page['brand']) ?></b> · founded by Erika K. Page<?= $phone !== '' ? ' · ' . esc($phone) : '' ?></span>
+  <span>We use what you send only to contact you about our services.</span>
+  <?php else: ?>
   <span><b>Erika K. Page</b> · Axen Realty<?= $phone !== '' ? ' · ' . esc($phone) : '' ?></span>
   <span><?= cms_e('global.footer.bottom2') ?></span>
+  <?php endif; ?>
 </div></footer>
 </body>
 </html>

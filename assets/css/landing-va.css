@@ -65,6 +65,8 @@ body.va .lp-draft{background:var(--gold)}
 .va-arch{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(400px,82%);height:84%;border-radius:999px 999px 0 0;
   background:linear-gradient(180deg,#E4BCB4 0%,var(--rose) 60%,#CF9E95 100%)}
 .va-cut{position:relative;width:min(470px,100%);height:auto;margin-left:6%;filter:drop-shadow(0 24px 40px rgba(0,0,0,.25))}
+.va-photo{position:relative;margin:0;width:min(400px,86%);aspect-ratio:2/2.75;border-radius:999px 999px 0 0;overflow:hidden;background:var(--rose);box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+.va-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block}
 .va-board{position:absolute;left:-6%;bottom:11%;width:250px;background:var(--paper);border-radius:18px;padding:16px 18px 18px;color:var(--text);
   box-shadow:0 30px 60px -20px rgba(0,0,0,.55);z-index:2}
 .va-board-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
@@ -266,4 +268,30 @@ body.va .lp-draft{background:var(--gold)}
 @media (prefers-reduced-motion:reduce){
   .va-strike::after,.va-board li,.va-board li i,.va-board-bar span{animation:none}
   .va-btn,.va-sticky,.va-progress-bar i,.va-faq summary::after{transition:none}
+}
+
+/* the company's name in the top bar (its own company: no "ErikaKPage" wordmark) */
+body.va .lp-brand.va-brand{font-family:var(--display);font-size:21px;letter-spacing:-.01em;color:var(--paper)}
+
+/* a wide tile across the grid: the command center service */
+.va-tile-wide{grid-column:1 / -1;background:var(--esp);border-color:var(--esp);color:rgba(255,252,250,.82)}
+.va .va-tile-wide h3{color:var(--paper)}
+.va-tile-wide .va-tile-top .va-ic{background:var(--esp-3);color:var(--gold)}
+.va-tile-wide p{margin:0;font-size:17px;max-width:46em}
+
+/* why I founded this company: Erika small, her own words */
+.va-founder{background:var(--sand);padding-block:clamp(56px,7vw,96px);border-block:1px solid var(--vline)}
+.va-founder-grid{display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px;align-items:center}
+.va-founder-photo{margin:0;width:200px;height:200px;border-radius:50%;overflow:hidden;background:linear-gradient(180deg,#E4BCB4,var(--rose));box-shadow:0 20px 40px -24px rgba(42,27,26,.55)}
+.va-founder-photo img{width:118%;height:auto;margin:6% 0 0 -6%;display:block}
+.va-founder blockquote{margin:0;display:grid;gap:12px;max-width:44em}
+.va-founder blockquote p{margin:0;font-family:var(--display);font-size:clamp(19px,1.7vw,23px);line-height:1.38;color:var(--esp)}
+.va-founder blockquote em{color:var(--rose-ink)}
+.va-founder-name{margin:20px 0 0;display:grid;font-size:14px;color:var(--muted)}
+.va-founder-name b{font-size:16px;color:var(--esp);font-weight:600}
+
+@media (max-width:900px){
+  .va-photo{grid-row:2;width:min(330px,82%)}
+  .va-founder-grid{grid-template-columns:1fr;gap:24px;justify-items:start}
+  .va-founder-photo{width:120px;height:120px}
 }

@@ -122,8 +122,8 @@ function stripe_checkout(array $p, int $leadId, string $email): array {
         'client_reference_id' => (string) $leadId,
         'metadata' => $meta,
         // {CHECKOUT_SESSION_ID} is filled in by Stripe; the braces must reach it unencoded-in-meaning.
-        'success_url' => abs_url(landing_path($p['slug'], 'paid')) . '?session_id={CHECKOUT_SESSION_ID}',
-        'cancel_url' => abs_url(landing_path($p['slug'])) . '?cancelled=1#form',
+        'success_url' => landing_url($p, 'paid') . '?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url' => landing_url($p) . '?cancelled=1#form',
         'expires_at' => time() + STRIPE_CHECKOUT_MINUTES * 60,
     ];
     $params[$sub ? 'subscription_data' : 'payment_intent_data'] = ['metadata' => $meta];
@@ -324,7 +324,7 @@ function stripe_lofty_unpaid(int $leadId, bool $force = false): array {
         . stripe_price_label((int) ($pay['amount'] ?? 0), (string) ($pay['billing'] ?? 'once'))
         . ' (started ' . date('M j, g:i a', strtotime((string) ($pay['started'] ?? 'now')) ?: time()) . ')';
     $label = (string) ($l['meta']['form'] ?? $l['source_label']) . ' (' . strtolower($tag) . ')';
-    [$ok, $detail] = lead_push_lofty($l, $crm, $label, abs_url((string) $l['page_url']), $rows);
+    [$ok, $detail] = lead_push_lofty($l, $crm, $label, lead_page_url($l), $rows);
     lead_update($leadId, ['crm_ok' => $ok, 'crm_detail' => $detail . ' · tagged ' . $tag]);
     return [$ok, $detail];
 }

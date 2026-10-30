@@ -84,7 +84,7 @@ function landing_admin_early(string $cur): void {
                     (string) $l['created'], (string) $l['source_label'], (string) $l['name'], (string) $l['email'], (string) $l['phone'],
                     implode(' | ', $ans), $l['email_ok'] === null ? '' : ((int) $l['email_ok'] ? 'yes' : 'NO'),
                     $l['crm_ok'] === null ? 'not sent' : ((int) $l['crm_ok'] ? 'yes' : 'FAILED'), (string) $l['crm_detail'],
-                    (string) (int) $l['downloads'], ($pc = stripe_lead_chip($l)) ? $pc[1] : '', abs_url((string) $l['page_url']),
+                    (string) (int) $l['downloads'], ($pc = stripe_lead_chip($l)) ? $pc[1] : '', lead_page_url($l),
                 ]));
             }
             if (count($rows) < 500) break;
@@ -207,7 +207,7 @@ function landing_admin_early(string $cur): void {
         'thanks_title' => $_POST['lp_thanks_title'] ?? '', 'thanks_text' => $_POST['lp_thanks_text'] ?? '',
         'consent' => $_POST['lp_consent'] ?? '',
         'email_lead' => !empty($_POST['lp_email_lead']), 'crm_on' => !empty($_POST['lp_crm_on']),
-        'brand' => $_POST['lp_brand'] ?? '', 'layout' => $_POST['lp_layout'] ?? '', 'crm_source' => $_POST['lp_crm_source'] ?? '', 'crm_tags' => $_POST['lp_crm_tags'] ?? '',
+        'brand' => $_POST['lp_brand'] ?? '', 'layout' => $_POST['lp_layout'] ?? '', 'domain' => $_POST['lp_domain'] ?? '', 'crm_source' => $_POST['lp_crm_source'] ?? '', 'crm_tags' => $_POST['lp_crm_tags'] ?? '',
         'crm_type' => (int) ($_POST['lp_crm_type'] ?? 0), 'indexable' => !empty($_POST['lp_indexable']),
         'price_cents' => $priceCents, 'billing' => $_POST['lp_billing'] ?? 'once',
         'published' => $act === 'publish', 'updated' => date('Y-m-d'),
@@ -536,6 +536,7 @@ function lpa_view_editor(string $slug): void {
           </div>
           <div class="fld"><label>Lofty tags (comma-separated)</label><input type="text" name="lp_crm_tags" value="<?= esc($p['crm_tags']) ?>"></div>
           <div class="fld"><label>Page design</label><select name="lp_layout"><?php foreach (LANDING_LAYOUTS as $id => $lbl): ?><option value="<?= esc($id) ?>" <?= $p['layout'] === $id ? 'selected' : '' ?>><?= esc($lbl) ?></option><?php endforeach; ?></select><small style="color:#8a746f">The VA services design has its own sections (services, how it works, questions) and a three-step form.</small></div>
+          <div class="fld"><label>Own domain (optional)</label><input type="text" name="lp_domain" value="<?= esc($p['domain']) ?>" placeholder="e.g. yourvacompany.com"><small style="color:#8a746f">Point the domain at this hosting (cPanel → Domains), then type it here. On that domain only this page is served; nothing else of the site can be reached from it.</small></div>
         </div>
 
         <div class="savebar">

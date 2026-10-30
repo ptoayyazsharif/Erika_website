@@ -134,7 +134,10 @@ function landing_clean(array $p): ?array {
         // something else for an offer that isn't brokerage business (VA services, 29 Oct 2026).
         'brand'        => $t($p['brand'] ?? '') ?: 'Axen Realty',
         // 'va' = the long VA services page (lib/landing-va.php); '' = the standard two-column page.
-        'layout'       => isset(LANDING_LAYOUTS[(string) ($p['layout'] ?? '')]) ? (string) $p['layout'] : '',
+        'layout'       => isset(LANDING_LAYOUTS[(string) ($p['layout'] ?? '')]) ? (string) ($p['layout'] ?? '') : '',
+        // Its own domain (optional): the page is then served at that domain's "/", and nothing else of
+        // the site is reachable there (Erika, 30 Oct 2026: the VA company stands apart from her real estate).
+        'domain'       => landing_domain_clean((string) ($p['domain'] ?? '')),
         'cta'          => $t($p['cta'] ?? '') ?: 'Send it to me',
         'fields'       => $fields,
         'deliver'      => $deliver,
@@ -224,7 +227,57 @@ function landing_removed_save(array $slugs): void {
 }
 
 function landing_path(string $slug, string $action = ''): string {
+    // On a page's own domain its addresses are "/", "/thanks", "/download" and "/paid".
+    if (landing_own_domain_slug() === $slug) return '/' . $action;
     return '/page/' . $slug . ($action !== '' ? '/' . $action : '');
+}
+
+/** A lead's page as a full address (a page on its own domain stores its full address). */
+function lead_page_url(array $l): string {
+    $u = (string) ($l['page_url'] ?? '');
+    return str_starts_with($u, 'http') ? $u : abs_url($u);
+}
+
+/** "https://www.Example.com/x" -> "example.com"; anything that isn't a plain host name -> ''. */
+function landing_domain_clean(string $d): string {
+    $d = strtolower(trim($d));
+    $d = preg_replace('#^[a-z]+://#', '', $d);
+    $d = preg_replace('#[/?\#:].*$#', '', $d);
+    $d = preg_replace('/^www\./', '', $d);
+    return preg_match('/^(?=.{4,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/', $d) ? $d : '';
+}
+
+/** The main site's host, from the site-address setting (never from the request). */
+function landing_main_host(): string {
+    return landing_domain_clean(cms('global.site-url')) ?: 'erikakpage.com';
+}
+
+/** The slug of the page whose own domain this request came in on, or '' on the main site. */
+function landing_own_domain_slug(): string {
+    static $slug = null;
+    if ($slug !== null) return $slug;
+    $host = landing_domain_clean((string) ($_SERVER['HTTP_HOST'] ?? ''));
+    $slug = '';
+    if ($host === '' || $host === landing_main_host()) return $slug;
+    foreach (landing_all(true) as $p) {
+        if ($p['domain'] !== '' && $p['domain'] === $host) { $slug = $p['slug']; break; }
+    }
+    return $slug;
+}
+
+/** Where a page's addresses live: its own domain when it has one, else the site. */
+function landing_base(array $p): string {
+    return $p['domain'] !== '' ? 'https://' . $p['domain'] : site_url();
+}
+
+/** A full address for a page (canonical, share tags, emailed links). */
+function landing_url(array $p, string $action = ''): string {
+    return $p['domain'] !== '' ? landing_base($p) . '/' . $action : abs_url('/page/' . $p['slug'] . ($action !== '' ? '/' . $action : ''));
+}
+
+/** The name a page signs with: the VA company signs as itself, the rest as Erika. */
+function landing_sender(array $p): string {
+    return $p['layout'] === 'va' ? $p['brand'] : 'Erika K. Page';
 }
 
 /** "/page/<slug>[/thanks|/download|/paid]" -> [slug, action], or null for any other path. */
@@ -538,17 +591,21 @@ function landing_email_visitor(array $p, string $email, string $name, string $li
     [$first] = lead_split_name($name);
     $hello = $first !== '' ? 'Hi ' . $first . ',' : 'Hello,';
     $what = $p['deliver'] === 'url' ? 'Here is your link' : 'Here is your download';
-    $text = "$hello\n\n$what for \"{$p['title']}\":\n$link\n\nThe link works for " . LANDING_LINK_DAYS . " days.\n\nErika K. Page\n" . $p['brand'];
+    $va = $p['layout'] === 'va';
+    $sign = $va ? $p['brand'] . "\nFounded by Erika K. Page" : "Erika K. Page\n" . $p['brand'];
+    $text = "$hello\n\n$what for \"{$p['title']}\":\n$link\n\nThe link works for " . LANDING_LINK_DAYS . " days.\n\n" . $sign;
     $html = '<div style="font-family:system-ui,Arial,sans-serif;color:#453230;max-width:560px;line-height:1.6">'
-        . '<p style="font-family:Georgia,serif;font-size:22px;color:#453230;margin:0 0 6px">Erika<span style="color:#B05E51">K</span>Page</p>'
+        . ($va ? '<p style="font-family:Georgia,serif;font-size:22px;color:#2A1B1A;margin:0 0 6px">' . esc($p['brand']) . '</p>'
+               : '<p style="font-family:Georgia,serif;font-size:22px;color:#453230;margin:0 0 6px">Erika<span style="color:#B05E51">K</span>Page</p>')
         . '<p>' . esc($hello) . '</p><p>' . esc($what) . ' for <b>' . esc($p['title']) . '</b>.</p>'
         . '<p style="margin:26px 0"><a href="' . esc($link) . '" style="background:#B05E51;color:#fff;padding:14px 26px;text-decoration:none;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px">'
         . esc($p['deliver'] === 'url' ? 'Open it' : 'Download') . '</a></p>'
         . '<p style="font-size:13px;color:#8a746f">The link works for ' . LANDING_LINK_DAYS . ' days. If the button doesn\'t work, copy this address into your browser:<br>'
         . '<span style="word-break:break-all">' . esc($link) . '</span></p>'
-        . '<p style="margin-top:24px">Erika K. Page<br><span style="color:#8a746f">' . esc($p['brand']) . '</span></p></div>';
+        . ($va ? '<p style="margin-top:24px">' . esc($p['brand']) . '<br><span style="color:#8a746f">Founded by Erika K. Page</span></p></div>'
+               : '<p style="margin-top:24px">Erika K. Page<br><span style="color:#8a746f">' . esc($p['brand']) . '</span></p></div>');
     // Replies go to the owner, not to the website's sending address.
-    [$ok, $err] = send_mail('Your ' . ($p['deliver'] === 'url' ? 'link' : 'download') . ': ' . $p['title'], $html, $text, landing_reply_to(), 'Erika K. Page', $email, 'Erika K. Page');
+    [$ok, $err] = send_mail('Your ' . ($p['deliver'] === 'url' ? 'link' : 'download') . ': ' . $p['title'], $html, $text, landing_reply_to(), landing_sender($p), $email, landing_sender($p));
     return [$ok, $ok ? 'link emailed to ' . $email : $err];
 }
 
@@ -725,7 +782,7 @@ function landing_capture(array $p, array $vals, array $pay = []): array {
     if ($pay) $meta['pay'] = $pay;
     $lead = [
         'kind' => 'landing', 'source_key' => 'page:' . $p['slug'], 'source_label' => $p['title'],
-        'page_url' => landing_path($p['slug']), 'name' => $vals['name'], 'email' => $vals['email'], 'phone' => landing_phone($p, $vals),
+        'page_url' => $p['domain'] !== '' ? landing_url($p) : '/page/' . $p['slug'], 'name' => $vals['name'], 'email' => $vals['email'], 'phone' => landing_phone($p, $vals),
         'answers' => $answers, 'meta' => $meta, 'ip_hash' => lead_ip_hash(),
     ];
     $id = lead_insert($lead);
@@ -743,11 +800,11 @@ function landing_notify(array $p, array $lead, string $token, bool $isSale, stri
     $rows = [];
     foreach ((array) $lead['answers'] as $a) if (is_array($a) && count($a) === 2) $rows[$a[0]] = $a[1];
     if ($sale !== '') $rows['Payment'] = $sale;
-    $url = abs_url(landing_path($p['slug']));
+    $url = landing_url($p);
     $label = 'Landing page: ' . $p['title'];
     $name = (string) $lead['name'];
     $email = (string) $lead['email'];
-    $link = abs_url(landing_path($p['slug'], 'download')) . '?t=' . $token;
+    $link = landing_url($p, 'download') . '?t=' . $token;
 
     // The visitor's copy first: it's what they asked for (and, for a sale, paid for).
     $emailed = false;
@@ -812,7 +869,7 @@ function lead_resend_visitor(int $id): array {
     if (!landing_deliverable($p)) return [false, 'Its landing page has no file or link to hand over.'];
     $pay = (array) ($l['meta']['pay'] ?? []);
     if ($pay && ($pay['state'] ?? '') !== 'paid') return [false, 'This checkout was never paid.'];
-    $link = abs_url(landing_path($p['slug'], 'download')) . '?t=' . landing_token($p['slug'], $id);
+    $link = landing_url($p, 'download') . '?t=' . landing_token($p['slug'], $id);
     return $pay ? landing_email_receipt($p, $l, $link) : landing_email_visitor($p, (string) $l['email'], (string) $l['name'], $link);
 }
 
@@ -829,7 +886,7 @@ function lead_retry_lofty(int $id): array {
     if (in_array($l['meta']['pay']['state'] ?? '', ['abandoned', 'failed'], true)) return stripe_lofty_unpaid($id, true);
     $rows = [];
     foreach ($l['answers'] as $a) if (is_array($a) && count($a) === 2) $rows[$a[0]] = $a[1];
-    [$ok, $detail] = lead_push_lofty($l, $crm, (string) ($l['meta']['form'] ?? $l['source_label']), abs_url((string) $l['page_url']), $rows);
+    [$ok, $detail] = lead_push_lofty($l, $crm, (string) ($l['meta']['form'] ?? $l['source_label']), lead_page_url($l), $rows);
     lead_update($id, ['crm_ok' => $ok, 'crm_detail' => $detail]);
     return [$ok, $detail];
 }

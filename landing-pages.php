@@ -101,23 +101,25 @@ return [
         'slug'         => 'va-services',
         'title'        => 'Need a VA? Get the VA Wish List',
         'desc'         => '<p><strong>&ldquo;My amazing virtual assistant is taking my eventually list, my checklist, my to-do list, and turning it into a to-done list.&rdquo;</strong></p>'
-                        . '<p>Busy entrepreneur, real estate agent, business owner, medical office, or just busy? Tell me what&rsquo;s on your plate and get my free VA Wish List: everything a virtual assistant can take off it, from your calendar and leads to your listings, social media, video editing and phones.</p>'
+                        . '<p>CPA, medical or dental office, salon, designer, agent, or just busy? Get the free VA Wish List: everything a virtual assistant can take off your plate, from your calendar and follow-up to your social media, video editing and phones. On average $4 to $8 an hour, or by the project.</p>'
                         . '<p>AI is amazing, but AI needs an AI operator. One 10-minute conversation with my VA and you can have 50 things done. Don&rsquo;t wait: it is cost efficient, and it is amazing to just know that things are being done.</p>'
                         . '<p><strong>Prefer to talk? Call (678) 404-1562.</strong></p>',
-        // Her pink-suit photo: the one Erika likes (her VA, 29 Oct 2026). Also the link preview.
-        'image'        => 'assets/photos/01/a7-pink-suit-ai.jpg',
-        'image_alt'    => 'Erika K. Page',
+        // The link preview: a professional VA, not Erika (her ask, 30 Oct 2026). MART PRODUCTION, Pexels 7709287.
+        'image'        => 'assets/photos/va/va-at-work.jpg',
+        'image_alt'    => 'A virtual assistant at work',
         // The long VA design (lib/landing-va.php), asked for on 29 Oct 2026 after the standard page was rejected.
         'layout'       => 'va',
+        // Its own company on its own domain (Erika, 30 Oct 2026); the domain goes here once she picks one.
+        'domain'       => '',
         'brand'        => 'VA Services',
         'bottom_title' => 'Get the VA Wish List',
         'cta'          => 'Get the Free VA Wish List',
         'fields'       => [
             ['id' => 'mobile', 'type' => 'phone', 'label' => 'Mobile Number', 'required' => true],
             ['id' => 'who', 'type' => 'select', 'label' => 'What best describes you?', 'required' => true,
-             'options' => ['Real estate agent or team', 'Small business owner', 'Medical office', 'Busy professional or parent', 'Something else']],
+             'options' => ['CPA or accounting', 'Medical or dental office', 'Salon owner', 'Fashion designer', 'Real estate agent or team', 'Small business owner', 'Busy professional or parent', 'Something else']],
             ['id' => 'tasks', 'type' => 'checkbox', 'label' => 'What would you hand off first?', 'required' => false,
-             'options' => ['Calendar and inbox', 'Lead follow-up and client communication', 'Listing and transaction coordination', 'MLS, database and CRM', 'Social media and video editing', 'Marketing support', 'Research and data entry', 'Admin tasks', 'Answering calls and setting appointments', 'Cold calling', 'Medical billing', 'Website, profiles and automations', 'Household and personal errands']],
+             'options' => ['Calendar and inbox', 'Lead follow-up and client communication', 'Social media and video editing', 'Marketing support', 'Research and data entry', 'Admin tasks', 'Answering calls and setting appointments', 'Cold calling', 'Medical billing', 'CRM and database', 'Website, profiles and automations', 'A command center for my business', 'Household and personal errands', 'Real estate: listings and transactions']],
             ['id' => 'hours', 'type' => 'select', 'label' => 'How much help do you think you need?', 'required' => true,
              'options' => ['A few hours a week', '10–20 hours a week', '20–40 hours a week', 'Full-time', 'Not sure yet']],
             ['id' => 'start', 'type' => 'select', 'label' => 'When would you like to start?', 'required' => true,
@@ -130,7 +132,7 @@ return [
         'file_name'    => 'The VA Wish List',
         'thanks_title' => 'Your VA Wish List is ready.',
         'thanks_text'  => 'Open it below, tick what you would hand off, and we will reach out to talk it through. Can\'t wait? Call (678) 404-1562.',
-        'consent'      => 'By sending this form you agree that Erika K. Page and her team may contact you about virtual assistant and call center services by phone, text or email.',
+        'consent'      => 'By sending this form you agree that our team may contact you about virtual assistant and call center services by phone, text or email.',
         'email_lead'   => true,
         'crm_on'       => true,
         'crm_source'   => 'Website – VA Services',
@@ -138,6 +140,6 @@ return [
         'crm_type'     => 0,
         'indexable'    => true,
         'published'    => false,
-        'updated'      => '2026-10-29',
+        'updated'      => '2026-10-30',
     ],
 ];

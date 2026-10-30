@@ -84,16 +84,15 @@ function va_steps(array $page): array {
 function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
     [$ph, $tel] = va_phone();
     $steps = va_steps($page);
-    $hv = $page['image'] !== '' ? img_variants($page['image']) : null;
     $cover = 'assets/guides/va-wish-list-cover.webp';
     $hasCover = is_file(dirname(__DIR__) . '/' . $cover);
     ?>
 <section class="va-hero">
   <div class="va-in va-hero-grid">
     <div class="va-hero-copy">
-      <p class="va-kicker">Need a VA? <span>Erika K. Page · <?= esc($page['brand']) ?></span></p>
+      <p class="va-kicker">Need a VA? <span><?= esc($page['brand']) ?></span></p>
       <h1 class="va-h1">Turn your <span class="va-strike">to-do</span> list into a <em>to-done</em> list.</h1>
-      <p class="va-lede">Busy agent, business owner, medical office, or just busy? A virtual assistant takes the calendar, the leads, the listings, the social media and the phones off your plate. Start with the free VA Wish List: tick what you would hand off.</p>
+      <p class="va-lede">CPA, medical or dental office, salon, designer, agent, or just busy? A virtual assistant takes the calendar, the follow-up, the social media and the phones off your plate. Start with the free VA Wish List: tick what you would hand off.</p>
       <div class="va-actions">
         <a class="va-btn" href="#form"><?= esc($page['cta']) ?> <?= va_icon('arrow', 18) ?></a>
         <a class="va-call" href="<?= esc($tel) ?>"><?= va_icon('phone', 17) ?> or call <b><?= esc($ph) ?></b></a>
@@ -103,29 +102,28 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
       </ul>
     </div>
     <div class="va-hero-art">
-      <div class="va-arch" aria-hidden="true"></div>
-      <?php // Her cut-out on a backdrop drawn in one piece, never a feathered crop (the channel-art
-            // lesson, 20 Oct). The photo is the one Erika likes (her VA, 29 Oct 2026). ?>
-      <img class="va-cut" src="<?= esc(asset_url('assets/photos/01/a7-pink-suit-cutout-900.webp')) ?>" srcset="<?= esc(asset_url('assets/photos/01/a7-pink-suit-cutout-520.webp')) ?> 520w, <?= esc(asset_url('assets/photos/01/a7-pink-suit-cutout-900.webp')) ?> 900w" sizes="(max-width: 900px) 64vw, 440px" alt="Erika K. Page" width="900" height="1353" fetchpriority="high">
+      <?php // A professional VA in front, not Erika (her ask, 30 Oct 2026: "this looks like I am the VA").
+            // Photo: MART PRODUCTION on Pexels (pexels.com/photo/7709287), Pexels licence. ?>
+      <figure class="va-photo"><img src="<?= esc(asset_url('assets/photos/va/va-at-work-1000.webp')) ?>" srcset="<?= esc(asset_url('assets/photos/va/va-at-work-560.webp')) ?> 560w, <?= esc(asset_url('assets/photos/va/va-at-work-1000.webp')) ?> 1000w" sizes="(max-width: 900px) 70vw, 400px" alt="A virtual assistant at work with a headset and laptop" width="1000" height="1500" fetchpriority="high"></figure>
       <div class="va-board" aria-label="An example day with a VA">
         <div class="va-board-top"><span>Today</span><b>To-done</b></div>
         <ol>
           <li style="--i:0"><i><?= va_icon('check', 13) ?></i>Inbox and calendar sorted</li>
           <li style="--i:1"><i><?= va_icon('check', 13) ?></i>New leads followed up</li>
-          <li style="--i:2"><i><?= va_icon('check', 13) ?></i>Transaction file updated</li>
+          <li style="--i:2"><i><?= va_icon('check', 13) ?></i>Reports and forms done</li>
           <li style="--i:3"><i><?= va_icon('check', 13) ?></i>Reel edited and posted</li>
-          <li style="--i:4"><i><?= va_icon('check', 13) ?></i>Calls answered, showings set</li>
+          <li style="--i:4"><i><?= va_icon('check', 13) ?></i>Calls answered, appointments set</li>
         </ol>
         <div class="va-board-bar"><span></span></div>
       </div>
-      <blockquote class="va-bubble">&ldquo;One 10-minute conversation with my VA and you can have 50 things done.&rdquo;<cite>Erika K. Page</cite></blockquote>
+      <blockquote class="va-bubble">&ldquo;One 10-minute conversation with my VA and you can have 50 things done.&rdquo;<cite>Erika K. Page, founder</cite></blockquote>
     </div>
   </div>
 </section>
 
 <section class="va-who">
   <div class="va-in">
-    <p class="va-who-line">For the <b>real estate agent</b>, the <b>business owner</b>, the <b>medical office</b>, the <b>busy mom</b> and the <b>busy working professional</b>.</p>
+    <p class="va-who-line">For <b>CPAs</b>, <b>medical and dental offices</b>, <b>salon owners</b>, <b>fashion designers</b>, <b>real estate agents and teams</b>, and every <b>busy business owner</b> and <b>professional</b>.</p>
   </div>
 </section>
 
@@ -141,19 +139,19 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
         <ul class="va-list">
           <li><b>Calendar and inbox</b><span>Never miss an important date or lead.</span></li>
           <li><b>Lead follow-up</b><span>Nurturing leads so you can close more deals.</span></li>
-          <li><b>Listing and transaction coordination</b><span>From contract to close.</span></li>
-          <li><b>MLS and database</b><span>Your pipeline clean and updated.</span></li>
           <li><b>Client communication</b><span>Quick replies, happy clients.</span></li>
-          <li><b>Research and data entry</b><span>Market research, comps, property information.</span></li>
+          <li><b>Research and data entry</b><span>Research, data and records, kept up to date.</span></li>
           <li><b>Marketing support</b><span>Content, email campaigns, flyers.</span></li>
           <li><b>Admin tasks</b><span>Documents, forms, reports.</span></li>
+          <li><b>CRM and database</b><span>Your pipeline clean and updated.</span></li>
+          <li><b>For real estate teams</b><span>Listing and transaction coordination, from contract to close.</span></li>
         </ul>
       </article>
       <article class="va-tile">
         <div class="va-tile-top"><?= va_icon('film') ?><h3>Your content</h3></div>
         <ul class="va-ticks">
+          <li>Social media posting</li>
           <li>Reels, TikToks and YouTube Shorts</li>
-          <li>Property tours and market updates</li>
           <li>Client testimonials, tips and advice</li>
           <li>Captions, transitions, music, branding</li>
         </ul>
@@ -164,29 +162,47 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
           <li>Answering calls and setting appointments</li>
           <li>Cold calling</li>
           <li>CRM, profiles, websites and automations</li>
-          <li>Medical billing for medical offices</li>
+          <li>Medical billing for medical and dental offices</li>
         </ul>
       </article>
       <article class="va-tile va-tile-dark">
         <div class="va-tile-top"><?= va_icon('spark') ?><h3>Your tools</h3></div>
         <p class="va-tile-quote">&ldquo;AI is amazing, but AI needs an AI operator.&rdquo;</p>
-        <ul class="va-tools"><li>Lofty</li><li>kvCORE</li><li>dotloop</li><li>Canva</li><li>Google Workspace</li><li>Mailchimp</li><li>Trello</li></ul>
+        <ul class="va-tools"><li>HubSpot</li><li>Salesforce</li><li>Google Workspace</li><li>Microsoft 365</li><li>Canva</li><li>Mailchimp</li><li>Trello</li><li>Slack</li></ul>
       </article>
       <article class="va-tile va-tile-rose">
         <div class="va-tile-top"><?= va_icon('home') ?><h3>Your home, too</h3></div>
-        <p class="va-tile-quote">&ldquo;Having a VA manage household things, personal things and business things for me is a game changer.&rdquo;</p>
-        <p class="va-tile-cite">Erika K. Page</p>
+        <ul class="va-ticks">
+          <li>Household things</li>
+          <li>Personal things and errands</li>
+          <li>Your day planned and kept</li>
+        </ul>
+      </article>
+      <?php // A service since 30 Oct 2026: Erika, seeing the team's command center, "all of that needs to
+            // be part of the VA services". ?>
+      <article class="va-tile va-tile-wide">
+        <div class="va-tile-top"><?= va_icon('spark') ?><h3>Your own command center</h3></div>
+        <p>Every meeting turned into tasks, questions and dates on one private dashboard, with a switch that hides the private details when you share your screen.</p>
       </article>
     </div>
   </div>
 </section>
 
-<section class="va-quote">
-  <div class="va-in">
-    <blockquote>
-      <p>&ldquo;My amazing virtual assistant is taking my <span>eventually list</span>, my <span>checklist</span>, my <span>to-do list</span>, and turning it into a <em>to-done list.</em>&rdquo;</p>
-      <footer><?php if ($hv): ?><img src="<?= esc(asset_url($page['image'])) ?>"<?= $hv['srcset'] !== '' ? ' srcset="' . $hv['srcset'] . '" sizes="56px"' : '' ?> alt="" width="56" height="56" loading="lazy"><?php endif; ?><span><b>Erika K. Page</b>Founder, Escaluxe Global · Metro Atlanta</span></footer>
-    </blockquote>
+<?php // "Why I founded this company" (Erika, 30 Oct 2026: "so there is a US person connected to it").
+      // Every line in it is hers: the "You need a VA" video (23-24 Oct) and her 27 Oct meeting. ?>
+<section class="va-founder">
+  <div class="va-in va-founder-grid">
+    <figure class="va-founder-photo"><img src="<?= esc(asset_url('assets/photos/01/a7-pink-suit-cutout-520.webp')) ?>" alt="Erika K. Page" width="520" height="782" loading="lazy"></figure>
+    <div>
+      <p class="va-eyebrow">Why I founded this company</p>
+      <blockquote>
+        <p>&ldquo;I myself needed a call center, and after using a call center, I decided to create one.&rdquo;</p>
+        <p>&ldquo;My amazing virtual assistant is taking my eventually list, my checklist, my to-do list, and turning it into a <em>to-done list.</em>&rdquo;</p>
+        <p>&ldquo;Having a VA manage household things, personal things and business things for me is a game changer.&rdquo;</p>
+        <p>&ldquo;I&rsquo;m right here in the United States. I&rsquo;m just a regular everyday business owner.&rdquo;</p>
+      </blockquote>
+      <p class="va-founder-name"><b>Erika K. Page</b>Founder · Metro Atlanta</p>
+    </div>
   </div>
 </section>
 
@@ -263,10 +279,11 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
     </div>
     <div class="va-faq">
       <details open><summary>What is the VA Wish List?</summary><p>A free checklist, as a PDF, of everything a virtual assistant can take off your plate: your business, your content, your phones and your home. Each task has room to note how many hours a week it costs you now, and the last page helps you pick your first five to hand off.</p></details>
-      <details><summary>Is it only for real estate agents?</summary><p>No. It is for real estate agents and teams, business owners, medical offices, and busy parents and professionals. Household and personal tasks are on the list too.</p></details>
       <details><summary>What happens after I send the form?</summary><p>You get the list straight away, on the next screen and by email. Then we reach out to talk through what you ticked. Can't wait? Call <?= esc($ph) ?>.</p></details>
-      <details><summary>What does a VA cost?</summary><p>It depends on what you hand off and how many hours a week it takes. We go through it together on the call, once we know what is on your list.</p></details>
-      <details><summary>Which tools do you work in?</summary><p>The ones you already use: Lofty, kvCORE, dotloop, Canva, Google Workspace, Mailchimp, Trello and more.</p></details>
+      <?php // Her price, 30 Oct 2026: "an average of four to eight … or it can be project based … significantly less expensive than … a US-based assistant". ?>
+      <details><summary>What does a VA cost?</summary><p>On average $4 to $8 an hour, or a price for the project. That is significantly less than an assistant based in the US. We go through it on the call, once we know what is on your list.</p></details>
+      <details><summary>Which tools do you work in?</summary><p>The ones you already use: HubSpot, Salesforce, Google Workspace, Microsoft 365, Canva, Mailchimp, Trello, Slack and more.</p></details>
+      <details><summary>Can you build us a command center?</summary><p>Yes. Your meetings become tasks, questions and dates on one private dashboard, with a switch that hides private details when you share your screen.</p></details>
       <details><summary>I don't know where to start.</summary><p>That is what the list is for. Tick everything you would hand off, then start with the task that costs you the most hours.</p></details>
     </div>
   </div>

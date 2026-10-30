@@ -4,6 +4,17 @@ require __DIR__ . '/routes.php';
 
 $reqPath = $_SERVER['REQUEST_URI'] ?? '/';
 
+// A landing page with its own domain: on that domain only the page itself is served ("/",
+// "/thanks", "/download", "/paid"); every other address goes back to "/", so nobody can walk from
+// it into the rest of the site (the VA company, 30 Oct 2026).
+if (($ownSlug = landing_own_domain_slug()) !== '') {
+    $own = trim(parse_url($reqPath, PHP_URL_PATH) ?? '', '/');
+    if ($own !== '' && !in_array($own, ['thanks', 'download', 'paid'], true)) { header('Location: /', true, 301); exit; }
+    $lp = [$ownSlug, $own];
+    require __DIR__ . '/landing.php';
+    exit;
+}
+
 // A landing page (/page/<address>) is its own small document, with one job: see landing.php.
 if ($lp = landing_route($reqPath)) { require __DIR__ . '/landing.php'; exit; }
 

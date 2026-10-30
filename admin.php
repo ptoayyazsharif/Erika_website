@@ -4,6 +4,8 @@
  * change password. One file, no framework.
  */
 require __DIR__ . '/cms.php';
+// Not on a landing page's own domain: the admin lives on the main site only.
+if (landing_own_domain_slug() !== '') { header('Location: /', true, 302); exit; }
 require __DIR__ . '/routes.php';   // the product screen links out to real page URLs
 
 if (!installed()) { header('Location: setup.php'); exit; }
