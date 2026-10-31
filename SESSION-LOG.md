@@ -7,6 +7,21 @@ history behind it. See "The loop" in `CLAUDE.md`.
 
 ---
 
+## 2026-10-31 — VA page: "errands" becomes "tasks"
+
+**Asked.** Erika (WhatsApp, 30 Oct): "Since it's virtual, you can't actually run errands. So change that word
+to tasks." She also called the splash page "very very good" and asked for "more photos, similar to the
+video" (the VA asked her for details; not done yet).
+
+**Done.** The services tile ("Personal tasks") and the task option ("Household and personal tasks") in the
+defaults; the admin's saved copy updated with a one-off script (`tools/migrations/2026-10-31-va-tasks-word.php`:
+dry run, run, deleted; now 404). Deployed (FAILURES: 0). The live page has no "errand" left.
+
+**Open.** "More photos similar to the video": the "You need a VA" video used stock VAs (men and women, several
+countries; Pexels). Waiting on Erika's details.
+
+---
+
 ## 2026-10-30 (evening) — VA page: the face, more tools, a VA on the PDF
 
 **Asked.** The owner: the to-done board hid the VA's face on desktop; add more tools, from competitors

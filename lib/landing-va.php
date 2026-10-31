@@ -177,7 +177,7 @@ function va_page(array $page, array $vals, array $errs, bool $isDraft): void {
         <div class="va-tile-top"><?= va_icon('home') ?><h3>Your home, too</h3></div>
         <ul class="va-ticks">
           <li>Household things</li>
-          <li>Personal things and errands</li>
+          <li>Personal tasks</li>
           <li>Your day planned and kept</li>
         </ul>
       </article>

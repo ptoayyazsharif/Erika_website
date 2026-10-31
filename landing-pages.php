@@ -119,7 +119,7 @@ return [
             ['id' => 'who', 'type' => 'select', 'label' => 'What best describes you?', 'required' => true,
              'options' => ['CPA or accounting', 'Medical or dental office', 'Salon owner', 'Fashion designer', 'Real estate agent or team', 'Small business owner', 'Busy professional or parent', 'Something else']],
             ['id' => 'tasks', 'type' => 'checkbox', 'label' => 'What would you hand off first?', 'required' => false,
-             'options' => ['Calendar and inbox', 'Lead follow-up and client communication', 'Social media and video editing', 'Marketing support', 'Research and data entry', 'Admin tasks', 'Answering calls and setting appointments', 'Cold calling', 'Medical billing', 'CRM and database', 'Website, profiles and automations', 'A command center for my business', 'Household and personal errands', 'Real estate: listings and transactions']],
+             'options' => ['Calendar and inbox', 'Lead follow-up and client communication', 'Social media and video editing', 'Marketing support', 'Research and data entry', 'Admin tasks', 'Answering calls and setting appointments', 'Cold calling', 'Medical billing', 'CRM and database', 'Website, profiles and automations', 'A command center for my business', 'Household and personal tasks', 'Real estate: listings and transactions']],
             ['id' => 'hours', 'type' => 'select', 'label' => 'How much help do you think you need?', 'required' => true,
              'options' => ['A few hours a week', '10–20 hours a week', '20–40 hours a week', 'Full-time', 'Not sure yet']],
             ['id' => 'start', 'type' => 'select', 'label' => 'When would you like to start?', 'required' => true,
